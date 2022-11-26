@@ -54,6 +54,18 @@ export const initClientRPC = (
   },
   arg?: DeclareServiceArg<any>,
 ) => {
+  process
+    .on("unhandledRejection", (r, p) => {
+      console.log("");
+      console.log(pe.render(r as Error));
+      process.exit(1);
+    });
+  process
+    .on("uncaughtException", (err) => {
+      console.log("");
+      console.log(pe.render(err));
+      process.exit(1);
+    });
   const hook = arg ? arg.hook : undefined;
   return new Promise<void>(async (resolve) => {
     try {

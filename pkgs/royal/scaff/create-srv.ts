@@ -12,6 +12,9 @@ export const createNewSrv = async (path: string) => {
       royal: "workspace:^",
       service: "workspace:^",
     },
+    "devDependencies": {
+      "@types/node": "^18.11.9",
+    },
   });
   await writeAsync(
     join(path, "index.ts"),

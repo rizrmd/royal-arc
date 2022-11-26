@@ -32,6 +32,9 @@ export const createNewDB = async (path: string) => {
         "royal": "../../pkgs/royal",
         "service": "../../pkgs/service",
       },
+      "devDependencies": {
+        "@types/node": "^18.11.9",
+      },
     },
     "tsconfig.json": {
       compilerOptions: {

@@ -63,7 +63,9 @@ export const initServerRPC = async (port: number) => {
                 serviceHandler.bindThis({ _ws: ws });
 
                 let res;
-                if (rpc === "boot") res = await bootHandler.handleRequest(json);
+                if (rpc === "boot") {
+                  res = await bootHandler.handleRequest(json);
+                }
                 if (rpc === "service") {
                   res = await serviceHandler.handleRequest(json);
                 }

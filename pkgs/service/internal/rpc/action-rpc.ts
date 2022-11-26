@@ -241,8 +241,8 @@ export const rootAction =
       {},
       {
         get(_, p) {
-          return (...args: any[]) => {
-            return sender.sendRequest({
+          return async (...args: any[]) => {
+            return await sender.sendRequest({
               id: cuid.slug(),
               jsonrpc: "2.0",
               method: "action",

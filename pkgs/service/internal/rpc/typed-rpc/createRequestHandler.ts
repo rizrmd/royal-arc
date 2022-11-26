@@ -1,47 +1,47 @@
-import { invokeAction } from '../action-rpc'
+import { invokeAction } from "../action-rpc";
 import {
   Handlers,
   JsonRpcRequest,
   JsonRpcResponse,
   RequestHandler,
-} from './types'
+} from "./types";
 
 export const createRequestHandler = <T extends { [key: string]: any }>(
-  handlers: Handlers<T>
+  handlers: Handlers<T>,
 ): RequestHandler => {
   return {
     bindThis: (arg: Record<string, any>) => {
       for (const [k, v] of Object.entries(arg)) {
-        ;(handlers as any)[k] = v
+        (handlers as any)[k] = v;
       }
     },
     handleRequest: async (request: JsonRpcRequest) => {
       try {
-        if (request.method === 'action') {
-          const params: Parameters<typeof invokeAction> = request.params
-          const result = await invokeAction(...params)
+        if (request.method === "action") {
+          const params: Parameters<typeof invokeAction> = request.params;
+          const result = await invokeAction(...params);
           return {
-            jsonrpc: '2.0',
+            jsonrpc: "2.0",
             id: request.id,
             result,
-          }
+          };
         }
 
         const result = (await handlers[request.method](
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          ...request.params
-        )) as Promise<any>
+          ...request.params,
+        )) as Promise<any>;
         const response: JsonRpcResponse = {
-          jsonrpc: '2.0',
+          jsonrpc: "2.0",
           id: request.id,
           result,
-        }
-        return response
+        };
+        return response;
       } catch (error) {
-        let response: JsonRpcResponse
+        let response: JsonRpcResponse;
         if (error instanceof Error) {
           response = {
-            jsonrpc: '2.0',
+            jsonrpc: "2.0",
             id: request.id,
             error: {
               message: error.message,
@@ -49,16 +49,16 @@ export const createRequestHandler = <T extends { [key: string]: any }>(
               name: error.name,
               stack: error.stack,
             },
-          }
+          };
         } else {
           response = {
-            jsonrpc: '2.0',
+            jsonrpc: "2.0",
             id: request.id,
             error,
-          }
+          };
         }
-        return response
+        return response;
       }
     },
-  }
-}
+  };
+};
