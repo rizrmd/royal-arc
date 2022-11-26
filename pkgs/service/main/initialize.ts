@@ -44,7 +44,5 @@ export const initialize = async (fn: () => Promise<void>) => {
   await initClientRPC({ wsPort: svcPort, clientID: "root" });
   Bun.write(Bun.stdout, `[${(`ws://127.0.0.1:${svcPort}`)}]\n`);
 
-  root.service.start("royal", { mode: g.mode });
-
   await fn();
 };

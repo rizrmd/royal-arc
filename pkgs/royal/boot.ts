@@ -45,9 +45,9 @@ export const boot = async () => {
       process.exit(0);
     }
 
-    if (k.startsWith("srv") && !_path[k as _names]) {
+    if (!_path[k as _names]) {
       console.log(
-        picocolors.yellow(`WARNING:`),
+        picocolors.yellow(` › WARNING:`),
         `Skipping ${k} config, service not found`,
       );
       continue;

@@ -28,8 +28,6 @@ export const stopServices = async (reason?: string) => {
       } else {
         await root.service.start(name);
       }
-    } else {
-      console.log(`Failed to start ${name}: service not found`);
     }
   }
 };
@@ -58,11 +56,9 @@ export const startServices = async () => {
         } else {
           await root.service.start(name);
         }
-      } else {
-        console.log(`Failed to start ${name}: service not found`);
       }
     }
-
+ 
     if (Object.keys(pendingSrv).length > 0) {
       console.log(
         picocolors.yellow("WARNING:"),
