@@ -23978,10 +23978,6 @@ export default {
       let i = 0;
       if (opt.progress) {
         ival = setInterval(() => {
-          if (i >= 30) {
-            i === 0;
-            console.log("");
-          }
           if (runtime === "node") {
             process.stdout.write("\u2592");
           } else if (runtime === "bun") {
