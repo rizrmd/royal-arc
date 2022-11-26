@@ -14,7 +14,7 @@ export const runPnpm = (
     if (opt.progress) {
       ival = setInterval(() => {
         if (i >= 30) {
-          i === 0;
+          i = 0;
           console.log("");
         }
         if (runtime === "node") {
