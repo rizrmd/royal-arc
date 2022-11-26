@@ -4,15 +4,20 @@ import { getRuntime } from "../../rpc/get-runtime";
 export const runPnpm = (
   args: string[],
   cwd: string,
-  opt = { silent: true, progress: true },
+  opt = { silent: true, progress: true, stdoutAfter: 120 },
 ) => {
   return new Promise<number>(async (_resolve) => {
     const runtime = getRuntime();
 
     let ival = 0 as any;
     let i = 0;
+    
     if (opt.progress) {
       ival = setInterval(() => {
+        if (i >= 30) {
+          i = 0;
+          console.log("");
+        }
         if (runtime === "node") {
           process.stdout.write("▒");
         } else if (runtime === "bun") {

@@ -23971,13 +23971,17 @@ export default {
   };
 
   // ../service/internal/service/build/run-pnpm.ts
-  var runPnpm = (args, cwd2, opt = { silent: true, progress: true }) => {
+  var runPnpm = (args, cwd2, opt = { silent: true, progress: true, stdoutAfter: 120 }) => {
     return new Promise(async (_resolve) => {
       const runtime = getRuntime();
       let ival = 0;
       let i = 0;
       if (opt.progress) {
         ival = setInterval(() => {
+          if (i >= 30) {
+            i = 0;
+            console.log("");
+          }
           if (runtime === "node") {
             process.stdout.write("\u2592");
           } else if (runtime === "bun") {
