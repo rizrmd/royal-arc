@@ -1,0 +1,18 @@
+{
+  "srv": {
+    "_url": {
+      "hello": "/hello/:name?"
+    },
+    "_params": {
+      "hello": {
+        "api": [
+          "name"
+        ],
+        "url": [
+          ""
+        ],
+        "service": []
+      }
+    }
+  }
+}

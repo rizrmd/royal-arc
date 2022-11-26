@@ -1,0 +1,5 @@
+packages:
+  - ./pkgs/*
+  - ./pkgs/*/pkgs/*
+  - ./app/*
+  - ./gen

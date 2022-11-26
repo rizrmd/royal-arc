@@ -1,0 +1,9 @@
+{
+  "name": "srv",
+  "version": "1.0.0",
+  "dependencies": {
+    "gen": "workspace:^",
+    "royal": "workspace:^",
+    "service": "workspace:^"
+  }
+}

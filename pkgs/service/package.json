@@ -1,0 +1,24 @@
+{
+  "name": "service",
+  "description": "Service: Royal Core Service. Provide root.* global variable and give app initialize function",
+  "version": "0.0.1",
+  "main": "export.ts",
+  "dependencies": {
+    "cuid": "^2.1.8",
+    "esbuild": "^0.15.15",
+    "gen": "workspace:^",
+    "lodash.capitalize": "^4.2.1",
+    "lodash.padend": "^4.6.1",
+    "minimatch": "^5.1.0",
+    "picocolors": "^1.0.0",
+    "pretty-error": "^4.0.0",
+    "ws": "^8.11.0"
+  },
+  "devDependencies": {
+    "@types/lodash.capitalize": "^4.2.7",
+    "@types/lodash.padend": "^4.6.7",
+    "@types/node": "^18.11.9",
+    "@types/ws": "^8.5.3",
+    "bun-types": "^0.2.2"
+  }
+}

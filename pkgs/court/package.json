@@ -1,0 +1,9 @@
+{
+  "name": "court",
+  "description": "Court: Royal Test Suites",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "devDependencies": {
+    "bun-types": "^0.2.2"
+  }
+}

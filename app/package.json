@@ -1,0 +1,11 @@
+{
+  "name": "service",
+  "description": "Service: Core Royal Service",
+  "version": "0.0.1",
+  "main": "export.ts",
+  "dependencies": {
+    "service": "workspace:^"
+  },
+  "devDependencies": {
+  }
+}
