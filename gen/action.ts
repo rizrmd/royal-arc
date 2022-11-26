@@ -3,9 +3,11 @@
 /******************************************************/
 
 import { action as royal } from '../pkgs/royal/action';
+import { action as srv } from '../app/srv/action';
 
 export default {
-  "royal": royal
+  "royal": royal,
+  "srv": srv
 }
   
   

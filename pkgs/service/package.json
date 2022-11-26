@@ -6,13 +6,13 @@
   "dependencies": {
     "cuid": "^2.1.8",
     "esbuild": "^0.15.15",
-    "gen": "workspace:^",
     "lodash.capitalize": "^4.2.1",
     "lodash.padend": "^4.6.1",
     "minimatch": "^5.1.0",
     "picocolors": "^1.0.0",
     "pretty-error": "^4.0.0",
-    "ws": "^8.11.0"
+    "ws": "^8.11.0",
+    "gen": "workspace:^"
   },
   "devDependencies": {
     "@types/lodash.capitalize": "^4.2.7",

@@ -51,7 +51,7 @@ export const initExpress = async (params: {
     ex.server = createServer(ex.app);
 
     ex.router.all("*/_api_frm", (req, res) => {
-      // TODO: whitelist origin 
+      // TODO: whitelist origin
       const allowUrl = req.headers.origin || req.headers.referer;
 
       res.setHeader(
@@ -62,7 +62,7 @@ export const initExpress = async (params: {
       res.setHeader("Access-Control-Allow-Credentials", "true");
       if (allowUrl) {
         res.setHeader("Access-Control-Allow-Origin", allowUrl);
-      } 
+      }
 
       res.send(`\
     <script>
@@ -79,14 +79,18 @@ export const initExpress = async (params: {
       //@ts-ignore
       const apiImports = await import("../../../gen/api");
       //@ts-ignore
-      const apiMeta =
-        (await import("../../../gen/api." + serviceName + ".meta.json"))[
-          serviceName
-        ] as { _url: Record<string, string>; _params: ApiMetaParams };
+      const _apiMeta = (await import("../../../gen/api.meta.json"));
 
+      const apiMeta = _apiMeta[
+        serviceName
+      ] as { _url: Record<string, string>; _params: ApiMetaParams };
       const api = apiImports[serviceName];
 
       for (let [apiName, url] of Object.entries(apiMeta._url)) {
+        if (!api[apiName]) {
+          continue;
+        }
+
         ex.router.all(url, async (req, res) => {
           try {
             const im = api[apiName].api.bind({
@@ -145,9 +149,11 @@ export const initExpress = async (params: {
       const { prisma } = await import("../../../gen/prisma");
       for (const dbName of Object.keys(prisma)) {
         ex.router.all(`/_dbs/${dbName}*`, async (req, res, next) => {
+          //@ts-ignore
           const s = root.action(dbName as "db");
           if (s) {
             const runDB = async (arg: DBArg) => {
+              //@ts-ignore
               return await s.query(arg);
             };
             try {

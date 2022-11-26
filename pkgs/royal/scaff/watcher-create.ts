@@ -1,7 +1,7 @@
 import { watch } from "chokidar";
 import { basename, join } from "path";
 import { green } from "picocolors";
-import { current, listAsync, root } from "service";
+import { listAsync, root } from "service";
 import { runPnpm } from "service/internal/service/build/run-pnpm";
 import { g } from "../global";
 import { createNewDB } from "./create-db";
@@ -13,37 +13,6 @@ const excludes = ["boot", "royal", "service", "service"];
 
 const status = {
   creating: false,
-};
-
-const createNew = async (f: string, path: string) => {
-  if (status.creating) {
-    return;
-  }
-  status.creating = true;
-  const name = basename(path);
-
-  console.log("Creating service:", green(f));
-
-  if (f.startsWith("web")) {
-    await createNewWeb(path);
-    return;
-  } else if (f.startsWith("db")) {
-    await createNewDB(path);
-    await runPnpm(["i", "prisma"], path);
-    await runPnpm(["prisma", "generate"], path);
-    await root.boot.genMeta();
-  } else {
-    if (f.startsWith("srv")) {
-      await createNewSrv(path);
-    } else {
-      await createNewSvc(path);
-    }
-    await runPnpm(["i"], path);
-    console.log(`Service ${name} created.`);
-
-    await root.boot.genMeta();
-  }
-  process.exit(111);
 };
 
 export const startCreateWatcher = async () => {
@@ -77,4 +46,35 @@ export const startCreateWatcher = async () => {
     await root.boot.stop();
   });
   g.watchers.push(w);
+};
+
+const createNew = async (f: string, path: string) => {
+  if (status.creating) {
+    return;
+  }
+  status.creating = true;
+  const name = basename(path);
+
+  console.log("Creating service:", green(f));
+
+  if (f.startsWith("web")) {
+    await createNewWeb(path);
+    return;
+  } else if (f.startsWith("db")) {
+    await createNewDB(path);
+    await runPnpm(["i", "prisma"], path);
+    await runPnpm(["prisma", "generate"], path);
+    await root.boot.genMeta();
+  } else {
+    if (f.startsWith("srv")) {
+      await createNewSrv(path);
+    } else {
+      await createNewSvc(path);
+    }
+    await runPnpm(["i"], path);
+    console.log(`Service ${name} created.`);
+
+    await root.boot.genMeta();
+  }
+  process.exit(111);
 };

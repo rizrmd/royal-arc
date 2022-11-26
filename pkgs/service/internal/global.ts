@@ -11,6 +11,7 @@ export const initGlobal = (arg: { svcPort: number }) => {
     g.mode = process.argv.includes("debug") ? "dev" : "prod";
     g.svcPort = arg.svcPort;
     g.node = {
+      buildTimeout: {},
       build: {},
       watch: {},
     };
@@ -22,6 +23,7 @@ export const g = globalThis as unknown as {
   svcPort: number;
   mode: "dev" | "prod" | "staging";
   node: {
+    buildTimeout: Record<string, any>;
     build: Record<string, Awaited<ReturnType<typeof build>>>;
     watch: Record<string, ReturnType<typeof spawn>>;
   };

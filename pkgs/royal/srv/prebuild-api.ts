@@ -23,11 +23,11 @@ export const scaffoldAPI = async (name: string, path: string) => {
   const genPath = join(dirname(path), "..", "..", "gen");
   const mtimePath = join(
     genPath,
-    `api.${name}.mtime.json`,
+    `api.mtime.json`,
   );
   const apimetaPath = join(
     genPath,
-    `api.${name}.meta.json`,
+    `api.meta.json`,
   );
   const apimeta = (await readAsync(apimetaPath, "json")) || {};
   if (!apimeta[name]) {
@@ -81,16 +81,16 @@ export const scaffoldAPI = async (name: string, path: string) => {
           await writeAsync(
             file.absolutePath,
             `\
-  import { APIContext } from 'royal'
-  
-  export const _ = {
-    url: '/${apiName}',
-    async api(name: string) {
-      const server: APIContext = this as any
-  
-      return { hello: name || "" }
-    },
-  }`,
+import { APIContext } from 'royal'
+
+export const _ = {
+  url: '/${apiName}',
+  async api(name: string) {
+    const server: APIContext = this as any
+
+    return { hello: name || "" }
+  },
+}`,
           );
           shouldParse = true;
         }

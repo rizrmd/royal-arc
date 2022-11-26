@@ -58,7 +58,7 @@ export const startServices = async () => {
         }
       }
     }
- 
+
     if (Object.keys(pendingSrv).length > 0) {
       console.log(
         picocolors.yellow("WARNING:"),

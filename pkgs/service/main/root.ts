@@ -7,3 +7,4 @@ export const root = {
   service: createJsonRpcClient<typeof rootService>(rpcSender("service")),
   action: rootAction(rpcSender("service")),
 };
+ 

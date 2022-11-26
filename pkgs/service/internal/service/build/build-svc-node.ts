@@ -83,6 +83,38 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
             await b.rebuild();
           }
         } else {
+          const rebuild = () => {
+            let i = 0;
+            if (!g.svc || !g.svc[name]) return;
+
+            console.log(
+              picocolors.gray(
+                ` › File changed on service ${dirname(_path[name])}`,
+              ),
+            );
+            for (const [_, svc] of Object.entries(g.svc[name])) {
+              if (svc.ws) {
+                // kill all except first pid
+                // tell first pid to restart itself (111)
+                svc.ws.send(
+                  JSON.stringify(
+                    i === 0
+                      ? {
+                        type: "event",
+                        event: "kill",
+                        code: 111,
+                      }
+                      : {
+                        type: "event",
+                        event: "kill",
+                      },
+                  ),
+                );
+              }
+              i++;
+            }
+          };
+
           g.node.build[name] = await build({
             bundle: true,
             logLevel: "silent",
@@ -109,35 +141,9 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
                   printError(err);
                   return;
                 }
-                let i = 0;
-                if (!g.svc || !g.svc[name]) return;
 
-                console.log(
-                  picocolors.gray(
-                    ` › File changed on service ${dirname(_path[name])}`,
-                  ),
-                );
-                for (const [_, svc] of Object.entries(g.svc[name])) {
-                  if (svc.ws) {
-                    // kill all except first pid
-                    // tell first pid to restart itself (111)
-                    svc.ws.send(
-                      JSON.stringify(
-                        i === 0
-                          ? {
-                            type: "event",
-                            event: "kill",
-                            code: 111,
-                          }
-                          : {
-                            type: "event",
-                            event: "kill",
-                          },
-                      ),
-                    );
-                  }
-                  i++;
-                }
+                clearTimeout(g.node.buildTimeout[name]);
+                g.node.buildTimeout[name] = setTimeout(rebuild, 300);
               },
             },
             minify: true,
