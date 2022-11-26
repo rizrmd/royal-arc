@@ -13,10 +13,6 @@ export const runPnpm = (
     let i = 0;
     if (opt.progress) {
       ival = setInterval(() => {
-        if (i >= 30) {
-          i = 0;
-          console.log("");
-        }
         if (runtime === "node") {
           process.stdout.write("▒");
         } else if (runtime === "bun") {
