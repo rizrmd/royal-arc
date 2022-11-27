@@ -1,6 +1,7 @@
 import { spawn } from "child_process";
 import { join } from "path";
 import { existsAsync } from "service";
+import { runPnpm } from "service/internal/service/build/run-pnpm";
 import { g } from "../global";
 import { getWebDirs } from "./utils";
 
@@ -10,7 +11,13 @@ export const viteServe = async () => {
       ? join(dir, "node_modules", ".bin", "vite.cmd")
       : join(dir, "node_modules", ".bin", "vite");
 
-    if (!await existsAsync(viteCmd)) break;
+    if (!await existsAsync(viteCmd)) {
+      if (!await existsAsync(join(dir, "node_modules"))) {
+        await runPnpm(["i"], dir);
+      } else {
+        continue;
+      }
+    }
 
     const vite = spawn(
       viteCmd,

@@ -45,7 +45,7 @@ export const boot = async () => {
       process.exit(0);
     }
 
-    if (!_path[k as _names]) {
+    if (!_path[k as _names] && !k.startsWith('web')) {
       console.log(
         picocolors.yellow(` › WARNING:`),
         `Skipping ${k} config, service not found`,
@@ -77,7 +77,9 @@ export const boot = async () => {
 
   if (g.execFromBase) {
     if (g.mode === "dev") {
+
       await devMode();
+
       await viteServe();
     } else {
       await viteBuild();

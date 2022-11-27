@@ -1,7 +1,7 @@
 import { prisma } from "gen/prisma";
 import { css } from "@emotion/react";
 import React, { Fragment } from "react";
-import apimeta from "gen/api.srv.meta.json";
+import apimeta from "gen/api.meta.json";
 import { jsx } from "./jsx";
 import { createFrameCors } from "./iframe-cors";
 import { importPageAndLayout } from "./router";
