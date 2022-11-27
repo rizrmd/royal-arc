@@ -41,7 +41,7 @@ export { action as royal } from "../pkgs/royal/action";
   const args = process.argv.slice(2);
 
   if (args.includes("deploy")) {
-    await removeAsync(join(process.cwd(), ".output", "app"));
+    await removeAsync(join(process.cwd(), ".output", "deploy"));
     await removeAsync(join(process.cwd(), ".output", "deploy.zip"));
   }
   if (args.length === 0) {

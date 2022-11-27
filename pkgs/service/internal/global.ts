@@ -2,13 +2,27 @@ import { ServerWebSocket, spawn } from "bun";
 import { build } from "esbuild";
 import { _names } from "gen/service";
 import action from "gen/action";
+import { existsAsync, readAsync } from "../internal/service/build/jetpack";
+import { join } from "path";
 
 export type ActionItem = typeof action;
 export type ActionKey = keyof ActionItem;
 
-export const initGlobal = (arg: { svcPort: number }) => {
+export const initGlobal = async (arg: { svcPort: number }) => {
   if (!g.mode) {
     g.mode = process.argv.includes("debug") ? "dev" : "prod";
+    if (process.argv.includes("staging")) {
+      g.mode = "staging";
+    }
+
+    const confg: any =
+      await readAsync(join(process.cwd(), "conf.json"), "json") ||
+      {};
+
+    for (const [k, v] of Object.entries(confg)) {
+      (g as any)[k] = v;
+    }
+
     g.svcPort = arg.svcPort;
     g.node = {
       buildTimeout: {},

@@ -3,6 +3,7 @@ import { join } from "path";
 import { declareService } from "service";
 import { action } from "./action";
 import { boot } from "./boot";
+import { deploy } from "./deploy/deploy";
 import { getDeployKey } from "./deploy/key";
 import { g } from "./global";
 import { stopAllWatcher } from "./scaff/cleanup";
@@ -31,8 +32,7 @@ export default declareService({
       g.isRestarted = restarted;
 
       if (argv.includes("deploy")) {
-        await viteBuild();
-        process.exit(55);
+        await deploy()
       } else {
         boot();
       }

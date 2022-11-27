@@ -1,36 +1,29 @@
 import { _names, _path } from "gen";
 import capitalize from "lodash.capitalize";
-import { join } from "path";
-import picocolors, { green, magenta } from "picocolors";
-import { g } from "../../global";
+import picocolors from "picocolors";
+import { getRuntime } from "../../rpc/get-runtime";
+import { rawLog } from "../../rpc/raw-log";
 import { buildApp } from "./build-app";
 import { buildSvc } from "./build-svc";
-import { dirAsync, removeAsync } from "./jetpack";
 import { runPnpm } from "./run-pnpm";
 
-export const buildAll = async () => {
-  const mode = g.mode;
-  if (mode !== "dev") {
-    const cwd = process.cwd();
-    process.chdir(join(process.cwd(), ".."));
-    await removeAsync(cwd);
-    await dirAsync(cwd);
-    process.chdir(cwd);
-  }
+export const buildAll = async (targetDir?: string, skipDep?: boolean) => {
+  const target = targetDir || process.cwd();
 
   const pending: Promise<any>[] = [];
-  Bun.write(Bun.stdout, `Building: ` + picocolors.blue("App"));
-  pending.push(buildApp(process.cwd()));
+  rawLog(`Building: ` + picocolors.blue("App"));
+  pending.push(buildApp(target));
 
   for (const [_name] of Object.entries(_path)) {
     const name = _name as _names;
-    Bun.write(Bun.stdout, " " + picocolors.green(capitalize(name)));
-    pending.push(buildSvc(name, process.cwd()));
+    rawLog(" " + picocolors.green(capitalize(name)));
+    pending.push(buildSvc(name, target));
   }
   console.log("");
 
   await Promise.all(pending);
-  await (runPnpm(["i"], process.cwd()));
-
+  if (skipDep) {
+    await (runPnpm(["i"], process.cwd()));
+  }
   console.log("");
 };

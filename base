@@ -23096,12 +23096,10 @@ error: ${text}`);
 
   // ../../gen/service.ts
   var _path = {
-    "db": "app/db/index.ts",
     "royal": "pkgs/royal/index.ts",
     "srv": "app/srv/index.ts"
   };
   var _runtime = {
-    "db": "node",
     "royal": "node",
     "srv": "node"
   };
@@ -23348,6 +23346,33 @@ ${src}`
               await b.rebuild();
             }
           } else {
+            const rebuild2 = () => {
+              let i = 0;
+              if (!g.svc || !g.svc[name])
+                return;
+              console.log(
+                import_picocolors.default.gray(
+                  ` \u203A File changed on service ${(0, import_path3.dirname)(_path[name])}`
+                )
+              );
+              for (const [_, svc] of Object.entries(g.svc[name])) {
+                if (svc.ws) {
+                  svc.ws.send(
+                    JSON.stringify(
+                      i === 0 ? {
+                        type: "event",
+                        event: "kill",
+                        code: 111
+                      } : {
+                        type: "event",
+                        event: "kill"
+                      }
+                    )
+                  );
+                }
+                i++;
+              }
+            };
             g.node.build[name] = await (0, import_esbuild2.build)({
               bundle: true,
               logLevel: "silent",
@@ -23368,31 +23393,8 @@ ${src}`
                     printError(err);
                     return;
                   }
-                  let i = 0;
-                  if (!g.svc || !g.svc[name])
-                    return;
-                  console.log(
-                    import_picocolors.default.gray(
-                      ` \u203A File changed on service ${(0, import_path3.dirname)(_path[name])}`
-                    )
-                  );
-                  for (const [_, svc] of Object.entries(g.svc[name])) {
-                    if (svc.ws) {
-                      svc.ws.send(
-                        JSON.stringify(
-                          i === 0 ? {
-                            type: "event",
-                            event: "kill",
-                            code: 111
-                          } : {
-                            type: "event",
-                            event: "kill"
-                          }
-                        )
-                      );
-                    }
-                    i++;
-                  }
+                  clearTimeout(g.node.buildTimeout[name]);
+                  g.node.buildTimeout[name] = setTimeout(rebuild2, 300);
                 }
               },
               minify: true,
@@ -23854,8 +23856,8 @@ export default {
       {},
       {
         get(_, p) {
-          return (...args) => {
-            return sender.sendRequest({
+          return async (...args) => {
+            return await sender.sendRequest({
               id: import_cuid.default.slug(),
               jsonrpc: "2.0",
               method: "action",
@@ -23897,7 +23899,6 @@ export default {
     return {
       bindThis: (arg) => {
         for (const [k, v] of Object.entries(arg)) {
-          ;
           handlers[k] = v;
         }
       },
@@ -24020,16 +24021,16 @@ export default {
     });
   };
 
+  // ../service/main/declare.ts
+  BigInt.prototype["toJSON"] = function() {
+    return this.toString();
+  };
+
   // ../service/main/root.ts
   var root = {
     boot: createJsonRpcClient(rpcSender("boot")),
     service: createJsonRpcClient(rpcSender("service")),
     action: rootAction(rpcSender("service"))
-  };
-
-  // ../service/main/declare.ts
-  BigInt.prototype["toJSON"] = function() {
-    return this.toString();
   };
 
   // scaff/util/scaff.ts
@@ -24080,7 +24081,7 @@ export { action as royal } from "../pkgs/royal/action";
     }
     const args = process.argv.slice(2);
     if (args.includes("deploy")) {
-      await removeAsync((0, import_path8.join)(process.cwd(), ".output", "app"));
+      await removeAsync((0, import_path8.join)(process.cwd(), ".output", "deploy"));
       await removeAsync((0, import_path8.join)(process.cwd(), ".output", "deploy.zip"));
     }
     if (args.length === 0) {

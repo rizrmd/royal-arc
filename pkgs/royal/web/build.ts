@@ -4,7 +4,7 @@ import picocolors from "picocolors";
 import { existsAsync, moveAsync, removeAsync } from "service";
 import { getWebDirs } from "./utils";
 
-export const viteBuild = async () => {
+export const viteBuild = async (targetDir?: string) => {
   for (const [webName, dir] of Object.entries(await getWebDirs())) {
     const viteCmd = /^win/.test(process.platform)
       ? join(dir, "node_modules", ".bin", "vite.cmd")
@@ -26,8 +26,9 @@ export const viteBuild = async () => {
       },
     );
     console.log(`── ${picocolors.green(webName.toUpperCase())} › Done`);
-    console.log('\n')
-    const target = join(dir, "..", "..", ".output", "app", "client", webName);
+    console.log("\n");
+    const targetDefault = join(dir, "..", "..", ".output", "app");
+    const target = join(targetDir || targetDefault, "client", webName);
     if (await existsAsync(target)) {
       await removeAsync(target);
     }

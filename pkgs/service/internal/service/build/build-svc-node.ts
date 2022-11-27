@@ -1,11 +1,12 @@
 import { FileSink } from "bun";
-import { spawn } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import { build, BuildFailure } from "esbuild";
 import { _names, _path } from "gen";
 import { dirname, join, sep } from "path";
 import picocolors from "picocolors";
 import { current } from "../../../export";
 import { g } from "../../global";
+import { getRuntime } from "../../rpc/get-runtime";
 import { dirAsync, existsAsync, writeAsync } from "./jetpack";
 import { resolveDeps } from "./resolve-deps";
 import { runPnpm } from "./run-pnpm";
@@ -60,21 +61,46 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
     }
 
     if (preBuildScript[name]) {
-      Bun.spawnSync({
-        cmd: [
-          "node",
-          "--enable-source-maps",
-          "--no-warnings",
-          join(tpath, "build.js"),
-          "preBuild",
-        ],
-        cwd: process.cwd(),
-        stdout: "inherit",
-        stderr: "inherit",
-      });
+      const runtime = getRuntime();
+      if (runtime === "bun") {
+        Bun.spawnSync({
+          cmd: [
+            "node",
+            "--enable-source-maps",
+            "--no-warnings",
+            join(tpath, "build.js"),
+            "preBuild",
+          ],
+          cwd: process.cwd(),
+          stdout: "inherit",
+          stderr: "inherit",
+        });
+      } else if (runtime === "node") {
+        await new Promise((done) => {
+          const r = spawn(
+            "node",
+            [
+              "--enable-source-maps",
+              "--no-warnings",
+              join(tpath, "build.js"),
+              "preBuild",
+            ],
+            { cwd: process.cwd(), stdio: "inherit" },
+          );
+          r.on("exit", done);
+        });
+      }
     }
   }
   await new Promise<void>(async (finished) => {
+    if (!g.node) {
+      g.node = {
+        build: {},
+        buildTimeout: {},
+        watch: {},
+      };
+    }
+
     const rebuild = async () => {
       try {
         const b = g.node.build[name];

@@ -1,6 +1,7 @@
 import padEnd from "lodash.padend";
 import { join } from "path";
 import picocolors from "picocolors";
+import { removeAsync } from "../export";
 import { g, initGlobal } from "../internal/global";
 import { initClientRPC } from "../internal/rpc/client";
 import { getPort } from "../internal/rpc/get-port";
@@ -13,11 +14,15 @@ import { root } from "./root";
 
 export const initialize = async (fn: () => Promise<void>) => {
   const svcPort = getPort();
+  const executedFromNodeBase = process.argv.includes("base");
 
-  initGlobal({ svcPort });
+  if (executedFromNodeBase) {
+    await removeAsync(join(process.cwd(), "conf.json"));
+  }
 
-  const baseExec = process.argv.includes("base");
-  if (baseExec) {
+  await initGlobal({ svcPort });
+
+  if (executedFromNodeBase) {
     if (await generateMeta(join(process.cwd(), "..", ".."))) {
       process.exit(111);
     }
@@ -34,7 +39,7 @@ export const initialize = async (fn: () => Promise<void>) => {
     } `,
   );
 
-  if (baseExec) {
+  if (executedFromNodeBase) {
     await vscodeSettings();
     await buildAll();
   }
