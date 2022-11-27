@@ -160,9 +160,10 @@ export const initExpress = async (params: {
               const result = await runDB(req.body);
               res.send(result);
             } catch (e) {
+              res.sendStatus(500);
+              console.error(e);
+
               if (!res.headersSent) {
-                res.sendStatus(500);
-                console.error(e);
                 res.send(e);
               }
             }
