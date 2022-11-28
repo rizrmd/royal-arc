@@ -4,6 +4,7 @@ import { _names } from "gen";
 import { WebSocket } from "ws";
 import { Action, DeclareServiceArg, root } from "../../export";
 import PrettyError from "pretty-error";
+import { g } from "../global";
 export const cg = globalThis as unknown as {
   _serviceName: _names;
   _pid: string;
@@ -96,6 +97,7 @@ export const initClientRPC = (
                 argv: res.argv,
                 params: res.params,
                 starter: res.starter,
+                metafile: res.metafile
               });
             } catch (e: any) {
               console.log("");

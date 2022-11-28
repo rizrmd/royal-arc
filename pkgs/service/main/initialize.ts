@@ -16,7 +16,6 @@ export const initialize = async (fn: () => Promise<void>) => {
   const svcPort = getPort();
   const executedFromNodeBase = process.argv.includes("base");
 
-  console.log('init')
   if (executedFromNodeBase) {
     await removeAsync(join(process.cwd(), "conf.json"));
   }

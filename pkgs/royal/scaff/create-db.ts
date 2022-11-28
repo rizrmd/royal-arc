@@ -45,16 +45,6 @@ export const createNewDB = async (path: string) => {
         types: ["node"],
       },
     },
-    "build.ts": `\
-import { declareBuild } from "../../pkgs/service";
-import { preBuildDb } from "../../pkgs/royal";
-
-declareBuild({
-  preBuild() {
-    preBuildDb();
-  },
-});
-`,
     "prisma/schema.prisma": defaultPrismaSrc,
     "index.ts": `\
 #!/usr/bin/env node

@@ -15,7 +15,7 @@ export default declareService({
     onStop: async () => {
       await stopAllWatcher();
     },
-    onStart: async ({ argv, restarted, params, pid, starter }) => {
+    onStart: async ({ argv, restarted, params, metafile }) => {
       g.root = join(process.cwd(), "..", "..");
       g.vite = {};
       g.watchers = [];
@@ -32,7 +32,7 @@ export default declareService({
       g.isRestarted = restarted;
 
       if (argv.includes("deploy")) {
-        await deploy()
+        await deploy();
       } else {
         boot();
       }

@@ -7,7 +7,7 @@ import { startAPIWatcher } from "./watcher-api";
 export const devMode = async () => {
   await startCreateWatcher();
   await startConfWatcher();
-  await startAPIWatcher();
+  startAPIWatcher();
   await webWatcherLayout();
   await webWatcherPage();
 };

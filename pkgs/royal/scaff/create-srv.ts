@@ -40,19 +40,6 @@ export default declareService<SrvParams>({
   );
 
   await writeAsync(
-    join(path, "build.ts"),
-    `\
-import { declareBuild } from "service";
-import { preBuildSrv } from "royal";
-
-declareBuild({
-  preBuild() {
-    preBuildSrv();
-  },
-});
-`,
-  );
-  await writeAsync(
     join(path, "action.ts"),
     `\
 export const action = () => ({

@@ -1,3 +1,4 @@
+import { Metafile } from "esbuild";
 import { _names } from "gen";
 
 type ActionResult = unknown;
@@ -25,6 +26,7 @@ export type DeclareServiceArg<P extends Record<string, any>> = {
       params: P;
       restarted: boolean;
       starter: _names | "root";
+      metafile?: Metafile;
     }) => Promise<void> | void;
     onStop: (pid: string) => Promise<void> | void;
   };

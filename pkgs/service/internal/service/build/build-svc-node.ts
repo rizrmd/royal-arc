@@ -1,17 +1,12 @@
 import { FileSink } from "bun";
-import { spawn, spawnSync } from "child_process";
 import { build, BuildFailure } from "esbuild";
 import { _names, _path } from "gen";
 import { dirname, join, sep } from "path";
 import picocolors from "picocolors";
-import { current } from "../../../export";
 import { g } from "../../global";
-import { getRuntime } from "../../rpc/get-runtime";
-import { dirAsync, existsAsync, writeAsync } from "./jetpack";
+import { dirAsync, writeAsync } from "./jetpack";
 import { resolveDeps } from "./resolve-deps";
-import { runPnpm } from "./run-pnpm";
 
-const preBuildScript = {} as Record<string, true>;
 export const buildSvcNode = async (name: _names, outPath: string) => {
   const cwdsplit = process.cwd().split(sep);
   const root = (
@@ -33,66 +28,6 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
     dependencies: deps,
   });
 
-  const buildFile = join(spath, "build.ts");
-  if (await existsAsync(buildFile)) {
-    if (!preBuildScript[name]) {
-      await new Promise<void>(async (finished) => {
-        const rebuild = async () => {
-          try {
-            await build({
-              bundle: true,
-              logLevel: "silent",
-              platform: "node",
-              sourcemap: true,
-              entryPoints: [buildFile],
-              outfile: join(tpath, "build.js"),
-            });
-            preBuildScript[name] = true;
-            finished();
-          } catch (e: any) {
-            console.log(
-              `Build failed: ${buildFile.substring(root.length + 1)}`,
-            );
-            recoverFromError(name, e, rebuild);
-          }
-        };
-        rebuild();
-      });
-    }
-
-    if (preBuildScript[name]) {
-      console.log("auo ", name);
-      const runtime = getRuntime();
-      if (runtime === "bun") {
-        Bun.spawnSync({
-          cmd: [
-            "node",
-            "--enable-source-maps",
-            "--no-warnings",
-            join(tpath, "build.js"),
-            "preBuild",
-          ],
-          cwd: process.cwd(),
-          stdout: "inherit",
-          stderr: "inherit",
-        });
-      } else if (runtime === "node") {
-        await new Promise((done) => {
-          const r = spawn(
-            "node",
-            [
-              "--enable-source-maps",
-              "--no-warnings",
-              join(tpath, "build.js"),
-              "preBuild",
-            ],
-            { cwd: process.cwd(), stdio: "inherit" },
-          );
-          r.on("exit", done);
-        });
-      }
-    }
-  }
   await new Promise<void>(async (finished) => {
     if (!g.node) {
       g.node = {
@@ -102,94 +37,29 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
       };
     }
 
+    let nb = g.node.build[name];
+    if (nb && nb.stop) nb.stop();
+
     const rebuild = async () => {
-      try {
-        const b = g.node.build[name];
-        if (b) {
-          if (b.rebuild) {
-            await b.rebuild();
-          }
-        } else {
-          const rebuildInternal = () => {
-            let i = 0;
-            if (!g.svc || !g.svc[name]) return;
-
-            console.log(
-              picocolors.gray(
-                ` › File changed on service ${dirname(_path[name])}`,
-              ),
-            );
-            for (const [_, svc] of Object.entries(g.svc[name])) {
-              if (svc.ws) {
-                // kill all except first pid
-                // tell first pid to restart itself (111)
-                svc.ws.send(
-                  JSON.stringify(
-                    i === 0
-                      ? {
-                        type: "event",
-                        event: "kill",
-                        code: 111,
-                      }
-                      : {
-                        type: "event",
-                        event: "kill",
-                      },
-                  ),
-                );
-              }
-              i++;
-            }
-          };
-
-          const nb = g.node.build[name];
-          if (nb && nb.stop) nb.stop();
-
-          g.node.build[name] = await build({
-            bundle: true,
-            logLevel: "silent",
-            platform: "node",
-            sourcemap: true,
-            incremental: true,
-            watch: {
-              onRebuild: async (err, res) => {
-                if (
-                  !await existsAsync(join(dirname(indexPath)))
-                ) {
-                  if (
-                    res &&
-                    res.stop
-                  ) {
-                    res.stop();
-                  }
-                  return;
-                }
-
-                if (err) {
-                  console.log(
-                    `Build failed: ${indexPath.substring(root.length + 1)}`,
-                  );
-                  printError(err);
-                  return;
-                }
-
-                clearTimeout(g.node.buildTimeout[name]);
-                g.node.buildTimeout[name] = setTimeout(rebuildInternal, 300);
-              },
-            },
-            minify: true,
-            entryPoints: [indexPath],
-            outfile: join(tpath, "index.js"),
-            external: Object.keys(deps),
-          });
-        }
-        finished();
-      } catch (e: any) {
-        console.log(`Build failed: ${indexPath.substring(root.length + 1)}`);
-        recoverFromError(name, e, rebuild);
-      }
+      g.node.build[name] = await build({
+        bundle: true,
+        logLevel: "silent",
+        platform: "node",
+        sourcemap: true,
+        incremental: true,
+        metafile: true,
+        minify: true,
+        entryPoints: [indexPath],
+        outfile: join(tpath, "index.js"),
+        external: Object.keys(deps),
+      });
+      finished();
     };
-    rebuild();
+    try {
+      rebuild();
+    } catch (e: any) {
+      recoverFromError(name, e, rebuild);
+    }
   });
 };
 

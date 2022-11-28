@@ -1,7 +1,7 @@
 import { watch } from "chokidar";
-import { _names, _path } from "gen";
+import { _path } from "gen";
 import { dirname, join } from "path";
-import { listAsync, removeAsync, root, writeAsync } from "service";
+import { writeAsync } from "service";
 import { g } from "../global";
 import { scaffoldAPI } from "../srv/prebuild-api";
 

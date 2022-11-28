@@ -53,6 +53,7 @@ const _service = () => ({
         runtime: svc.runtime,
         restarted: !!svc.restarted,
         starter: svc.starter,
+        metafile: g.node.build[name].metafile,
       };
     }
   },
@@ -77,10 +78,10 @@ const _service = () => ({
         start();
       };
 
-      const start = () => { 
+      const start = () => {
         if (_runtime[name] === "node") {
           svc.child = Bun.spawn({
-            cmd: [ 
+            cmd: [
               "node",
               ...[
                 "--enable-source-maps",
@@ -150,10 +151,10 @@ const _service = () => ({
           });
           svc.pendingStart = resolve;
           return svc;
-        } else {  
+        } else {
           if (!_runtime[name]) {
             console.log(`Service ${name} not found`);
-          } else { 
+          } else {
             console.log("Only node service are supported");
           }
         }

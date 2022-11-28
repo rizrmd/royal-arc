@@ -1,5 +1,5 @@
 import { ServerWebSocket, spawn } from "bun";
-import { build } from "esbuild";
+import { build, BuildInvalidate } from "esbuild";
 import { _names } from "gen/service";
 import action from "gen/action";
 import { existsAsync, readAsync } from "../internal/service/build/jetpack";
@@ -38,7 +38,12 @@ export const g = globalThis as unknown as {
   mode: "dev" | "prod" | "staging";
   node: {
     buildTimeout: Record<string, any>;
-    build: Record<string, Awaited<ReturnType<typeof build>>>;
+    build: Record<
+      string,
+      Awaited<ReturnType<typeof build>> & {
+        rebuild: BuildInvalidate & (() => void);
+      }
+    >;
     watch: Record<string, ReturnType<typeof spawn>>;
   };
   svc: Record<
