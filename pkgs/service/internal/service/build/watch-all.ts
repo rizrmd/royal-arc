@@ -36,13 +36,14 @@ const rewatch = (name: _names, files?: string[]) => {
             recoverFromError(name, e, rebuild);
           }
         };
-        rebuild()
+        rebuild();
       });
 
       if (inc && inc.metafile) {
         w.close();
         const files = Object.keys(inc.metafile.inputs).map((e) => join(cwd, e));
         rewatch(name, files);
+        console.clear();
         await root.service.stopAll(name, "Hot Reload");
       }
     });
