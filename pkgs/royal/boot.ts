@@ -1,12 +1,10 @@
 import { _names, _path } from "gen";
 import camelCase from "lodash.camelcase";
 import padEnd from "lodash.padend";
-import picocolors, { green } from "picocolors";
+import picocolors from "picocolors";
 import { cwd } from "process";
 import { root } from "service";
-import { DeployKey } from "../../config";
 import { TSingleConfig, TSingleConfigOutput } from "./config";
-import { getDeployKey } from "./deploy/key";
 import { g } from "./global";
 import { stopAllWatcher } from "./scaff/cleanup";
 import { devMode } from "./scaff/dev-mode";
@@ -89,7 +87,7 @@ export const boot = async () => {
   }
   await startServices();
 
-  console.log(green(`Royal `));
+  console.log(picocolors.green(`Royal `));
   let i = 0;
   for (let [host, urls] of Object.entries(servers)) {
     const urlkeys = Object.keys(urls);

@@ -1,9 +1,11 @@
-import { ServerWebSocket, spawn } from "bun";
+import { ServerWebSocket, spawn as bunSpawn } from "bun";
+import { spawn as nodeSpawn } from "child_process";
 import { build, BuildInvalidate } from "esbuild";
-import { _names } from "gen/service";
 import action from "gen/action";
-import { existsAsync, readAsync } from "../internal/service/build/jetpack";
+import { _names } from "gen/service";
 import { join } from "path";
+import { WebSocket as uWebSocket } from "uWebSockets.js";
+import { readAsync } from "../internal/service/build/jetpack";
 
 export type ActionItem = typeof action;
 export type ActionKey = keyof ActionItem;
@@ -44,7 +46,7 @@ export const g = globalThis as unknown as {
         rebuild: BuildInvalidate & (() => void);
       }
     >;
-    watch: Record<string, ReturnType<typeof spawn>>;
+    watch: Record<string, ReturnType<typeof bunSpawn | typeof nodeSpawn>>;
   };
   svc: Record<
     _names,
@@ -53,7 +55,7 @@ export const g = globalThis as unknown as {
       {
         runtime: "node" | "bun" | "deno";
         params?: any;
-        child?: ReturnType<typeof spawn>;
+        child?: ReturnType<typeof bunSpawn | typeof nodeSpawn>;
         ws?: ServerWebSocket;
         restarted?: boolean;
         crashed?: boolean;
@@ -71,7 +73,11 @@ export const g = globalThis as unknown as {
     >
   >;
   ws: WeakMap<
-    ServerWebSocket,
-    { name: _names; pid: string; child: ReturnType<typeof spawn> }
+    ServerWebSocket | uWebSocket,
+    {
+      name: _names;
+      pid: string;
+      child: ReturnType<typeof bunSpawn | typeof nodeSpawn>;
+    }
   >;
 };

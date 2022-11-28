@@ -1,6 +1,6 @@
 import trim from "lodash.trim";
 import { WebSocket as uWebSocket } from "uWebSockets.js";
-import { client as WebSocket } from "websocket";
+import ws from "websocket";
 import config from "../../../config";
 import { g, MHttpResponse } from "../global";
 import { fetchProxy } from "./fetch-proxy";
@@ -8,6 +8,7 @@ import { IUpstream, localHostName, plog } from "./tools";
 export const findWeb = (matches: string[]) =>
   matches.find((e) => e?.startsWith("web"));
 
+const WebSocket = ws.client;
 export const serveVite = async (
   webName: string,
   upstream: IUpstream,

@@ -1,4 +1,5 @@
 import { ServerWebSocket } from "bun";
+import { spawn } from "child_process";
 import cuid from "cuid";
 import { _names, _runtime } from "gen";
 import capitalize from "lodash.capitalize";
@@ -11,6 +12,7 @@ import { buildSvc } from "../service/build/build-svc";
 import { generateMeta } from "../service/gen-meta";
 import { serverCleanUp } from "../service/server/cleanup";
 import { getPort } from "./get-port";
+import { getRuntime } from "./get-runtime";
 import { Handlers, RequestSender } from "./typed-rpc";
 
 const { blue, green, magenta, red, yellow } = picocolors;
@@ -78,76 +80,88 @@ const _service = () => ({
       };
 
       const start = () => {
-        if (_runtime[name] === "node") {
-          svc.child = Bun.spawn({
-            cmd: [
-              "node",
-              ...[
-                "--enable-source-maps",
-                "--no-warnings",
-                join(path, "index.js"),
-                svc.crashed ? "crashed" : "running",
-                g.svcPort.toString(),
-                pid,
-              ].filter((e) => e),
-            ],
-            cwd: process.cwd(),
-            stderr: "inherit",
-            stdout: "inherit",
-            onExit(exitCode) {
-              const desc: any = {
-                "0": "EXIT WITHOUT ERROR",
-                "1": "FATAL ERROR",
-                "2": "Incorrect usage, invalid options or missing arguments",
-                "55": "Service requested stop parent",
-                "126": "Command found but is not executable",
-                "128": "Command was forcefully terminated manually",
-                "88": "Parent websocket connection lost",
-                "111": "Hot Reload",
-                "222": "Terminated by parent",
-                "130": "SIGINT (ctrl+c)",
-                "143": "SIGTERM (kill command)",
-              };
-              const stoplog = (reason?: string) => {
-                if (reason === "Hot Reload" || reason === "Clean Up") return;
-                console.log(
-                  red("Stopped"),
-                  green(`› ${padEnd(capitalize(name) + " ", 13, " ")}`),
-                  `[pid: ${blue(padEnd(pid, 7, " "))}] ${yellow(reason || "")}`,
-                );
-              };
+        const svcRuntime = getRuntime();
+        const onExit = (exitCode: number) => {
+          const desc: any = {
+            "0": "EXIT WITHOUT ERROR",
+            "1": "FATAL ERROR",
+            "2": "Incorrect usage, invalid options or missing arguments",
+            "55": "Service requested stop parent",
+            "126": "Command found but is not executable",
+            "128": "Command was forcefully terminated manually",
+            "88": "Parent websocket connection lost",
+            "111": "Hot Reload",
+            "222": "Terminated by parent",
+            "130": "SIGINT (ctrl+c)",
+            "143": "SIGTERM (kill command)",
+          };
+          const stoplog = (reason?: string) => {
+            if (reason === "Hot Reload" || reason === "Clean Up") return;
+            console.log(
+              red("Stopped"),
+              green(`› ${padEnd(capitalize(name) + " ", 13, " ")}`),
+              `[pid: ${blue(padEnd(pid, 7, " "))}] ${yellow(reason || "")}`,
+            );
+          };
 
-              if (svc.pendingExit && svc.pendingExit.resolve) {
-                const reason = svc.pendingExit.from;
-                stoplog(`${reason}`);
-                svc.pendingExit.resolve(exitCode);
-                delete g.svc[name][pid];
+          if (svc.pendingExit && svc.pendingExit.resolve) {
+            const reason = svc.pendingExit.from;
+            stoplog(`${reason}`);
+            svc.pendingExit.resolve(exitCode);
+            delete g.svc[name][pid];
+          } else {
+            const text = desc[exitCode.toString()] || "Unknown Exit Code";
+
+            if (exitCode === 55) {
+              process.exit(55);
+            }
+
+            if (exitCode === 111) {
+              stoplog(text);
+              buildSvc(name, process.cwd());
+              restart();
+              return;
+            } else {
+              stoplog(`[${red(`${exitCode}`)}] ${yellow(text)}`);
+              if (g.mode !== "dev") {
+                restart(true);
               } else {
-                const text = desc[exitCode.toString()] || "Unknown Exit Code";
-
-                if (exitCode === 55) {
-                  process.exit(55);
-                }
-
-                if (exitCode === 111) {
-                  stoplog(text);
-                  buildSvc(name, process.cwd());
-                  restart();
-                  return;
-                } else {
-                  stoplog(`[${red(`${exitCode}`)}] ${yellow(text)}`);
-                  if (g.mode !== "dev") {
-                    restart(true);
-                  } else {
-                    delete g.svc[name][pid];
-                    root.action("royal").watchAndStart(name);
-                  }
-                  return;
-                }
+                delete g.svc[name][pid];
+                root.action("royal").watchAndStart(name);
               }
-              delete g.svc[name][pid];
-            },
-          });
+              return;
+            }
+          }
+          delete g.svc[name][pid];
+        };
+        if (_runtime[name] === "node") {
+          const args = [
+            "--enable-source-maps",
+            "--no-warnings",
+            join(path, "index.js"),
+            svc.crashed ? "crashed" : "running",
+            g.svcPort.toString(),
+            pid,
+          ].filter((e) => e);
+          if (svcRuntime === "bun") {
+            svc.child = Bun.spawn({
+              cmd: ["node", ...args],
+              cwd: process.cwd(),
+              stderr: "inherit",
+              stdout: "inherit",
+              onExit(exitCode) {
+                onExit(exitCode);
+              },
+            });
+          } else if (svcRuntime === "node") {
+            svc.child = spawn(process.execPath, args, {
+              cwd: process.cwd(),
+              stdio: "inherit",
+            });
+            svc.child.on("exit", (code) => {
+              onExit(code || 0);
+            });
+          }
           svc.pendingStart = resolve;
           return svc;
         } else {

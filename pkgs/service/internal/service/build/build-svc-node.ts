@@ -4,7 +4,9 @@ import { _names, _path } from "gen";
 import { dirname, join, sep } from "path";
 import picocolors from "picocolors";
 import { g } from "../../global";
+import { waitExit } from "../../rpc/wait-exit";
 import { dirAsync, writeAsync } from "./jetpack";
+import { commonjs } from "@hyrious/esbuild-plugin-commonjs";
 import { resolveDeps } from "./resolve-deps";
 
 export const buildSvcNode = async (name: _names, outPath: string) => {
@@ -25,6 +27,7 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
   await writeAsync(join(tpath, "package.json"), {
     name,
     version: "1.0.0",
+    type: "module",
     dependencies: deps,
   });
 
@@ -45,10 +48,12 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
         bundle: true,
         logLevel: "silent",
         platform: "node",
+        format: "esm",
         sourcemap: true,
         incremental: true,
         metafile: true,
         minify: true,
+        plugins: [commonjs()],
         entryPoints: [indexPath],
         outfile: join(tpath, "index.js"),
         external: Object.keys(deps),
@@ -68,14 +73,12 @@ const recoverFromError = async (
   e: BuildFailure,
   rebuild: () => Promise<void>,
 ) => {
-  printError(e);
-
   if (e && e.errors) {
     const files = e.errors.map((e) => e.location?.file || "").filter((e) => e);
 
     if (g.node.watch[name]) {
       g.node.watch[name].kill();
-      await g.node.watch[name].exited;
+      await waitExit(g.node.watch[name]);
     }
 
     g.node.watch[name] = Bun.spawn({
@@ -107,7 +110,7 @@ const recoverFromError = async (
     }
 
     g.node.watch[name].kill();
-    await g.node.watch[name].exited;
+    await waitExit(g.node.watch[name]);
     delete g.node.watch[name];
     rebuild();
   }

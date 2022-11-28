@@ -1,6 +1,6 @@
 import { watch } from "chokidar";
 import { basename, join } from "path";
-import { green } from "picocolors";
+import pico from "picocolors";
 import { listAsync, root } from "service";
 import { runPnpm } from "service/internal/service/build/run-pnpm";
 import { g } from "../global";
@@ -10,7 +10,7 @@ import { createNewSvc } from "./create-svc";
 import { createNewWeb } from "./create-web";
 import { isDirectory } from "./util/is-directory";
 const excludes = ["boot", "royal", "service", "service"];
-
+const { green } = pico;
 const status = {
   creating: false,
 };
