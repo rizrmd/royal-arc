@@ -6,8 +6,6 @@ import { cwd } from "process";
 import { root } from "service";
 import { TSingleConfig, TSingleConfigOutput } from "./config";
 import { g } from "./global";
-import { stopAllWatcher } from "./scaff/cleanup";
-import { devMode } from "./scaff/dev-mode";
 import { startServices, stopServices } from "./service";
 import { plog } from "./uws/tools";
 import { createUWS } from "./uws/uws-creator";
@@ -23,8 +21,6 @@ export const boot = async () => {
   if (!g.vite) {
     g.vite = {};
   }
-
-  await stopAllWatcher();
 
   const conf = g.config[g.serverName][g.mode];
   const urls = {} as Record<string, URL>;
@@ -75,7 +71,6 @@ export const boot = async () => {
 
   if (g.execFromBase) {
     if (g.mode === "dev") {
-      await devMode();
       await viteServe();
     } else {
       await viteBuild();

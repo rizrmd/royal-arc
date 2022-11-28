@@ -1,8 +1,6 @@
-import { build } from "esbuild";
 import { join, sep } from "path";
 import { dirAsync, readAsync, writeAsync } from "./jetpack";
 import { resolveDeps } from "./resolve-deps";
-import { commonjs } from "@hyrious/esbuild-plugin-commonjs";
 export const buildApp = async (
   targetDir: string,
 ) => {
@@ -29,6 +27,9 @@ export const buildApp = async (
     type: "module",
     dependencies: deps,
   });
+
+  const { build } = await import("esbuild");
+  const { commonjs } = await import("@hyrious/esbuild-plugin-commonjs");
 
   await build({
     bundle: true,

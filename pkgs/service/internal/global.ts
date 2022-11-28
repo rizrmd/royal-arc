@@ -1,6 +1,6 @@
 import { ServerWebSocket, spawn as bunSpawn } from "bun";
 import { spawn as nodeSpawn } from "child_process";
-import { build, BuildInvalidate } from "esbuild";
+import type { build, BuildInvalidate } from "esbuild";
 import action from "gen/action";
 import { _names } from "gen/service";
 import { join } from "path";

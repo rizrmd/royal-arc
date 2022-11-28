@@ -1,4 +1,4 @@
-import { Metafile } from "esbuild";
+import type { Metafile } from "esbuild";
 import { _names } from "gen";
 
 type ActionResult = unknown;

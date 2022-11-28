@@ -1,5 +1,4 @@
 import { ChildProcess } from "child_process";
-import { watch } from "chokidar";
 import {
   getParts,
   HttpResponse,
@@ -23,7 +22,6 @@ export const g = global as unknown as {
   servers: Record<string, TemplatedApp>;
   serverWS: WeakMap<uWebSocket, connection>;
   getParts: typeof getParts;
-  watchers: ReturnType<typeof watch>[];
   outpath: string;
   deployKey: string;
 

@@ -1,5 +1,5 @@
 import { dirname, join, sep } from "path";
-import { dirAsync, existsAsync, writeAsync } from "service";
+import { dirAsync, existsAsync, writeAsync } from "../export";
 
 export const scaff = async (
   arg: Record<string, string | object>,
@@ -15,7 +15,7 @@ export const scaff = async (
       await writeAsync(path, v);
       shouldInstallDep = true;
     }
-  } 
+  }
 
   return shouldInstallDep;
 };

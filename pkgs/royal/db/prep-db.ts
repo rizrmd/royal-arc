@@ -2,7 +2,7 @@ import { stat } from "fs/promises";
 import { join } from "path";
 import { existsAsync, readAsync, removeAsync } from "service";
 import { runPnpm } from "service/internal/service/build/run-pnpm";
-import { defaultPrismaSrc } from "../scaff/create-db";
+import { defaultPrismaSrc } from "service/scaff/create-db";
 
 export const gdb = global as unknown as {
   prisma: any;

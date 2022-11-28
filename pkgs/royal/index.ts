@@ -6,7 +6,7 @@ import { boot } from "./boot";
 import { deploy } from "./deploy/deploy";
 import { getDeployKey } from "./deploy/key";
 import { g } from "./global";
-import { stopAllWatcher } from "./scaff/cleanup";
+import { stopAllWatcher } from "service/scaff/cleanup";
 import { viteBuild } from "./web/build";
 
 export default declareService({

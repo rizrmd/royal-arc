@@ -1,11 +1,11 @@
 import { spawn, spawnSync } from "child_process";
 import { join } from "path";
-import { scaff } from "../../royal/scaff/util/scaff";
 import { dirAsync, existsAsync, readAsync, removeAsync } from "../export";
 import { buildApp } from "../internal/service/build/build-app";
 import { resolveDeps } from "../internal/service/build/resolve-deps";
 import { runPnpm } from "../internal/service/build/run-pnpm";
 import { isEqual } from "./is-equal";
+import { scaff } from "./scaff";
 
 let lastRestart = new Date().getTime();
 

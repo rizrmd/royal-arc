@@ -10,8 +10,8 @@ import {
   writeAsync,
 } from "service";
 import { runPnpm } from "service/internal/service/build/run-pnpm";
-import { defaultPrismaSrc } from "../scaff/create-db";
-import { isDirectory } from "../scaff/util/is-directory";
+import { defaultPrismaSrc } from "service/scaff/create-db";
+import { isDirectory } from "service/scaff/util/is-directory";
 
 export const preBuildDb = async () => {
   const name = basename(__dirname);

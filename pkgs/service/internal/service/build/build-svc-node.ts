@@ -1,12 +1,11 @@
 import { FileSink } from "bun";
-import { build, BuildFailure } from "esbuild";
+import type { BuildFailure } from "esbuild";
 import { _names, _path } from "gen";
 import { dirname, join, sep } from "path";
 import picocolors from "picocolors";
 import { g } from "../../global";
 import { waitExit } from "../../rpc/wait-exit";
 import { dirAsync, writeAsync } from "./jetpack";
-import { commonjs } from "@hyrious/esbuild-plugin-commonjs";
 import { resolveDeps } from "./resolve-deps";
 
 export const buildSvcNode = async (name: _names, outPath: string) => {
@@ -42,6 +41,9 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
 
     let nb = g.node.build[name];
     if (nb && nb.stop) nb.stop();
+
+    const { build } = await import("esbuild");
+    const { commonjs } = await import("@hyrious/esbuild-plugin-commonjs");
 
     const rebuild = async () => {
       g.node.build[name] = await build({

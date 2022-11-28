@@ -7,7 +7,7 @@ import { createRequestHandler, JsonRpcRequest } from "service";
 import type { WebSocket } from "uWebSockets.js";
 import config from "../../../config";
 import { g, MHttpResponse } from "../global";
-import { waitUntil } from "../scaff/util/wait-until";
+import { waitUntil } from "service/scaff/util/wait-until";
 import { fetchProxy } from "./fetch-proxy";
 import { PanelActions } from "./panel/panel-actions";
 import { progress } from "./panel/panel-build";
