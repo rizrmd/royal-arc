@@ -73,7 +73,7 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
   });
 };
 
-const recoverFromError = async (
+export const recoverFromError = async (
   name: _names,
   e: BuildFailure,
   rebuild: () => Promise<void>,
@@ -145,7 +145,7 @@ const printError = (e: any, svcName?: string) => {
   for (const [idx, line] of Object.entries(e.message.split("\n") as string[])) {
     if (idx === "0") {
       console.log(
-        svcName ? `[${picocolors.green(capitalize(svcName))}] ` : "",
+        svcName ? `[${picocolors.green(capitalize(svcName))}]` : "",
         picocolors.red(line),
       );
     } else {

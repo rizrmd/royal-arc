@@ -96,19 +96,25 @@ const _service = () => ({
             "143": "SIGTERM (kill command)",
           };
           const stoplog = (reason?: string) => {
-            if (reason === "Hot Reload" || reason === "Clean Up") return;
             console.log(
               red("Stopped"),
               green(`› ${padEnd(capitalize(name) + " ", 13, " ")}`),
               `[pid: ${blue(padEnd(pid, 7, " "))}] ${yellow(reason || "")}`,
-            );
-          };
+            ); 
+          }; 
 
           if (svc.pendingExit && svc.pendingExit.resolve) {
             const reason = svc.pendingExit.from;
-            stoplog(`${reason}`);
-            svc.pendingExit.resolve(exitCode);
-            delete g.svc[name][pid];
+
+            if (reason === "Hot Reload") {
+              svc.pendingExit.resolve(exitCode);
+              restart(); 
+              return;
+            } else {
+              stoplog(`${reason}`);
+              svc.pendingExit.resolve(exitCode);
+              delete g.svc[name][pid];
+            }
           } else {
             const text = desc[exitCode.toString()] || "Unknown Exit Code";
 

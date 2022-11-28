@@ -15,4 +15,3 @@ export default declareService<SrvParams>({
   },
   action,
 });
-    

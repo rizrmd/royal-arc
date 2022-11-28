@@ -77,10 +77,9 @@ export const boot = async () => {
     }
   }
 
-  if (g.isRestarted) {
-    await stopServices("Hot Reload");
+  if (!g.isRestarted) {
+    await startServices();
   }
-  await startServices();
 
   console.log(picocolors.green(`Royal `));
   let i = 0;

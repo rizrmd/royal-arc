@@ -8,6 +8,7 @@ import { getPort } from "../internal/rpc/get-port";
 import { rawLog } from "../internal/rpc/raw-log";
 import { initServerRPC } from "../internal/rpc/server";
 import { buildAll } from "../internal/service/build/build-all";
+import { watchAll } from "../internal/service/build/watch-all";
 import { generateMeta } from "../internal/service/gen-meta";
 import { serverCleanUp } from "../internal/service/server/cleanup";
 import { vscodeSettings } from "../internal/vscode";
@@ -43,6 +44,7 @@ export const initialize = async (fn: () => Promise<void>) => {
   if (executedFromNodeBase) {
     await vscodeSettings();
     await buildAll();
+    await watchAll()
   }
 
   rawLog(`Starting: ${picocolors.cyan("WebSocket RPC")} `);
