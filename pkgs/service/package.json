@@ -3,16 +3,24 @@
   "description": "Service: Royal Core Service. Provide root.* global variable and give app initialize function",
   "version": "0.0.1",
   "main": "export.ts",
+  "scripts": {
+    "gen": "jiti ./base/gen.ts"
+  },
   "dependencies": {
+    "@hyrious/esbuild-plugin-commonjs": "^0.2.2",
+    "cjs-module-lexer": "^1.2.2",
     "cuid": "^2.1.8",
     "esbuild": "^0.15.15",
+    "gen": "workspace:^",
+    "get-port": "^6.1.2",
+    "jiti": "^1.16.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.padend": "^4.6.1",
     "minimatch": "^5.1.0",
     "picocolors": "^1.0.0",
     "pretty-error": "^4.0.0",
-    "ws": "^8.11.0",
-    "gen": "workspace:^"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.15.0",
+    "ws": "^8.11.0"
   },
   "devDependencies": {
     "@types/lodash.capitalize": "^4.2.7",

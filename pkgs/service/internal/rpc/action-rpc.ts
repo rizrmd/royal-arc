@@ -4,16 +4,16 @@ import { _names, _runtime } from "gen";
 import capitalize from "lodash.capitalize";
 import padEnd from "lodash.padend";
 import { join } from "path";
-import { blue, green, magenta, red, yellow } from "picocolors";
+import picocolors from "picocolors";
 import { root } from "../../export";
 import { ActionItem, ActionKey, g } from "../global";
-import { buildApp } from "../service/build/build-app";
 import { buildSvc } from "../service/build/build-svc";
 import { generateMeta } from "../service/gen-meta";
 import { serverCleanUp } from "../service/server/cleanup";
 import { getPort } from "./get-port";
 import { Handlers, RequestSender } from "./typed-rpc";
 
+const { blue, green, magenta, red, yellow } = picocolors;
 const _boot = () => ({
   async stop() {
     await serverCleanUp();
@@ -23,10 +23,9 @@ const _boot = () => ({
     await generateMeta(join(process.cwd(), "..", ".."));
   },
   async getPort() {
-    return getPort();
+    return await getPort();
   },
   buildSvc: buildSvc,
-  buildApp: buildApp,
 });
 
 const _service = () => ({

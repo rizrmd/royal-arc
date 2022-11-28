@@ -1,14 +1,18 @@
 import { spawn, spawnSync } from "child_process";
 import { join } from "path";
-import { dirAsync, existsAsync, removeAsync } from "service";
-import { runPnpm } from "service/internal/service/build/run-pnpm";
-import { Transform } from "stream";
-import { scaff } from "../scaff/util/scaff";
+import { scaff } from "../../royal/scaff/util/scaff";
+import { dirAsync, existsAsync, readAsync, removeAsync } from "../export";
+import { buildApp } from "../internal/service/build/build-app";
+import { resolveDeps } from "../internal/service/build/resolve-deps";
+import { runPnpm } from "../internal/service/build/run-pnpm";
+import { isEqual } from "./is-equal";
 
 let lastRestart = new Date().getTime();
 
 const main = (async () => {
-  let shouldInstallDep = await scaff({
+  await removeAsync(join(process.cwd(), "gen"));
+  let shouldInstallDep = false;
+  await scaff({
     "package.json": {
       "name": "gen",
       "version": "0.0.1",
@@ -57,29 +61,46 @@ export { action as royal } from "../pkgs/royal/action";
 
   if (args.includes("genbase")) {
     spawnSync(
-      /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
-      ["jiti", "./base/gen.ts"],
-      { cwd: join(process.cwd(), "pkgs", "royal") },
+      process.execPath,
+      ["-r", "jiti/register", "./base/gen.ts"],
+      {
+        stdio: "inherit",
+        cwd: join(process.cwd(), "pkgs", "service"),
+        env: {
+          JITI_CACHE: join(process.cwd(), ".output", ".jiti"),
+          JITI_ESM_RESOLVE: "1",
+        },
+      },
     );
     return;
   }
 
-  const start = () => {
+  const start = async () => {
+    const pk1 = await readAsync(
+      join(process.cwd(), ".output", "app", "package.json"),
+      "json",
+    );
+    const ndeps = await resolveDeps(join(process.cwd(), "app"));
+
+    await buildApp(join(process.cwd(), ".output", "app"));
+
+    console.log(pk1)
+    if (!pk1 || (pk1 && !isEqual(pk1.dependencies, ndeps))) {
+      await runPnpm(["i"], join(process.cwd(), ".output", "app"));
+    }
     const res = spawn(
-      "bun",
+      process.execPath,
       [
-        args.indexOf("prod") >= 0 ||
-          args.indexOf("staging") >= 0 ||
-          args.indexOf("build") >= 0
-          ? ""
-          : "--hot",
-        "--silent",
-        "--no-install",
-        join(process.cwd(), "app", "app.ts"),
+        "--enable-source-maps",
+        "--no-warnings",
+        join(process.cwd(), ".output", "app", "app.js"),
         "base",
         ...args,
       ].filter((e) => e),
-      { stdio: "inherit", cwd: appcwd },
+      {
+        stdio: "inherit",
+        cwd: appcwd,
+      },
     );
 
     res.on("exit", (code) => {

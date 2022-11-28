@@ -2,7 +2,7 @@ import { build } from "esbuild";
 import { join, sep } from "path";
 import { dirAsync, readAsync, writeAsync } from "./jetpack";
 import { resolveDeps } from "./resolve-deps";
-
+import { commonjs } from "@hyrious/esbuild-plugin-commonjs";
 export const buildApp = async (
   targetDir: string,
 ) => {
@@ -26,6 +26,7 @@ export const buildApp = async (
   await writeAsync(join(targetDir, "package.json"), {
     name: "app",
     version: "1.0.0",
+    type: "module",
     dependencies: deps,
   });
 
@@ -33,9 +34,11 @@ export const buildApp = async (
     bundle: true,
     logLevel: "silent",
     platform: "node",
+    format: "esm",
     entryPoints: [join(appDir, "app.ts")],
+    plugins: [commonjs()],
     outfile: join(targetDir, "app.js"),
-    external: Object.keys(deps),
+    external: [...Object.keys(deps), "esbuild"],
   });
 
   const src = await readAsync(join(targetDir, "app.js"));
@@ -50,21 +53,20 @@ export const buildApp = async (
 ▐█•█▌▐█▌.▐▌ ▐█▀·.▐█ ▪▐▌▐█▌▐▌
 .▀  ▀ ▀█▄▀▪  ▀ •  ▀  ▀ .▀▀▀ 
 */
-const { existsSync } = require('fs')
-const { join } = require('path')
-if (!existsSync(join(process.cwd(), 'node_modules'))) {
-  Bun.spawnSync({
-    cmd: ['pnpm', 'i'],
-    stdout: 'inherit',
-    stderr: 'inherit',
-  })
-  console.log('Dependencies installed, please run "bun app.js"')
-  process.exit(0)
-}
-if (process.argv0) {
-  console.log('You should run app.js using bun, e.g: "bun app.js"')
-  process.exit(0)
-}
+(async () => {
+  const { existsSync } = await import('fs')
+  const { join } = await import('path')
+  const { spawnSync } = await import('child_process')
+  if (!existsSync(join(process.cwd(), 'node_modules'))) {
+    spawnSync(
+      /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
+      ["i"],
+      {
+        stdio: "inherit",
+      }
+    );
+  }
+})()
 ${src}`,
   );
 

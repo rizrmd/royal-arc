@@ -22,7 +22,7 @@ export const buildAll = async (targetDir?: string, skipDep?: boolean) => {
   console.log("");
 
   await Promise.all(pending);
-  if (skipDep) {
+  if (!skipDep) {
     await (runPnpm(["i"], process.cwd()));
   }
   console.log("");

@@ -1,5 +1,5 @@
 import { build } from "esbuild";
-import { writeAsync } from "service";
+import { writeAsync } from "../export";
 import { join } from "path";
 
 export const generateBase = async () => {
@@ -50,6 +50,7 @@ const getRuntime = () => {
     platform: "node",
     format: "iife",
     nodePaths: [join(__dirname, "..", "node_modules")],
+    "external": ["esbuild"],
   });
   const src = template.replace("/*!!*--node--*!!*/", res.outputFiles[0].text);
   await writeAsync(join(__dirname, "..", "..", "..", "base"), src);

@@ -2,6 +2,12 @@ lockfileVersion: 5.4
 
 importers:
 
+  .:
+    specifiers:
+      esbuild: ^0.15.15
+    dependencies:
+      esbuild: 0.15.15
+
   app:
     specifiers:
       service: workspace:^
@@ -63,12 +69,6 @@ importers:
   gen:
     specifiers: {}
 
-  pkgs/court:
-    specifiers:
-      bun-types: ^0.2.2
-    devDependencies:
-      bun-types: 0.2.2
-
   pkgs/royal:
     specifiers:
       '@babel/core': ^7.20.2
@@ -95,7 +95,6 @@ importers:
       express: ^4.18.2
       fflate: ^0.7.4
       gen: workspace:^
-      jiti: ^1.16.0
       lodash.camelcase: ^4.3.0
       lodash.padend: ^4.6.1
       lodash.trim: ^4.5.1
@@ -120,7 +119,6 @@ importers:
       express: 4.18.2
       fflate: 0.7.4
       gen: link:../../gen
-      jiti: 1.16.0
       lodash.camelcase: 4.3.0
       lodash.padend: 4.6.1
       lodash.trim: 4.5.1
@@ -191,29 +189,39 @@ importers:
 
   pkgs/service:
     specifiers:
+      '@hyrious/esbuild-plugin-commonjs': ^0.2.2
       '@types/lodash.capitalize': ^4.2.7
       '@types/lodash.padend': ^4.6.7
       '@types/node': ^18.11.9
       '@types/ws': ^8.5.3
       bun-types: ^0.2.2
+      cjs-module-lexer: ^1.2.2
       cuid: ^2.1.8
       esbuild: ^0.15.15
       gen: workspace:^
+      get-port: ^6.1.2
+      jiti: ^1.16.0
       lodash.capitalize: ^4.2.1
       lodash.padend: ^4.6.1
       minimatch: ^5.1.0
       picocolors: ^1.0.0
       pretty-error: ^4.0.0
+      uWebSockets.js: github:uNetworking/uWebSockets.js#v20.15.0
       ws: ^8.11.0
     dependencies:
+      '@hyrious/esbuild-plugin-commonjs': 0.2.2_vnl7al5uq7maqocd7j3jkpyoai
+      cjs-module-lexer: 1.2.2
       cuid: 2.1.8
       esbuild: 0.15.15
       gen: link:../../gen
+      get-port: 6.1.2
+      jiti: 1.16.0
       lodash.capitalize: 4.2.1
       lodash.padend: 4.6.1
       minimatch: 5.1.0
       picocolors: 1.0.0
       pretty-error: 4.0.0
+      uWebSockets.js: github.com/uNetworking/uWebSockets.js/77bc1fd5577ae42b56675912eb8481a31f3fefd2
       ws: 8.11.0
     devDependencies:
       '@types/lodash.capitalize': 4.2.7
@@ -657,6 +665,20 @@ packages:
     os: [linux]
     requiresBuild: true
     optional: true
+
+  /@hyrious/esbuild-plugin-commonjs/0.2.2_vnl7al5uq7maqocd7j3jkpyoai:
+    resolution: {integrity: sha512-08RxncQ0S3vgVtj8bxx/TcG+4b6bLbWCiXQtRpkuO7U3dLi1pVvSOnIacVphWLCHudCvJL+05b/r1km+r3osWQ==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      cjs-module-lexer: '*'
+      esbuild: '*'
+    peerDependenciesMeta:
+      cjs-module-lexer:
+        optional: true
+    dependencies:
+      cjs-module-lexer: 1.2.2
+      esbuild: 0.15.15
+    dev: false
 
   /@jridgewell/gen-mapping/0.1.1:
     resolution: {integrity: sha512-sQXCasFk+U8lWYEe66WxRDOE9PjVz4vSM51fTu3Hw+ClTpUSQb718772vH3pyS5pShp6lvQM7SxgIDXXXmOX7w==}
@@ -1163,6 +1185,10 @@ packages:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.2
+
+  /cjs-module-lexer/1.2.2:
+    resolution: {integrity: sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==}
+    dev: false
 
   /color-convert/1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
@@ -1767,6 +1793,11 @@ packages:
       function-bind: 1.1.1
       has: 1.0.3
       has-symbols: 1.0.3
+    dev: false
+
+  /get-port/6.1.2:
+    resolution: {integrity: sha512-BrGGraKm2uPqurfGVj/z97/zv8dPleC6x9JBNRTrDNtCkkRF4rPwrQXFgL7+I+q8QSdU4ntLQX2D7KIxSy8nGw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dev: false
 
   /glob-parent/5.1.2:
