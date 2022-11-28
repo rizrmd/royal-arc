@@ -22227,7 +22227,7 @@ ${src}`
     return (0, import_path6.join)(targetDir, "app.js");
   };
 
-  // base/is-equal.ts
+  // base/util/is-equal.ts
   var isEqual = (obj1, obj2, checkDataOrder = false) => {
     const checkDataOrderParanoic = false;
     if (obj1 === null || obj2 === null) {
@@ -22274,7 +22274,7 @@ ${src}`
     return true;
   };
 
-  // base/scaff.ts
+  // base/util/scaff.ts
   var import_path7 = __require("path");
   var scaff = async (arg, root2) => {
     let shouldInstallDep = false;

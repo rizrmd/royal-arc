@@ -5,8 +5,12 @@ export const serverCleanUp = async () => {
   if (g.svc) {
     for (const [name, v] of Object.entries(g.svc)) {
       const build = g.node.build[name];
-      if (build && build.stop) {
-        build.stop();
+      if (build) {
+        if (build.stop) {
+          build.stop();
+        }
+
+        build.rebuild.dispose();
       }
       for (const [pid, svc] of Object.entries(v)) {
         pending.push(

@@ -1,5 +1,5 @@
 import { dirname, join, sep } from "path";
-import { dirAsync, existsAsync, writeAsync } from "../export";
+import { dirAsync, existsAsync, writeAsync } from "../../export";
 
 export const scaff = async (
   arg: Record<string, string | object>,

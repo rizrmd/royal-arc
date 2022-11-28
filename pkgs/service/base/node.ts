@@ -4,8 +4,8 @@ import { dirAsync, existsAsync, readAsync, removeAsync } from "../export";
 import { buildApp } from "../internal/service/build/build-app";
 import { resolveDeps } from "../internal/service/build/resolve-deps";
 import { runPnpm } from "../internal/service/build/run-pnpm";
-import { isEqual } from "./is-equal";
-import { scaff } from "./scaff";
+import { isEqual } from "./util/is-equal";
+import { scaff } from "./util/scaff";
 
 let lastRestart = new Date().getTime();
 

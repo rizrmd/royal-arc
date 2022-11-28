@@ -29,7 +29,7 @@ export const initGlobal = async (arg: { svcPort: number }) => {
     g.node = {
       buildTimeout: {},
       build: {},
-      watch: {},
+      recoverError: {},
     };
   }
 };
@@ -46,7 +46,10 @@ export const g = globalThis as unknown as {
         rebuild: BuildInvalidate & (() => void);
       }
     >;
-    watch: Record<string, ReturnType<typeof bunSpawn | typeof nodeSpawn>>;
+    recoverError: Record<
+      string,
+      ReturnType<typeof bunSpawn | typeof nodeSpawn>
+    >;
   };
   svc: Record<
     _names,

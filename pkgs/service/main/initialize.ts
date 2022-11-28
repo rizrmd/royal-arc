@@ -24,13 +24,14 @@ export const initialize = async (fn: () => Promise<void>) => {
 
   if (executedFromNodeBase) {
     if (await generateMeta(join(process.cwd(), "..", ".."))) {
+      await serverCleanUp();
       process.exit(111);
     }
     await serverCleanUp();
   }
 
   console.log(
-    `\n\n── ${
+    `\n── ${
       padEnd(
         picocolors.magenta(g.mode.toUpperCase()) + " ",
         30,

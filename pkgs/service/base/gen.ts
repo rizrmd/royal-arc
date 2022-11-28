@@ -1,7 +1,7 @@
 import { build } from "esbuild";
 import { writeAsync } from "../export";
 import { join } from "path";
-import * as importMap from "./esbuild-map";
+import * as importMap from "./util/esbuild-map";
 export const generateBase = async () => {
   const template = `\
 #!/usr/bin/env node

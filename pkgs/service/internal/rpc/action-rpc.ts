@@ -127,7 +127,6 @@ const _service = () => ({
                 restart(true);
               } else {
                 delete g.svc[name][pid];
-                root.action("royal").watchAndStart(name);
               }
               return;
             }

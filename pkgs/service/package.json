@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@hyrious/esbuild-plugin-commonjs": "^0.2.2",
+    "chokidar": "^3.5.3",
     "cjs-module-lexer": "^1.2.2",
     "cuid": "^2.1.8",
     "esbuild": "^0.15.15",
