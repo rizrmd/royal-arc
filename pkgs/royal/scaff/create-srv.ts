@@ -72,12 +72,12 @@ export const action = () => ({
   await writeAsync(
     join(path, "api", "hello.ts"),
     `\
-import { APIContext } from "royal";
+import { apiContext } from "royal";
 
 export const _ = {
   url: "/hello/:name?",
   async api(name: string) {
-    const server: APIContext = this as any;
+    const ctx = apiContext(this);
     return { hello: name || "" };
   },
 };

@@ -6,11 +6,13 @@ import { DeclareServiceArg } from "./types";
   return this.toString();
 };
 
-export const declareBuild = (args: { preBuild?: () => void }) => {
+export const declareBuild = (
+  args: { preBuild?: (p: { restarted: boolean; argv: string[] }) => void },
+) => {
   const command = process.argv[2];
   if ((args as any)[command]) {
     try {
-      (args as any)[command](...process.argv.slice(3));
+      (args as any)[command]({ restarted: false, argv: process.argv.slice(3) });
     } catch (_) {}
   }
 };

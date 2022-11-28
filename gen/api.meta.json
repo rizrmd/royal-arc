@@ -2,13 +2,8 @@
   "srv": {
     "_url": {
       "hello": "/hello/:name?",
-      "mo": "/mo",
-      "moto": "/moto",
-      "meko": "/meko",
-      "ajo": "/ajo",
-      "koko": "/koko",
       "moko": "/moko",
-      "joni": "/joni"
+      "jono": "/jono"
     },
     "_params": {
       "hello": {
@@ -20,41 +15,6 @@
         ],
         "service": []
       },
-      "mo": {
-        "api": [
-          "name"
-        ],
-        "url": [],
-        "service": []
-      },
-      "moto": {
-        "api": [
-          "name"
-        ],
-        "url": [],
-        "service": []
-      },
-      "meko": {
-        "api": [
-          "name"
-        ],
-        "url": [],
-        "service": []
-      },
-      "ajo": {
-        "api": [
-          "name"
-        ],
-        "url": [],
-        "service": []
-      },
-      "koko": {
-        "api": [
-          "name"
-        ],
-        "url": [],
-        "service": []
-      },
       "moko": {
         "api": [
           "name"
@@ -62,7 +22,7 @@
         "url": [],
         "service": []
       },
-      "joni": {
+      "jono": {
         "api": [
           "name"
         ],

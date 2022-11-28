@@ -61,6 +61,7 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
     }
 
     if (preBuildScript[name]) {
+      console.log("auo ", name);
       const runtime = getRuntime();
       if (runtime === "bun") {
         Bun.spawnSync({
@@ -109,7 +110,7 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
             await b.rebuild();
           }
         } else {
-          const rebuild = () => {
+          const rebuildInternal = () => {
             let i = 0;
             if (!g.svc || !g.svc[name]) return;
 
@@ -141,11 +142,15 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
             }
           };
 
+          const nb = g.node.build[name];
+          if (nb && nb.stop) nb.stop();
+
           g.node.build[name] = await build({
             bundle: true,
             logLevel: "silent",
             platform: "node",
             sourcemap: true,
+            incremental: true,
             watch: {
               onRebuild: async (err, res) => {
                 if (
@@ -169,7 +174,7 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
                 }
 
                 clearTimeout(g.node.buildTimeout[name]);
-                g.node.buildTimeout[name] = setTimeout(rebuild, 300);
+                g.node.buildTimeout[name] = setTimeout(rebuildInternal, 300);
               },
             },
             minify: true,

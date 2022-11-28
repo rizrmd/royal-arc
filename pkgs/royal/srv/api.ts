@@ -5,4 +5,7 @@ export type APIContext = {
   res: Response<Record<string, any> | string>;
   skip: () => void;
 };
- 
+
+export const apiContext = (obj: any): APIContext => {
+  return obj as APIContext;
+};

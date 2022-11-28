@@ -2,7 +2,8 @@ import { declareBuild } from "service";
 import { preBuildSrv } from "royal";
 
 declareBuild({
-  preBuild() {
-    preBuildSrv();
+  preBuild({ restarted }) {
+    console.log(restarted);
+    // preBuildSrv();
   },
 });
