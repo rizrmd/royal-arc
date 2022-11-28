@@ -2,12 +2,6 @@ lockfileVersion: 5.4
 
 importers:
 
-  .:
-    specifiers:
-      esbuild: ^0.15.15
-    dependencies:
-      esbuild: 0.15.15
-
   app:
     specifiers:
       service: workspace:^

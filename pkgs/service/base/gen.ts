@@ -1,7 +1,7 @@
 import { build } from "esbuild";
 import { writeAsync } from "../export";
 import { join } from "path";
-
+import * as importMap from "./esbuild-map";
 export const generateBase = async () => {
   const template = `\
 #!/usr/bin/env node
@@ -43,6 +43,11 @@ const getRuntime = () => {
   }
 })();`;
 
+  importMap.load({
+    imports: {
+      "esbuild": "./pkgs/service/node_modules/esbuild/lib/main.js",
+    },
+  });
   const res = await build({
     entryPoints: [join(__dirname, "node.ts")],
     write: false,
@@ -51,6 +56,7 @@ const getRuntime = () => {
     format: "iife",
     nodePaths: [join(__dirname, "..", "node_modules")],
     "external": ["esbuild"],
+    plugins: [importMap.plugin()],
   });
   const src = template.replace("/*!!*--node--*!!*/", res.outputFiles[0].text);
   await writeAsync(join(__dirname, "..", "..", "..", "base"), src);

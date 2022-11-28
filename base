@@ -20995,7 +20995,7 @@ const getRuntime = () => {
           name: "commonjs",
           setup({ onLoad, esbuild }) {
             let esbuild_shim;
-            const require_esbuild = () => esbuild || (esbuild_shim || (esbuild_shim = __require("esbuild")));
+            const require_esbuild = () => esbuild || (esbuild_shim || (esbuild_shim = __require("./pkgs/service/node_modules/esbuild/lib/main.js")));
             const read2 = import_fs2.promises.readFile;
             const lexer = new Lexer();
             onLoad({ filter }, async (args) => {
@@ -21369,12 +21369,10 @@ const getRuntime = () => {
 
   // ../../gen/service.ts
   var _path = {
-    "royal": "pkgs/royal/index.ts",
-    "srv": "app/srv/index.ts"
+    "royal": "pkgs/royal/index.ts"
   };
   var _runtime = {
-    "royal": "node",
-    "srv": "node"
+    "royal": "node"
   };
 
   // internal/rpc/action-rpc.ts
@@ -21486,7 +21484,7 @@ const getRuntime = () => {
       let nb = g.node.build[name];
       if (nb && nb.stop)
         nb.stop();
-      const { build } = await import("esbuild");
+      const { build } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
       const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
       const rebuild = async () => {
         g.node.build[name] = await build({
@@ -22116,7 +22114,7 @@ export default {
       type: "module",
       dependencies: deps
     });
-    const { build } = await import("esbuild");
+    const { build } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
     const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
     await build({
       bundle: true,
