@@ -7,7 +7,6 @@ import { createRequestHandler, JsonRpcRequest } from "service";
 import type { WebSocket } from "uWebSockets.js";
 import config from "../../../config";
 import { g, MHttpResponse } from "../global";
-import { waitUntil } from "service/scaff/util/wait-until";
 import { fetchProxy } from "./fetch-proxy";
 import { PanelActions } from "./panel/panel-actions";
 import { progress } from "./panel/panel-build";
@@ -79,9 +78,7 @@ export const serveBoot = async (
   } else {
     if (!g.vite["royal-panel"] || !g.vite["royal-panel"].host) {
       console.log("Waiting for Boot Vite Panel");
-      await waitUntil(() =>
-        g.vite["royal-panel"] && g.vite["royal-panel"].host
-      );
+      return false;
     }
 
     let base = trim(g.vite["royal-panel"].host, "/");

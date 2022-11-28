@@ -20808,7 +20808,7 @@ const getRuntime = () => {
       var __toCommonJS = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
       var esbuild_plugin_commonjs_exports = {};
       __export2(esbuild_plugin_commonjs_exports, {
-        commonjs: () => commonjs3,
+        commonjs: () => commonjs,
         default: () => esbuild_plugin_commonjs_default
       });
       module.exports = __toCommonJS(esbuild_plugin_commonjs_exports);
@@ -20982,7 +20982,7 @@ const getRuntime = () => {
         }
         return identifier || "_";
       };
-      function commonjs3({
+      function commonjs({
         filter = /\.c?js$/,
         transform = false,
         transformConfig
@@ -21119,16 +21119,13 @@ const getRuntime = () => {
           }
         };
       }
-      var esbuild_plugin_commonjs_default = commonjs3;
+      var esbuild_plugin_commonjs_default = commonjs;
     }
   });
 
   // base/node.ts
   var import_child_process3 = __require("child_process");
   var import_path8 = __require("path");
-
-  // ../royal/scaff/util/scaff.ts
-  var import_path7 = __require("path");
 
   // main/initialize.ts
   var import_lodash4 = __toESM(require_lodash());
@@ -21392,7 +21389,6 @@ const getRuntime = () => {
   var import_picocolors2 = __toESM(require_picocolors());
 
   // internal/service/build/build-svc-node.ts
-  var import_esbuild = __require("esbuild");
   var import_path2 = __require("path");
   var import_picocolors = __toESM(require_picocolors());
 
@@ -21410,9 +21406,6 @@ const getRuntime = () => {
       });
     }
   };
-
-  // internal/service/build/build-svc-node.ts
-  var import_esbuild_plugin_commonjs = __toESM(require_esbuild_plugin_commonjs());
 
   // internal/service/build/resolve-deps.ts
   var import_path = __require("path");
@@ -21493,8 +21486,10 @@ const getRuntime = () => {
       let nb = g.node.build[name];
       if (nb && nb.stop)
         nb.stop();
+      const { build } = await import("esbuild");
+      const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
       const rebuild = async () => {
-        g.node.build[name] = await (0, import_esbuild.build)({
+        g.node.build[name] = await build({
           bundle: true,
           logLevel: "silent",
           platform: "node",
@@ -21503,7 +21498,7 @@ const getRuntime = () => {
           incremental: true,
           metafile: true,
           minify: true,
-          plugins: [(0, import_esbuild_plugin_commonjs.commonjs)()],
+          plugins: [commonjs()],
           entryPoints: [indexPath],
           outfile: (0, import_path2.join)(tpath, "index.js"),
           external: Object.keys(deps)
@@ -21716,9 +21711,9 @@ export default {
     const pending = [];
     if (g.svc) {
       for (const [name, v] of Object.entries(g.svc)) {
-        const build3 = g.node.build[name];
-        if (build3 && build3.stop) {
-          build3.stop();
+        const build = g.node.build[name];
+        if (build && build.stop) {
+          build.stop();
         }
         for (const [pid, svc] of Object.entries(v)) {
           pending.push(
@@ -22103,9 +22098,7 @@ export default {
   var import_lodash3 = __toESM(require_lodash2());
 
   // internal/service/build/build-app.ts
-  var import_esbuild2 = __require("esbuild");
   var import_path6 = __require("path");
-  var import_esbuild_plugin_commonjs2 = __toESM(require_esbuild_plugin_commonjs());
   var buildApp = async (targetDir) => {
     const cwdsplit = process.cwd().split(import_path6.sep);
     const root2 = (cwdsplit.includes(".output") ? cwdsplit.slice(0, cwdsplit.length - 2) : cwdsplit).join(import_path6.sep);
@@ -22123,13 +22116,15 @@ export default {
       type: "module",
       dependencies: deps
     });
-    await (0, import_esbuild2.build)({
+    const { build } = await import("esbuild");
+    const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
+    await build({
       bundle: true,
       logLevel: "silent",
       platform: "node",
       format: "esm",
       entryPoints: [(0, import_path6.join)(appDir, "app.ts")],
-      plugins: [(0, import_esbuild_plugin_commonjs2.commonjs)()],
+      plugins: [commonjs()],
       outfile: (0, import_path6.join)(targetDir, "app.js"),
       external: [...Object.keys(deps), "esbuild"]
     });
@@ -22232,22 +22227,6 @@ ${src}`
     action: rootAction(rpcSender("service"))
   };
 
-  // ../royal/scaff/util/scaff.ts
-  var scaff = async (arg, root2) => {
-    let shouldInstallDep = false;
-    for (const [k, v] of Object.entries(arg)) {
-      if (!k)
-        continue;
-      const path2 = (0, import_path7.join)(root2, k.replace(/\//ig, import_path7.sep));
-      await dirAsync((0, import_path7.dirname)(root2));
-      if (!await existsAsync(path2)) {
-        await writeAsync(path2, v);
-        shouldInstallDep = true;
-      }
-    }
-    return shouldInstallDep;
-  };
-
   // base/is-equal.ts
   var isEqual = (obj1, obj2, checkDataOrder = false) => {
     const checkDataOrderParanoic = false;
@@ -22293,6 +22272,23 @@ ${src}`
       }
     }
     return true;
+  };
+
+  // base/scaff.ts
+  var import_path7 = __require("path");
+  var scaff = async (arg, root2) => {
+    let shouldInstallDep = false;
+    for (const [k, v] of Object.entries(arg)) {
+      if (!k)
+        continue;
+      const path2 = (0, import_path7.join)(root2, k.replace(/\//ig, import_path7.sep));
+      await dirAsync((0, import_path7.dirname)(root2));
+      if (!await existsAsync(path2)) {
+        await writeAsync(path2, v);
+        shouldInstallDep = true;
+      }
+    }
+    return shouldInstallDep;
   };
 
   // base/node.ts
