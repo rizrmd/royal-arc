@@ -1,12 +1,8 @@
-import { prisma } from "gen/prisma";
 import { css } from "@emotion/react";
 import React, { Fragment } from "react";
-import apimeta from "gen/api.meta.json";
 import { jsx } from "./jsx";
 import { createFrameCors } from "./iframe-cors";
 import { importPageAndLayout } from "./router";
-
-const { _params, _url } = apimeta["srv"];
 
 export const initEnv = async (arg: { layout: any; page: any }) => {
   const w = window as any;
@@ -73,49 +69,63 @@ export const initEnv = async (arg: { layout: any; page: any }) => {
       }
     }
 
-    w.api = new Proxy(
-      {},
-      {
-        get: (_, actionName) => {
-          return (...rest: any) => {
-            return new Promise<any>(async (resolve) => {
-              const action = (_url as any)[actionName];
-              const params = (_params as any)[actionName];
-              if (action && params) {
-                let actionurl = action;
+    let apimeta;
+    try {
+      //@ts-ignore
+      apimeta = await import("gen/api.meta.json");
+    } catch (e) {
+    }
+    
+    //@ts-ignore
+    if (apimeta && apimeta["srv"]) {
+      //@ts-ignore
+      const { _params, _url } = apimeta["srv"];
+      w.api = new Proxy(
+        {},
+        {
+          get: (_, actionName) => {
+            return (...rest: any) => {
+              return new Promise<any>(async (resolve) => {
+                const action = (_url as any)[actionName];
+                const params = (_params as any)[actionName];
+                if (action && params) {
+                  let actionurl = action;
 
-                if (rest.length > 0 && params.api.length > 0) {
-                  for (const [idx, p] of Object.entries(rest)) {
-                    const paramName = params.api[idx];
-                    if (params.shared.includes(paramName)) {
-                      if (
-                        !!p &&
-                        typeof p !== "string" &&
-                        typeof p !== "number"
-                      ) {
-                        throw new Error(
-                          `\n\nAPI Parameter [${paramName}] should be string or number.\nIt is passed in url: ${action}.\n\nCurrent value: \n${JSON.stringify(
-                            p
-                          )}\n`
-                        );
+                  if (rest.length > 0 && params.api.length > 0) {
+                    for (const [idx, p] of Object.entries(rest)) {
+                      const paramName = params.api[idx];
+                      if (params.shared.includes(paramName)) {
+                        if (
+                          !!p &&
+                          typeof p !== "string" &&
+                          typeof p !== "number"
+                        ) {
+                          throw new Error(
+                            `\n\nAPI Parameter [${paramName}] should be string or number.\nIt is passed in url: ${action}.\n\nCurrent value: \n${
+                              JSON.stringify(
+                                p,
+                              )
+                            }\n`,
+                          );
+                        }
                       }
+                      actionurl = actionurl.replace(`:${paramName}?`, p + "");
+                      actionurl = actionurl.replace(`:${paramName}`, p + "");
                     }
-                    actionurl = actionurl.replace(`:${paramName}?`, p + "");
-                    actionurl = actionurl.replace(`:${paramName}`, p + "");
                   }
-                }
 
-                const url = `${w.basepath}${actionurl}`;
-                const result = await fetchSendApi(url, rest);
-                resolve(result);
-              } else {
-                console.error(`API Not Found: ${actionName.toString()}`);
-              }
-            });
-          };
+                  const url = `${w.basepath}${actionurl}`;
+                  const result = await fetchSendApi(url, rest);
+                  resolve(result);
+                } else {
+                  console.error(`API Not Found: ${actionName.toString()}`);
+                }
+              });
+            };
+          },
         },
-      }
-    );
+      );
+    }
 
     w.navigate = (href: string) => {
       let _href = href;
@@ -141,6 +151,14 @@ export const initEnv = async (arg: { layout: any; page: any }) => {
       }
       w.appRoot.render();
     });
+
+    let prisma;
+
+    try {
+      // @ts-ignore
+      prisma = await import("gen/prisma");
+    } catch (e) {
+    }
 
     if (prisma) {
       for (let name of Object.keys(prisma)) {
@@ -187,10 +205,10 @@ const dbClient = (name: string) => {
                 });
               };
             },
-          }
+          },
         );
       },
-    }
+    },
   );
 };
 

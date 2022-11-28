@@ -13,6 +13,8 @@ const main = (async () => {
   await removeAsync(join(process.cwd(), "gen"));
   let shouldInstallDep = false;
   await scaff({
+    "api.meta.json": {},
+    "prisma.ts": `export const prisma = {};`,
     "package.json": {
       "name": "gen",
       "version": "0.0.1",
@@ -84,7 +86,6 @@ export { action as royal } from "../pkgs/royal/action";
 
     await buildApp(join(process.cwd(), ".output", "app"));
 
-    console.log(pk1)
     if (!pk1 || (pk1 && !isEqual(pk1.dependencies, ndeps))) {
       await runPnpm(["i"], join(process.cwd(), ".output", "app"));
     }

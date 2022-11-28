@@ -2603,7 +2603,7 @@ const getRuntime = () => {
         }
         return false;
       };
-      var existsAsync3 = (path2) => {
+      var existsAsync2 = (path2) => {
         return new Promise((resolve, reject) => {
           fs.stat(path2).then((stat2) => {
             if (stat2.isDirectory()) {
@@ -2624,7 +2624,7 @@ const getRuntime = () => {
       };
       exports.validateInput = validateInput;
       exports.sync = existsSync;
-      exports.async = existsAsync3;
+      exports.async = existsAsync2;
     }
   });
 
@@ -15684,11 +15684,11 @@ const getRuntime = () => {
           }], [{
             key: "setOnto",
             value: function setOnto(declarations, prop, val) {
-              var dec;
-              if (!(dec = declarations[prop])) {
+              var dec2;
+              if (!(dec2 = declarations[prop])) {
                 return declarations[prop] = new this(prop, val);
               } else {
-                return dec.set(val);
+                return dec2.set(val);
               }
             }
           }, {
@@ -18067,22 +18067,22 @@ const getRuntime = () => {
           }, {
             key: "_mixWithRule",
             value: function _mixWithRule(rule) {
-              var dec, prop, ref;
+              var dec2, prop, ref;
               ref = rule.styles._declarations;
               for (prop in ref) {
-                dec = ref[prop];
-                this._mixWithDeclaration(dec);
+                dec2 = ref[prop];
+                this._mixWithDeclaration(dec2);
               }
             }
           }, {
             key: "_mixWithDeclaration",
-            value: function _mixWithDeclaration(dec) {
+            value: function _mixWithDeclaration(dec2) {
               var cur;
-              cur = this._declarations[dec.prop];
-              if (cur != null && cur.important && !dec.important) {
+              cur = this._declarations[dec2.prop];
+              if (cur != null && cur.important && !dec2.important) {
                 return;
               }
-              this._declarations[dec.prop] = dec;
+              this._declarations[dec2.prop] = dec2;
             }
           }, {
             key: "get",
@@ -18098,12 +18098,12 @@ const getRuntime = () => {
           }, {
             key: "toObject",
             value: function toObject() {
-              var dec, obj, prop, ref;
+              var dec2, obj, prop, ref;
               obj = {};
               ref = this._declarations;
               for (prop in ref) {
-                dec = ref[prop];
-                obj[prop] = dec.val;
+                dec2 = ref[prop];
+                obj[prop] = dec2.val;
               }
               return obj;
             }
@@ -20808,7 +20808,7 @@ const getRuntime = () => {
       var __toCommonJS = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
       var esbuild_plugin_commonjs_exports = {};
       __export2(esbuild_plugin_commonjs_exports, {
-        commonjs: () => commonjs2,
+        commonjs: () => commonjs3,
         default: () => esbuild_plugin_commonjs_default
       });
       module.exports = __toCommonJS(esbuild_plugin_commonjs_exports);
@@ -20982,7 +20982,7 @@ const getRuntime = () => {
         }
         return identifier || "_";
       };
-      function commonjs2({
+      function commonjs3({
         filter = /\.c?js$/,
         transform = false,
         transformConfig
@@ -21119,12 +21119,12 @@ const getRuntime = () => {
           }
         };
       }
-      var esbuild_plugin_commonjs_default = commonjs2;
+      var esbuild_plugin_commonjs_default = commonjs3;
     }
   });
 
   // base/node.ts
-  var import_child_process2 = __require("child_process");
+  var import_child_process3 = __require("child_process");
   var import_path8 = __require("path");
 
   // ../royal/scaff/util/scaff.ts
@@ -21366,51 +21366,18 @@ const getRuntime = () => {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  // internal/rpc/typed-rpc/createJsonRpcRequest.ts
-  var globalRequestId = 1;
-  var createJsonRpcRequest = () => (action, ...payload) => {
-    const currentRequestId = globalRequestId;
-    globalRequestId += 1;
-    return {
-      jsonrpc: "2.0",
-      method: action,
-      params: payload,
-      id: currentRequestId.toString()
-    };
-  };
-
-  // internal/rpc/typed-rpc/createBasicJsonRpcClient.ts
-  var createBasicJsonRpcClient = (client) => ({
-    send: (action, ...payload) => {
-      const request = createJsonRpcRequest()(action, ...payload);
-      return client.sendRequest(request);
-    }
-  });
-
-  // internal/rpc/typed-rpc/createJsonRpcClient.ts
-  var createJsonRpcClient = (client) => {
-    const basicClient = createBasicJsonRpcClient(client);
-    return new Proxy(basicClient, {
-      get: (target, methodOrAttributeName) => {
-        return (...rest) => {
-          return target.send(
-            methodOrAttributeName,
-            ...rest
-          );
-        };
-      }
-    });
-  };
-
   // internal/rpc/action-rpc.ts
+  var import_child_process = __require("child_process");
   var import_cuid = __toESM(require_cuid());
 
   // ../../gen/service.ts
   var _path = {
-    "royal": "pkgs/royal/index.ts"
+    "royal": "pkgs/royal/index.ts",
+    "srv": "app/srv/index.ts"
   };
   var _runtime = {
-    "royal": "node"
+    "royal": "node",
+    "srv": "node"
   };
 
   // internal/rpc/action-rpc.ts
@@ -21428,6 +21395,24 @@ const getRuntime = () => {
   var import_esbuild = __require("esbuild");
   var import_path2 = __require("path");
   var import_picocolors = __toESM(require_picocolors());
+
+  // internal/rpc/wait-exit.ts
+  var waitExit = async (child) => {
+    const bunChild = child;
+    if (typeof bunChild.exited !== "undefined") {
+      await bunChild.exited;
+    } else {
+      const nodeChild = child;
+      await new Promise((resolve) => {
+        nodeChild.on("exit", function() {
+          resolve();
+        });
+      });
+    }
+  };
+
+  // internal/service/build/build-svc-node.ts
+  var import_esbuild_plugin_commonjs = __toESM(require_esbuild_plugin_commonjs());
 
   // internal/service/build/resolve-deps.ts
   var import_path = __require("path");
@@ -21494,6 +21479,7 @@ const getRuntime = () => {
     await writeAsync((0, import_path2.join)(tpath, "package.json"), {
       name,
       version: "1.0.0",
+      type: "module",
       dependencies: deps
     });
     await new Promise(async (finished) => {
@@ -21512,10 +21498,12 @@ const getRuntime = () => {
           bundle: true,
           logLevel: "silent",
           platform: "node",
+          format: "esm",
           sourcemap: true,
           incremental: true,
           metafile: true,
           minify: true,
+          plugins: [(0, import_esbuild_plugin_commonjs.commonjs)()],
           entryPoints: [indexPath],
           outfile: (0, import_path2.join)(tpath, "index.js"),
           external: Object.keys(deps)
@@ -21530,12 +21518,11 @@ const getRuntime = () => {
     });
   };
   var recoverFromError = async (name, e, rebuild) => {
-    printError(e);
     if (e && e.errors) {
       const files = e.errors.map((e2) => e2.location?.file || "").filter((e2) => e2);
       if (g.node.watch[name]) {
         g.node.watch[name].kill();
-        await g.node.watch[name].exited;
+        await waitExit(g.node.watch[name]);
       }
       g.node.watch[name] = Bun.spawn({
         cmd: [
@@ -21564,18 +21551,9 @@ const getRuntime = () => {
         break;
       }
       g.node.watch[name].kill();
-      await g.node.watch[name].exited;
+      await waitExit(g.node.watch[name]);
       delete g.node.watch[name];
       rebuild();
-    }
-  };
-  var printError = (e) => {
-    for (const [idx, line] of Object.entries(e.message.split("\n"))) {
-      if (idx === "0") {
-        console.log(import_picocolors.default.red(line));
-      } else {
-        console.log(`  ${line}`);
-      }
     }
   };
 
@@ -21823,74 +21801,86 @@ export default {
           start();
         };
         const start = () => {
-          if (_runtime[name] === "node") {
-            svc.child = Bun.spawn({
-              cmd: [
-                "node",
-                ...[
-                  "--enable-source-maps",
-                  "--no-warnings",
-                  (0, import_path5.join)(path2, "index.js"),
-                  svc.crashed ? "crashed" : "running",
-                  g.svcPort.toString(),
-                  pid
-                ].filter((e) => e)
-              ],
-              cwd: process.cwd(),
-              stderr: "inherit",
-              stdout: "inherit",
-              onExit(exitCode) {
-                const desc = {
-                  "0": "EXIT WITHOUT ERROR",
-                  "1": "FATAL ERROR",
-                  "2": "Incorrect usage, invalid options or missing arguments",
-                  "55": "Service requested stop parent",
-                  "126": "Command found but is not executable",
-                  "128": "Command was forcefully terminated manually",
-                  "88": "Parent websocket connection lost",
-                  "111": "Hot Reload",
-                  "222": "Terminated by parent",
-                  "130": "SIGINT (ctrl+c)",
-                  "143": "SIGTERM (kill command)"
-                };
-                const stoplog = (reason) => {
-                  if (reason === "Hot Reload" || reason === "Clean Up")
-                    return;
-                  console.log(
-                    red("Stopped"),
-                    green(`\u203A ${(0, import_lodash2.default)((0, import_lodash.default)(name) + " ", 13, " ")}`),
-                    `[pid: ${blue((0, import_lodash2.default)(pid, 7, " "))}] ${yellow(reason || "")}`
-                  );
-                };
-                if (svc.pendingExit && svc.pendingExit.resolve) {
-                  const reason = svc.pendingExit.from;
-                  stoplog(`${reason}`);
-                  svc.pendingExit.resolve(exitCode);
-                  delete g.svc[name][pid];
-                } else {
-                  const text = desc[exitCode.toString()] || "Unknown Exit Code";
-                  if (exitCode === 55) {
-                    process.exit(55);
-                  }
-                  if (exitCode === 111) {
-                    stoplog(text);
-                    buildSvc(name, process.cwd());
-                    restart();
-                    return;
-                  } else {
-                    stoplog(`[${red(`${exitCode}`)}] ${yellow(text)}`);
-                    if (g.mode !== "dev") {
-                      restart(true);
-                    } else {
-                      delete g.svc[name][pid];
-                      root.action("royal").watchAndStart(name);
-                    }
-                    return;
-                  }
-                }
-                delete g.svc[name][pid];
+          const svcRuntime = getRuntime();
+          const onExit = (exitCode) => {
+            const desc = {
+              "0": "EXIT WITHOUT ERROR",
+              "1": "FATAL ERROR",
+              "2": "Incorrect usage, invalid options or missing arguments",
+              "55": "Service requested stop parent",
+              "126": "Command found but is not executable",
+              "128": "Command was forcefully terminated manually",
+              "88": "Parent websocket connection lost",
+              "111": "Hot Reload",
+              "222": "Terminated by parent",
+              "130": "SIGINT (ctrl+c)",
+              "143": "SIGTERM (kill command)"
+            };
+            const stoplog = (reason) => {
+              if (reason === "Hot Reload" || reason === "Clean Up")
+                return;
+              console.log(
+                red("Stopped"),
+                green(`\u203A ${(0, import_lodash2.default)((0, import_lodash.default)(name) + " ", 13, " ")}`),
+                `[pid: ${blue((0, import_lodash2.default)(pid, 7, " "))}] ${yellow(reason || "")}`
+              );
+            };
+            if (svc.pendingExit && svc.pendingExit.resolve) {
+              const reason = svc.pendingExit.from;
+              stoplog(`${reason}`);
+              svc.pendingExit.resolve(exitCode);
+              delete g.svc[name][pid];
+            } else {
+              const text = desc[exitCode.toString()] || "Unknown Exit Code";
+              if (exitCode === 55) {
+                process.exit(55);
               }
-            });
+              if (exitCode === 111) {
+                stoplog(text);
+                buildSvc(name, process.cwd());
+                restart();
+                return;
+              } else {
+                stoplog(`[${red(`${exitCode}`)}] ${yellow(text)}`);
+                if (g.mode !== "dev") {
+                  restart(true);
+                } else {
+                  delete g.svc[name][pid];
+                  root.action("royal").watchAndStart(name);
+                }
+                return;
+              }
+            }
+            delete g.svc[name][pid];
+          };
+          if (_runtime[name] === "node") {
+            const args = [
+              "--enable-source-maps",
+              "--no-warnings",
+              (0, import_path5.join)(path2, "index.js"),
+              svc.crashed ? "crashed" : "running",
+              g.svcPort.toString(),
+              pid
+            ].filter((e) => e);
+            if (svcRuntime === "bun") {
+              svc.child = Bun.spawn({
+                cmd: ["node", ...args],
+                cwd: process.cwd(),
+                stderr: "inherit",
+                stdout: "inherit",
+                onExit(exitCode) {
+                  onExit(exitCode);
+                }
+              });
+            } else if (svcRuntime === "node") {
+              svc.child = (0, import_child_process.spawn)(process.execPath, args, {
+                cwd: process.cwd(),
+                stdio: "inherit"
+              });
+              svc.child.on("exit", (code) => {
+                onExit(code || 0);
+              });
+            }
             svc.pendingStart = resolve;
             return svc;
           } else {
@@ -22012,6 +22002,42 @@ export default {
   var rootBoot = _boot();
   var rootService = _service();
 
+  // internal/rpc/typed-rpc/createJsonRpcRequest.ts
+  var globalRequestId = 1;
+  var createJsonRpcRequest = () => (action, ...payload) => {
+    const currentRequestId = globalRequestId;
+    globalRequestId += 1;
+    return {
+      jsonrpc: "2.0",
+      method: action,
+      params: payload,
+      id: currentRequestId.toString()
+    };
+  };
+
+  // internal/rpc/typed-rpc/createBasicJsonRpcClient.ts
+  var createBasicJsonRpcClient = (client) => ({
+    send: (action, ...payload) => {
+      const request = createJsonRpcRequest()(action, ...payload);
+      return client.sendRequest(request);
+    }
+  });
+
+  // internal/rpc/typed-rpc/createJsonRpcClient.ts
+  var createJsonRpcClient = (client) => {
+    const basicClient = createBasicJsonRpcClient(client);
+    return new Proxy(basicClient, {
+      get: (target, methodOrAttributeName) => {
+        return (...rest) => {
+          return target.send(
+            methodOrAttributeName,
+            ...rest
+          );
+        };
+      }
+    });
+  };
+
   // internal/rpc/typed-rpc/createRequestHandler.ts
   var createRequestHandler = (handlers) => {
     return {
@@ -22071,6 +22097,7 @@ export default {
   var serviceHandler = createRequestHandler({
     ...rootService
   });
+  var dec = new TextDecoder();
 
   // internal/service/build/build-all.ts
   var import_lodash3 = __toESM(require_lodash2());
@@ -22078,7 +22105,7 @@ export default {
   // internal/service/build/build-app.ts
   var import_esbuild2 = __require("esbuild");
   var import_path6 = __require("path");
-  var import_esbuild_plugin_commonjs = __toESM(require_esbuild_plugin_commonjs());
+  var import_esbuild_plugin_commonjs2 = __toESM(require_esbuild_plugin_commonjs());
   var buildApp = async (targetDir) => {
     const cwdsplit = process.cwd().split(import_path6.sep);
     const root2 = (cwdsplit.includes(".output") ? cwdsplit.slice(0, cwdsplit.length - 2) : cwdsplit).join(import_path6.sep);
@@ -22102,7 +22129,7 @@ export default {
       platform: "node",
       format: "esm",
       entryPoints: [(0, import_path6.join)(appDir, "app.ts")],
-      plugins: [(0, import_esbuild_plugin_commonjs.commonjs)()],
+      plugins: [(0, import_esbuild_plugin_commonjs2.commonjs)()],
       outfile: (0, import_path6.join)(targetDir, "app.js"),
       external: [...Object.keys(deps), "esbuild"]
     });
@@ -22143,7 +22170,7 @@ ${src}`
   };
 
   // internal/service/build/run-pnpm.ts
-  var import_child_process = __require("child_process");
+  var import_child_process2 = __require("child_process");
   var runPnpm = (args, cwd2, opt = { silent: true, progress: true, stdoutAfter: 120 }) => {
     return new Promise(async (_resolve) => {
       const runtime = getRuntime();
@@ -22181,7 +22208,7 @@ ${src}`
         const code = await s.exited;
         resolve(code);
       } else if (runtime === "node") {
-        const pnpm = (0, import_child_process.spawn)(
+        const pnpm = (0, import_child_process2.spawn)(
           /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
           args,
           { cwd: cwd2, stdio: "ignore" }
@@ -22274,6 +22301,8 @@ ${src}`
     await removeAsync((0, import_path8.join)(process.cwd(), "gen"));
     let shouldInstallDep = false;
     await scaff({
+      "api.meta.json": {},
+      "prisma.ts": `export const prisma = {};`,
       "package.json": {
         "name": "gen",
         "version": "0.0.1",
@@ -22313,7 +22342,7 @@ export { action as royal } from "../pkgs/royal/action";
     const appcwd = (0, import_path8.join)(process.cwd(), ".output", "app");
     await dirAsync(appcwd);
     if (args.includes("genbase")) {
-      (0, import_child_process2.spawnSync)(
+      (0, import_child_process3.spawnSync)(
         process.execPath,
         ["-r", "jiti/register", "./base/gen.ts"],
         {
@@ -22337,7 +22366,7 @@ export { action as royal } from "../pkgs/royal/action";
       if (!pk1 || pk1 && !isEqual(pk1.dependencies, ndeps)) {
         await runPnpm(["i"], (0, import_path8.join)(process.cwd(), ".output", "app"));
       }
-      const res = (0, import_child_process2.spawn)(
+      const res = (0, import_child_process3.spawn)(
         process.execPath,
         [
           "--enable-source-maps",
