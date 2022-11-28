@@ -78,7 +78,7 @@ export { action as royal } from "../pkgs/royal/action";
   }
 
   const start = async () => {
-    const pk1 = await readAsync(
+    const pkgjson = await readAsync(
       join(process.cwd(), ".output", "app", "package.json"),
       "json",
     );
@@ -86,9 +86,10 @@ export { action as royal } from "../pkgs/royal/action";
 
     await buildApp(join(process.cwd(), ".output", "app"));
 
-    if (!pk1 || (pk1 && !isEqual(pk1.dependencies, ndeps))) {
+    if (!pkgjson || (pkgjson && !isEqual(pkgjson.dependencies, ndeps))) {
       await runPnpm(["i"], join(process.cwd(), ".output", "app"));
     }
+
     const res = spawn(
       process.execPath,
       [
@@ -106,9 +107,11 @@ export { action as royal } from "../pkgs/royal/action";
 
     res.on("exit", (code) => {
       const time = new Date().getTime();
-      if (time - lastRestart < 2000 && code !== 111) return;
-      if (code === 222 || code === 55) {
-        return;
+      if (code !== 111) {
+        if (time - lastRestart < 2000) return;
+        if (code === 222 || code === 55) {
+          return;
+        }
       }
       start();
       lastRestart = time;

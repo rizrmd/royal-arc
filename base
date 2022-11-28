@@ -21369,10 +21369,12 @@ const getRuntime = () => {
 
   // ../../gen/service.ts
   var _path = {
-    "royal": "pkgs/royal/index.ts"
+    "royal": "pkgs/royal/index.ts",
+    "srv": "app/srv/index.ts"
   };
   var _runtime = {
-    "royal": "node"
+    "royal": "node",
+    "srv": "node"
   };
 
   // internal/rpc/action-rpc.ts
@@ -22095,6 +22097,69 @@ export default {
   // internal/service/build/build-all.ts
   var import_lodash3 = __toESM(require_lodash2());
 
+  // internal/service/build/run-pnpm.ts
+  var import_child_process2 = __require("child_process");
+  var runPnpm = (args, cwd2, opt = { silent: true, progress: true, stdoutAfter: 120 }) => {
+    return new Promise(async (_resolve) => {
+      const runtime = getRuntime();
+      let ival = 0;
+      let i = 0;
+      if (opt.progress) {
+        ival = setInterval(() => {
+          if (i >= 30) {
+            i = 0;
+            console.log("");
+          }
+          if (runtime === "node") {
+            process.stdout.write("\u2592");
+          } else if (runtime === "bun") {
+            Bun.write(Bun.stdout, "\u2592");
+          }
+          i++;
+        }, 1e3);
+      }
+      if (opt.silent && args[0] === "i" && args.length === 1) {
+        args.push("-s");
+      }
+      const resolve = (code) => {
+        clearInterval(ival);
+        _resolve(code);
+      };
+      if (runtime === "bun") {
+        const s = Bun.spawn({
+          cmd: [
+            /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
+            ...args
+          ],
+          cwd: cwd2
+        });
+        const code = await s.exited;
+        resolve(code);
+      } else if (runtime === "node") {
+        const pnpm = (0, import_child_process2.spawn)(
+          /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
+          args,
+          { cwd: cwd2, stdio: "ignore" }
+        );
+        pnpm.once("exit", (code) => {
+          resolve(code || 0);
+        });
+      }
+    });
+  };
+
+  // main/declare.ts
+  BigInt.prototype["toJSON"] = function() {
+    return this.toString();
+  };
+
+  // main/root.ts
+  var root = {
+    boot: createJsonRpcClient(rpcSender("boot")),
+    service: createJsonRpcClient(rpcSender("service")),
+    action: rootAction(rpcSender("service"))
+  };
+
   // internal/service/build/build-app.ts
   var import_path6 = __require("path");
   var buildApp = async (targetDir) => {
@@ -22160,69 +22225,6 @@ ${src}`
   `
     );
     return (0, import_path6.join)(targetDir, "app.js");
-  };
-
-  // internal/service/build/run-pnpm.ts
-  var import_child_process2 = __require("child_process");
-  var runPnpm = (args, cwd2, opt = { silent: true, progress: true, stdoutAfter: 120 }) => {
-    return new Promise(async (_resolve) => {
-      const runtime = getRuntime();
-      let ival = 0;
-      let i = 0;
-      if (opt.progress) {
-        ival = setInterval(() => {
-          if (i >= 30) {
-            i = 0;
-            console.log("");
-          }
-          if (runtime === "node") {
-            process.stdout.write("\u2592");
-          } else if (runtime === "bun") {
-            Bun.write(Bun.stdout, "\u2592");
-          }
-          i++;
-        }, 1e3);
-      }
-      if (opt.silent && args[0] === "i" && args.length === 1) {
-        args.push("-s");
-      }
-      const resolve = (code) => {
-        clearInterval(ival);
-        _resolve(code);
-      };
-      if (runtime === "bun") {
-        const s = Bun.spawn({
-          cmd: [
-            /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
-            ...args
-          ],
-          cwd: cwd2
-        });
-        const code = await s.exited;
-        resolve(code);
-      } else if (runtime === "node") {
-        const pnpm = (0, import_child_process2.spawn)(
-          /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
-          args,
-          { cwd: cwd2, stdio: "ignore" }
-        );
-        pnpm.once("exit", (code) => {
-          resolve(code || 0);
-        });
-      }
-    });
-  };
-
-  // main/declare.ts
-  BigInt.prototype["toJSON"] = function() {
-    return this.toString();
-  };
-
-  // main/root.ts
-  var root = {
-    boot: createJsonRpcClient(rpcSender("boot")),
-    service: createJsonRpcClient(rpcSender("service")),
-    action: rootAction(rpcSender("service"))
   };
 
   // base/is-equal.ts
@@ -22351,13 +22353,13 @@ export { action as royal } from "../pkgs/royal/action";
       return;
     }
     const start = async () => {
-      const pk1 = await readAsync(
+      const pkgjson = await readAsync(
         (0, import_path8.join)(process.cwd(), ".output", "app", "package.json"),
         "json"
       );
       const ndeps = await resolveDeps((0, import_path8.join)(process.cwd(), "app"));
       await buildApp((0, import_path8.join)(process.cwd(), ".output", "app"));
-      if (!pk1 || pk1 && !isEqual(pk1.dependencies, ndeps)) {
+      if (!pkgjson || pkgjson && !isEqual(pkgjson.dependencies, ndeps)) {
         await runPnpm(["i"], (0, import_path8.join)(process.cwd(), ".output", "app"));
       }
       const res = (0, import_child_process3.spawn)(
@@ -22376,10 +22378,12 @@ export { action as royal } from "../pkgs/royal/action";
       );
       res.on("exit", (code) => {
         const time = new Date().getTime();
-        if (time - lastRestart < 2e3 && code !== 111)
-          return;
-        if (code === 222 || code === 55) {
-          return;
+        if (code !== 111) {
+          if (time - lastRestart < 2e3)
+            return;
+          if (code === 222 || code === 55) {
+            return;
+          }
         }
         start();
         lastRestart = time;
