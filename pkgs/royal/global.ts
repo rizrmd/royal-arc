@@ -1,4 +1,5 @@
 import { ChildProcess } from "child_process";
+import { watch } from "chokidar";
 import {
   getParts,
   HttpResponse,
@@ -16,6 +17,9 @@ export const g = global as unknown as {
   mode: "dev" | "staging" | "prod";
   isRestarted: boolean;
   execFromBase: boolean;
+  watcher: {
+    create: ReturnType<typeof watch>;
+  };
 
   serverName: "default";
   root: string;

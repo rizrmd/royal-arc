@@ -2277,9 +2277,9 @@ const getRuntime = () => {
         }
         return opts;
       };
-      var processFoundPaths = (foundPaths, cwd2) => {
+      var processFoundPaths = (foundPaths, cwd3) => {
         return foundPaths.map((path2) => {
-          return pathUtil.relative(cwd2, path2);
+          return pathUtil.relative(cwd3, path2);
         });
       };
       var generatePathDoesntExistError = (path2) => {
@@ -3300,7 +3300,7 @@ const getRuntime = () => {
         const getCwdPath = () => {
           return cwdPath || process.cwd();
         };
-        const cwd2 = function() {
+        const cwd3 = function() {
           if (arguments.length === 0) {
             return getCwdPath();
           }
@@ -3321,7 +3321,7 @@ const getRuntime = () => {
           return opts;
         };
         const api = {
-          cwd: cwd2,
+          cwd: cwd3,
           path: getPath,
           append: (path2, data, options) => {
             append2.validateInput("append", path2, data, options);
@@ -3349,14 +3349,14 @@ const getRuntime = () => {
             dir2.validateInput("dir", path2, criteria);
             const normalizedPath = resolvePath(path2);
             dir2.sync(normalizedPath, criteria);
-            return cwd2(normalizedPath);
+            return cwd3(normalizedPath);
           },
           dirAsync: (path2, criteria) => {
             dir2.validateInput("dirAsync", path2, criteria);
             return new Promise((resolve, reject) => {
               const normalizedPath = resolvePath(path2);
               dir2.async(normalizedPath, criteria).then(() => {
-                resolve(cwd2(normalizedPath));
+                resolve(cwd3(normalizedPath));
               }, reject);
             });
           },
@@ -3464,13 +3464,13 @@ const getRuntime = () => {
           tmpDir: (options) => {
             tmpDir2.validateInput("tmpDir", options);
             const pathOfCreatedDirectory = tmpDir2.sync(getCwdPath(), options);
-            return cwd2(pathOfCreatedDirectory);
+            return cwd3(pathOfCreatedDirectory);
           },
           tmpDirAsync: (options) => {
             tmpDir2.validateInput("tmpDirAsync", options);
             return new Promise((resolve, reject) => {
               tmpDir2.async(getCwdPath(), options).then((pathOfCreatedDirectory) => {
-                resolve(cwd2(pathOfCreatedDirectory));
+                resolve(cwd3(pathOfCreatedDirectory));
               }, reject);
             });
           },
@@ -20703,11 +20703,11 @@ const getRuntime = () => {
       function toString(value) {
         return value == null ? "" : baseToString(value);
       }
-      function capitalize3(string) {
+      function capitalize4(string) {
         return upperFirst(toString(string).toLowerCase());
       }
       var upperFirst = createCaseFirst("toUpperCase");
-      module.exports = capitalize3;
+      module.exports = capitalize4;
     }
   });
 
@@ -21128,7 +21128,7 @@ const getRuntime = () => {
   var import_path8 = __require("path");
 
   // main/initialize.ts
-  var import_lodash4 = __toESM(require_lodash());
+  var import_lodash5 = __toESM(require_lodash());
 
   // internal/service/build/jetpack/index.ts
   var import_jetpack = __toESM(require_jetpack());
@@ -21378,8 +21378,8 @@ const getRuntime = () => {
   };
 
   // internal/rpc/action-rpc.ts
-  var import_lodash = __toESM(require_lodash2());
-  var import_lodash2 = __toESM(require_lodash());
+  var import_lodash2 = __toESM(require_lodash2());
+  var import_lodash3 = __toESM(require_lodash());
   var import_path5 = __require("path");
   var import_picocolors3 = __toESM(require_picocolors());
 
@@ -21389,11 +21389,15 @@ const getRuntime = () => {
   var import_picocolors2 = __toESM(require_picocolors());
 
   // internal/service/build/build-svc-node.ts
+  var import_chokidar = __require("./pkgs/service/node_modules/chokidar/index.js");
+  var import_lodash = __toESM(require_lodash2());
   var import_path2 = __require("path");
   var import_picocolors = __toESM(require_picocolors());
 
   // internal/rpc/wait-exit.ts
   var waitExit = async (child) => {
+    if (!child)
+      return;
     const bunChild = child;
     if (typeof bunChild.exited !== "undefined") {
       await bunChild.exited;
@@ -21480,7 +21484,7 @@ const getRuntime = () => {
         g.node = {
           build: {},
           buildTimeout: {},
-          watch: {}
+          recoverError: {}
         };
       }
       let nb = g.node.build[name];
@@ -21489,66 +21493,94 @@ const getRuntime = () => {
       const { build } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
       const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
       const rebuild = async () => {
-        g.node.build[name] = await build({
-          bundle: true,
-          logLevel: "silent",
-          platform: "node",
-          format: "esm",
-          sourcemap: true,
-          incremental: true,
-          metafile: true,
-          minify: true,
-          plugins: [commonjs()],
-          entryPoints: [indexPath],
-          outfile: (0, import_path2.join)(tpath, "index.js"),
-          external: Object.keys(deps)
-        });
-        finished();
+        try {
+          g.node.build[name] = await build({
+            bundle: true,
+            logLevel: "silent",
+            platform: "node",
+            format: "esm",
+            sourcemap: true,
+            incremental: true,
+            metafile: true,
+            minify: true,
+            plugins: [commonjs()],
+            entryPoints: [indexPath],
+            outfile: (0, import_path2.join)(tpath, "index.js"),
+            external: Object.keys(deps)
+          });
+          finished();
+        } catch (e) {
+          recoverFromError(name, e, rebuild);
+        }
       };
-      try {
-        rebuild();
-      } catch (e) {
-        recoverFromError(name, e, rebuild);
-      }
+      rebuild();
     });
   };
   var recoverFromError = async (name, e, rebuild) => {
     if (e && e.errors) {
+      printError(e, name);
       const files = e.errors.map((e2) => e2.location?.file || "").filter((e2) => e2);
-      if (g.node.watch[name]) {
-        g.node.watch[name].kill();
-        await waitExit(g.node.watch[name]);
+      if (g.node.recoverError[name]) {
+        g.node.recoverError[name].kill();
+        await waitExit(g.node.recoverError[name]);
       }
-      g.node.watch[name] = Bun.spawn({
-        cmd: [
-          (0, import_path2.join)(
-            "node_modules",
-            ".bin",
-            /^win/.test(process.platform) ? "jiti.cmd" : "jiti"
-          ),
-          (0, import_path2.join)(__dirname, "node-watcher.ts")
-        ],
-        cwd: process.cwd(),
-        stdin: "pipe",
-        stdout: "pipe"
-      });
-      const { stdin, stdout } = g.node.watch[name];
-      const fstdin = stdin;
-      for (const file2 of files) {
-        fstdin.write(file2 + "\n");
+      const runtime = getRuntime();
+      const cmd = (0, import_path2.join)(
+        "node_modules",
+        ".bin",
+        /^win/.test(process.platform) ? "jiti.cmd" : "jiti"
+      );
+      if (runtime === "bun") {
+        g.node.recoverError[name] = Bun.spawn({
+          cmd: [
+            cmd,
+            (0, import_path2.join)(__dirname, "node-watcher.ts")
+          ],
+          cwd: process.cwd(),
+          stdin: "pipe",
+          stdout: "pipe"
+        });
+        const { stdin, stdout } = g.node.recoverError[name];
+        const fstdin = stdin;
+        for (const file2 of files) {
+          fstdin.write(file2 + "\n");
+        }
+        fstdin.write("!!start!!\n");
+        const rstdout = stdout;
+        const reader = rstdout.getReader();
+        while (true) {
+          await reader.read();
+          console.log(import_picocolors.default.yellow(`Rebuilding ${name}...`));
+          break;
+        }
+        g.node.recoverError[name].kill();
+      } else {
+        const w = (0, import_chokidar.watch)(files, {
+          disableGlobbing: true,
+          ignoreInitial: true
+        });
+        await new Promise((done) => {
+          w.once("all", async () => {
+            await w.close();
+            done();
+          });
+        });
       }
-      fstdin.write("!!start!!\n");
-      const rstdout = stdout;
-      const reader = rstdout.getReader();
-      while (true) {
-        await reader.read();
-        console.log(import_picocolors.default.yellow(`Rebuilding ${name}...`));
-        break;
-      }
-      g.node.watch[name].kill();
-      await waitExit(g.node.watch[name]);
-      delete g.node.watch[name];
+      await waitExit(g.node.recoverError[name]);
+      delete g.node.recoverError[name];
       rebuild();
+    }
+  };
+  var printError = (e, svcName) => {
+    for (const [idx, line] of Object.entries(e.message.split("\n"))) {
+      if (idx === "0") {
+        console.log(
+          svcName ? `[${import_picocolors.default.green((0, import_lodash.default)(svcName))}]` : "",
+          import_picocolors.default.red(line)
+        );
+      } else {
+        console.log(`  ${line}`);
+      }
     }
   };
 
@@ -21595,12 +21627,12 @@ const getRuntime = () => {
   // internal/service/gen-meta.ts
   var import_promises = __require("fs/promises");
   var import_path4 = __require("path");
-  var generateMeta = async (cwd2, subdir = ["app", "pkgs"]) => {
-    await dirAsync((0, import_path4.join)(cwd2, "gen"));
+  var generateMeta = async (cwd3, subdir = ["app", "pkgs"]) => {
+    await dirAsync((0, import_path4.join)(cwd3, "gen"));
     let changed = false;
     const services = {};
     for (const dir2 of subdir) {
-      const currentDir = (0, import_path4.join)(cwd2, dir2);
+      const currentDir = (0, import_path4.join)(cwd3, dir2);
       const dirs = await listAsync(currentDir);
       if (dirs) {
         for (const item of dirs) {
@@ -21619,7 +21651,7 @@ const getRuntime = () => {
                   name: item,
                   safeName: item.replaceAll(/\W/ig, "_"),
                   runtime,
-                  path: indexPath.substring(cwd2.length + 1)
+                  path: indexPath.substring(cwd3.length + 1)
                 };
               }
             } catch (_) {
@@ -21653,14 +21685,14 @@ export const _runtime = {
     }).join(",\n  ")}
 }
 `;
-    const appGenPath = (0, import_path4.join)(cwd2, "gen", "service.ts");
+    const appGenPath = (0, import_path4.join)(cwd3, "gen", "service.ts");
     const gen = await readAsync(appGenPath);
     if (gen !== gensrc) {
       changed = true;
       await writeAsync(appGenPath, gensrc);
     }
     if (await genAction({
-      cwd: cwd2,
+      cwd: cwd3,
       services,
       suffix: "",
       outfile: "action.ts"
@@ -21670,12 +21702,12 @@ export const _runtime = {
     return changed;
   };
   var genAction = async ({
-    cwd: cwd2,
+    cwd: cwd3,
     services,
     suffix,
     outfile
   }) => {
-    const gnodeFile = (0, import_path4.join)(cwd2, "gen", outfile);
+    const gnodeFile = (0, import_path4.join)(cwd3, "gen", outfile);
     const gnode = `/******************************************************/
 /************* autogenerated - do not edit ************/
 /******************************************************/
@@ -21712,8 +21744,11 @@ export default {
     if (g.svc) {
       for (const [name, v] of Object.entries(g.svc)) {
         const build = g.node.build[name];
-        if (build && build.stop) {
-          build.stop();
+        if (build) {
+          if (build.stop) {
+            build.stop();
+          }
+          build.rebuild.dispose();
         }
         for (const [pid, svc] of Object.entries(v)) {
           pending.push(
@@ -21762,8 +21797,8 @@ export default {
         }
         console.log(
           magenta("Started"),
-          green(`\u203A ${(0, import_lodash2.default)((0, import_lodash.default)(name) + " ", 13, " ")}`),
-          `[pid: ${blue((0, import_lodash2.default)(pid, 7, " "))}]`,
+          green(`\u203A ${(0, import_lodash3.default)((0, import_lodash2.default)(name) + " ", 13, " ")}`),
+          `[pid: ${blue((0, import_lodash3.default)(pid, 7, " "))}]`,
           !!svc.restarted ? yellow("Restarted") : ""
         );
         return {
@@ -21812,19 +21847,23 @@ export default {
               "143": "SIGTERM (kill command)"
             };
             const stoplog = (reason) => {
-              if (reason === "Hot Reload" || reason === "Clean Up")
-                return;
               console.log(
                 red("Stopped"),
-                green(`\u203A ${(0, import_lodash2.default)((0, import_lodash.default)(name) + " ", 13, " ")}`),
-                `[pid: ${blue((0, import_lodash2.default)(pid, 7, " "))}] ${yellow(reason || "")}`
+                green(`\u203A ${(0, import_lodash3.default)((0, import_lodash2.default)(name) + " ", 13, " ")}`),
+                `[pid: ${blue((0, import_lodash3.default)(pid, 7, " "))}] ${yellow(reason || "")}`
               );
             };
             if (svc.pendingExit && svc.pendingExit.resolve) {
               const reason = svc.pendingExit.from;
-              stoplog(`${reason}`);
-              svc.pendingExit.resolve(exitCode);
-              delete g.svc[name][pid];
+              if (reason === "Hot Reload") {
+                svc.pendingExit.resolve(exitCode);
+                restart();
+                return;
+              } else {
+                stoplog(`${reason}`);
+                svc.pendingExit.resolve(exitCode);
+                delete g.svc[name][pid];
+              }
             } else {
               const text = desc[exitCode.toString()] || "Unknown Exit Code";
               if (exitCode === 55) {
@@ -21841,7 +21880,6 @@ export default {
                   restart(true);
                 } else {
                   delete g.svc[name][pid];
-                  root.action("royal").watchAndStart(name);
                 }
                 return;
               }
@@ -22095,11 +22133,11 @@ export default {
   var dec = new TextDecoder();
 
   // internal/service/build/build-all.ts
-  var import_lodash3 = __toESM(require_lodash2());
+  var import_lodash4 = __toESM(require_lodash2());
 
   // internal/service/build/run-pnpm.ts
   var import_child_process2 = __require("child_process");
-  var runPnpm = (args, cwd2, opt = { silent: true, progress: true, stdoutAfter: 120 }) => {
+  var runPnpm = (args, cwd3, opt = { silent: true, progress: true, stdoutAfter: 120 }) => {
     return new Promise(async (_resolve) => {
       const runtime = getRuntime();
       let ival = 0;
@@ -22131,7 +22169,7 @@ export default {
             /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
             ...args
           ],
-          cwd: cwd2
+          cwd: cwd3
         });
         const code = await s.exited;
         resolve(code);
@@ -22139,7 +22177,7 @@ export default {
         const pnpm = (0, import_child_process2.spawn)(
           /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
           args,
-          { cwd: cwd2, stdio: "ignore" }
+          { cwd: cwd3, stdio: "ignore" }
         );
         pnpm.once("exit", (code) => {
           resolve(code || 0);
@@ -22147,6 +22185,10 @@ export default {
       }
     });
   };
+
+  // internal/service/build/watch-all.ts
+  var import_chokidar2 = __require("./pkgs/service/node_modules/chokidar/index.js");
+  var cwd2 = process.cwd();
 
   // main/declare.ts
   BigInt.prototype["toJSON"] = function() {

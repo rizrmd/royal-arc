@@ -82,6 +82,7 @@ importers:
       '@types/prettier': ^2.7.1
       '@types/websocket': ^1.0.5
       body-parser: ^1.20.1
+      chokidar: ^3.5.3
       cuid: ^2.1.8
       dotenv: ^16.0.3
       express: ^4.18.2
@@ -104,6 +105,7 @@ importers:
       '@babel/plugin-syntax-typescript': 7.20.0_@babel+core@7.20.2
       '@babel/traverse': 7.20.1
       body-parser: 1.20.1
+      chokidar: 3.5.3
       cuid: 2.1.8
       dotenv: 16.0.3
       express: 4.18.2

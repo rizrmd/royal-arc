@@ -46,6 +46,7 @@ const getRuntime = () => {
   importMap.load({
     imports: {
       "esbuild": "./pkgs/service/node_modules/esbuild/lib/main.js",
+      "chokidar": "./pkgs/service/node_modules/chokidar/index.js",
     },
   });
   const res = await build({
