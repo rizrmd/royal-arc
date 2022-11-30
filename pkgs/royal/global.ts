@@ -18,6 +18,7 @@ export const g = global as unknown as {
   isRestarted: boolean;
   execFromBase: boolean;
   watcher: {
+    web: Record<string, ReturnType<typeof watch>>;
     create: ReturnType<typeof watch>;
   };
 

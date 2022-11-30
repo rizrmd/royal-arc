@@ -8,6 +8,12 @@ importers:
     dependencies:
       service: link:../pkgs/service
 
+  app/muk:
+    specifiers:
+      service: workspace:^
+    dependencies:
+      service: link:../../pkgs/service
+
   app/srv:
     specifiers:
       '@types/node': ^18.11.9
@@ -20,6 +26,12 @@ importers:
       service: link:../../pkgs/service
     devDependencies:
       '@types/node': 18.11.9
+
+  app/utu:
+    specifiers:
+      service: workspace:^
+    dependencies:
+      service: link:../../pkgs/service
 
   app/web:
     specifiers:

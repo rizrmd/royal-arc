@@ -6,6 +6,8 @@ import { cwd } from "process";
 import { root } from "service";
 import { TSingleConfig, TSingleConfigOutput } from "./config";
 import { g } from "./global";
+import { initScaff } from "./scaff/init-scaff";
+import { watcherCreate } from "./scaff/watcher-create";
 import { startServices, stopServices } from "./service";
 import { plog } from "./uws/tools";
 import { createUWS } from "./uws/uws-creator";
@@ -17,6 +19,10 @@ export const boot = async () => {
   g.servers = {};
   g.ports = {};
   g.serverWS = new WeakMap();
+  g.watcher = {
+    web: {},
+    create: null,
+  };
   g.panelStdOut = "";
   if (!g.vite) {
     g.vite = {};
@@ -58,18 +64,8 @@ export const boot = async () => {
 
   await ensurePorts(conf, servers);
 
-  if (g.isRestarted) {
-    for (let _name of Object.keys(_path)) {
-      const name = _name as _names;
-      try {
-        await root.boot.buildSvc(name, process.cwd());
-      } catch (e) {
-        console.log(`Failed to rebuild services:`, e);
-      }
-    }
-  }
-
   if (g.execFromBase) {
+    await watcherCreate();
     if (g.mode === "dev") {
       await viteServe();
     } else {
@@ -79,6 +75,8 @@ export const boot = async () => {
 
   if (!g.isRestarted) {
     await startServices();
+  } else {
+    await initScaff();
   }
 
   console.log(picocolors.green(`Royal `));
