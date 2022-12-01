@@ -3,7 +3,17 @@ import { walkDir } from "../web/utils";
 import { format } from "prettier";
 import { writeAsync } from "service";
 
-export const createWebLayout = async (path: string) => {};
+export const createWebLayout = async (path: string) => {
+  const src = `\
+import { layout } from 'web-init'
+export default layout({
+  component: ({ children }) => {
+    return <>{children}</>
+  },
+})`;
+
+  await writeAsync(path, src);
+};
 
 export const reloadWebLayout = async (basedir: string) => {
   const newLayouts: any = {};
@@ -13,7 +23,7 @@ export const reloadWebLayout = async (basedir: string) => {
     const name = basename(
       i.endsWith(".tsx") ? i.substring(0, i.length - 4) : i,
     );
-    newLayouts[name] = `() => import('..${
+    newLayouts[name] = `() => import('../src/base/layout${
       i
         .substring(basedir.length, i.length - 4)
         .replace(/\\/gi, "/")

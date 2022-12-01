@@ -1,11 +1,17 @@
-import { basename } from "path";
+import { basename, join } from "path";
+import { reloadWebLayout } from "./create-web-layout";
+import { reloadWebPage } from "./create-web-page";
 import { watcherWeb } from "./watcher-web";
 
-export const watcherAttach = (path: string) => {
+export const watcherAttach = async (path: string) => {
   const name = basename(path);
 
   if (name.startsWith("web")) {
-    watcherWeb(name)
+    watcherWeb(path);
+    const layoutPath = join(path, "src", "base", "layout");
+    const pagePath = join(path, "src", "base", "page");
+    await reloadWebLayout(layoutPath);
+    await reloadWebPage(pagePath);
   }
 
   return path;

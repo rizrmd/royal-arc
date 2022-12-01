@@ -1,5 +1,4 @@
-import { ServerWebSocket, Subprocess } from "bun";
-import { ChildProcess, spawn as nodeSpawn } from "child_process";
+import { ServerWebSocket } from "bun";
 import { _names } from "gen";
 import { WebSocket as uWebSocket } from "uWebSockets.js";
 import { g } from "../global";
@@ -30,10 +29,14 @@ export const initServerRPC = async (port: number) => {
         idleTimeout: 0,
         sendPingsAutomatically: true,
         close(ws, code, message) {
+          ws.closed = true;
           onClose(ws);
         },
         async message(ws, message, isBinary) {
           await onMessage(ws, message);
+        },
+        open(ws) {
+          ws.closed = false;
         },
       });
     app.listen("127.0.0.1", port, (socket) => {});
@@ -68,7 +71,7 @@ export const initServerRPC = async (port: number) => {
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
-const onClose = async (ws: ServerWebSocket | uWebSocket) => {
+const onClose = async (ws: ServerWebSocket | (uWebSocket)) => {
   const svc = g.ws.get(ws);
   if (svc) {
     g.ws.delete(ws);
@@ -126,7 +129,8 @@ const onMessage = async (ws: ServerWebSocket | uWebSocket, _raw: any) => {
         res = await serviceHandler.handleRequest(json);
       }
 
-      if (res) {
+      const uws = ws as uWebSocket;
+      if (res && !uws.closed) {
         ws.send(JSON.stringify(res));
       }
     }

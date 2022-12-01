@@ -74,9 +74,8 @@ export const boot = async () => {
   }
 
   if (!g.isRestarted) {
-    await startServices();
-  } else {
     await initScaff();
+    await startServices();
   }
 
   console.log(picocolors.green(`Royal `));

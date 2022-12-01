@@ -24,7 +24,6 @@ export const initScaff = async () => {
         if (files.length === 0) {
           await createNew(path);
         }
-
         watcherAttach(path);
       }
     }

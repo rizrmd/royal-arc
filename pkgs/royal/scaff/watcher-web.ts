@@ -1,7 +1,11 @@
 import { watch } from "chokidar";
 import { basename, join } from "path";
 import { createWebLayout, reloadWebLayout } from "./create-web-layout";
-import { createWebPage, reloadWebPage } from "./create-web-page";
+import {
+  createWebPage,
+  reloadWebPage,
+  reloadWebPageSingle,
+} from "./create-web-page";
 
 export const watcherWeb = (path: string) => {
   const name = basename(path);
@@ -11,19 +15,24 @@ export const watcherWeb = (path: string) => {
   const w = watch([
     pagePath,
     layoutPath,
-  ]);
+  ], { ignoreInitial: true });
 
-  w.on("all", async (e, filepath) => {
-    if (filepath.startsWith(layoutPath)) {
-      if (e === "add" && filepath.endsWith(".ts")) {
-        await createWebLayout(filepath);
+  w.on("all", async (e, filePath) => {
+    if (filePath.startsWith(layoutPath)) {
+      if (e === "add" && filePath.endsWith(".tsx")) {
+        await createWebLayout(filePath);
       }
       await reloadWebLayout(layoutPath);
-    } else if (filepath.startsWith(pagePath)) {
-      if (e === "add" && filepath.endsWith(".ts")) {
-        await createWebPage(filepath);
+    } else if (filePath.startsWith(pagePath)) {
+      if (e === "add" && filePath.endsWith(".tsx")) {
+        await createWebPage(filePath);
       }
-      await reloadWebPage(pagePath);
+
+      if (e === "change") {
+        reloadWebPageSingle(pagePath, filePath);
+      } else {
+        await reloadWebPage(pagePath);
+      }
     }
   });
 };
