@@ -569,18 +569,18 @@ const getRuntime = () => {
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat2;
+        let stat3;
         try {
-          stat2 = fs.statSync(path2);
+          stat3 = fs.statSync(path2);
         } catch (err) {
           if (err.code !== "ENOENT") {
             throw err;
           }
         }
-        if (stat2 && !stat2.isDirectory()) {
+        if (stat3 && !stat3.isDirectory()) {
           throw generatePathOccupiedByNotDirectoryError(path2);
         }
-        return stat2;
+        return stat3;
       };
       var createBrandNewDirectorySync = (path2, opts) => {
         const options = opts || {};
@@ -596,9 +596,9 @@ const getRuntime = () => {
           }
         }
       };
-      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat2, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat3, criteria) => {
         const checkMode = () => {
-          const mode = modeUtil.normalizeFileMode(stat2.mode);
+          const mode = modeUtil.normalizeFileMode(stat3.mode);
           if (criteria.mode !== void 0 && criteria.mode !== mode) {
             fs.chmodSync(path2, criteria.mode);
           }
@@ -616,18 +616,18 @@ const getRuntime = () => {
       };
       var dirSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat2 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat2) {
-          checkExistingDirectoryFulfillsCriteriaSync(path2, stat2, criteria);
+        const stat3 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat3) {
+          checkExistingDirectoryFulfillsCriteriaSync(path2, stat3, criteria);
         } else {
           createBrandNewDirectorySync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve, reject) => {
-          fs.stat(path2).then((stat2) => {
-            if (stat2.isDirectory()) {
-              resolve(stat2);
+          fs.stat(path2).then((stat3) => {
+            if (stat3.isDirectory()) {
+              resolve(stat3);
             } else {
               reject(generatePathOccupiedByNotDirectoryError(path2));
             }
@@ -657,10 +657,10 @@ const getRuntime = () => {
           }).catch(reject);
         });
       };
-      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat2, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat3, criteria) => {
         return new Promise((resolve, reject) => {
           const checkMode = () => {
-            const mode = modeUtil.normalizeFileMode(stat2.mode);
+            const mode = modeUtil.normalizeFileMode(stat3.mode);
             if (criteria.mode !== void 0 && criteria.mode !== mode) {
               return fs.chmod(path2, criteria.mode);
             }
@@ -700,11 +700,11 @@ const getRuntime = () => {
       var dirAsync2 = (path2, passedCriteria) => {
         return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat2) => {
-            if (stat2 !== void 0) {
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat3) => {
+            if (stat3 !== void 0) {
               return checkExistingDirectoryFulfillsCriteriaAsync(
                 path2,
-                stat2,
+                stat3,
                 criteria
               );
             }
@@ -887,21 +887,21 @@ const getRuntime = () => {
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat2;
+        let stat3;
         try {
-          stat2 = fs.statSync(path2);
+          stat3 = fs.statSync(path2);
         } catch (err) {
           if (err.code !== "ENOENT") {
             throw err;
           }
         }
-        if (stat2 && !stat2.isFile()) {
+        if (stat3 && !stat3.isFile()) {
           throw generatePathOccupiedByNotFileError(path2);
         }
-        return stat2;
+        return stat3;
       };
-      var checkExistingFileFulfillsCriteriaSync = (path2, stat2, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat2.mode);
+      var checkExistingFileFulfillsCriteriaSync = (path2, stat3, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat3.mode);
         const checkContent = () => {
           if (criteria.content !== void 0) {
             write2.sync(path2, criteria.content, {
@@ -934,18 +934,18 @@ const getRuntime = () => {
       };
       var fileSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat2 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat2 !== void 0) {
-          checkExistingFileFulfillsCriteriaSync(path2, stat2, criteria);
+        const stat3 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat3 !== void 0) {
+          checkExistingFileFulfillsCriteriaSync(path2, stat3, criteria);
         } else {
           createBrandNewFileSync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve, reject) => {
-          fs.stat(path2).then((stat2) => {
-            if (stat2.isFile()) {
-              resolve(stat2);
+          fs.stat(path2).then((stat3) => {
+            if (stat3.isFile()) {
+              resolve(stat3);
             } else {
               reject(generatePathOccupiedByNotFileError(path2));
             }
@@ -958,8 +958,8 @@ const getRuntime = () => {
           });
         });
       };
-      var checkExistingFileFulfillsCriteriaAsync = (path2, stat2, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat2.mode);
+      var checkExistingFileFulfillsCriteriaAsync = (path2, stat3, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat3.mode);
         const checkContent = () => {
           return new Promise((resolve, reject) => {
             if (criteria.content !== void 0) {
@@ -1000,9 +1000,9 @@ const getRuntime = () => {
       var fileAsync2 = (path2, passedCriteria) => {
         return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat2) => {
-            if (stat2 !== void 0) {
-              return checkExistingFileFulfillsCriteriaAsync(path2, stat2, criteria);
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat3) => {
+            if (stat3 !== void 0) {
+              return checkExistingFileFulfillsCriteriaAsync(path2, stat3, criteria);
             }
             return createBrandNewFileAsync(path2, criteria);
           }).then(resolve, reject);
@@ -1049,27 +1049,27 @@ const getRuntime = () => {
           );
         }
       };
-      var createInspectObj = (path2, options, stat2) => {
+      var createInspectObj = (path2, options, stat3) => {
         const obj = {};
         obj.name = pathUtil.basename(path2);
-        if (stat2.isFile()) {
+        if (stat3.isFile()) {
           obj.type = "file";
-          obj.size = stat2.size;
-        } else if (stat2.isDirectory()) {
+          obj.size = stat3.size;
+        } else if (stat3.isDirectory()) {
           obj.type = "dir";
-        } else if (stat2.isSymbolicLink()) {
+        } else if (stat3.isSymbolicLink()) {
           obj.type = "symlink";
         } else {
           obj.type = "other";
         }
         if (options.mode) {
-          obj.mode = stat2.mode;
+          obj.mode = stat3.mode;
         }
         if (options.times) {
-          obj.accessTime = stat2.atime;
-          obj.modifyTime = stat2.mtime;
-          obj.changeTime = stat2.ctime;
-          obj.birthTime = stat2.birthtime;
+          obj.accessTime = stat3.atime;
+          obj.modifyTime = stat3.mtime;
+          obj.changeTime = stat3.ctime;
+          obj.birthTime = stat3.birthtime;
         }
         if (options.absolutePath) {
           obj.absolutePath = path2;
@@ -1091,20 +1091,20 @@ const getRuntime = () => {
       };
       var inspectSync = (path2, options) => {
         let statOperation = fs.lstatSync;
-        let stat2;
+        let stat3;
         const opts = options || {};
         if (opts.symlinks === "follow") {
           statOperation = fs.statSync;
         }
         try {
-          stat2 = statOperation(path2);
+          stat3 = statOperation(path2);
         } catch (err) {
           if (err.code === "ENOENT") {
             return void 0;
           }
           throw err;
         }
-        const inspectObj = createInspectObj(path2, opts, stat2);
+        const inspectObj = createInspectObj(path2, opts, stat3);
         addExtraFieldsSync(path2, inspectObj, opts);
         return inspectObj;
       };
@@ -1142,8 +1142,8 @@ const getRuntime = () => {
           if (opts.symlinks === "follow") {
             statOperation = fs.stat;
           }
-          statOperation(path2).then((stat2) => {
-            const inspectObj = createInspectObj(path2, opts, stat2);
+          statOperation(path2).then((stat3) => {
+            const inspectObj = createInspectObj(path2, opts, stat3);
             addExtraFieldsAsync(path2, inspectObj, opts).then(resolve, reject);
           }).catch((err) => {
             if (err.code === "ENOENT") {
@@ -2589,10 +2589,10 @@ const getRuntime = () => {
       };
       var existsSync = (path2) => {
         try {
-          const stat2 = fs.statSync(path2);
-          if (stat2.isDirectory()) {
+          const stat3 = fs.statSync(path2);
+          if (stat3.isDirectory()) {
             return "dir";
-          } else if (stat2.isFile()) {
+          } else if (stat3.isFile()) {
             return "file";
           }
           return "other";
@@ -2605,10 +2605,10 @@ const getRuntime = () => {
       };
       var existsAsync2 = (path2) => {
         return new Promise((resolve, reject) => {
-          fs.stat(path2).then((stat2) => {
-            if (stat2.isDirectory()) {
+          fs.stat(path2).then((stat3) => {
+            if (stat3.isDirectory()) {
               resolve("dir");
-            } else if (stat2.isFile()) {
+            } else if (stat3.isFile()) {
               resolve("file");
             } else {
               resolve("other");
@@ -21125,6 +21125,7 @@ const getRuntime = () => {
 
   // base/node.ts
   var import_child_process3 = __require("child_process");
+  var import_promises2 = __require("fs/promises");
   var import_path8 = __require("path");
 
   // main/initialize.ts
@@ -22339,8 +22340,6 @@ ${src}`
     await removeAsync((0, import_path8.join)(process.cwd(), "gen"));
     let shouldInstallDep = false;
     await scaff({
-      "api.meta.json": {},
-      "prisma.ts": `export const prisma = {};`,
       "package.json": {
         "name": "gen",
         "version": "0.0.1",
@@ -22376,6 +22375,38 @@ export { action as royal } from "../pkgs/royal/action";
     }
     if (shouldInstallDep) {
       await installDep();
+    }
+    const jiti = (0, import_path8.join)(
+      process.cwd(),
+      "pkgs",
+      "service",
+      "node_modules",
+      ".bin",
+      /\^win/.test(process.platform) ? "jiti.cmd" : "jiti"
+    );
+    for (const dir2 of ["app", "pkgs"].map((e) => (0, import_path8.join)(process.cwd(), e))) {
+      const list2 = await listAsync(dir2);
+      if (list2) {
+        for (const item of list2) {
+          const svcDir = (0, import_path8.join)(dir2, item);
+          if ((await (0, import_promises2.stat)(svcDir)).isDirectory()) {
+            const buildTs = (0, import_path8.join)(dir2, item, "build.ts");
+            if (await existsAsync(buildTs)) {
+              const res = (0, import_child_process3.spawn)(
+                jiti,
+                [
+                  buildTs,
+                  "preBuild"
+                ],
+                {
+                  stdio: "inherit",
+                  cwd: process.cwd()
+                }
+              );
+            }
+          }
+        }
+      }
     }
     const appcwd = (0, import_path8.join)(process.cwd(), ".output", "app");
     await dirAsync(appcwd);

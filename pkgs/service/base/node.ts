@@ -1,6 +1,13 @@
 import { spawn, spawnSync } from "child_process";
+import { stat } from "fs/promises";
 import { join } from "path";
-import { dirAsync, existsAsync, readAsync, removeAsync } from "../export";
+import {
+  dirAsync,
+  existsAsync,
+  listAsync,
+  readAsync,
+  removeAsync,
+} from "../export";
 import { buildApp } from "../internal/service/build/build-app";
 import { resolveDeps } from "../internal/service/build/resolve-deps";
 import { runPnpm } from "../internal/service/build/run-pnpm";
@@ -13,8 +20,6 @@ const main = (async () => {
   await removeAsync(join(process.cwd(), "gen"));
   let shouldInstallDep = false;
   await scaff({
-    "api.meta.json": {},
-    "prisma.ts": `export const prisma = {};`,
     "package.json": {
       "name": "gen",
       "version": "0.0.1",
@@ -56,6 +61,41 @@ export { action as royal } from "../pkgs/royal/action";
 
   if (shouldInstallDep) {
     await installDep();
+  }
+
+  const jiti = join(
+    process.cwd(),
+    "pkgs",
+    "service",
+    "node_modules",
+    ".bin",
+    /\^win/.test(process.platform) ? "jiti.cmd" : "jiti",
+  );
+
+  for (const dir of ["app", "pkgs"].map((e) => join(process.cwd(), e))) {
+    const list = await listAsync(dir);
+    if (list) {
+      for (const item of list) {
+        const svcDir = join(dir, item);
+        if ((await stat(svcDir)).isDirectory()) {
+          const buildTs = join(dir, item, "build.ts");
+          if (await existsAsync(buildTs)) {
+            spawn(
+              jiti,
+              [
+                buildTs,
+                "preBuild",
+                ...args,
+              ],
+              {
+                stdio: "inherit",
+                cwd: process.cwd(),
+              },
+            );
+          }
+        }
+      }
+    }
   }
 
   const appcwd = join(process.cwd(), ".output", "app");
