@@ -1,4 +1,5 @@
 import { spawn, spawnSync } from "child_process";
+import { build } from "esbuild";
 import { stat } from "fs/promises";
 import { join } from "path";
 import {
@@ -63,15 +64,10 @@ export { action as royal } from "../pkgs/royal/action";
     await installDep();
   }
 
-  const jiti = join(
-    process.cwd(),
-    "pkgs",
-    "service",
-    "node_modules",
-    ".bin",
-    /\^win/.test(process.platform) ? "jiti.cmd" : "jiti",
-  );
+  const { commonjs } = await import("@hyrious/esbuild-plugin-commonjs");
+  const appcwd = join(process.cwd(), ".output", "app");
 
+  await removeAsync(join(appcwd, ".build"));
   for (const dir of ["app", "pkgs"].map((e) => join(process.cwd(), e))) {
     const list = await listAsync(dir);
     if (list) {
@@ -80,16 +76,28 @@ export { action as royal } from "../pkgs/royal/action";
         if ((await stat(svcDir)).isDirectory()) {
           const buildTs = join(dir, item, "build.ts");
           if (await existsAsync(buildTs)) {
+            const deps = await resolveDeps(svcDir);
+            await build({
+              bundle: true,
+              logLevel: "silent",
+              platform: "node",
+              format: "cjs",
+              entryPoints: [buildTs],
+              plugins: [commonjs()],
+              outfile: join(appcwd, `.build`, `${item}.js`),
+              external: [...Object.keys(deps), "esbuild"],
+            });
             spawn(
-              jiti,
+              process.execPath,
               [
-                buildTs,
+                "--enable-source-maps",
+                "--no-warnings",
+                join(appcwd, `.build`, `${item}.js`),
                 "preBuild",
                 ...args,
               ],
               {
                 stdio: "inherit",
-                cwd: process.cwd(),
               },
             );
           }
@@ -98,24 +106,23 @@ export { action as royal } from "../pkgs/royal/action";
     }
   }
 
-  const appcwd = join(process.cwd(), ".output", "app");
   await dirAsync(appcwd);
 
-  if (args.includes("genbase")) {
-    spawnSync(
-      process.execPath,
-      ["-r", "jiti/register", "./base/gen.ts"],
-      {
-        stdio: "inherit",
-        cwd: join(process.cwd(), "pkgs", "service"),
-        env: {
-          JITI_CACHE: join(process.cwd(), ".output", ".jiti"),
-          JITI_ESM_RESOLVE: "1",
-        },
-      },
-    );
-    return;
-  }
+  // if (args.includes("genbase")) {
+  //   spawnSync(
+  //     process.execPath,
+  //     ["-r", "jiti/register", "./base/gen.ts"],
+  //     {
+  //       stdio: "inherit",
+  //       cwd: join(process.cwd(), "pkgs", "service"),
+  //       env: {
+  //         JITI_CACHE: join(process.cwd(), ".output", ".jiti"),
+  //         JITI_ESM_RESOLVE: "1",
+  //       },
+  //     },
+  //   );
+  //   return;
+  // }
 
   const start = async () => {
     const pkgjson = await readAsync(

@@ -2,6 +2,7 @@
   "name": "royal",
   "runtime": "node",
   "version": "1.0.0",
+  "type": "module",
   "main": "export.ts",
   "dependencies": {
     "@babel/core": "^7.20.2",

@@ -1,4 +1,5 @@
 import { spawn } from "child_process";
+import { Transform } from "stream";
 import { getRuntime } from "../../rpc/get-runtime";
 
 export const runPnpm = (
@@ -11,11 +12,18 @@ export const runPnpm = (
 
     let ival = 0 as any;
     let i = 0;
-    
+    let m = 0;
+    let justPrint = false;
     if (opt.progress) {
       ival = setInterval(() => {
         if (i >= 30) {
+          if (m >= 3) {
+            justPrint = true;
+            clearInterval(ival);
+            return;
+          }
           i = 0;
+          m++;
           console.log("");
         }
         if (runtime === "node") {
@@ -50,8 +58,20 @@ export const runPnpm = (
       const pnpm = spawn(
         /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
         args,
-        { cwd, stdio: "ignore" },
+        { cwd, stdio: "pipe" },
       );
+
+      const tfm = new Transform({
+        transform: (chunk, encoding, done) => {
+          if (justPrint) {
+            const str = chunk.toString();
+            process.stdout.write(str);
+          }
+        },
+      });
+      pnpm.stdout.pipe(tfm);
+      pnpm.stderr.pipe(tfm);
+
       pnpm.once("exit", (code) => {
         resolve(code || 0);
       });

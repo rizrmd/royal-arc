@@ -21125,6 +21125,7 @@ const getRuntime = () => {
 
   // base/node.ts
   var import_child_process3 = __require("child_process");
+  var import_esbuild = __require("./pkgs/service/node_modules/esbuild/lib/main.js");
   var import_promises2 = __require("fs/promises");
   var import_path8 = __require("path");
 
@@ -21370,12 +21371,10 @@ const getRuntime = () => {
 
   // ../../gen/service.ts
   var _path = {
-    "royal": "pkgs/royal/index.ts",
-    "srv": "app/srv/index.ts"
+    "royal": "pkgs/royal/index.ts"
   };
   var _runtime = {
-    "royal": "node",
-    "srv": "node"
+    "royal": "node"
   };
 
   // internal/rpc/action-rpc.ts
@@ -21491,11 +21490,11 @@ const getRuntime = () => {
       let nb = g.node.build[name];
       if (nb && nb.stop)
         nb.stop();
-      const { build } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
+      const { build: build2 } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
       const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
       const rebuild = async () => {
         try {
-          g.node.build[name] = await build({
+          g.node.build[name] = await build2({
             bundle: true,
             logLevel: "silent",
             platform: "node",
@@ -21744,12 +21743,12 @@ export default {
     const pending = [];
     if (g.svc) {
       for (const [name, v] of Object.entries(g.svc)) {
-        const build = g.node.build[name];
-        if (build) {
-          if (build.stop) {
-            build.stop();
+        const build2 = g.node.build[name];
+        if (build2) {
+          if (build2.stop) {
+            build2.stop();
           }
-          build.rebuild.dispose();
+          build2.rebuild.dispose();
         }
         for (const [pid, svc] of Object.entries(v)) {
           pending.push(
@@ -22138,15 +22137,24 @@ export default {
 
   // internal/service/build/run-pnpm.ts
   var import_child_process2 = __require("child_process");
+  var import_stream2 = __require("stream");
   var runPnpm = (args, cwd3, opt = { silent: true, progress: true, stdoutAfter: 120 }) => {
     return new Promise(async (_resolve) => {
       const runtime = getRuntime();
       let ival = 0;
       let i = 0;
+      let m = 0;
+      let justPrint = false;
       if (opt.progress) {
         ival = setInterval(() => {
           if (i >= 30) {
+            if (m >= 3) {
+              justPrint = true;
+              clearInterval(ival);
+              return;
+            }
             i = 0;
+            m++;
             console.log("");
           }
           if (runtime === "node") {
@@ -22178,8 +22186,18 @@ export default {
         const pnpm = (0, import_child_process2.spawn)(
           /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
           args,
-          { cwd: cwd3, stdio: "ignore" }
+          { cwd: cwd3, stdio: "pipe" }
         );
+        const tfm = new import_stream2.Transform({
+          transform: (chunk, encoding, done) => {
+            if (justPrint) {
+              const str = chunk.toString();
+              process.stdout.write(str);
+            }
+          }
+        });
+        pnpm.stdout.pipe(tfm);
+        pnpm.stderr.pipe(tfm);
         pnpm.once("exit", (code) => {
           resolve(code || 0);
         });
@@ -22222,9 +22240,9 @@ export default {
       type: "module",
       dependencies: deps
     });
-    const { build } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
+    const { build: build2 } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
     const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
-    await build({
+    await build2({
       bundle: true,
       logLevel: "silent",
       platform: "node",
@@ -22376,14 +22394,9 @@ export { action as royal } from "../pkgs/royal/action";
     if (shouldInstallDep) {
       await installDep();
     }
-    const jiti = (0, import_path8.join)(
-      process.cwd(),
-      "pkgs",
-      "service",
-      "node_modules",
-      ".bin",
-      /\^win/.test(process.platform) ? "jiti.cmd" : "jiti"
-    );
+    const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
+    const appcwd = (0, import_path8.join)(process.cwd(), ".output", "app");
+    await removeAsync((0, import_path8.join)(appcwd, ".build"));
     for (const dir2 of ["app", "pkgs"].map((e) => (0, import_path8.join)(process.cwd(), e))) {
       const list2 = await listAsync(dir2);
       if (list2) {
@@ -22392,11 +22405,25 @@ export { action as royal } from "../pkgs/royal/action";
           if ((await (0, import_promises2.stat)(svcDir)).isDirectory()) {
             const buildTs = (0, import_path8.join)(dir2, item, "build.ts");
             if (await existsAsync(buildTs)) {
-              const res = (0, import_child_process3.spawn)(
-                jiti,
+              const deps = await resolveDeps(svcDir);
+              await (0, import_esbuild.build)({
+                bundle: true,
+                logLevel: "silent",
+                platform: "node",
+                format: "cjs",
+                entryPoints: [buildTs],
+                plugins: [commonjs()],
+                external: [...Object.keys(deps), "esbuild"],
+                outfile: (0, import_path8.join)(process.cwd(), `${item}.js`)
+              });
+              (0, import_child_process3.spawn)(
+                process.execPath,
                 [
-                  buildTs,
-                  "preBuild"
+                  "--enable-source-maps",
+                  "--no-warnings",
+                  (0, import_path8.join)(process.cwd(), `${item}.js`),
+                  "preBuild",
+                  ...args
                 ],
                 {
                   stdio: "inherit",
@@ -22408,23 +22435,7 @@ export { action as royal } from "../pkgs/royal/action";
         }
       }
     }
-    const appcwd = (0, import_path8.join)(process.cwd(), ".output", "app");
     await dirAsync(appcwd);
-    if (args.includes("genbase")) {
-      (0, import_child_process3.spawnSync)(
-        process.execPath,
-        ["-r", "jiti/register", "./base/gen.ts"],
-        {
-          stdio: "inherit",
-          cwd: (0, import_path8.join)(process.cwd(), "pkgs", "service"),
-          env: {
-            JITI_CACHE: (0, import_path8.join)(process.cwd(), ".output", ".jiti"),
-            JITI_ESM_RESOLVE: "1"
-          }
-        }
-      );
-      return;
-    }
     const start = async () => {
       const pkgjson = await readAsync(
         (0, import_path8.join)(process.cwd(), ".output", "app", "package.json"),

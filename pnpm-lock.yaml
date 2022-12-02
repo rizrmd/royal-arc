@@ -12,10 +12,12 @@ importers:
     specifiers:
       '@types/node': ^18.11.9
       gen: workspace:^
+      jiti: ^1.16.0
       royal: workspace:^
       service: workspace:^
     dependencies:
       gen: link:../../gen
+      jiti: 1.16.0
       royal: link:../../pkgs/royal
       service: link:../../pkgs/service
     devDependencies:

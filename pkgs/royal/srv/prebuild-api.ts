@@ -13,15 +13,15 @@ import pluginTs from "@babel/plugin-syntax-typescript";
 import { stat } from "fs/promises";
 import { ApiMetaParams } from "service";
 
-export const scaffoldAPI = async (name: string, path: string) => {
-  console.log("Scaffolding Srv API", name, path);
-  await dirAsync(path);
+export const scaffoldAPI = async (name: string, apiPath: string) => {
+  console.log("ScaffoldingAPI", name, apiPath);
+  await dirAsync(apiPath);
   const index = [] as { name: string; path: string }[];
 
   let _url: Record<string, string> = {};
   let _params: ApiMetaParams = {};
-  const root = join(dirname(path), "..", "..");
-  const genPath = join(dirname(path), "..", "..", "gen");
+  const root = join(dirname(apiPath), "..", "..");
+  const genPath = join(dirname(apiPath), "..", "..", "gen");
   const mtimePath = join(
     genPath,
     `api.mtime.json`,
@@ -44,10 +44,10 @@ export const scaffoldAPI = async (name: string, path: string) => {
     number
   >;
 
-  const relPath = path.substring(root.length + 1);
+  const relPath = apiPath.substring(root.length + 1);
 
   const pendingRemove: Promise<any>[] = [];
-  const dirs = await listAsync(join(dirname(path), "..", "..", "gen"));
+  const dirs = await listAsync(join(dirname(apiPath), "..", "..", "gen"));
   if (dirs) {
     for (let file of dirs) {
       if (file.startsWith("api.")) {
@@ -57,14 +57,15 @@ export const scaffoldAPI = async (name: string, path: string) => {
   }
   await Promise.all(pendingRemove);
 
-  await findAsync(path, {
+  await findAsync(apiPath, {
     recursive: true,
     files: true,
     directories: false,
     filter: async (file) => {
+      // if (file.absolutePath.startsWith()) return;
       if (file.absolutePath && file.absolutePath.endsWith(".ts")) {
         const s = await stat(file.absolutePath);
-        const filePath = file.absolutePath.substring(path.length + 1);
+        const filePath = file.absolutePath.substring(apiPath.length + 1);
         let shouldParse = mtime[filePath] !== s.mtimeMs;
         mtime[filePath] = s.mtimeMs;
 
@@ -76,7 +77,7 @@ export const scaffoldAPI = async (name: string, path: string) => {
           name: apiName,
           path: `../${relPath}/` +
             file.absolutePath.substring(
-              path.length + 1,
+              apiPath.length + 1,
               file.absolutePath.length - 3,
             ),
         });
@@ -107,39 +108,42 @@ export const _ = {
               service: [],
             };
             _url[apiName] = await new Promise<string>((resolve) => {
-              const parsed = parse(source, {
-                sourceType: "module",
-                plugins: [[pluginTs]],
-              });
+              try {
+                // const parsed = parse(source, {
+                //   sourceType: "module",
+                //   plugins: [[pluginTs]],
+                // });
 
-              let url = "";
-              traverse(parsed, {
-                ObjectMethod: (p) => {
-                  const c = p.node;
-                  const params: string[] = [];
-                  if (c.key.type === "Identifier" && c.key.name === "api") {
-                    for (let [_, param] of Object.entries(c.params)) {
-                      let name = "";
-                      if (param.type === "Identifier") {
-                        name = param.name;
-                      }
-                      params.push(name);
-                    }
-                  }
-                  _params[apiName].api = params;
-                },
-                ObjectProperty: (p) => {
-                  if (url) return;
+                // let url = "";
+                // traverse(parsed, {
+                //   ObjectMethod: (p) => {
+                //     const c = p.node;
+                //     const params: string[] = [];
+                //     if (c.key.type === "Identifier" && c.key.name === "api") {
+                //       for (let [_, param] of Object.entries(c.params)) {
+                //         let name = "";
+                //         if (param.type === "Identifier") {
+                //           name = param.name;
+                //         }
+                //         params.push(name);
+                //       }
+                //     }
+                //     _params[apiName].api = params;
+                //   },
+                //   ObjectProperty: (p) => {
+                //     if (url) return;
 
-                  const c = p.node;
-                  if (c.key.type === "Identifier" && c.key.name === "url") {
-                    if (c.value.type === "StringLiteral") {
-                      url = c.value.value;
-                      resolve(url);
-                    }
-                  }
-                },
-              });
+                //     const c = p.node;
+                //     if (c.key.type === "Identifier" && c.key.name === "url") {
+                //       if (c.value.type === "StringLiteral") {
+                //         url = c.value.value;
+                //         resolve(url);
+                //       }
+                //     }
+                //   },
+                // });
+              } catch (e) {
+              }
             });
 
             _params[apiName].url = parseParameterizedPathname(_url[apiName]);
@@ -160,7 +164,7 @@ export const _ = {
   await writeAsync(apimetaPath, apimeta);
   await writeAsync(mtimePath, mtime);
   await writeAsync(
-    join(dirname(path), "..", "..", "gen", `api.${name}.ts`),
+    join(dirname(apiPath), "..", "..", "gen", `api.${name}.ts`),
     `\
 /** AUTOGENERATED - DO NOT EDIT **/
 export {};
