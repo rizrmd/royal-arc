@@ -8,8 +8,9 @@ import picocolors from "picocolors";
 import { g } from "../../global";
 import { getRuntime } from "../../rpc/get-runtime";
 import { waitExit } from "../../rpc/wait-exit";
-import { dirAsync, writeAsync } from "./jetpack";
+import { dirAsync, existsAsync, writeAsync } from "./jetpack";
 import { resolveDeps } from "./resolve-deps";
+import { runPnpm } from "./run-pnpm";
 
 export const buildSvcNode = async (name: _names, outPath: string) => {
   const cwdsplit = process.cwd().split(sep);
@@ -32,6 +33,14 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
     type: "module",
     dependencies: deps,
   });
+
+  if (await existsAsync(join(tpath, "build.ts"))) {
+    await runPnpm(["jiti", "./build.ts", "preBuild"], spath, {
+      silent: false,
+      progress: false,
+      stdoutAfter: 0,
+    });
+  }
 
   await new Promise<void>(async (finished) => {
     if (!g.node) {

@@ -109,39 +109,39 @@ export const _ = {
             };
             _url[apiName] = await new Promise<string>((resolve) => {
               try {
-                // const parsed = parse(source, {
-                //   sourceType: "module",
-                //   plugins: [[pluginTs]],
-                // });
+                const parsed = parse(source, {
+                  sourceType: "module",
+                  plugins: [[pluginTs]],
+                });
 
-                // let url = "";
-                // traverse(parsed, {
-                //   ObjectMethod: (p) => {
-                //     const c = p.node;
-                //     const params: string[] = [];
-                //     if (c.key.type === "Identifier" && c.key.name === "api") {
-                //       for (let [_, param] of Object.entries(c.params)) {
-                //         let name = "";
-                //         if (param.type === "Identifier") {
-                //           name = param.name;
-                //         }
-                //         params.push(name);
-                //       }
-                //     }
-                //     _params[apiName].api = params;
-                //   },
-                //   ObjectProperty: (p) => {
-                //     if (url) return;
+                let url = "";
+                traverse(parsed, {
+                  ObjectMethod: (p) => {
+                    const c = p.node;
+                    const params: string[] = [];
+                    if (c.key.type === "Identifier" && c.key.name === "api") {
+                      for (let [_, param] of Object.entries(c.params)) {
+                        let name = "";
+                        if (param.type === "Identifier") {
+                          name = param.name;
+                        }
+                        params.push(name);
+                      }
+                    }
+                    _params[apiName].api = params;
+                  },
+                  ObjectProperty: (p) => {
+                    if (url) return;
 
-                //     const c = p.node;
-                //     if (c.key.type === "Identifier" && c.key.name === "url") {
-                //       if (c.value.type === "StringLiteral") {
-                //         url = c.value.value;
-                //         resolve(url);
-                //       }
-                //     }
-                //   },
-                // });
+                    const c = p.node;
+                    if (c.key.type === "Identifier" && c.key.name === "url") {
+                      if (c.value.type === "StringLiteral") {
+                        url = c.value.value;
+                        resolve(url);
+                      }
+                    }
+                  },
+                });
               } catch (e) {
               }
             });
