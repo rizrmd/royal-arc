@@ -2603,7 +2603,7 @@ const getRuntime = () => {
         }
         return false;
       };
-      var existsAsync2 = (path2) => {
+      var existsAsync3 = (path2) => {
         return new Promise((resolve, reject) => {
           fs.stat(path2).then((stat3) => {
             if (stat3.isDirectory()) {
@@ -2624,7 +2624,7 @@ const getRuntime = () => {
       };
       exports.validateInput = validateInput;
       exports.sync = existsSync;
-      exports.async = existsAsync2;
+      exports.async = existsAsync3;
     }
   });
 
@@ -21125,7 +21125,6 @@ const getRuntime = () => {
 
   // base/node.ts
   var import_child_process3 = __require("child_process");
-  var import_esbuild = __require("./pkgs/service/node_modules/esbuild/lib/main.js");
   var import_promises2 = __require("fs/promises");
   var import_path8 = __require("path");
 
@@ -21490,11 +21489,11 @@ const getRuntime = () => {
       let nb = g.node.build[name];
       if (nb && nb.stop)
         nb.stop();
-      const { build: build2 } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
+      const { build } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
       const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
       const rebuild = async () => {
         try {
-          g.node.build[name] = await build2({
+          g.node.build[name] = await build({
             bundle: true,
             logLevel: "silent",
             platform: "node",
@@ -21743,12 +21742,12 @@ export default {
     const pending = [];
     if (g.svc) {
       for (const [name, v] of Object.entries(g.svc)) {
-        const build2 = g.node.build[name];
-        if (build2) {
-          if (build2.stop) {
-            build2.stop();
+        const build = g.node.build[name];
+        if (build) {
+          if (build.stop) {
+            build.stop();
           }
-          build2.rebuild.dispose();
+          build.rebuild.dispose();
         }
         for (const [pid, svc] of Object.entries(v)) {
           pending.push(
@@ -22240,9 +22239,9 @@ export default {
       type: "module",
       dependencies: deps
     });
-    const { build: build2 } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
+    const { build } = await import("./pkgs/service/node_modules/esbuild/lib/main.js");
     const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
-    await build2({
+    await build({
       bundle: true,
       logLevel: "silent",
       platform: "node",
@@ -22396,40 +22395,19 @@ export { action as royal } from "../pkgs/royal/action";
     }
     const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
     const appcwd = (0, import_path8.join)(process.cwd(), ".output", "app");
-    await removeAsync((0, import_path8.join)(appcwd, ".build"));
     for (const dir2 of ["app", "pkgs"].map((e) => (0, import_path8.join)(process.cwd(), e))) {
       const list2 = await listAsync(dir2);
       if (list2) {
         for (const item of list2) {
           const svcDir = (0, import_path8.join)(dir2, item);
+          const buildTs = (0, import_path8.join)(dir2, item, "build.ts");
           if ((await (0, import_promises2.stat)(svcDir)).isDirectory()) {
-            const buildTs = (0, import_path8.join)(dir2, item, "build.ts");
             if (await existsAsync(buildTs)) {
-              const deps = await resolveDeps(svcDir);
-              await (0, import_esbuild.build)({
-                bundle: true,
-                logLevel: "silent",
-                platform: "node",
-                format: "cjs",
-                entryPoints: [buildTs],
-                plugins: [commonjs()],
-                external: [...Object.keys(deps), "esbuild"],
-                outfile: (0, import_path8.join)(process.cwd(), `${item}.js`)
+              await runPnpm(["jiti", "build.ts", "preBuild"], svcDir, {
+                silent: false,
+                progress: false,
+                stdoutAfter: 0
               });
-              (0, import_child_process3.spawn)(
-                process.execPath,
-                [
-                  "--enable-source-maps",
-                  "--no-warnings",
-                  (0, import_path8.join)(process.cwd(), `${item}.js`),
-                  "preBuild",
-                  ...args
-                ],
-                {
-                  stdio: "inherit",
-                  cwd: process.cwd()
-                }
-              );
             }
           }
         }

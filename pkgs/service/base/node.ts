@@ -67,39 +67,44 @@ export { action as royal } from "../pkgs/royal/action";
   const { commonjs } = await import("@hyrious/esbuild-plugin-commonjs");
   const appcwd = join(process.cwd(), ".output", "app");
 
-  await removeAsync(join(appcwd, ".build"));
   for (const dir of ["app", "pkgs"].map((e) => join(process.cwd(), e))) {
     const list = await listAsync(dir);
     if (list) {
       for (const item of list) {
         const svcDir = join(dir, item);
+        const buildTs = join(dir, item, "build.ts");
+
         if ((await stat(svcDir)).isDirectory()) {
-          const buildTs = join(dir, item, "build.ts");
           if (await existsAsync(buildTs)) {
-            const deps = await resolveDeps(svcDir);
-            await build({
-              bundle: true,
-              logLevel: "silent",
-              platform: "node",
-              format: "cjs",
-              entryPoints: [buildTs],
-              plugins: [commonjs()],
-              outfile: join(appcwd, `.build`, `${item}.js`),
-              external: [...Object.keys(deps), "esbuild"],
+            await runPnpm(["jiti", "build.ts", "preBuild"], svcDir, {
+              silent: false,
+              progress: false,
+              stdoutAfter: 0,
             });
-            spawn(
-              process.execPath,
-              [
-                "--enable-source-maps",
-                "--no-warnings",
-                join(appcwd, `.build`, `${item}.js`),
-                "preBuild",
-                ...args,
-              ],
-              {
-                stdio: "inherit",
-              },
-            );
+            // const deps = await resolveDeps(svcDir);
+            // await build({
+            //   bundle: true,
+            //   logLevel: "silent",
+            //   platform: "node",
+            //   format: "cjs",
+            //   entryPoints: [buildTs],
+            //   plugins: [commonjs()],
+            //   outfile: join(appcwd, `.build`, `${item}.js`),
+            //   external: [...Object.keys(deps), "esbuild"],
+            // });
+            // spawn(
+            //   process.execPath,
+            //   [
+            //     "--enable-source-maps",
+            //     "--no-warnings",
+            //     join(appcwd, `.build`, `${item}.js`),
+            //     "preBuild",
+            //     ...args,
+            //   ],
+            //   {
+            //     stdio: "inherit",
+            //   },
+            // );
           }
         }
       }

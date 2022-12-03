@@ -34,14 +34,6 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
     dependencies: deps,
   });
 
-  if (await existsAsync(join(tpath, "build.ts"))) {
-    await runPnpm(["jiti", "./build.ts", "preBuild"], spath, {
-      silent: false,
-      progress: false,
-      stdoutAfter: 0,
-    });
-  }
-
   await new Promise<void>(async (finished) => {
     if (!g.node) {
       g.node = {
