@@ -8,6 +8,21 @@ importers:
     dependencies:
       service: link:../pkgs/service
 
+  app/db:
+    specifiers:
+      '@types/node': ^18.11.9
+      gen: ../../gen
+      prisma: ^4.7.1
+      royal: ../../pkgs/royal
+      service: ../../pkgs/service
+    dependencies:
+      gen: link:../../gen
+      prisma: 4.7.1
+      royal: link:../../pkgs/royal
+      service: link:../../pkgs/service
+    devDependencies:
+      '@types/node': 18.11.9
+
   app/srv:
     specifiers:
       '@types/node': ^18.11.9
@@ -728,6 +743,11 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
     dev: true
+
+  /@prisma/engines/4.7.1:
+    resolution: {integrity: sha512-zWabHosTdLpXXlMefHmnouhXMoTB1+SCbUU3t4FCmdrtIOZcarPKU3Alto7gm/pZ9vHlGOXHCfVZ1G7OIrSbog==}
+    requiresBuild: true
+    dev: false
 
   /@types/aes-js/3.1.1:
     resolution: {integrity: sha512-SDSGgXT3LRCH6qMWk8OHT1vLSVNuHNvCpKCx2/TYtQMbMGGgxJC9fspwSkQjqzRagrWnCrxuLL3jMNXLXHHvSw==}
@@ -2304,6 +2324,15 @@ packages:
     dependencies:
       lodash: 4.17.21
       renderkid: 3.0.0
+    dev: false
+
+  /prisma/4.7.1:
+    resolution: {integrity: sha512-CCQP+m+1qZOGIZlvnL6T3ZwaU0LAleIHYFPN9tFSzjs/KL6vH9rlYbGOkTuG9Q1s6Ki5D0LJlYlW18Z9EBUpGg==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 4.7.1
     dev: false
 
   /process-nextick-args/2.0.1:

@@ -72,6 +72,16 @@ export default declareService({
 });
  
 `,
+    "build.ts": `\
+import { declareBuild } from "../../pkgs/service";
+import { preBuildDb } from "../../pkgs/royal";
+
+declareBuild({
+  preBuild() {
+    preBuildDb();
+  },
+});
+`,
     "action.ts": `\
 import { DBArg } from "../../pkgs/service";
 import { gdb } from "../../pkgs/royal";

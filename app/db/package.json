@@ -1,0 +1,14 @@
+{
+  "name": "db",
+  "version": "1.0.0",
+  "dependencies": {
+    "@prisma/client": "^4.7.1",
+    "gen": "../../gen",
+    "prisma": "^4.7.1",
+    "royal": "../../pkgs/royal",
+    "service": "../../pkgs/service"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9"
+  }
+}

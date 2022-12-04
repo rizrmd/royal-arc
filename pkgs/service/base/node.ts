@@ -81,30 +81,6 @@ export { action as royal } from "../pkgs/royal/action";
               progress: false,
               stdoutAfter: 0,
             });
-            // const deps = await resolveDeps(svcDir);
-            // await build({
-            //   bundle: true,
-            //   logLevel: "silent",
-            //   platform: "node",
-            //   format: "cjs",
-            //   entryPoints: [buildTs],
-            //   plugins: [commonjs()],
-            //   outfile: join(appcwd, `.build`, `${item}.js`),
-            //   external: [...Object.keys(deps), "esbuild"],
-            // });
-            // spawn(
-            //   process.execPath,
-            //   [
-            //     "--enable-source-maps",
-            //     "--no-warnings",
-            //     join(appcwd, `.build`, `${item}.js`),
-            //     "preBuild",
-            //     ...args,
-            //   ],
-            //   {
-            //     stdio: "inherit",
-            //   },
-            // );
           }
         }
       }
