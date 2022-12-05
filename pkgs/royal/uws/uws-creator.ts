@@ -181,7 +181,7 @@ export const createUWS = async (
               18,
               ".",
             )
-          }: ${picocolors.magenta(url.toString())}`,
+          }: ${picocolors.green(url.toString())}`,
         );
         i++;
       }
