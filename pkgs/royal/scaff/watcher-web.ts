@@ -1,4 +1,5 @@
 import { watch } from "chokidar";
+import { stat } from "fs/promises";
 import { basename, join } from "path";
 import { createWebLayout, reloadWebLayout } from "./create-web-layout";
 import {
@@ -25,7 +26,9 @@ export const watcherWeb = (path: string) => {
       await reloadWebLayout(layoutPath);
     } else if (filePath.startsWith(pagePath)) {
       if (e === "add" && filePath.endsWith(".tsx")) {
-        await createWebPage(filePath);
+        if (((await stat(filePath)).size) === 0) {
+          await createWebPage(filePath);
+        }
       }
 
       if (e === "change") {

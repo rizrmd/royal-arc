@@ -29,18 +29,20 @@ importers:
 
   app/srv:
     specifiers:
+      '@types/multer': ^1.4.7
       '@types/node': ^18.11.9
-      gen: workspace:^
+      gen: ../../gen
       jiti: ^1.16.0
       multer: 1.4.5-lts.1
-      royal: workspace:^
-      service: workspace:^
+      royal: ../../pkgs/royal
+      service: ../../pkgs/service
     dependencies:
       gen: link:../../gen
       multer: 1.4.5-lts.1
       royal: link:../../pkgs/royal
       service: link:../../pkgs/service
     devDependencies:
+      '@types/multer': 1.4.7
       '@types/node': 18.11.9
       jiti: 1.16.0
 

@@ -2,7 +2,7 @@
   "srv": {
     "_url": {
       "hello": "/hello/:name?",
-      "moko": "/moko"
+      "upload": "/moko"
     },
     "_params": {
       "hello": {
@@ -14,7 +14,47 @@
         ],
         "service": []
       },
-      "moko": {
+      "upload": {
+        "api": [
+          "name"
+        ],
+        "url": [],
+        "service": []
+      }
+    }
+  },
+  "/Users/r/Desktop/projects/royal/app": {
+    "_url": {
+      "upload": "/moko",
+      "hello": "/hello/:name?",
+      "coba": "/coba",
+      "mukudang": "/coba"
+    },
+    "_params": {
+      "upload": {
+        "api": [
+          "name"
+        ],
+        "url": [],
+        "service": []
+      },
+      "hello": {
+        "api": [
+          "name"
+        ],
+        "url": [
+          ""
+        ],
+        "service": []
+      },
+      "coba": {
+        "api": [
+          "name"
+        ],
+        "url": [],
+        "service": []
+      },
+      "mukudang": {
         "api": [
           "name"
         ],

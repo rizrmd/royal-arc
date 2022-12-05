@@ -1,6 +1,6 @@
 {
   "commit": {
-    "id": "a5641545d8b78c1bea7a1b3945629d52cbe86b80",
-    "msg": "fix import image + typings\n"
+    "id": "6519bb9f21e3306f016982407c9f337cfc80e5f1",
+    "msg": "add upload support\n"
   }
 }
