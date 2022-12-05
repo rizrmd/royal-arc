@@ -27,10 +27,12 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
   const spath = dirname(indexPath);
   const deps = await resolveDeps(spath);
 
+  const format = (name as any) === "db" ? "cjs" : "esm";
+
   await writeAsync(join(tpath, "package.json"), {
     name,
     version: "1.0.0",
-    type: "module",
+    type: format === "cjs" ? undefined : "module",
     dependencies: deps,
   });
 
@@ -55,12 +57,12 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
           bundle: true,
           logLevel: "silent",
           platform: "node",
-          format: "esm",
+          format,
           sourcemap: true,
           incremental: true,
           metafile: true,
           minify: true,
-          plugins: [commonjs()],
+          plugins: format === "cjs" ? undefined : [commonjs()],
           entryPoints: [indexPath],
           outfile: join(tpath, "index.js"),
           external: Object.keys(deps),

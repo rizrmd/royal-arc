@@ -4,6 +4,7 @@ import { basename, dirname, join } from "path";
 import { cwd } from "process";
 import {
   copyAsync,
+  dirAsync,
   existsAsync,
   readAsync,
   removeAsync,
@@ -14,15 +15,17 @@ import { defaultPrismaSrc } from "../scaff/create-db";
 import { isDirectory } from "../scaff/util/is-directory";
 
 export const preBuildDb = async () => {
-  const name = basename(__dirname);
-  const mtimeFile = join(__dirname, "mtime.json");
+  const name = basename(cwd());
+  const mtimeFile = join(cwd(), "mtime.json");
   const mtime = ((await readAsync(mtimeFile, "json")) || {}) as Record<
     string,
     number
   >;
+
   const root = join(cwd(), "..", "..");
   const base = join(root, dirname(_path[name]));
   const appdir = join(root, "app", name);
+  const outdir = join(root, ".output", "app", "service", name);
   const prisma = { im: [] as string[], ex: [] as string[] };
 
   if (await isDirectory(appdir)) {
@@ -65,7 +68,7 @@ ${prisma.ex.join(",\n")}
   for (const file of files) {
     const fname = join(...file);
     const fromFile = join(base, ...file);
-    const toFile = join(__dirname, ...file);
+    const toFile = join(cwd(), ...file);
     try {
       const s = await stat(fromFile);
       if (mtime[fname] !== s.mtimeMs) {
@@ -79,14 +82,59 @@ ${prisma.ex.join(",\n")}
   if (prismaGen) {
     await writeAsync(mtimeFile, mtime);
 
-    const schema = join(__dirname, "prisma", "schema.prisma");
-    const sqdb = join(__dirname, "db.sqlite");
+    const schema = join(cwd(), "prisma", "schema.prisma");
+    const sqdb = join(cwd(), "db.sqlite");
     const prismaSrc = await readAsync(schema);
     if (prismaSrc === defaultPrismaSrc) {
       if (!await existsAsync(sqdb)) {
-        await runPnpm(["prisma", "db", "push"], __dirname);
+        await runPnpm(["prisma", "db", "push"], cwd());
       }
     }
-    runPnpm(["prisma", "generate"], __dirname);
+    runPnpm(["prisma", "generate"], cwd());
+  }
+
+  await dirAsync(join(outdir, "prisma"));
+
+  const appschema = await readAsync(
+    join(appdir, "prisma", "schema.prisma"),
+  );
+  let outschema = "";
+  let generateSchema = false;
+
+  if (!await existsAsync(join(outdir, "prisma"))) {
+    await copyAsync(join(appdir, "prisma"), join(outdir, "prisma"), {
+      overwrite: true,
+    });
+    outschema = appschema;
+    await runPnpm(["prisma", "generate"], outdir, { silent: false });
+  } else {
+    outschema = await readAsync(
+      join(outdir, "prisma", "schema.prisma"),
+    );
+  }
+
+  if (outschema && outschema.indexOf("file:../db.sqlite") >= 0) {
+    if (!await existsAsync(join(outdir, "db.sqlite"))) {
+      generateSchema = true;
+
+      await runPnpm(["prisma", "db", "push"], outdir, { silent: false });
+    }
+  }
+
+  if (appschema !== outschema) {
+    await copyAsync(join(appdir, "prisma"), join(outdir, "prisma"), {
+      overwrite: true,
+    });
+
+    generateSchema = true;
+  }
+
+  if (generateSchema) {
+    await runPnpm(["prisma", "generate"], outdir, { silent: false });
+  }
+  if (await existsAsync(join(appdir, ".env"))) {
+    await copyAsync(join(appdir, ".env"), join(outdir, ".env"), {
+      overwrite: true,
+    });
   }
 };

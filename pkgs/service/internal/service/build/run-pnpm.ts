@@ -5,7 +5,7 @@ import { getRuntime } from "../../rpc/get-runtime";
 export const runPnpm = (
   args: string[],
   cwd: string,
-  opt = { silent: true, progress: true, stdoutAfter: 120 },
+  opt = { silent: true},
 ) => {
   return new Promise<number>(async (_resolve) => {
     const runtime = getRuntime();
@@ -14,7 +14,7 @@ export const runPnpm = (
     let i = 0;
     let m = 0;
     let justPrint = false;
-    if (opt.progress) {
+    if (opt.silent) {
       ival = setInterval(() => {
         if (i >= 30) {
           if (m >= 3) {
@@ -33,6 +33,8 @@ export const runPnpm = (
         }
         i++;
       }, 1000);
+    } else {
+      justPrint = true
     }
 
     if (opt.silent && args[0] === "i" && args.length === 1) {

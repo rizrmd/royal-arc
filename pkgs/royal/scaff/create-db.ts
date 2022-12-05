@@ -33,6 +33,7 @@ export const createNewDB = async (path: string) => {
         "service": "../../pkgs/service",
       },
       "devDependencies": {
+        "jiti": "^1.16.0",
         "@types/node": "^18.11.9",
       },
     },

@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "dependencies": {
     "gen": "workspace:^",
-    "jiti": "^1.16.0",
     "royal": "workspace:^",
     "service": "workspace:^"
   },
   "devDependencies": {
+    "jiti": "^1.16.0",
     "@types/node": "^18.11.9"
   }
 }

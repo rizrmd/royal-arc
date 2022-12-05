@@ -8,7 +8,12 @@ export const createNewSvc = async (path: string) => {
     name,
     version: "1.0.0",
     dependencies: {
-      service: "workspace:^",
+      "royal": "../../pkgs/royal",
+      "service": "../../pkgs/service",
+    },
+    "devDependencies": {
+      "jiti": "^1.16.0",
+      "@types/node": "^18.11.9",
     },
   });
   await writeAsync(
@@ -45,5 +50,4 @@ export const action = () => ({
       types: ["node"],
     },
   });
-
 };

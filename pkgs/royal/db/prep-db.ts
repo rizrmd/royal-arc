@@ -15,7 +15,9 @@ export const prepareDb = async (name: string) => {
 
   if (!(await existsAsync(genpath))) {
     if (!(await existsAsync(schema))) {
-      throw new Error("schema.prisma not found!");
+      throw new Error(
+        `schema.prisma not found! ${schema}`,
+      );
     }
 
     await runPnpm(["prisma", "generate"], cwd);

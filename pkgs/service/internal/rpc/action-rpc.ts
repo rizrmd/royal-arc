@@ -6,7 +6,6 @@ import capitalize from "lodash.capitalize";
 import padEnd from "lodash.padend";
 import { join } from "path";
 import picocolors from "picocolors";
-import { root } from "../../export";
 import { ActionItem, ActionKey, g } from "../global";
 import { buildSvc } from "../service/build/build-svc";
 import { generateMeta } from "../service/gen-meta";

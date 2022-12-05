@@ -13,7 +13,6 @@
     "cuid": "^2.1.8",
     "esbuild": "^0.15.15",
     "gen": "workspace:^",
-    "get-port": "^6.1.2",
     "jiti": "^1.16.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.padend": "^4.6.1",

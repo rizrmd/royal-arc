@@ -38,6 +38,7 @@
     "@types/lodash.padend": "^4.6.7",
     "@types/lodash.trim": "^4.5.7",
     "@types/mime-types": "^2.1.1",
+    "jiti": "^1.16.0",
     "@types/node": "^18.11.9",
     "@types/prettier": "^2.7.1",
     "@types/websocket": "^1.0.5"

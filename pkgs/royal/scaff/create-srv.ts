@@ -8,11 +8,12 @@ export const createNewSrv = async (path: string) => {
     name,
     version: "1.0.0",
     dependencies: {
-      "gen": "workspace:^",
-      royal: "workspace:^",
-      service: "workspace:^",
+      "gen": "../../gen",
+      "royal": "../../pkgs/royal",
+      "service": "../../pkgs/service",
     },
     "devDependencies": {
+      "jiti": "^1.16.0",
       "@types/node": "^18.11.9",
     },
   });

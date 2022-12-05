@@ -24,10 +24,6 @@ export const initialize = async (fn: () => Promise<void>) => {
   await initGlobal({ svcPort });
 
   if (executedFromNodeBase) {
-    if (await generateMeta(join(process.cwd(), "..", ".."))) {
-      await serverCleanUp();
-      process.exit(111);
-    }
     await serverCleanUp();
   }
 

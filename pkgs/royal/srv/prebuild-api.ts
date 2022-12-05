@@ -14,7 +14,6 @@ import { stat } from "fs/promises";
 import { ApiMetaParams } from "service";
 
 export const scaffoldAPI = async (name: string, apiPath: string) => {
-  console.log("ScaffoldingAPI", name, apiPath);
   await dirAsync(apiPath);
   const index = [] as { name: string; path: string }[];
 

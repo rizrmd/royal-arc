@@ -3,6 +3,6 @@ import { preBuildDb } from "../../pkgs/royal";
 
 declareBuild({
   preBuild() {
-    preBuildDb();
+    preBuildDb(true);
   },
 });
