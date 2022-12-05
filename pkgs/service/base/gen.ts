@@ -36,6 +36,19 @@ const getRuntime = () => {
     case "node":
       {
 
+      const { existsSync } = await import('fs')
+      const { join } = await import('path')
+      const { spawnSync } = await import('child_process')
+      if (!existsSync(join(process.cwd(), 'node_modules'))) {
+        spawnSync(
+          /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
+          ["i"],
+          {
+            stdio: "inherit",
+          }
+        );
+      }
+      
 /*!!*--node--*!!*/
 
       }
@@ -47,6 +60,7 @@ const getRuntime = () => {
     imports: {
       "esbuild": "./pkgs/service/node_modules/esbuild/lib/main.js",
       "chokidar": "./pkgs/service/node_modules/chokidar/index.js",
+      "isomorphic-git": "./pkgs/service/node_modules/isomorphic-git/index.cjs",
     },
   });
   const res = await build({
@@ -56,7 +70,6 @@ const getRuntime = () => {
     platform: "node",
     format: "iife",
     nodePaths: [join(__dirname, "..", "node_modules")],
-    "external": ["esbuild"],
     plugins: [importMap.plugin()],
   });
   const src = template.replace("/*!!*--node--*!!*/", res.outputFiles[0].text);

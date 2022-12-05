@@ -12,6 +12,7 @@ import { buildApp } from "../internal/service/build/build-app";
 import { resolveDeps } from "../internal/service/build/resolve-deps";
 import { runPnpm } from "../internal/service/build/run-pnpm";
 import { generateMeta } from "../internal/service/gen-meta";
+import { gitMark } from "./git";
 import { isEqual } from "./util/is-equal";
 import { scaff } from "./util/scaff";
 
@@ -20,6 +21,11 @@ let lastRestart = new Date().getTime();
 const main = (async () => {
   await removeAsync(join(process.cwd(), "gen"));
   let shouldInstallDep = false;
+
+  try {
+    gitMark();
+  } catch (e) {}
+
   await scaff({
     "package.json": {
       "name": "gen",

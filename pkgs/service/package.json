@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "main": "export.ts",
   "scripts": {
-    "gen": "jiti ./base/gen.ts"
+    "gen": "jiti ./base/gen.ts",
+    "git": "jiti ./base/git.ts"
   },
   "dependencies": {
     "@hyrious/esbuild-plugin-commonjs": "^0.2.2",
@@ -13,6 +14,7 @@
     "cuid": "^2.1.8",
     "esbuild": "^0.15.15",
     "gen": "workspace:^",
+    "isomorphic-git": "^1.21.0",
     "jiti": "^1.16.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.padend": "^4.6.1",
