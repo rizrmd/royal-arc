@@ -1,7 +1,7 @@
 import { prisma } from "gen/prisma";
-import type * as _api from "gen/api";
+import type * as _api from "gen/api.srv";
 
-type TApi = typeof _api["srv"];
+type TApi = typeof _api;
 type TApiKey = keyof TApi;
 type TApiFn<K extends TApiKey> = TApi[K]["api"];
 type TApiParams<K extends TApiKey> = Parameters<TApiFn<K>>;
