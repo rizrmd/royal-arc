@@ -12,6 +12,7 @@
     "body-parser": "^1.20.1",
     "chokidar": "^3.5.3",
     "cuid": "^2.1.8",
+    "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "fflate": "^0.7.4",
@@ -20,6 +21,7 @@
     "lodash.padend": "^4.6.1",
     "lodash.trim": "^4.5.1",
     "mime-types": "^2.1.35",
+    "multer": "1.4.5-lts.1",
     "picocolors": "^1.0.0",
     "prettier": "^2.7.1",
     "service": "workspace:^",
@@ -38,9 +40,10 @@
     "@types/lodash.padend": "^4.6.7",
     "@types/lodash.trim": "^4.5.7",
     "@types/mime-types": "^2.1.1",
-    "jiti": "^1.16.0",
+    "@types/multer": "^1.4.7",
     "@types/node": "^18.11.9",
     "@types/prettier": "^2.7.1",
-    "@types/websocket": "^1.0.5"
+    "@types/websocket": "^1.0.5",
+    "jiti": "^1.16.0"
   }
 }

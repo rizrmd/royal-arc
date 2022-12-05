@@ -8,12 +8,14 @@ export const createNewSrv = async (path: string) => {
     name,
     version: "1.0.0",
     dependencies: {
+      "multer": "1.4.5-lts.1",
       "gen": "../../gen",
       "royal": "../../pkgs/royal",
       "service": "../../pkgs/service",
     },
     "devDependencies": {
       "jiti": "^1.16.0",
+      "@types/multer": "^1.4.7",
       "@types/node": "^18.11.9",
     },
   });
@@ -74,13 +76,12 @@ export const _ = {
   await writeAsync(
     join(path, "build.ts"),
     `\
-import { join } from "path";
-import { scaffoldAPI } from "royal/srv/prebuild-api";
+import { preBuildSrv } from "royal";
 import { declareBuild } from "service";
 
 declareBuild({
   async preBuild() {
-    await scaffoldAPI("srv", join(process.cwd(), "api"));
+    await preBuildSrv();
   },
 });
 `,

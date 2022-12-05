@@ -7,6 +7,7 @@ import { current as cur } from "service";
 import { g } from "../global";
 import { ex } from "./global-ex";
 import { preBuildSrv } from "./prebuild";
+import { middlewareUpload } from "./routes/middleware-upload";
 import { routeAPI } from "./routes/route-api";
 import { routeAPIFrm } from "./routes/route-api-frm";
 import { routeDB } from "./routes/route-db";
@@ -44,6 +45,8 @@ export const initExpress = async (params: {
     ex.router = express.Router();
 
     ex.app.use(bodyParser.json());
+    ex.app.use(middlewareUpload);
+    ex.app.disable("x-powered-by");
     ex.app.use(
       bodyParser.urlencoded({
         extended: true,

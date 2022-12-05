@@ -50,18 +50,24 @@ export const routeAPI = async (serviceName: _names) => {
                 } catch (e: any) {
                   reason = e.message;
                 }
-                if (apires !== undefined) {
-                  res.status(200).send(apires);
-                } else {
-                  res.status(500).send({ status: "failed", reason });
+
+                if (!res.headersSent) {
+                  if (apires !== undefined) {
+                    res.status(200).send(apires);
+                  } else {
+                    res.status(500).send({ status: "failed", reason });
+                  }
                 }
               }
             }
           }
         } catch (e: any) {
           console.log(`Failed to call API ${url}:`, e);
-          res.status(500);
-          res.send({ status: "failed", reason: e.message });
+
+          if (!res.headersSent) {
+            res.status(500);
+            res.send({ status: "failed", reason: e.message });
+          }
         }
       });
     }

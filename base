@@ -25665,12 +25665,18 @@ ${src}`
         }
       });
     } else {
+      const info = await import_isomorphic_git.default.getRemoteInfo({
+        http: import_node.default,
+        url: "https://github.com/rizrmd/royal-arc.git"
+      });
+      const ver = await readAsync(
+        (0, import_path7.join)(process.cwd(), "pkgs", "ver.json"),
+        "json"
+      );
+      if (ver.commit.id !== info.refs.heads.main) {
+        console.log(`New version available at: github.com/rizrmd/royal-arc`);
+      }
     }
-    const info = await import_isomorphic_git.default.getRemoteInfo({
-      http: import_node.default,
-      url: "https://github.com/rizrmd/royal-arc.git"
-    });
-    console.log(info);
   };
 
   // base/util/is-equal.ts
