@@ -1,10 +1,15 @@
 import { page } from "types/content";
-import { useLocal } from "web-utils";
+import icon from "src/icons.png";
 
 export default page({
   url: "/x",
   component: ({}) => {
-    return <div>Halo</div>;
+    return (
+      <div>
+        Halo
+
+        <img src={icon} />
+      </div>
+    );
   },
 });
-  

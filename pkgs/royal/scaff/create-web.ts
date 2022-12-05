@@ -224,9 +224,17 @@ export const page = (opt: IPage) => {
   return opt
 }`,
     //-------------------------------------------------
+    "types/react-app-env.d.ts": `\
+declare module "*.png";
+declare module "*.svg";
+declare module "*.jpeg";
+declare module "*.jpg";
+`,
+    //-------------------------------------------------
     "types/global.d.ts": `\
 import { prisma } from "gen/prisma";
 import type * as _api from "gen/api";
+import "web-init/src/global";
 
 type TApi = typeof _api["srv"];
 type TApiKey = keyof TApi;

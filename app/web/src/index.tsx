@@ -1,6 +1,5 @@
 import { createRoot } from "react-dom/client";
 import { App, initEnv } from "web-init";
-import "web-init/src/global";
 import layout from "../types/layout";
 import page from "../types/page";
 import "./index.css";

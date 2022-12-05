@@ -6,3 +6,5 @@ declare global {
   const navigate: (src: string) => void
   const params: any
 }
+
+
