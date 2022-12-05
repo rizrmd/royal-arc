@@ -1,8 +1,6 @@
 import { _runtime } from "gen";
 import { cg, initClientRPC } from "../internal/rpc/client";
 import { DeclareServiceArg } from "./types";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 (BigInt as any).prototype["toJSON"] = function () {
   return this.toString();

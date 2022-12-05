@@ -62,37 +62,6 @@ ${prisma.ex.join(",\n")}
 `,
   );
 
-  const files = [["prisma", "schema.prisma"], [".env"]];
-  let prismaGen = false;
-
-  for (const file of files) {
-    const fname = join(...file);
-    const fromFile = join(base, ...file);
-    const toFile = join(cwd(), ...file);
-    try {
-      const s = await stat(fromFile);
-      if (mtime[fname] !== s.mtimeMs) {
-        mtime[fname] = s.mtimeMs;
-        await copyAsync(fromFile, toFile, { overwrite: true });
-        prismaGen = true;
-      }
-    } catch (_) {
-    }
-  }
-  if (prismaGen) {
-    await writeAsync(mtimeFile, mtime);
-
-    const schema = join(cwd(), "prisma", "schema.prisma");
-    const sqdb = join(cwd(), "db.sqlite");
-    const prismaSrc = await readAsync(schema);
-    if (prismaSrc === defaultPrismaSrc) {
-      if (!await existsAsync(sqdb)) {
-        await runPnpm(["prisma", "db", "push"], cwd());
-      }
-    }
-    runPnpm(["prisma", "generate"], cwd());
-  }
-
   await dirAsync(join(outdir, "prisma"));
 
   const appschema = await readAsync(

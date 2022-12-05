@@ -215,7 +215,6 @@ importers:
       cuid: ^2.1.8
       esbuild: ^0.15.15
       gen: workspace:^
-      get-port: ^6.1.2
       jiti: ^1.16.0
       lodash.capitalize: ^4.2.1
       lodash.padend: ^4.6.1
@@ -231,7 +230,6 @@ importers:
       cuid: 2.1.8
       esbuild: 0.15.15
       gen: link:../../gen
-      get-port: 6.1.2
       jiti: 1.16.0
       lodash.capitalize: 4.2.1
       lodash.padend: 4.6.1
@@ -1833,11 +1831,6 @@ packages:
       function-bind: 1.1.1
       has: 1.0.3
       has-symbols: 1.0.3
-    dev: false
-
-  /get-port/6.1.2:
-    resolution: {integrity: sha512-BrGGraKm2uPqurfGVj/z97/zv8dPleC6x9JBNRTrDNtCkkRF4rPwrQXFgL7+I+q8QSdU4ntLQX2D7KIxSy8nGw==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dev: false
 
   /glob-parent/5.1.2:
