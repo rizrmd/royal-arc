@@ -1,20 +1,19 @@
 {
   "srv": {
     "_url": {
-      "_img": "/_img/*",
-      "_file": "/_file/*",
+      "hello": "/hello/:name?",
       "_upload": "/_upload",
-      "hello": "/hello/:name?"
+      "_file": "/_file/*",
+      "_img": "/_img/*"
     },
     "_params": {
-      "_img": {
-        "api": [],
-        "url": [],
-        "service": []
-      },
-      "_file": {
-        "api": [],
-        "url": [],
+      "hello": {
+        "api": [
+          "name"
+        ],
+        "url": [
+          ""
+        ],
         "service": []
       },
       "_upload": {
@@ -24,13 +23,14 @@
         "url": [],
         "service": []
       },
-      "hello": {
-        "api": [
-          "name"
-        ],
-        "url": [
-          ""
-        ],
+      "_file": {
+        "api": [],
+        "url": [],
+        "service": []
+      },
+      "_img": {
+        "api": [],
+        "url": [],
         "service": []
       }
     }
