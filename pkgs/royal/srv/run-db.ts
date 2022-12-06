@@ -3,8 +3,7 @@ import { ex, SrvHttpRequest, SrvHttpResponse } from "./global-ex";
 
 export const runDB = async (
   dbName: string,
-  req: SrvHttpRequest,
-  res: SrvHttpResponse,
+  body: any,
 ) => {
   try {
     //@ts-ignore
@@ -16,20 +15,9 @@ export const runDB = async (
         //@ts-ignore
         return await s.query(arg);
       };
-      try {
-        const result = await runDB(req.body);
-        res.send(result);
-      } catch (e) {
-        res.sendStatus(500);
-        console.error(e);
-
-        if (!res.headersSent) {
-          res.send(e);
-        }
-      }
-      return;
+      const result = await runDB(body);
+      return result;
     }
-    res.send({ error: `${dbName} not found.` });
   } catch (e) {
     if (e.message.includes("Cannot find module")) {
     } else {
