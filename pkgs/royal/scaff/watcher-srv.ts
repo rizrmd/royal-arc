@@ -1,5 +1,5 @@
 import { watch } from "chokidar";
-import { dirname, join } from "path";
+import { basename, dirname, join } from "path";
 import { scaffoldAPI } from "../srv/prebuild-api";
 
 export const watcherSrv = (path: string) => {
@@ -14,7 +14,7 @@ export const watcherSrv = (path: string) => {
   w.on("all", async (e, filePath) => {
     clearTimeout(opt.tout);
     opt.tout = setTimeout(() => {
-      scaffoldAPI(dirname(path), join(path, "api"));
+      scaffoldAPI(basename(path), join(path, "api"), filePath);
     }, 500);
   });
 };

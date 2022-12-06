@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { SrvHttpRequest, SrvHttpResponse } from "./global-ex";
 
 export type APIContext = {
-  req: Request<{}, any, any, Record<string, any>>;
-  res: Response<Record<string, any> | string>;
+  req: SrvHttpRequest;
+  res: SrvHttpResponse;
   skip: () => void;
 };
 

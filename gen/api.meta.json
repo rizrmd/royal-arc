@@ -1,17 +1,13 @@
 {
   "srv": {
     "_url": {
-      "upload": "/moko",
-      "hello": "/hello/:name?"
+      "hello": "/hello/:name?",
+      "_upload": "/_upload",
+      "_img": "/_img/*",
+      "_img_copy": "/_img/*",
+      "_file": "/_file/*"
     },
     "_params": {
-      "upload": {
-        "api": [
-          "name"
-        ],
-        "url": [],
-        "service": []
-      },
       "hello": {
         "api": [
           "name"
@@ -19,6 +15,28 @@
         "url": [
           ""
         ],
+        "service": []
+      },
+      "_upload": {
+        "api": [
+          "name"
+        ],
+        "url": [],
+        "service": []
+      },
+      "_img": {
+        "api": [],
+        "url": [],
+        "service": []
+      },
+      "_img_copy": {
+        "api": [],
+        "url": [],
+        "service": []
+      },
+      "_file": {
+        "api": [],
+        "url": [],
         "service": []
       }
     }

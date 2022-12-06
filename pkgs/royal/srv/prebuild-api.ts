@@ -12,8 +12,13 @@ import { parse, traverse } from "@babel/core";
 import pluginTs from "@babel/plugin-syntax-typescript";
 import { stat } from "fs/promises";
 import { ApiMetaParams } from "service";
+import { isDirectory } from "../scaff/util/is-directory";
 
-export const scaffoldAPI = async (name: string, apiPath: string) => {
+export const scaffoldAPI = async (
+  name: string,
+  apiPath: string,
+  changedPath?: string,
+) => {
   await dirAsync(apiPath);
   const index = [] as { name: string; path: string }[];
 
@@ -38,23 +43,32 @@ export const scaffoldAPI = async (name: string, apiPath: string) => {
     if (apimeta[name]._params) _params = apimeta[name]._params;
   }
 
+  if (changedPath) {
+    const changedName = changedPath
+      .substring(0, changedPath.length - 3)
+      .replace(/\W/gi, "_");
+
+    delete _url[changedName];
+    delete _params[changedName];
+  } else {
+    const pendingRemove: Promise<any>[] = [];
+    const dirs = await listAsync(genPath);
+    if (dirs) {
+      for (let file of dirs) {
+        if (file.startsWith("api.")) {
+          pendingRemove.push(removeAsync(join(genPath, file)));
+        }
+      }
+    }
+    await Promise.all(pendingRemove);
+  }
+
   let mtime = ((await readAsync(mtimePath, "json")) || {}) as Record<
     string,
     number
   >;
 
   const relPath = apiPath.substring(root.length + 1);
-
-  const pendingRemove: Promise<any>[] = [];
-  const dirs = await listAsync(join(dirname(apiPath), "..", "..", "gen"));
-  if (dirs) {
-    for (let file of dirs) {
-      if (file.startsWith("api.")) {
-        pendingRemove.push(removeAsync(join(genPath, file)));
-      }
-    }
-  }
-  await Promise.all(pendingRemove);
 
   await findAsync(apiPath, {
     recursive: true,
@@ -179,6 +193,7 @@ ${
 };
 
 export const generateApiIndex = async (srvs: string[], path: string) => {
+  console.log(srvs, path);
   await writeAsync(
     join(path, `api.ts`),
     `\

@@ -10,7 +10,7 @@ export default page({
       <div>
         Halo
         <form
-          action={`${serverurl}/moko`}
+          action={`${serverurl}/_upload`}
           method="POST"
           ref={form}
           encType="multipart/form-data"

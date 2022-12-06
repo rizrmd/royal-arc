@@ -7,7 +7,7 @@ import { generateApiIndex, scaffoldAPI } from "./prebuild-api";
 
 export const preBuildSrv = async () => {
   const srvs = [] as string[];
-  const svcname = basename(__dirname);
+  const svcname = basename(cwd());
 
   if (!g.mode) {
     for (let [_name, _] of Object.entries(_path)) {

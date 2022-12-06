@@ -1,17 +1,13 @@
-import bodyParser from "body-parser";
-import express from "express";
 import { _names } from "gen";
-import { createServer } from "http";
 import picocolors from "picocolors";
 import { current as cur } from "service";
+import { App } from "uWebSockets.js";
 import { g } from "../global";
-import { ex } from "./global-ex";
+import { ex, SrvHttpResponse, statusCode } from "./global-ex";
 import { preBuildSrv } from "./prebuild";
-import { middlewareUpload } from "./routes/middleware-upload";
+import { attachRouter, route } from "./route";
 import { routeAPI } from "./routes/route-api";
 import { routeAPIFrm } from "./routes/route-api-frm";
-import { routeDB } from "./routes/route-db";
-import { routeDeploy } from "./routes/route-deploy";
 
 export const initExpress = async (params: {
   current: {
@@ -41,30 +37,22 @@ export const initExpress = async (params: {
 
   try {
     const port = g.ports[serviceName];
-    ex.app = express();
-    ex.router = express.Router();
-
-    ex.app.use(bodyParser.json());
-    ex.app.use(middlewareUpload);
-    ex.app.disable("x-powered-by");
-    ex.app.use(
-      bodyParser.urlencoded({
-        extended: true,
-      }),
-    );
-    ex.app.use(ex.router);
-
-    ex.server = createServer(ex.app);
+    const app = App({});
+    ex.app = app;
 
     routeAPIFrm();
-    await routeAPI(serviceName);
-    await routeDB();
-    routeDeploy();
-
-    ex.router.all("/", (req, res) => {
-      res.send("API Server Running");
+    routeAPI(serviceName);
+    route("/*", async (req, res) => {
+      res.sendStatus(404);
+      res.send({
+        "response": "Not Found",
+      });
     });
-    ex.server.listen(port);
+
+    attachRouter();
+    app.listen("0.0.0.0", port, (token) => {
+      ex.socket = token;
+    });
   } catch (e) {
     console.log("Failed to start express:\n", e);
   }

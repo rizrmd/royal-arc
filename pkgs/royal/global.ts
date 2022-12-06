@@ -17,6 +17,11 @@ export const g = global as unknown as {
   mode: "dev" | "staging" | "prod";
   isRestarted: boolean;
   execFromBase: boolean;
+  watcher: {
+    web: Record<string, ReturnType<typeof watch>>;
+    create: ReturnType<typeof watch>;
+  };
+
   serverName: "default";
   root: string;
   servers: Record<string, TemplatedApp>;

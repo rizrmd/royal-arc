@@ -1,6 +1,6 @@
 import { _names } from "gen";
 import { ApiMetaParams } from "service";
-import { ex } from "../global-ex";
+import { route } from "../route";
 
 export const routeAPI = async (serviceName: _names) => {
   try {
@@ -19,7 +19,7 @@ export const routeAPI = async (serviceName: _names) => {
         continue;
       }
 
-      ex.router.all(url, async (req, res) => {
+      route(url, async (req, res) => {
         try {
           const im = api[apiName].api.bind({
             req,
@@ -30,7 +30,8 @@ export const routeAPI = async (serviceName: _names) => {
           if (typeof params === "object") {
             if (Array.isArray(params)) {
               const apires = await (im as any)(...params);
-              res.status(200).send(apires);
+              res.sendStatus(200);
+              res.send(apires);
             } else {
               const prm = apiMeta._params[apiName];
               if (prm) {
@@ -51,11 +52,14 @@ export const routeAPI = async (serviceName: _names) => {
                   reason = e.message;
                 }
 
-                if (!res.headersSent) {
+                const sent = res.sentBody || res.sentHeader || res.sentStatus;
+                if (!sent) {
                   if (apires !== undefined) {
-                    res.status(200).send(apires);
+                    res.sendStatus(200);
+                    res.send(apires);
                   } else {
-                    res.status(500).send({ status: "failed", reason });
+                    res.sendStatus(500);
+                    res.send({ status: "failed", reason });
                   }
                 }
               }
@@ -65,7 +69,7 @@ export const routeAPI = async (serviceName: _names) => {
           console.log(`Failed to call API ${url}:`, e);
 
           if (!res.headersSent) {
-            res.status(500);
+            res.sendStatus(500);
             res.send({ status: "failed", reason: e.message });
           }
         }

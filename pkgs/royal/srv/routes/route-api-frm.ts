@@ -1,7 +1,8 @@
 import { ex } from "../global-ex";
+import { route } from "../route";
 
 export const routeAPIFrm = () => {
-  ex.router.all("*/_api_frm", (req, res) => {
+  route("/_api_frm", async (req, res) => {
     // TODO: whitelist origin
     const allowUrl = req.headers.origin || req.headers.referer;
 

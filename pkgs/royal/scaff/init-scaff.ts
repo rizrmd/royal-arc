@@ -1,7 +1,6 @@
-import { basename, join } from "path";
+import { join } from "path";
 import { listAsync } from "service";
 import { g } from "../global";
-import { createNewDB } from "./create-db";
 import { isDirectory } from "./util/is-directory";
 import { watcherAttach } from "./watcher-attach";
 import { createNew } from "./watcher-create";
