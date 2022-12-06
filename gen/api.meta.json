@@ -5,8 +5,12 @@
         "api": [
           "name"
         ],
-        "service": [],
-        "url": []
+        "service": [
+          "name"
+        ],
+        "url": [
+          "name"
+        ]
       },
       "_file": {
         "api": [],
@@ -36,7 +40,7 @@
       }
     },
     "_url": {
-      "_dbs": "/_dbs/",
+      "_dbs": "/_dbs/:name/*",
       "_file": "/_file/*",
       "_img": "/_img/*",
       "_upload": "/_upload",

@@ -46,7 +46,7 @@ const defaultVsSettings = {
     "pnpm-workspace.yaml": true,
     "pnpm-lock.yaml": true,
     ".vscode": true,
-    "app/.gen": true,
+    "gen": true,
     ".idea": true,
   },
   "hide-files.files": [
@@ -55,7 +55,7 @@ const defaultVsSettings = {
     "pnpm-lock.yaml",
     ".vscode",
     ".idea",
-    "app/.gen",
+    "gen",
   ],
   "files.associations": {},
 };
