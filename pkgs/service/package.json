@@ -19,6 +19,7 @@
     "lodash.capitalize": "^4.2.1",
     "lodash.padend": "^4.6.1",
     "minimatch": "^5.1.0",
+    "node-fetch": "^3.3.0",
     "picocolors": "^1.0.0",
     "pretty-error": "^4.0.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.15.0",

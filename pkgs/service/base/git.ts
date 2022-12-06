@@ -1,8 +1,8 @@
 import fs from "fs";
 import git from "isomorphic-git";
-import http from "isomorphic-git/http/node";
 import { join } from "path";
 import { readAsync, writeAsync } from "../export";
+import fetch from 'node-fetch';
 
 export const gitMark = async () => {
   const cfg = await git.getConfig({
@@ -25,11 +25,9 @@ export const gitMark = async () => {
       },
     });
   } else {
-    const info = await git.getRemoteInfo({
-      http,
-      url: "https://github.com/rizrmd/royal-arc.git",
-    });
-
+    const json = await (await fetch(
+      `https://raw.githubusercontent.com/rizrmd/royal-arc/main/pkgs/ver.json`,
+    )).json() as any;
     const ver = await readAsync(
       join(process.cwd(), "pkgs", "ver.json"),
       "json",
@@ -37,8 +35,11 @@ export const gitMark = async () => {
       commit: { id: string; msg: string };
     };
 
-    if (ver.commit.id !== info.refs.heads.main) {
-      console.log(`New version available at: github.com/rizrmd/royal-arc`);
+    if (ver.commit.id !== json.commit.id) {
+      console.log(`\
+New version available at: https://github.com/rizrmd/royal-arc
+  Old ID: ${ver.commit.id}
+  New ID: ${json.commit.id}`);
     }
   }
 };
