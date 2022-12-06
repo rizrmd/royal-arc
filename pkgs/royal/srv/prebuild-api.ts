@@ -193,7 +193,6 @@ ${
 };
 
 export const generateApiIndex = async (srvs: string[], path: string) => {
-  console.log(srvs, path);
   await writeAsync(
     join(path, `api.ts`),
     `\
