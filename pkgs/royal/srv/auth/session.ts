@@ -1,6 +1,6 @@
 import cuid from "cuid";
 import { join } from "path";
-import { open, RootDatabase } from "lmdb";
+import lmdb, { open, RootDatabase } from "lmdb";
 import { SrvHttpRequest } from "../global-ex";
 
 const BlankSession = {
@@ -57,6 +57,24 @@ export const session = {
   async set(id: string, data: any): Promise<SessionEntry> {
     await self(this).lmdb.put(id, data);
     return data;
+  },
+  del(id: string) {
+    return self(this).lmdb.remove(id);
+  },
+  keys() {
+    return new Promise<lmdb.Key[]>((resolve) => {
+      const keys: lmdb.Key[] = [];
+      self(this).lmdb.getKeys().forEach((e) => {
+        keys.push(e);
+      });
+      resolve(keys);
+    });
+  },
+  clear() {
+    self(this).lmdb.clearSync();
+  },
+  count() {
+    return self(this).lmdb.getCount();
   },
 };
 

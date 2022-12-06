@@ -53,13 +53,6 @@
         "service": [],
         "url": []
       },
-      "service": {
-        "api": [
-          "name"
-        ],
-        "service": [],
-        "url": []
-      },
       "session": {
         "api": [
           "name"
@@ -76,7 +69,6 @@
       "hello": "/hello/:name?",
       "login": "/_login",
       "logout": "/_logout",
-      "service": "/_service",
       "session": "/_session"
     }
   }
