@@ -5,9 +5,9 @@ import { getRuntime } from "../../rpc/get-runtime";
 export const runPnpm = (
   args: string[],
   cwd: string,
-  opt = { silent: true},
+  opt = { silent: true },
 ) => {
-  return new Promise<number>(async (_resolve) => {
+  return new Promise<string>(async (_resolve) => {
     const runtime = getRuntime();
 
     let ival = 0 as any;
@@ -34,14 +34,14 @@ export const runPnpm = (
         i++;
       }, 1000);
     } else {
-      justPrint = true
+      justPrint = true;
     }
 
     if (opt.silent && args[0] === "i" && args.length === 1) {
       args.push("-s");
     }
 
-    const resolve = (code: number) => {
+    const resolve = (code: string) => {
       clearInterval(ival);
       _resolve(code);
     };
@@ -55,7 +55,7 @@ export const runPnpm = (
         cwd: cwd,
       });
       const code = await s.exited;
-      resolve(code);
+      resolve("");
     } else if (runtime === "node") {
       const pnpm = spawn(
         /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
@@ -63,10 +63,13 @@ export const runPnpm = (
         { cwd, stdio: "pipe" },
       );
 
+      let output = "";
       const tfm = new Transform({
         transform: (chunk, encoding, done) => {
+          const str = chunk.toString();
+          output += str;
+
           if (justPrint) {
-            const str = chunk.toString();
             process.stdout.write(str);
           }
         },
@@ -75,7 +78,7 @@ export const runPnpm = (
       pnpm.stderr.pipe(tfm);
 
       pnpm.once("exit", (code) => {
-        resolve(code || 0);
+        resolve(output);
       });
     }
   });

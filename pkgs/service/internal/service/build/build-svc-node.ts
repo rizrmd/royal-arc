@@ -8,9 +8,8 @@ import picocolors from "picocolors";
 import { g } from "../../global";
 import { getRuntime } from "../../rpc/get-runtime";
 import { waitExit } from "../../rpc/wait-exit";
-import { dirAsync, existsAsync, writeAsync } from "./jetpack";
+import { dirAsync, writeAsync } from "./jetpack";
 import { resolveDeps } from "./resolve-deps";
-import { runPnpm } from "./run-pnpm";
 
 export const buildSvcNode = async (name: _names, outPath: string) => {
   const cwdsplit = process.cwd().split(sep);

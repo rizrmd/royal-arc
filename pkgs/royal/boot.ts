@@ -93,7 +93,7 @@ export const boot = async () => {
               18,
               ".",
             )
-          }: ${picocolors.green(url.toString())}`,
+          }: ${(url.toString())}`,
         );
         continue;
       }

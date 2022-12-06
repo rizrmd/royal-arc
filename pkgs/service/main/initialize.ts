@@ -40,13 +40,14 @@ export const initialize = async (fn: () => Promise<void>) => {
   if (executedFromNodeBase) {
     await vscodeSettings();
     await buildAll();
-    await watchAll()
+    await watchAll();
   }
 
   rawLog(`Starting: ${picocolors.cyan("WebSocket RPC")} `);
   await initServerRPC(svcPort);
   await initClientRPC({ wsPort: svcPort, clientID: "root" });
-  rawLog(`[${(`ws://127.0.0.1:${svcPort}`)}]\n`);
+  // rawLog(picocolors.gray(`[${(`ws://127.0.0.1:${svcPort}`)}]`));
+  rawLog(`\n`);
 
   await fn();
 };

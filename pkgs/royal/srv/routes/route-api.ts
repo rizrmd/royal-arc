@@ -7,14 +7,14 @@ export const routeAPI = async (serviceName: _names) => {
     //@ts-ignore
     const apiImports = await import("../../../../gen/api");
     //@ts-ignore
-    const _apiMeta = (await import("../../../../gen/api.meta.json"));
+    const _apiMeta = (await import("../../../../gen/api.meta.json")).default;
 
     const apiMeta = _apiMeta[
       serviceName
     ] as { _url: Record<string, string>; _params: ApiMetaParams };
     const api = apiImports[serviceName];
 
-    for (let [apiName, url] of Object.entries(apiMeta._url)) {
+    for (let [apiName, url] of Object.entries(apiMeta._url || {})) {
       if (!api[apiName]) {
         continue;
       }
@@ -78,7 +78,7 @@ export const routeAPI = async (serviceName: _names) => {
   } catch (e) {
     if (e.message.includes("Cannot find module")) {
     } else {
-      console.log(`Failed to load API:\n ➥ ${e.message}`);
+      throw e;
     }
   }
 };

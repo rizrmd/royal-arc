@@ -1,12 +1,14 @@
 import { spawn } from "child_process";
 import { stat } from "fs/promises";
+import capitalize from "lodash.capitalize";
 import { join } from "path";
+import picocolors from "picocolors";
 import {
   dirAsync,
   existsAsync,
   listAsync,
   readAsync,
-  removeAsync,
+  removeAsync
 } from "../export";
 import { buildApp } from "../internal/service/build/build-app";
 import { resolveDeps } from "../internal/service/build/resolve-deps";
@@ -74,6 +76,7 @@ const main = (async () => {
   const { commonjs } = await import("@hyrious/esbuild-plugin-commonjs");
   const appcwd = join(process.cwd(), ".output", "app");
 
+  let printPreBuild = false;
   for (const dir of ["app", "pkgs"].map((e) => join(process.cwd(), e))) {
     const list = await listAsync(dir);
     if (list) {
@@ -83,9 +86,13 @@ const main = (async () => {
 
         if ((await stat(svcDir)).isDirectory()) {
           if (await existsAsync(buildTs)) {
-            await runPnpm(["jiti", "build.ts", "preBuild"], svcDir, {
-              silent: false,
-            });
+            if (!printPreBuild) {
+              printPreBuild = true;
+              process.stdout.write(picocolors.gray(`PreBuild: `));
+            }
+            process.stdout.write(picocolors.gray(`${capitalize(item)} `));
+
+            await runPnpm(["jiti", "build.ts", "preBuild"], svcDir);
           }
         }
       }
@@ -155,7 +162,7 @@ const main = (async () => {
 });
 
 const installDep = () => {
-  return new Promise<number>((resolve) => {
+  return new Promise<string>((resolve) => {
     console.log("Installing project dependency");
 
     runPnpm(["i"], process.cwd()).then(resolve);

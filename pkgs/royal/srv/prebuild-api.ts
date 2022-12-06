@@ -12,17 +12,24 @@ import { parse, traverse } from "@babel/core";
 import pluginTs from "@babel/plugin-syntax-typescript";
 import { stat } from "fs/promises";
 import { ApiMetaParams } from "service";
-import { isDirectory } from "../scaff/util/is-directory";
+import { InspectResult } from "service/internal/service/build/jetpack/types";
 
+type MTime = Record<
+  string,
+  number
+>;
+
+type IndexEntry = { name: string; path: string };
+type UrlMap = Record<string, string>;
 export const scaffoldAPI = async (
   name: string,
   apiPath: string,
   changedPath?: string,
 ) => {
   await dirAsync(apiPath);
-  const index = [] as { name: string; path: string }[];
+  const index = [] as IndexEntry[];
 
-  let _url: Record<string, string> = {};
+  let _url: UrlMap = {};
   let _params: ApiMetaParams = {};
   const root = join(dirname(apiPath), "..", "..");
   const genPath = join(dirname(apiPath), "..", "..", "gen");
@@ -63,125 +70,34 @@ export const scaffoldAPI = async (
     await Promise.all(pendingRemove);
   }
 
-  let mtime = ((await readAsync(mtimePath, "json")) || {}) as Record<
-    string,
-    number
-  >;
+  let mtime = ((await readAsync(mtimePath, "json")) || {}) as MTime;
 
   const relPath = apiPath.substring(root.length + 1);
 
+  const promises: Promise<void>[] = [];
   await findAsync(apiPath, {
     recursive: true,
     files: true,
     directories: false,
-    filter: async (file) => {
-      // if (file.absolutePath.startsWith()) return;
-      if (file.absolutePath && file.absolutePath.endsWith(".ts")) {
-        const s = await stat(file.absolutePath);
-        const filePath = file.absolutePath.substring(apiPath.length + 1);
-        let shouldParse = mtime[filePath] !== s.mtimeMs;
-        mtime[filePath] = s.mtimeMs;
-
-        const apiName = file.name
-          .substring(0, file.name.length - 3)
-          .replace(/\W/gi, "_");
-
-        index.push({
-          name: apiName,
-          path: `../${relPath}/` +
-            file.absolutePath.substring(
-              apiPath.length + 1,
-              file.absolutePath.length - 3,
-            ),
-        });
-
-        if (file.size < 10) {
-          await writeAsync(
-            file.absolutePath,
-            `\
-import { apiContext } from "royal";
-export const _ = {
-  url: "/${apiName}",
-  async api(name: string) {
-    const ctx = apiContext(this);
-    return { hello: name || "" };
-  },
-};
-`,
-          );
-          shouldParse = true;
-        }
-        if (shouldParse || !_params[apiName] || !_url[apiName]) {
-          const source = await readAsync(file.absolutePath, "utf8");
-
-          if (source) {
-            _params[apiName] = {
-              api: [],
-              url: [],
-              service: [],
-            };
-            _url[apiName] = await new Promise<string>((resolve) => {
-              try {
-                const parsed = parse(source, {
-                  sourceType: "module",
-                  plugins: [[pluginTs]],
-                });
-
-                let url = "";
-                traverse(parsed, {
-                  ObjectMethod: (p) => {
-                    const c = p.node;
-                    const params: string[] = [];
-                    if (c.key.type === "Identifier" && c.key.name === "api") {
-                      for (let [_, param] of Object.entries(c.params)) {
-                        let name = "";
-                        if (param.type === "Identifier") {
-                          name = param.name;
-                        }
-                        params.push(name);
-                      }
-                    }
-                    _params[apiName].api = params;
-                  },
-                  ObjectProperty: (p) => {
-                    if (url) return;
-
-                    const c = p.node;
-                    if (c.key.type === "Identifier" && c.key.name === "url") {
-                      if (c.value.type === "StringLiteral") {
-                        url = c.value.value;
-                        resolve(url);
-                      }
-                    }
-                  },
-                });
-              } catch (e) {
-              }
-            });
-
-            _params[apiName].url = parseParameterizedPathname(_url[apiName]);
-
-            for (let param of _params[apiName].url) {
-              if (_params[apiName].api.includes(param)) {
-                _params[apiName].service.push(param);
-              }
-            }
-          }
-        }
-      }
+    filter: (file) => {
+      promises.push(
+        scanAPIMeta({ file, apiPath, mtime, index, relPath, _params, _url }),
+      );
       return true;
     },
   });
+
+  await Promise.all(promises);
 
   apimeta[name] = { _url, _params };
 
   await writeAsync(
     apimetaPath,
-    JSON.stringify(apimeta, Object.keys(apimeta).sort(), 2),
+    JSON.stringify(apimeta, replacer, 2),
   );
   await writeAsync(
     mtimePath,
-    JSON.stringify(mtime, Object.keys(mtime).sort(), 2),
+    JSON.stringify(mtime, replacer, 2),
   );
   await writeAsync(
     join(dirname(apiPath), "..", "..", "gen", `api.${name}.ts`),
@@ -230,8 +146,117 @@ const parseParameterizedPathname = (pathname: string) => {
   return Object.keys(params);
 };
 
-function JSONstringifyOrder(obj: any, space: number) {
-  const allKeys = new Set();
-  JSON.stringify(obj, (key, value) => (allKeys.add(key), value));
-  return JSON.stringify(obj, Array.from(allKeys).sort() as any, space);
+function replacer(key: any, value: any) {
+  if (value == null || value.constructor != Object) {
+    return value;
+  }
+  return Object.keys(value).sort().reduce((s, k) => {
+    s[k] = value[k];
+    return s;
+  }, {});
 }
+const scanAPIMeta = async (
+  { file, apiPath, mtime, index, relPath, _params, _url }: {
+    file: InspectResult;
+    apiPath: string;
+    mtime: MTime;
+    relPath: string;
+    index: IndexEntry[];
+    _url: UrlMap;
+    _params: ApiMetaParams;
+  },
+) => {
+  if (file.absolutePath && file.absolutePath.endsWith(".ts")) {
+    const s = await stat(file.absolutePath);
+    const filePath = file.absolutePath.substring(apiPath.length + 1);
+    let shouldParse = mtime[filePath] !== s.mtimeMs;
+    mtime[filePath] = s.mtimeMs;
+
+    const apiName = file.name
+      .substring(0, file.name.length - 3)
+      .replace(/\W/gi, "_");
+
+    index.push({
+      name: apiName,
+      path: `../${relPath}/` +
+        file.absolutePath.substring(
+          apiPath.length + 1,
+          file.absolutePath.length - 3,
+        ),
+    });
+
+    if (file.size < 10) {
+      await writeAsync(
+        file.absolutePath,
+        `\
+import { apiContext } from "royal";
+export const _ = {
+url: "/${apiName}",
+async api(name: string) {
+const ctx = apiContext(this);
+return { hello: name || "" };
+},
+};
+`,
+      );
+      shouldParse = true;
+    }
+    if (shouldParse || !_params[apiName] || !_url[apiName]) {
+      const source = await readAsync(file.absolutePath, "utf8");
+
+      if (source) {
+        _params[apiName] = {
+          api: [],
+          url: [],
+          service: [],
+        };
+        _url[apiName] = await new Promise<string>((resolve) => {
+          try {
+            const parsed = parse(source, {
+              sourceType: "module",
+              plugins: [[pluginTs]],
+            });
+
+            let url = "";
+            traverse(parsed, {
+              ObjectMethod: (p) => {
+                const c = p.node;
+                const params: string[] = [];
+                if (c.key.type === "Identifier" && c.key.name === "api") {
+                  for (let [_, param] of Object.entries(c.params)) {
+                    let name = "";
+                    if (param.type === "Identifier") {
+                      name = param.name;
+                    }
+                    params.push(name);
+                  }
+                }
+                _params[apiName].api = params;
+              },
+              ObjectProperty: (p) => {
+                if (url) return;
+
+                const c = p.node;
+                if (c.key.type === "Identifier" && c.key.name === "url") {
+                  if (c.value.type === "StringLiteral") {
+                    url = c.value.value;
+                    resolve(url);
+                  }
+                }
+              },
+            });
+          } catch (e) {
+          }
+        });
+
+        _params[apiName].url = parseParameterizedPathname(_url[apiName]);
+
+        for (let param of _params[apiName].url) {
+          if (_params[apiName].api.includes(param)) {
+            _params[apiName].service.push(param);
+          }
+        }
+      }
+    }
+  }
+};

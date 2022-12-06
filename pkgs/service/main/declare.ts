@@ -7,13 +7,20 @@ import { DeclareServiceArg } from "./types";
 };
 
 export const declareBuild = (
-  args: { preBuild?: (p: { restarted: boolean; argv: string[] }) => void },
+  args: {
+    ignore?: string[];
+    preBuild?: (p: { restarted: boolean; argv: string[] }) => void;
+  },
 ) => {
   const command = process.argv[2];
   if ((args as any)[command]) {
     try {
       (args as any)[command]({ restarted: false, argv: process.argv.slice(3) });
     } catch (_) {}
+  }
+
+  if (args.ignore) {
+    console.log(JSON.stringify(args.ignore));
   }
 };
 
