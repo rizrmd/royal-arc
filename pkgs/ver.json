@@ -1,6 +1,6 @@
 {
   "commit": {
-    "id": 1670366229,
-    "msg": "fix db pkg gen\n"
+    "id": 1670366738,
+    "msg": "fix db sample db.sqlite generate\n"
   }
 }

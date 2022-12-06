@@ -97,6 +97,10 @@ ${prisma.ex.join(",\n")}
       generateSchema = true;
 
       await runPnpm(["prisma", "db", "push"], outdir, { silent: false });
+    } else if ((await stat(join(outdir, "db.sqlite"))).size === 0) {
+      generateSchema = true;
+      await removeAsync(join(outdir, "db.sqlite"));
+      await runPnpm(["prisma", "db", "push"], outdir, { silent: false });
     }
   }
 
