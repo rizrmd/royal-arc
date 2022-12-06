@@ -2,6 +2,7 @@ export * from "./srv/init";
 export * from "./srv/cleanup";
 export * from "./srv/global-ex";
 export * from "./srv/api";
+export * from "./srv/run-db";
 export * from "./global";
 export * from "./srv/prebuild";
 export * from "./db/proxy";

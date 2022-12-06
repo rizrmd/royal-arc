@@ -1,6 +1,6 @@
 {
   "commit": {
-    "id": "fc670aa41d2b81d136d9f0cc4628e90dbdbad0e9",
-    "msg": "fix livereload\n"
+    "id": "373a4f5da71668c5148a16990c2f5307a6897452",
+    "msg": "run db on srv\n"
   }
 }

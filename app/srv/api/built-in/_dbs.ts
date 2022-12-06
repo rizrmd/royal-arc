@@ -1,9 +1,8 @@
-import { apiContext } from "royal";
+import { apiContext, runDB } from "royal";
 export const _ = {
   url: "/_dbs/:name/*",
   async api(name: string) {
     const { req, res } = apiContext(this);
-
-    console.log(req.params);
+    await runDB(name, req, res);
   },
 };
