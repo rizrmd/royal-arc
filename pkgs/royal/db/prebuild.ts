@@ -34,10 +34,20 @@ export const preBuildDb = async () => {
       await runPnpm(["i"], root);
     }
 
+    const genpkg = (join(nodemod, ".gen", "package.json"));
+
     const genindex = (join(nodemod, ".gen", "index.js"));
     if (!await existsAsync(genindex)) {
       await removeAsync(dirname(genindex));
       await runPnpm(["prisma", "generate"], appdir);
+    }
+
+    if (await existsAsync(genpkg)) {
+      const pkg = await readAsync(genpkg, "json");
+      if (pkg && pkg.name !== "prisma-gen") {
+        pkg.name = "prisma-gen";
+        await writeAsync(genpkg, pkg);
+      }
     }
 
     const dbname = name.replace(/\W/gi, "_");
