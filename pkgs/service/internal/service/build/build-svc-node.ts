@@ -10,6 +10,7 @@ import { getRuntime } from "../../rpc/get-runtime";
 import { waitExit } from "../../rpc/wait-exit";
 import { dirAsync, writeAsync } from "./jetpack";
 import { resolveDeps } from "./resolve-deps";
+import { rewatch } from "./watch-all";
 
 export const buildSvcNode = async (name: _names, outPath: string) => {
   const cwdsplit = process.cwd().split(sep);
@@ -38,6 +39,7 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
   await new Promise<void>(async (finished) => {
     if (!g.node) {
       g.node = {
+        watch: {},
         build: {},
         buildTimeout: {},
         recoverError: {},
@@ -66,6 +68,12 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
           outfile: join(tpath, "index.js"),
           external: Object.keys(deps),
         });
+
+        if (g.node.watch[name]) {
+          await g.node.watch[name].close();
+          rewatch(name);
+        }
+
         finished();
       } catch (e: any) {
         recoverFromError(name, e, rebuild);

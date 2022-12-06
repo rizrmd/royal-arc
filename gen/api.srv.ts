@@ -5,4 +5,7 @@ export { _ as _file } from "../app/srv/api/built-in/_file"
 export { _ as _img } from "../app/srv/api/built-in/_img"
 export { _ as _upload } from "../app/srv/api/built-in/_upload"
 export { _ as hello } from "../app/srv/api/hello"
+export { _ as login } from "../app/srv/api/built-in/auth/login"
+export { _ as logout } from "../app/srv/api/built-in/auth/logout"
+export { _ as session } from "../app/srv/api/built-in/auth/session"
     

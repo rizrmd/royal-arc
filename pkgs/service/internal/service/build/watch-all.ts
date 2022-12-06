@@ -19,7 +19,7 @@ export const watchAll = async () => {
     rewatch(k as _names);
   }
 };
-const rewatch = (name: _names, files?: string[]) => {
+export const rewatch = (name: _names, files?: string[]) => {
   const b = g.node.build[name];
   if (b.metafile) {
     const fls = files
@@ -46,6 +46,7 @@ const rewatch = (name: _names, files?: string[]) => {
 
       await rebuild({ name, b, w: w as any, path });
     });
+    g.node.watch[name] = w;
   }
 };
 

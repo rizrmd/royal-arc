@@ -1,5 +1,6 @@
 import { ServerWebSocket, spawn as bunSpawn } from "bun";
 import { spawn as nodeSpawn } from "child_process";
+import { FSWatcher } from "chokidar";
 import type { build, BuildInvalidate } from "esbuild";
 import action from "gen/action";
 import { _names } from "gen/service";
@@ -29,6 +30,7 @@ export const initGlobal = async (arg: { svcPort: number }) => {
     g.node = {
       buildTimeout: {},
       build: {},
+      watch: {},
       recoverError: {},
     };
   }
@@ -46,6 +48,7 @@ export const g = globalThis as unknown as {
         rebuild: BuildInvalidate & (() => void);
       }
     >;
+    watch: Record<string, FSWatcher>;
     recoverError: Record<
       string,
       ReturnType<typeof bunSpawn | typeof nodeSpawn>

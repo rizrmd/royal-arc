@@ -37,6 +37,35 @@
         "url": [
           ""
         ]
+      },
+      "login": {
+        "api": [
+          "username",
+          "password"
+        ],
+        "service": [],
+        "url": []
+      },
+      "logout": {
+        "api": [
+          "name"
+        ],
+        "service": [],
+        "url": []
+      },
+      "service": {
+        "api": [
+          "name"
+        ],
+        "service": [],
+        "url": []
+      },
+      "session": {
+        "api": [
+          "name"
+        ],
+        "service": [],
+        "url": []
       }
     },
     "_url": {
@@ -44,7 +73,11 @@
       "_file": "/_file/*",
       "_img": "/_img/*",
       "_upload": "/_upload",
-      "hello": "/hello/:name?"
+      "hello": "/hello/:name?",
+      "login": "/_login",
+      "logout": "/_logout",
+      "service": "/_service",
+      "session": "/_session"
     }
   }
 }

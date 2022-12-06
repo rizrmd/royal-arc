@@ -52,7 +52,7 @@ export const routeAPI = async (serviceName: _names) => {
                   reason = e.message;
                 }
 
-                const sent = res.sentBody || res.sentHeader || res.sentStatus;
+                const sent = res.sentBody;
                 if (!sent) {
                   if (apires !== undefined) {
                     res.sendStatus(200);

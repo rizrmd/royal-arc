@@ -15,6 +15,7 @@
     "fflate": "^0.7.4",
     "find-my-way": "^7.3.1",
     "gen": "workspace:^",
+    "lmdb": "^2.7.3",
     "lodash.camelcase": "^4.3.0",
     "lodash.padend": "^4.6.1",
     "lodash.trim": "^4.5.1",

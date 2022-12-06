@@ -9,7 +9,7 @@ import { attachRouter, route } from "./route";
 import { routeAPI } from "./routes/route-api";
 import { routeAPIFrm } from "./routes/route-api-frm";
 
-export const initExpress = async (params: {
+export const initServer = async (params: {
   current: {
     serviceName: _names;
     pid: string;
