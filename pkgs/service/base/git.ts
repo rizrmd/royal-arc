@@ -2,7 +2,7 @@ import fs from "fs";
 import git from "isomorphic-git";
 import { join } from "path";
 import { readAsync, writeAsync } from "../export";
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 
 export const gitMark = async () => {
   const cfg = await git.getConfig({
@@ -20,7 +20,7 @@ export const gitMark = async () => {
 
     await writeAsync(join(process.cwd(), "pkgs", "ver.json"), {
       commit: {
-        id: commits[0].oid,
+        id: Date.now(),
         msg: commits[0].commit.message,
       },
     });

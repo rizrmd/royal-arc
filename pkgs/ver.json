@@ -1,6 +1,6 @@
 {
   "commit": {
-    "id": "853ec3c9cccc3a2edfac5dfe8f48120057f17e85",
-    "msg": "run db on srv\n"
+    "id": 1670340489767,
+    "msg": "fix precommit ver\n"
   }
 }
