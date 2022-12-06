@@ -110,6 +110,7 @@ importers:
       '@types/websocket': ^1.0.5
       chokidar: ^3.5.3
       cuid: ^2.1.8
+      date-fns: ^2.29.3
       dotenv: ^16.0.3
       fflate: ^0.7.4
       find-my-way: ^7.3.1
@@ -134,6 +135,7 @@ importers:
       '@babel/traverse': 7.20.1
       chokidar: 3.5.3
       cuid: 2.1.8
+      date-fns: 2.29.3
       dotenv: 16.0.3
       fflate: 0.7.4
       find-my-way: 7.3.1

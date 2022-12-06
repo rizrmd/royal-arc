@@ -120,7 +120,7 @@ export const initEnv = async (arg: { layout: any; page: any }) => {
                   if (rest.length > 0 && params.api.length > 0) {
                     for (const [idx, p] of Object.entries(rest)) {
                       const paramName = params.api[idx];
-                      if (params.shared.includes(paramName)) {
+                      if (params.shared && params.shared.includes(paramName)) {
                         if (
                           !!p &&
                           typeof p !== "string" &&
