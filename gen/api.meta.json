@@ -3,13 +3,12 @@
     "_params": {
       "_dbs": {
         "api": [
-          "name"
+          "dbName",
+          "action"
         ],
-        "service": [
-          "name"
-        ],
+        "service": [],
         "url": [
-          "name"
+          ""
         ]
       },
       "_file": {
@@ -62,7 +61,7 @@
       }
     },
     "_url": {
-      "_dbs": "/_dbs/:name/*",
+      "_dbs": "/_dbs/:dbName...:action",
       "_file": "/_file/*",
       "_img": "/_img/*",
       "_upload": "/_upload",

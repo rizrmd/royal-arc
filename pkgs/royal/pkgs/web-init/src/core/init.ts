@@ -4,8 +4,34 @@ import { jsx } from "./jsx";
 import { createFrameCors } from "./iframe-cors";
 import { importPageAndLayout } from "./router";
 
+const w = window as unknown as {
+  importedLayouts: any;
+  importedPages: any;
+  Capacitor: any;
+
+  apiHeaders: typeof apiHeaders;
+  serverurl: typeof serverurl;
+  baseurl: typeof baseurl;
+  basepath: typeof basepath;
+  pathname: typeof pathname;
+  webname: string;
+  css: typeof css;
+  mode: typeof mode;
+  jsx: typeof jsx;
+  Fragment: typeof Fragment;
+  React: typeof React;
+  params: typeof params;
+  isMobile: typeof isMobile;
+  mobile: typeof mobile;
+  api: any;
+  navigate: typeof navigate;
+  appRoot: typeof appRoot;
+  preventPopRender: boolean;
+  frmapi: ReturnType<typeof createFrameCors>;
+  db: any;
+};
+
 export const initEnv = async (arg: { layout: any; page: any }) => {
-  const w = window as any;
   w.importedLayouts = arg.layout;
   w.importedPages = arg.page;
   w.apiHeaders = {};
@@ -75,7 +101,7 @@ export const initEnv = async (arg: { layout: any; page: any }) => {
       apimeta = await import("gen/api.meta.json");
     } catch (e) {
     }
-    
+
     //@ts-ignore
     if (apimeta && apimeta["srv"]) {
       //@ts-ignore
@@ -213,8 +239,6 @@ const dbClient = (name: string) => {
 };
 
 export const fetchSendApi = async (url: string, params: any) => {
-  const w = window as any;
-
   if (!w.frmapi) {
     w.frmapi = createFrameCors(w.serverurl);
   }
@@ -236,3 +260,6 @@ export const fetchSendDb = async (name: string, params: any) => {
 
   return await w.frmapi.send(url, params, w.apiHeaders);
 };
+
+// generate db
+w.db = dbClient("db");

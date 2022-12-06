@@ -1,13 +1,10 @@
-import { DBArg } from "service";
-import { ex, SrvHttpRequest, SrvHttpResponse } from "./global-ex";
+import { DBArg, root } from "service";
 
 export const runDB = async (
   dbName: string,
   body: any,
 ) => {
   try {
-    //@ts-ignore
-    const { prisma } = await import("../../../gen/prisma");
     //@ts-ignore
     const s = root.action(dbName as "db");
     if (s) {
@@ -19,9 +16,9 @@ export const runDB = async (
       return result;
     }
   } catch (e) {
-    if (e.message.includes("Cannot find module")) {
+    if (e && e.message && e.message.includes("Cannot find module")) {
     } else {
-      console.log(`Failed to run DB:\n ➥ ${e.message}`);
+      console.log(`Failed to run DB:\n ➥ ${e}`);
     }
   }
 };
