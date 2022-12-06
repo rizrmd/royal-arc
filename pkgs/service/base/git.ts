@@ -20,7 +20,7 @@ export const gitMark = async () => {
 
     await writeAsync(join(process.cwd(), "pkgs", "ver.json"), {
       commit: {
-        id: Date.now(),
+        id: Math.round(Date.now() / 1000),
         msg: commits[0].commit.message,
       },
     });
