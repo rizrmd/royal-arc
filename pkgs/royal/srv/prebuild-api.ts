@@ -174,8 +174,15 @@ export const _ = {
   });
 
   apimeta[name] = { _url, _params };
-  await writeAsync(apimetaPath, apimeta);
-  await writeAsync(mtimePath, mtime);
+
+  await writeAsync(
+    apimetaPath,
+    JSON.stringify(apimeta, Object.keys(apimeta).sort(), 2),
+  );
+  await writeAsync(
+    mtimePath,
+    JSON.stringify(mtime, Object.keys(mtime).sort(), 2),
+  );
   await writeAsync(
     join(dirname(apiPath), "..", "..", "gen", `api.${name}.ts`),
     `\
@@ -186,6 +193,7 @@ ${
         .map((e) => {
           return `export { _ as ${e.name} } from "${e.path}"`;
         })
+        .sort((a, b) => a.localeCompare(b))
         .join("\n")
     }
     `,

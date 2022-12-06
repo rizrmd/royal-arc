@@ -55,6 +55,7 @@ importers:
       '@types/react-dom': ^18.0.9
       '@vitejs/plugin-react': ^2.2.0
       autoprefixer: ^10.4.13
+      dbgen: ../db/node_modules/.gen
       gen: workspace:^
       postcss: ^8.4.19
       react: ^18.2.0
@@ -67,6 +68,7 @@ importers:
       web-utils: workspace:^
     dependencies:
       '@emotion/react': 11.10.5_cuziicjcvwawlf5iuhzacuhqcy
+      dbgen: link:../db/node_modules/.gen
       gen: link:../../gen
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
