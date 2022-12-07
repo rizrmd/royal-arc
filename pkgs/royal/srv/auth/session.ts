@@ -1,7 +1,8 @@
 import cuid from "cuid";
-import { join } from "path";
+import { dirname, join } from "path";
 import lmdb, { open, RootDatabase } from "lmdb";
 import { SrvHttpRequest } from "../global-ex";
+import { dirAsync } from "service";
 
 const BlankSession = {
   id: "",
@@ -13,8 +14,9 @@ type SessionEntry = typeof BlankSession;
 export const session = {
   lmdb: null as unknown as RootDatabase<SessionEntry>,
   cookieKey: "",
-  init(arg: { cookieKey: string }) {
-    const dbpath = join(process.cwd(), "session.lmdb");
+  async init(arg: { cookieKey: string }) {
+    const dbpath = join(process.cwd(), "..", "content", "session.lmdb");
+    await dirAsync(dirname(dbpath));
     self(this).lmdb = open({
       path: dbpath,
       compression: true,

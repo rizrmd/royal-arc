@@ -6,7 +6,7 @@ export const _ = {
   async api() {
     const { req, res } = apiContext(this);
     const rpath = req.params["*"];
-    const upath = join(process.cwd(), "..", "uploads");
+    const upath = join(process.cwd(), "..", "content", "upload");
     const path = resolve(join(upath, rpath));
     if (path.startsWith(upath)) {
       if (await existsAsync(path)) {

@@ -9,7 +9,7 @@ export const _ = {
     const { req, res } = apiContext(this);
     const result: string[] = [];
     if (req.body && Array.isArray(req.body)) {
-      const path = join(process.cwd(), "..", "uploads");
+      const path = join(process.cwd(), "..", "content", "upload");
       await dirAsync(path);
       for (const f of req.body) {
         if (f.data) {
