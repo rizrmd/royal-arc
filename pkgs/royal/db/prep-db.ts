@@ -20,12 +20,24 @@ export const prepareDb = async (name: string) => {
       );
     }
 
+    if (await readAsync(schema) === defaultPrismaSrc) {
+      try {
+        if ((await stat(join(cwd, "db.sqlite"))).size === 0) {
+          await runPnpm(["prisma", "db", "push"], cwd);
+        }
+      } catch (e) {
+        await runPnpm(["prisma", "db", "push"], cwd);
+      }
+    }
+
     await runPnpm(["prisma", "generate"], cwd);
   } else {
-    if (await readAsync(schema) === defaultPrismaSrc) {
+    try {
       if ((await stat(join(cwd, "db.sqlite"))).size === 0) {
         await runPnpm(["prisma", "db", "push"], cwd);
       }
+    } catch (e) {
+      await runPnpm(["prisma", "db", "push"], cwd);
     }
 
     const idxSrc = await readAsync(join(genpath, "index.js"));

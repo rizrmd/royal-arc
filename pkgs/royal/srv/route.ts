@@ -52,6 +52,7 @@ export const attachRouter = () => {
             res.sendStreamLastOffset = res.getWriteOffset();
             let [ok, done] = res.tryEnd(ab, totalSize);
             if (done) {
+              res.ended = true;
               resolve();
             } else if (!ok) {
               stream.pause();
@@ -131,8 +132,7 @@ export const attachRouter = () => {
       );
     }
 
-    const sent = res.sentBody || res.sentBody || res.sentStatus;
-    if (!res.aborted && !sent) {
+    if (!res.aborted && !res.ended) {
       res.end();
     }
   });
