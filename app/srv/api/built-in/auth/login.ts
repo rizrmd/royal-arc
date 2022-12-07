@@ -1,4 +1,4 @@
-import { apiContext, parseCookies, session } from "royal";
+import { apiContext, session } from "royal";
 export const _ = {
   url: "/_login",
   async api(username: string, password: string) {
