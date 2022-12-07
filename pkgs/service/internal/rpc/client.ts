@@ -158,7 +158,7 @@ export const initClientRPC = (
                   pid: cg._pid,
                   name: cg._serviceName,
                   aid: msg.aid,
-                  result,
+                  result: JSON.stringify(result),
                   error,
                 }),
               );

@@ -261,5 +261,5 @@ export const fetchSendDb = async (name: string, params: any) => {
   return await w.frmapi.send(url, params, w.apiHeaders);
 };
 
-// generate db
+//---generated---//
 w.db = dbClient("db");

@@ -1,6 +1,6 @@
 {
   "commit": {
-    "id": 1670369260,
-    "msg": "fix api gen\n"
+    "id": 1670371544,
+    "msg": "fix falsy return rpc\n"
   }
 }

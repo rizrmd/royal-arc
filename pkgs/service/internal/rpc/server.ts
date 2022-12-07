@@ -111,7 +111,7 @@ const onMessage = async (ws: ServerWebSocket | uWebSocket, _raw: any) => {
         if (svc.pendingActions && svc.pendingActions[msg.aid]) {
           const action = svc.pendingActions[msg.aid];
           if (msg.error) action.reject(msg.error);
-          else if (msg.result) action.resolve(msg.result);
+          else if (msg.result) action.resolve(JSON.parse(msg.result));
           delete svc.pendingActions[msg.aid];
         }
       }
