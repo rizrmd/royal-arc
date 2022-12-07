@@ -6,6 +6,9 @@ export const _ = {
 
     const current = session.get(req);
     if (!current) {
+      // TODO: cek username dan password,
+      //       kalau berhasil baru lanjut save session dibawah
+
       const sdata = await session.new({ username });
       res.sendHeader("set-cookie", `${session.cookieKey}=${sdata.id};`);
       return sdata;
