@@ -96,13 +96,15 @@ export const attachRouter = () => {
       if (!res.aborted) {
         if (typeof data === "string") {
           res.write(data);
+          res.sentBody = data;
         } else if (typeof data === "number") {
           res.write(data + "");
-        } else if (typeof data === "object") {
+          res.sentBody = data;
+        } else if (typeof data === "object" || !data) {
+          res.sentBody = JSON.stringify(data);
           res.writeHeader("content-type", "application/json");
-          res.write(JSON.stringify(data));
+          res.write(res.sentBody);
         }
-        res.sentBody = data;
       }
     };
 
