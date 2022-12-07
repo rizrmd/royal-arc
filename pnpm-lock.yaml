@@ -30,18 +30,14 @@ importers:
   app/srv:
     specifiers:
       '@types/node': ^18.11.9
-      date-fns: ^2.29.3
       gen: ../../gen
       jiti: ^1.16.0
       royal: ../../pkgs/royal
       service: ../../pkgs/service
-      sharp: ^0.31.2
     dependencies:
-      date-fns: 2.29.3
       gen: link:../../gen
       royal: link:../../pkgs/royal
       service: link:../../pkgs/service
-      sharp: 0.31.2
     devDependencies:
       '@types/node': 18.11.9
       jiti: 1.16.0
@@ -102,11 +98,13 @@ importers:
       '@types/body-parser': ^1.19.2
       '@types/express': ^4.17.14
       '@types/lodash.camelcase': ^4.3.7
+      '@types/lodash.get': ^4.4.7
       '@types/lodash.padend': ^4.6.7
       '@types/lodash.trim': ^4.5.7
       '@types/mime-types': ^2.1.1
       '@types/node': ^18.11.9
       '@types/prettier': ^2.7.1
+      '@types/sharp': ^0.31.0
       '@types/websocket': ^1.0.5
       chokidar: ^3.5.3
       cuid: ^2.1.8
@@ -118,12 +116,14 @@ importers:
       jiti: ^1.16.0
       lmdb: ^2.7.3
       lodash.camelcase: ^4.3.0
+      lodash.get: ^4.4.2
       lodash.padend: ^4.6.1
       lodash.trim: ^4.5.1
       mime-types: ^2.1.35
       picocolors: ^1.0.0
       prettier: ^2.7.1
       service: workspace:^
+      sharp: ^0.31.2
       uWebSockets.js: github:uNetworking/uWebSockets.js#v20.15.0
       undici: ^5.12.0
       websocket: ^1.0.34
@@ -142,12 +142,14 @@ importers:
       gen: link:../../gen
       lmdb: 2.7.3
       lodash.camelcase: 4.3.0
+      lodash.get: 4.4.2
       lodash.padend: 4.6.1
       lodash.trim: 4.5.1
       mime-types: 2.1.35
       picocolors: 1.0.0
       prettier: 2.7.1
       service: link:../service
+      sharp: 0.31.2
       uWebSockets.js: github.com/uNetworking/uWebSockets.js/77bc1fd5577ae42b56675912eb8481a31f3fefd2
       undici: 5.12.0
       websocket: 1.0.34
@@ -159,11 +161,13 @@ importers:
       '@types/body-parser': 1.19.2
       '@types/express': 4.17.14
       '@types/lodash.camelcase': 4.3.7
+      '@types/lodash.get': 4.4.7
       '@types/lodash.padend': 4.6.7
       '@types/lodash.trim': 4.5.7
       '@types/mime-types': 2.1.1
       '@types/node': 18.11.9
       '@types/prettier': 2.7.1
+      '@types/sharp': 0.31.0
       '@types/websocket': 1.0.5
       jiti: 1.16.0
 
@@ -960,6 +964,12 @@ packages:
       '@types/lodash': 4.14.189
     dev: true
 
+  /@types/lodash.get/4.4.7:
+    resolution: {integrity: sha512-af34Mj+KdDeuzsJBxc/XeTtOx0SZHZNLd+hdrn+PcKGQs0EG2TJTzQAOTCZTgDJCArahlCzLWSy8c2w59JRz7Q==}
+    dependencies:
+      '@types/lodash': 4.14.189
+    dev: true
+
   /@types/lodash.padend/4.6.7:
     resolution: {integrity: sha512-LE7+ehyBpN/PwJ/zumlEyeU/pWqoNOmCsRmFRsRkQeLf1JLDRT+cv4sWeqwqs9Q0EFgUWdGJF0+jC4FZbFrsPQ==}
     dependencies:
@@ -1034,6 +1044,12 @@ packages:
     resolution: {integrity: sha512-z5xyF6uh8CbjAu9760KDKsH2FcDxZ2tFCsA4HIMWE6IkiYMXfVoa+4f9KX+FN0ZLsaMw1WNG2ETLA6N+/YA+cg==}
     dependencies:
       '@types/mime': 3.0.1
+      '@types/node': 18.11.9
+    dev: true
+
+  /@types/sharp/0.31.0:
+    resolution: {integrity: sha512-nwivOU101fYInCwdDcH/0/Ru6yIRXOpORx25ynEOc6/IakuCmjOAGpaO5VfUl4QkDtUC6hj+Z2eCQvgXOioknw==}
+    dependencies:
       '@types/node': 18.11.9
     dev: true
 
@@ -2113,6 +2129,10 @@ packages:
 
   /lodash.flatten/4.4.0:
     resolution: {integrity: sha512-C5N2Z3DgnnKr0LOpv/hKCgKdb7ZZwafIrsesve6lmzvZIRZRGaZ/l6Q8+2W7NaT+ZwO3fFlSCzCzrDCFdJfZ4g==}
+    dev: false
+
+  /lodash.get/4.4.2:
+    resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
     dev: false
 
   /lodash.isplainobject/4.0.6:

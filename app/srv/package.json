@@ -2,11 +2,9 @@
   "name": "srv",
   "version": "1.0.0",
   "dependencies": {
-    "date-fns": "^2.29.3",
     "gen": "../../gen",
     "royal": "../../pkgs/royal",
-    "service": "../../pkgs/service",
-    "sharp": "^0.31.2"
+    "service": "../../pkgs/service"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",

@@ -43,6 +43,7 @@ export const attachRouter = () => {
       return new Promise<void>((resolve, reject) => {
         stream
           .on("data", (chunk) => {
+            res.sentBody = true;
             if (res.aborted) {
               resolve();
               return;
@@ -57,7 +58,6 @@ export const attachRouter = () => {
               res.ab = ab;
               res.abOffset = res.sendStreamLastOffset;
               res.onWritable((offset) => {
-                res.sentHeader = true;
                 let [ok, done] = res.tryEnd(
                   res.ab.slice(offset - res.abOffset),
                   totalSize,
@@ -80,7 +80,7 @@ export const attachRouter = () => {
     res.sendFile = async (path: string) => {
       const totalSize = (await stat(path)).size;
       const readStream = createReadStream(path);
-
+      res.sentBody = true;
       await res.sendStream(readStream, totalSize);
     };
 
@@ -132,7 +132,7 @@ export const attachRouter = () => {
     }
 
     const sent = res.sentBody || res.sentBody || res.sentStatus;
-    if (!res.aborted && sent) {
+    if (!res.aborted && !sent) {
       res.end();
     }
   });

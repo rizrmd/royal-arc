@@ -8,8 +8,6 @@ export * from "./srv/cleanup";
 export * from "./srv/global-ex";
 export * from "./srv/init";
 export * from "./srv/prebuild";
+export * from "./srv/optimize-img";
 export * from "./srv/run-db";
 export * from "./srv/upload-tools";
-
-
-
