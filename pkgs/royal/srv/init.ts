@@ -1,9 +1,9 @@
 import { _names } from "gen";
 import picocolors from "picocolors";
 import { current as cur } from "service";
-import { App } from "uWebSockets.js";
+import { App, WebSocketBehavior } from "uWebSockets.js";
 import { g } from "../global";
-import { ex, SrvHttpResponse, statusCode } from "./global-ex";
+import { ex } from "./global-ex";
 import { preBuildSrv } from "./prebuild";
 import { attachRouter, route } from "./route";
 import { routeAPI } from "./routes/route-api";
@@ -15,7 +15,7 @@ export const initServer = async (params: {
     pid: string;
   };
   global: Partial<typeof g>;
-}) => {
+}, ws?: WebSocketBehavior) => {
   if (!params || (params && !params.current) || (params && !params.global)) {
     console.log(
       picocolors.yellow("\nWARNING:"),
@@ -39,6 +39,10 @@ export const initServer = async (params: {
     const port = g.ports[serviceName];
     const app = App({});
     ex.app = app;
+
+    if (ws) {
+      app.ws("/*", ws);
+    }
 
     routeAPIFrm();
     routeAPI(serviceName);
