@@ -1,5 +1,5 @@
 import react from "@vitejs/plugin-react";
-import { viteCfg } from "royal";
+import { viteCfg } from "../../pkgs/royal/web/vitecfg";
 import { defineConfig } from "vite";
 
-export default defineConfig(viteCfg({react}));
+export default defineConfig(viteCfg({ react }));
