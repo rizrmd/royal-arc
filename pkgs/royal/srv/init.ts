@@ -54,6 +54,6 @@ export const initServer = async (params: {
       ex.socket = token;
     });
   } catch (e) {
-    console.log("Failed to start express:\n", e);
+    console.log("Failed to start server:\n", e);
   }
 };

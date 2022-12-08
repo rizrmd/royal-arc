@@ -7,9 +7,9 @@ import { g, MHttpResponse } from "../global";
 import { findBoot, onPanelWSReceiveMsg, serveBoot } from "./serve-boot";
 import {
   findServer as findSrv,
-  serveExpress,
-  serveExpressWS,
-} from "./serve-express";
+  serveServer,
+  serveServerWS,
+} from "./serve-server";
 import { serveStatic } from "./serve-static";
 import { findWeb, serveVite, serveViteWS } from "./serve-vite";
 import { generateUpstream, IUpstream, pathMatcher, plog } from "./tools";
@@ -52,7 +52,7 @@ export const createUWS = async (
         }
         const server = findSrv(matches);
         if (server) {
-          serveExpressWS(_ws);
+          serveServerWS(_ws);
           return;
         }
 
@@ -123,7 +123,7 @@ export const createUWS = async (
 
       const server = findSrv(matches);
       if (server) {
-        if (await serveExpress(upstream, pathname, res, server)) {
+        if (await serveServer(upstream, pathname, res, server)) {
           return;
         } else {
           if (matches.length === 1) {
@@ -157,8 +157,8 @@ export const createUWS = async (
         res.write("All System Operational");
         res.end();
       }
-    });
-
+    }); 
+ 
   return new Promise<TemplatedApp>((resolve) => {
     app.listen("0.0.0.0", parseInt(listen.port), (socket) => {
       const urlent = Object.entries(urls);

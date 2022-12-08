@@ -22,12 +22,12 @@
     "lodash.padend": "^4.6.1",
     "lodash.trim": "^4.5.1",
     "mime-types": "^2.1.35",
+    "node-fetch": "^3.3.0",
     "picocolors": "^1.0.0",
     "prettier": "^2.7.1",
     "service": "workspace:^",
     "sharp": "^0.31.2",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.15.0",
-    "undici": "^5.12.0",
     "websocket": "^1.0.34",
     "zip-a-folder": "^1.1.5"
   },

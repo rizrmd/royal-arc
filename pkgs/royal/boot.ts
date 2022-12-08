@@ -126,6 +126,13 @@ const ensurePorts = async (
       }
 
       if (!g.ports[k]) {
+        if (k.startsWith("srv")) {
+          const srvName = k as "srv";
+          try {
+            g.ports[k] = await root.action(srvName).port();
+            continue;
+          } catch (e) {}
+        }
         g.ports[k] = await root.boot.getPort();
       }
     }

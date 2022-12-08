@@ -5,7 +5,7 @@ import { fetchProxy } from "./fetch-proxy";
 import { IUpstream, localHostName } from "./tools";
 
 const WebSocket = ws.client;
-export const serveExpress = async (
+export const serveServer = async (
   upstream: IUpstream,
   _pathname: string,
   res: MHttpResponse,
@@ -17,11 +17,13 @@ export const serveExpress = async (
     const conf = g.config[g.serverName][g.mode];
     const prefix = new URL(conf[name].url).pathname;
     const pathname = _pathname.substring(prefix.length);
+    const url = `http://${localHostName}:${port}${
+      pathname.startsWith("/") ? pathname : `/${pathname}`
+    }`;
+
     if (
       !(await fetchProxy(
-        `http://${localHostName}:${port}${
-          pathname.startsWith("/") ? pathname : `/${pathname}`
-        }`,
+        url,
         `http://${localHostName}:${port}`,
         `http://${localHostName}:${port}`,
         upstream,
@@ -49,7 +51,7 @@ export const serveExpress = async (
 export const findServer = (matches: string[]) =>
   matches.find((e) => e.startsWith("srv"));
 
-export const serveExpressWS = (_ws: uWebSocket) => {
+export const serveServerWS = (_ws: uWebSocket) => {
   const port = g.ports["srv"];
   if (port) {
     const ws = new WebSocket({});

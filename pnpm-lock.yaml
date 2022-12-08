@@ -120,12 +120,12 @@ importers:
       lodash.padend: ^4.6.1
       lodash.trim: ^4.5.1
       mime-types: ^2.1.35
+      node-fetch: ^3.3.0
       picocolors: ^1.0.0
       prettier: ^2.7.1
       service: workspace:^
       sharp: ^0.31.2
       uWebSockets.js: github:uNetworking/uWebSockets.js#v20.15.0
-      undici: ^5.12.0
       websocket: ^1.0.34
       zip-a-folder: ^1.1.5
     dependencies:
@@ -146,12 +146,12 @@ importers:
       lodash.padend: 4.6.1
       lodash.trim: 4.5.1
       mime-types: 2.1.35
+      node-fetch: 3.3.0
       picocolors: 1.0.0
       prettier: 2.7.1
       service: link:../service
       sharp: 0.31.2
       uWebSockets.js: github.com/uNetworking/uWebSockets.js/77bc1fd5577ae42b56675912eb8481a31f3fefd2
-      undici: 5.12.0
       websocket: 1.0.34
       zip-a-folder: 1.1.5
     devDependencies:
@@ -1265,13 +1265,6 @@ packages:
   /bun-types/0.2.2:
     resolution: {integrity: sha512-/1IPC/PPWvV39I7uulBcWHL0Xpi1BqvwF34R/2gRwt0/l5MJB1gt15GLwLP33d59EnkOdRYibImuCg0l/9BRng==}
     dev: true
-
-  /busboy/1.6.0:
-    resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
-    engines: {node: '>=10.16.0'}
-    dependencies:
-      streamsearch: 1.1.0
-    dev: false
 
   /callsites/3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -2752,11 +2745,6 @@ packages:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
     dev: true
 
-  /streamsearch/1.1.0:
-    resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}
-    engines: {node: '>=10.0.0'}
-    dev: false
-
   /string_decoder/1.1.1:
     resolution: {integrity: sha512-n/ShnvDi6FHbbVfviro+WojiFzv+s8MPMHBczVePfUpDJLwoLT0ht1l4YwBCbi8pJAveEEdnkHyPyTP/mzRfwg==}
     dependencies:
@@ -2877,13 +2865,6 @@ packages:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
     dependencies:
       is-typedarray: 1.0.0
-    dev: false
-
-  /undici/5.12.0:
-    resolution: {integrity: sha512-zMLamCG62PGjd9HHMpo05bSLvvwWOZgGeiWlN/vlqu3+lRo3elxktVGEyLMX+IO7c2eflLjcW74AlkhEZm15mg==}
-    engines: {node: '>=12.18'}
-    dependencies:
-      busboy: 1.6.0
     dev: false
 
   /update-browserslist-db/1.0.10_browserslist@4.21.4:

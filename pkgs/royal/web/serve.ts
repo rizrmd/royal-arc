@@ -54,6 +54,9 @@ export const viteServe = async () => {
             const urlraw = line.split("Local: ")[1].trim().split(" ").shift();
             if (urlraw) {
               g.vite[webName].host = urlraw;
+
+              const url = new URL(urlraw);
+              g.ports[webName] = parseInt(url.port);
             }
           }
         }

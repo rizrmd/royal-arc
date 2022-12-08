@@ -4,7 +4,6 @@ import { readFile } from "fs/promises";
 import padEnd from "lodash.padend";
 import { join } from "path";
 import { cwd } from "process";
-import { request } from "undici";
 import { zip } from "zip-a-folder";
 import config from "../../../../config";
 // import { build } from '../../build'
@@ -48,15 +47,15 @@ export const panelBuild = async (to: typeof g.mode) => {
 
     try {
       const st = await readFile(buildZip);
-      await request(`${puburl}api/receive-deploy`, {
-        body: st,
-        throwOnError: true,
-        method: "POST",
-        headers: {
-          "content-type": "application/zip",
-          "content-length": st.length.toString(),
-        },
-      });
+      // await request(`${puburl}api/receive-deploy`, {
+      //   body: st,
+      //   throwOnError: true,
+      //   method: "POST",
+      //   headers: {
+      //     "content-type": "application/zip",
+      //     "content-length": st.length.toString(),
+      //   },
+      // });
       await removeAsync(buildZip);
     } catch (e: any) {
       console.log(e.message);
