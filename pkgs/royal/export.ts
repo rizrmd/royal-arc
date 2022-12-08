@@ -11,3 +11,4 @@ export * from "./srv/prebuild";
 export * from "./srv/optimize-img";
 export * from "./srv/run-db";
 export * from "./srv/upload-tools";
+export * from "./web/vitecfg";
