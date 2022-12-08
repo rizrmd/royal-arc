@@ -116,17 +116,11 @@ const sendRequest = async (
     const body = await (await r.blob()).arrayBuffer();
     const headers: Record<string, RecognizedString> = {};
 
-    if (url.startsWith("http://127.0.")) {
-      console.log("ok", url);
-    }
     r.headers.forEach((v, k) => {
       headers[k] = Array.isArray(v) ? v.join(" ") : v + "";
     });
     return { body, headers, status: r.status + "" };
   } catch (e: any) {
-    if (url.startsWith("http://127.0.")) {
-      console.log(url, e);
-    }
     if (e.code !== "ECONNREFUSED") {
       plog(`Failed to request ${url} \n  ➥  ${e}`);
     }
