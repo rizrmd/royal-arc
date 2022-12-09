@@ -33,6 +33,7 @@ export type SrvHttpResponse = HttpResponse & {
 export type SrvHttpRequest = HttpRequest & {
   url: string;
   queryString: string;
+  method: ReturnType<HttpRequest["getMethod"]>;
   query?: Record<string, string>;
   body?: any;
   params: any;

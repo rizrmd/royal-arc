@@ -11,4 +11,5 @@ export * from "./srv/prebuild";
 export * from "./srv/optimize-img";
 export * from "./srv/run-db";
 export * from "./srv/upload-tools";
+export * from "uWebSockets.js";
 export * from "./web/vitecfg";
