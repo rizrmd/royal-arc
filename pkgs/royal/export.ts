@@ -13,3 +13,5 @@ export * from "./srv/run-db";
 export * from "./srv/upload-tools";
 export * from "uWebSockets.js";
 export * from "./web/vitecfg";
+export * from "./db/query";
+export * from "./db/inspect-schema";

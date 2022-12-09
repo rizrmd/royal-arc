@@ -37,7 +37,6 @@ export const prepareDb = async (name: string) => {
         await runPnpm(["prisma", "db", "push"], cwd);
       }
     } catch (e) {
-      await runPnpm(["prisma", "db", "push"], cwd);
     }
 
     const idxSrc = await readAsync(join(genpath, "index.js"));
