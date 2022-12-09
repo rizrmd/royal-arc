@@ -70,6 +70,7 @@ export const baseUpgrade = async () => {
   console.log(`Updating pkgs`);
   await removeAsync(join(process.cwd(), "pkgs"));
   await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
+  await runPnpm(["i"], process.cwd());
 
   const root = process.cwd();
   const dirs = await listAsync(join(root, "app"));
