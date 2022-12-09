@@ -8,6 +8,10 @@ export default page({
       await db.user.create({ data: { password: "123", username: "123" } });
       console.log(await db.user.findFirst());
     });
-    return <div>Halo</div>;
+    return (
+      <div>
+        Halo
+      </div>
+    );
   },
 });

@@ -2,9 +2,9 @@
 import { prisma } from "gen/prisma";
 import { DBArg, root } from "service";
 
-type DBName = keyof typeof prisma;
+export type DBName = keyof typeof prisma;
 
-type DBTables<T> = T extends DBName ? Exclude<
+export type DBTables<T> = T extends DBName ? Exclude<
     keyof typeof prisma[T],
     | "$connect"
     | "$disconnect"
