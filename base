@@ -28444,7 +28444,13 @@ Upgrading ${f3}`);
               ["jiti", "upgrade.ts"],
               (0, import_path10.join)(root2, "app", f3)
             );
-            const out = JSON.parse(json);
+            let out = {};
+            try {
+              out = JSON.parse(json);
+            } catch (e2) {
+              console.log(`Failed to execute ${f3}/upgrade.ts:`, out);
+              continue;
+            }
             const paths = Object.keys(out).map(
               (e2) => (0, import_path10.join)(root2, "app", f3, e2.replace(/\//ig, import_path10.sep))
             );

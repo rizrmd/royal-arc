@@ -89,6 +89,15 @@ export const baseUpgrade = async () => {
           if (
             !await existsAsync(join(root, "app", f, "node_modules", "jiti"))
           ) {
+            const oldPkg = await readAsync(
+              join(root, "app", f, "package.json"),
+              "json",
+            );
+            oldPkg.devDependencies["jiti"] = "^1.16.0";
+            await writeAsync(
+              join(root, "app", f, "package.json"),
+              oldPkg,
+            );
             await runPnpm(["i"], process.cwd());
           }
 
@@ -97,10 +106,16 @@ export const baseUpgrade = async () => {
             join(root, "app", f),
           );
 
-          const out = JSON.parse(json) as Record<
+          let out = {} as Record<
             string,
             { ___rule___: UpgradeRuleArg }
           >;
+          try {
+            out = JSON.parse(json);
+          } catch (e) {
+            console.log(`Failed to execute ${f}/upgrade.ts:`, out);
+            continue;
+          }
 
           const paths = Object.keys(out).map((e) =>
             join(root, "app", f, e.replace(/\//ig, sep))
