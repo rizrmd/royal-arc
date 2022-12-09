@@ -33,7 +33,9 @@ export const baseUpgrade = async () => {
   const filebuf = await (await res.blob()).arrayBuffer();
 
   const tempdir = join(process.cwd(), ".output", "content", "temp-upgrade");
-  console.log(`\nExtracting To: ${tempdir}`);
+  console.log(
+    `\nExtracting To: ${tempdir.substring(process.cwd().length + 1)}`,
+  );
   const fileuint8 = new Uint8Array(filebuf);
   await removeAsync(tempdir);
   await dirAsync(tempdir);
@@ -60,7 +62,7 @@ export const baseUpgrade = async () => {
   await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
   await runPnpm(["i"], process.cwd());
 
-  console.log(`Upgrade finished!`);
+  console.log(`\nUpgrade finished!`);
 };
 const clearLine = () => {
   process.stdout.clearLine(0);

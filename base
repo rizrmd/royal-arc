@@ -28397,8 +28397,10 @@ ${src}`
     });
     const filebuf = await (await res.blob()).arrayBuffer();
     const tempdir = (0, import_path10.join)(process.cwd(), ".output", "content", "temp-upgrade");
-    console.log(`
-Extracting To: ${tempdir}`);
+    console.log(
+      `
+Extracting To: ${tempdir.substring(process.cwd().length + 1)}`
+    );
     const fileuint8 = new Uint8Array(filebuf);
     await removeAsync(tempdir);
     await dirAsync(tempdir);
@@ -28420,7 +28422,8 @@ Extracting To: ${tempdir}`);
     await removeAsync((0, import_path10.join)(process.cwd(), "pkgs"));
     await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
     await runPnpm(["i"], process.cwd());
-    console.log(`Upgrade finished!`);
+    console.log(`
+Upgrade finished!`);
   };
   var clearLine = () => {
     process.stdout.clearLine(0);
