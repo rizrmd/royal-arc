@@ -25487,9 +25487,9 @@ Content-Type: ${v.type || "application/octet-stream"}\r
 
   // base/node.ts
   var import_child_process3 = __require("child_process");
-  var import_promises2 = __require("fs/promises");
+  var import_promises3 = __require("fs/promises");
   var import_lodash8 = __toESM(require_lodash());
-  var import_path11 = __require("path");
+  var import_path12 = __require("path");
   var import_picocolors5 = __toESM(require_picocolors());
 
   // main/initialize.ts
@@ -28326,148 +28326,6 @@ ${src}`
       ;
     return [b8(d, b + 12), b8(d, b + 4), b8(d, b + 20)];
   };
-  var UnzipPassThrough = /* @__PURE__ */ function() {
-    function UnzipPassThrough2() {
-    }
-    UnzipPassThrough2.prototype.push = function(data, final) {
-      this.ondata(null, data, final);
-    };
-    UnzipPassThrough2.compression = 0;
-    return UnzipPassThrough2;
-  }();
-  var Unzip = /* @__PURE__ */ function() {
-    function Unzip2(cb) {
-      this.onfile = cb;
-      this.k = [];
-      this.o = {
-        0: UnzipPassThrough
-      };
-      this.p = et;
-    }
-    Unzip2.prototype.push = function(chunk, final) {
-      var _this_1 = this;
-      if (!this.onfile)
-        err(5);
-      if (!this.p)
-        err(4);
-      if (this.c > 0) {
-        var len = Math.min(this.c, chunk.length);
-        var toAdd = chunk.subarray(0, len);
-        this.c -= len;
-        if (this.d)
-          this.d.push(toAdd, !this.c);
-        else
-          this.k[0].push(toAdd);
-        chunk = chunk.subarray(len);
-        if (chunk.length)
-          return this.push(chunk, final);
-      } else {
-        var f3 = 0, i2 = 0, is = void 0, buf = void 0;
-        if (!this.p.length)
-          buf = chunk;
-        else if (!chunk.length)
-          buf = this.p;
-        else {
-          buf = new u8(this.p.length + chunk.length);
-          buf.set(this.p), buf.set(chunk, this.p.length);
-        }
-        var l = buf.length, oc = this.c, add = oc && this.d;
-        var _loop_2 = function() {
-          var _a2;
-          var sig = b4(buf, i2);
-          if (sig == 67324752) {
-            f3 = 1, is = i2;
-            this_1.d = null;
-            this_1.c = 0;
-            var bf = b2(buf, i2 + 6), cmp_1 = b2(buf, i2 + 8), u = bf & 2048, dd = bf & 8, fnl = b2(buf, i2 + 26), es = b2(buf, i2 + 28);
-            if (l > i2 + 30 + fnl + es) {
-              var chks_3 = [];
-              this_1.k.unshift(chks_3);
-              f3 = 2;
-              var sc_1 = b4(buf, i2 + 18), su_1 = b4(buf, i2 + 22);
-              var fn_1 = strFromU8(buf.subarray(i2 + 30, i2 += 30 + fnl), !u);
-              if (sc_1 == 4294967295) {
-                _a2 = dd ? [-2] : z64e(buf, i2), sc_1 = _a2[0], su_1 = _a2[1];
-              } else if (dd)
-                sc_1 = -1;
-              i2 += es;
-              this_1.c = sc_1;
-              var d_1;
-              var file_1 = {
-                name: fn_1,
-                compression: cmp_1,
-                start: function() {
-                  if (!file_1.ondata)
-                    err(5);
-                  if (!sc_1)
-                    file_1.ondata(null, et, true);
-                  else {
-                    var ctr = _this_1.o[cmp_1];
-                    if (!ctr)
-                      file_1.ondata(err(14, "unknown compression type " + cmp_1, 1), null, false);
-                    d_1 = sc_1 < 0 ? new ctr(fn_1) : new ctr(fn_1, sc_1, su_1);
-                    d_1.ondata = function(err2, dat3, final2) {
-                      file_1.ondata(err2, dat3, final2);
-                    };
-                    for (var _i = 0, chks_4 = chks_3; _i < chks_4.length; _i++) {
-                      var dat2 = chks_4[_i];
-                      d_1.push(dat2, false);
-                    }
-                    if (_this_1.k[0] == chks_3 && _this_1.c)
-                      _this_1.d = d_1;
-                    else
-                      d_1.push(et, true);
-                  }
-                },
-                terminate: function() {
-                  if (d_1 && d_1.terminate)
-                    d_1.terminate();
-                }
-              };
-              if (sc_1 >= 0)
-                file_1.size = sc_1, file_1.originalSize = su_1;
-              this_1.onfile(file_1);
-            }
-            return "break";
-          } else if (oc) {
-            if (sig == 134695760) {
-              is = i2 += 12 + (oc == -2 && 8), f3 = 3, this_1.c = 0;
-              return "break";
-            } else if (sig == 33639248) {
-              is = i2 -= 4, f3 = 3, this_1.c = 0;
-              return "break";
-            }
-          }
-        };
-        var this_1 = this;
-        for (; i2 < l - 4; ++i2) {
-          var state_1 = _loop_2();
-          if (state_1 === "break")
-            break;
-        }
-        this.p = et;
-        if (oc < 0) {
-          var dat = f3 ? buf.subarray(0, is - 12 - (oc == -2 && 8) - (b4(buf, is - 16) == 134695760 && 4)) : buf.subarray(0, i2);
-          if (add)
-            add.push(dat, !!f3);
-          else
-            this.k[+(f3 == 2)].push(dat);
-        }
-        if (f3 & 2)
-          return this.push(buf.subarray(i2), final);
-        this.p = buf.subarray(i2);
-      }
-      if (final) {
-        if (this.c)
-          err(13);
-        this.p = null;
-      }
-    };
-    Unzip2.prototype.register = function(decoder) {
-      this.o[decoder.compression] = decoder;
-    };
-    return Unzip2;
-  }();
   function unzipSync(data, opts) {
     var files = {};
     var e2 = data.length - 22;
@@ -28511,21 +28369,60 @@ ${src}`
   }
 
   // base/upgrade.ts
-  var unzipper = new Unzip();
+  var import_promises2 = __require("fs/promises");
+  var import_path10 = __require("path");
   var baseUpgrade = async () => {
     console.log(`Downloading royal-arc upgrade...`);
     const res = await fetch(
       `https://github.com/rizrmd/royal-arc/archive/refs/heads/main.zip`
     );
-    const filebuf = await (await res.blob()).arrayBuffer();
-    const fileuint8 = new Uint8Array(filebuf);
-    const decompressed = unzipSync(fileuint8, {
-      filter(file2) {
-        console.log(file2);
-        return true;
-      }
+    const length = {
+      total: Number(res.headers.get("content-length")),
+      current: 0
+    };
+    res.body?.on("data", (chunk) => {
+      length.current += chunk.length;
+      const percent = Math.round(length.current / length.total * 100);
+      if (length.current > 0)
+        clearLine();
+      process.stdout.write(
+        ` \u203A ${percent}% (${byt(length.current)} / ${byt(length.total)}) `
+      );
     });
+    const filebuf = await (await res.blob()).arrayBuffer();
+    const tempdir = (0, import_path10.join)(process.cwd(), ".output", "content", "temp-upgrade");
+    console.log(`
+Extracting To: ${tempdir}`);
+    const fileuint8 = new Uint8Array(filebuf);
+    await removeAsync(tempdir);
+    await dirAsync(tempdir);
+    const decompressed = unzipSync(fileuint8);
+    const entries = Object.entries(decompressed);
+    for (const [path2, data] of entries) {
+      const relpath = path2.split(import_path10.sep).slice(1).join(import_path10.sep);
+      const file2 = (0, import_path10.join)(tempdir, relpath);
+      await dirAsync((0, import_path10.dirname)(file2));
+      if (data.length > 0) {
+        clearLine();
+        process.stdout.write(` \u203A  ${relpath} `);
+        await (0, import_promises2.appendFile)(file2, Buffer.from(data));
+      }
+    }
+    clearLine();
+    console.log(` \u203A ${entries.length} files extracted`);
+    console.log(`Installing dependencies`);
+    await runPnpm(["i"], tempdir, { silent: false });
   };
+  var clearLine = () => {
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+  };
+  function byt(bytes, decimals = 2) {
+    if (bytes == 0)
+      return "0 Bytes";
+    var k = 1024, dm = decimals, sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"], i2 = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i2)).toFixed(dm)) + " " + sizes[i2];
+  }
 
   // base/util/is-equal.ts
   var isEqual = (obj1, obj2, checkDataOrder = false) => {
@@ -28575,14 +28472,14 @@ ${src}`
   };
 
   // base/util/scaff.ts
-  var import_path10 = __require("path");
+  var import_path11 = __require("path");
   var scaff = async (arg, root2) => {
     let shouldInstallDep = false;
     for (const [k, v] of Object.entries(arg)) {
       if (!k)
         continue;
-      const path2 = (0, import_path10.join)(root2, k.replace(/\//ig, import_path10.sep));
-      await dirAsync((0, import_path10.dirname)(root2));
+      const path2 = (0, import_path11.join)(root2, k.replace(/\//ig, import_path11.sep));
+      await dirAsync((0, import_path11.dirname)(root2));
       if (!await existsAsync(path2)) {
         await writeAsync(path2, v);
         shouldInstallDep = true;
@@ -28594,7 +28491,7 @@ ${src}`
   // base/node.ts
   var lastRestart = new Date().getTime();
   var main = async () => {
-    await removeAsync((0, import_path11.join)(process.cwd(), "gen"));
+    await removeAsync((0, import_path12.join)(process.cwd(), "gen"));
     let shouldInstallDep = false;
     try {
       isRoyalLatest();
@@ -28622,15 +28519,15 @@ ${src}`
   /******************************************************/
   export { action as royal } from "../pkgs/royal/action";
   `
-    }, (0, import_path11.join)(process.cwd(), "gen"));
-    await generateMeta((0, import_path11.join)(process.cwd()));
-    if (!await existsAsync((0, import_path11.join)(process.cwd(), "node_modules"))) {
+    }, (0, import_path12.join)(process.cwd(), "gen"));
+    await generateMeta((0, import_path12.join)(process.cwd()));
+    if (!await existsAsync((0, import_path12.join)(process.cwd(), "node_modules"))) {
       shouldInstallDep = true;
     }
     const args = process.argv.slice(2);
     if (args.includes("deploy")) {
-      await removeAsync((0, import_path11.join)(process.cwd(), ".output", "deploy"));
-      await removeAsync((0, import_path11.join)(process.cwd(), ".output", "deploy.zip"));
+      await removeAsync((0, import_path12.join)(process.cwd(), ".output", "deploy"));
+      await removeAsync((0, import_path12.join)(process.cwd(), ".output", "deploy.zip"));
     }
     if (args.includes("upgrade")) {
       await baseUpgrade();
@@ -28643,15 +28540,15 @@ ${src}`
       await installDep();
     }
     const { commonjs } = await Promise.resolve().then(() => __toESM(require_esbuild_plugin_commonjs()));
-    const appcwd = (0, import_path11.join)(process.cwd(), ".output", "app");
+    const appcwd = (0, import_path12.join)(process.cwd(), ".output", "app");
     let printPreBuild = false;
-    for (const dir2 of ["app", "pkgs"].map((e2) => (0, import_path11.join)(process.cwd(), e2))) {
+    for (const dir2 of ["app", "pkgs"].map((e2) => (0, import_path12.join)(process.cwd(), e2))) {
       const list2 = await listAsync(dir2);
       if (list2) {
         for (const item of list2) {
-          const svcDir = (0, import_path11.join)(dir2, item);
-          const buildTs = (0, import_path11.join)(dir2, item, "build.ts");
-          if ((await (0, import_promises2.stat)(svcDir)).isDirectory()) {
+          const svcDir = (0, import_path12.join)(dir2, item);
+          const buildTs = (0, import_path12.join)(dir2, item, "build.ts");
+          if ((await (0, import_promises3.stat)(svcDir)).isDirectory()) {
             if (await existsAsync(buildTs)) {
               if (!printPreBuild) {
                 printPreBuild = true;
@@ -28667,20 +28564,20 @@ ${src}`
     await dirAsync(appcwd);
     const start = async () => {
       const pkgjson = await readAsync(
-        (0, import_path11.join)(process.cwd(), ".output", "app", "package.json"),
+        (0, import_path12.join)(process.cwd(), ".output", "app", "package.json"),
         "json"
       );
-      const ndeps = await resolveDeps((0, import_path11.join)(process.cwd(), "app"));
-      await buildApp((0, import_path11.join)(process.cwd(), ".output", "app"));
+      const ndeps = await resolveDeps((0, import_path12.join)(process.cwd(), "app"));
+      await buildApp((0, import_path12.join)(process.cwd(), ".output", "app"));
       if (!pkgjson || pkgjson && !isEqual(pkgjson.dependencies, ndeps)) {
-        await runPnpm(["i"], (0, import_path11.join)(process.cwd(), ".output", "app"));
+        await runPnpm(["i"], (0, import_path12.join)(process.cwd(), ".output", "app"));
       }
       const res = (0, import_child_process3.spawn)(
         process.execPath,
         [
           "--enable-source-maps",
           "--no-warnings",
-          (0, import_path11.join)(process.cwd(), ".output", "app", "app.js"),
+          (0, import_path12.join)(process.cwd(), ".output", "app", "app.js"),
           "base",
           ...args
         ].filter((e2) => e2),
