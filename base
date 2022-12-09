@@ -28421,6 +28421,7 @@ Extracting To: ${tempdir.substring(process.cwd().length + 1)}`
     console.log(`Updating pkgs`);
     await removeAsync((0, import_path10.join)(process.cwd(), "pkgs"));
     await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
+    process.stdout.write(` \u2592`);
     await runPnpm(["i"], process.cwd());
     const root2 = process.cwd();
     const dirs = await listAsync((0, import_path10.join)(root2, "app"));
@@ -28432,7 +28433,7 @@ Extracting To: ${tempdir.substring(process.cwd().length + 1)}`
           if (await existsAsync((0, import_path10.join)(root2, "app", f3, "upgrade.ts"))) {
             console.log(`
  \u203A Upgrading ${f3}`);
-            process.stdout.write(`    \u2592`);
+            process.stdout.write(` \u2592`);
             if (!await existsAsync((0, import_path10.join)(root2, "app", f3, "node_modules", "jiti"))) {
               await runPnpm(["i"], process.cwd());
             }
