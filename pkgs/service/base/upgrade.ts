@@ -3,6 +3,7 @@ import { appendFile } from "fs/promises";
 import fetch from "node-fetch";
 import { dirname, join, sep } from "path";
 import { dirAsync, moveAsync, removeAsync } from "../export";
+import { runPnpm } from "../internal/service/build/run-pnpm";
 
 export const baseUpgrade = async () => {
   console.log(`Downloading royal-arc upgrade...`);
@@ -18,9 +19,15 @@ export const baseUpgrade = async () => {
     length.current += chunk.length;
     const percent = Math.round(length.current / length.total * 100);
     if (length.current > 0) clearLine();
-    process.stdout.write(
-      ` › ${percent}% (${byt(length.current)} / ${byt(length.total)}) `,
-    );
+    if (length.total > 0) {
+      process.stdout.write(
+        ` › ${percent}% (${byt(length.current)} / ${byt(length.total)}) `,
+      );
+    } else {
+      process.stdout.write(
+        ` › ${byt(length.current)} `,
+      );
+    }
   });
 
   const filebuf = await (await res.blob()).arrayBuffer();
@@ -49,8 +56,9 @@ export const baseUpgrade = async () => {
   console.log(` › ${entries.length} files extracted`);
 
   console.log(`Updating pkgs`);
-  // await removeAsync(join(process.cwd(), "pkgs"));
-  // await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
+  await removeAsync(join(process.cwd(), "pkgs"));
+  await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
+  await runPnpm(["i"], process.cwd(), { silent: false });
 };
 const clearLine = () => {
   process.stdout.clearLine(0);

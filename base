@@ -28385,9 +28385,15 @@ ${src}`
       const percent = Math.round(length.current / length.total * 100);
       if (length.current > 0)
         clearLine();
-      process.stdout.write(
-        ` \u203A ${percent}% (${byt(length.current)} / ${byt(length.total)}) `
-      );
+      if (length.total > 0) {
+        process.stdout.write(
+          ` \u203A ${percent}% (${byt(length.current)} / ${byt(length.total)}) `
+        );
+      } else {
+        process.stdout.write(
+          ` \u203A ${byt(length.current)} `
+        );
+      }
     });
     const filebuf = await (await res.blob()).arrayBuffer();
     const tempdir = (0, import_path10.join)(process.cwd(), ".output", "content", "temp-upgrade");
@@ -28410,8 +28416,10 @@ Extracting To: ${tempdir}`);
     }
     clearLine();
     console.log(` \u203A ${entries.length} files extracted`);
-    console.log(`Installing dependencies`);
-    await runPnpm(["i"], tempdir, { silent: false });
+    console.log(`Updating pkgs`);
+    await removeAsync((0, import_path10.join)(process.cwd(), "pkgs"));
+    await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
+    await runPnpm(["i"], process.cwd(), { silent: false });
   };
   var clearLine = () => {
     process.stdout.clearLine(0);
