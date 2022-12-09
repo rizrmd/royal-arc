@@ -28419,7 +28419,7 @@ Extracting To: ${tempdir}`);
     console.log(`Updating pkgs`);
     await removeAsync((0, import_path10.join)(process.cwd(), "pkgs"));
     await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
-    await runPnpm(["i"], process.cwd(), { silent: false });
+    await runPnpm(["i"], process.cwd());
     console.log(`Upgrade finished!`);
   };
   var clearLine = () => {
