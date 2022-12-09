@@ -58,7 +58,9 @@ export const baseUpgrade = async () => {
   console.log(`Updating pkgs`);
   await removeAsync(join(process.cwd(), "pkgs"));
   await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
-  await runPnpm(["i"], process.cwd(), { silent: false });
+  await runPnpm(["i"], process.cwd());
+
+  console.log(`Upgrade finished!`);
 };
 const clearLine = () => {
   process.stdout.clearLine(0);

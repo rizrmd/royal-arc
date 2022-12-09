@@ -28420,6 +28420,7 @@ Extracting To: ${tempdir}`);
     await removeAsync((0, import_path10.join)(process.cwd(), "pkgs"));
     await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
     await runPnpm(["i"], process.cwd(), { silent: false });
+    console.log(`Upgrade finished!`);
   };
   var clearLine = () => {
     process.stdout.clearLine(0);
