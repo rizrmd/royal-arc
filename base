@@ -684,18 +684,18 @@ const getRuntime = () => {
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat4;
+        let stat5;
         try {
-          stat4 = fs3.statSync(path2);
+          stat5 = fs3.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
           }
         }
-        if (stat4 && !stat4.isDirectory()) {
+        if (stat5 && !stat5.isDirectory()) {
           throw generatePathOccupiedByNotDirectoryError(path2);
         }
-        return stat4;
+        return stat5;
       };
       var createBrandNewDirectorySync = (path2, opts) => {
         const options = opts || {};
@@ -711,9 +711,9 @@ const getRuntime = () => {
           }
         }
       };
-      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat4, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat5, criteria) => {
         const checkMode = () => {
-          const mode = modeUtil.normalizeFileMode(stat4.mode);
+          const mode = modeUtil.normalizeFileMode(stat5.mode);
           if (criteria.mode !== void 0 && criteria.mode !== mode) {
             fs3.chmodSync(path2, criteria.mode);
           }
@@ -731,18 +731,18 @@ const getRuntime = () => {
       };
       var dirSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat4 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat4) {
-          checkExistingDirectoryFulfillsCriteriaSync(path2, stat4, criteria);
+        const stat5 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat5) {
+          checkExistingDirectoryFulfillsCriteriaSync(path2, stat5, criteria);
         } else {
           createBrandNewDirectorySync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve, reject) => {
-          fs3.stat(path2).then((stat4) => {
-            if (stat4.isDirectory()) {
-              resolve(stat4);
+          fs3.stat(path2).then((stat5) => {
+            if (stat5.isDirectory()) {
+              resolve(stat5);
             } else {
               reject(generatePathOccupiedByNotDirectoryError(path2));
             }
@@ -772,10 +772,10 @@ const getRuntime = () => {
           }).catch(reject);
         });
       };
-      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat4, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat5, criteria) => {
         return new Promise((resolve, reject) => {
           const checkMode = () => {
-            const mode = modeUtil.normalizeFileMode(stat4.mode);
+            const mode = modeUtil.normalizeFileMode(stat5.mode);
             if (criteria.mode !== void 0 && criteria.mode !== mode) {
               return fs3.chmod(path2, criteria.mode);
             }
@@ -815,11 +815,11 @@ const getRuntime = () => {
       var dirAsync2 = (path2, passedCriteria) => {
         return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat4) => {
-            if (stat4 !== void 0) {
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
+            if (stat5 !== void 0) {
               return checkExistingDirectoryFulfillsCriteriaAsync(
                 path2,
-                stat4,
+                stat5,
                 criteria
               );
             }
@@ -1002,21 +1002,21 @@ const getRuntime = () => {
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat4;
+        let stat5;
         try {
-          stat4 = fs3.statSync(path2);
+          stat5 = fs3.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
           }
         }
-        if (stat4 && !stat4.isFile()) {
+        if (stat5 && !stat5.isFile()) {
           throw generatePathOccupiedByNotFileError(path2);
         }
-        return stat4;
+        return stat5;
       };
-      var checkExistingFileFulfillsCriteriaSync = (path2, stat4, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat4.mode);
+      var checkExistingFileFulfillsCriteriaSync = (path2, stat5, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat5.mode);
         const checkContent = () => {
           if (criteria.content !== void 0) {
             write2.sync(path2, criteria.content, {
@@ -1049,18 +1049,18 @@ const getRuntime = () => {
       };
       var fileSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat4 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat4 !== void 0) {
-          checkExistingFileFulfillsCriteriaSync(path2, stat4, criteria);
+        const stat5 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat5 !== void 0) {
+          checkExistingFileFulfillsCriteriaSync(path2, stat5, criteria);
         } else {
           createBrandNewFileSync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve, reject) => {
-          fs3.stat(path2).then((stat4) => {
-            if (stat4.isFile()) {
-              resolve(stat4);
+          fs3.stat(path2).then((stat5) => {
+            if (stat5.isFile()) {
+              resolve(stat5);
             } else {
               reject(generatePathOccupiedByNotFileError(path2));
             }
@@ -1073,8 +1073,8 @@ const getRuntime = () => {
           });
         });
       };
-      var checkExistingFileFulfillsCriteriaAsync = (path2, stat4, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat4.mode);
+      var checkExistingFileFulfillsCriteriaAsync = (path2, stat5, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat5.mode);
         const checkContent = () => {
           return new Promise((resolve, reject) => {
             if (criteria.content !== void 0) {
@@ -1115,9 +1115,9 @@ const getRuntime = () => {
       var fileAsync2 = (path2, passedCriteria) => {
         return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat4) => {
-            if (stat4 !== void 0) {
-              return checkExistingFileFulfillsCriteriaAsync(path2, stat4, criteria);
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
+            if (stat5 !== void 0) {
+              return checkExistingFileFulfillsCriteriaAsync(path2, stat5, criteria);
             }
             return createBrandNewFileAsync(path2, criteria);
           }).then(resolve, reject);
@@ -1164,27 +1164,27 @@ const getRuntime = () => {
           );
         }
       };
-      var createInspectObj = (path2, options, stat4) => {
+      var createInspectObj = (path2, options, stat5) => {
         const obj = {};
         obj.name = pathUtil.basename(path2);
-        if (stat4.isFile()) {
+        if (stat5.isFile()) {
           obj.type = "file";
-          obj.size = stat4.size;
-        } else if (stat4.isDirectory()) {
+          obj.size = stat5.size;
+        } else if (stat5.isDirectory()) {
           obj.type = "dir";
-        } else if (stat4.isSymbolicLink()) {
+        } else if (stat5.isSymbolicLink()) {
           obj.type = "symlink";
         } else {
           obj.type = "other";
         }
         if (options.mode) {
-          obj.mode = stat4.mode;
+          obj.mode = stat5.mode;
         }
         if (options.times) {
-          obj.accessTime = stat4.atime;
-          obj.modifyTime = stat4.mtime;
-          obj.changeTime = stat4.ctime;
-          obj.birthTime = stat4.birthtime;
+          obj.accessTime = stat5.atime;
+          obj.modifyTime = stat5.mtime;
+          obj.changeTime = stat5.ctime;
+          obj.birthTime = stat5.birthtime;
         }
         if (options.absolutePath) {
           obj.absolutePath = path2;
@@ -1206,20 +1206,20 @@ const getRuntime = () => {
       };
       var inspectSync = (path2, options) => {
         let statOperation = fs3.lstatSync;
-        let stat4;
+        let stat5;
         const opts = options || {};
         if (opts.symlinks === "follow") {
           statOperation = fs3.statSync;
         }
         try {
-          stat4 = statOperation(path2);
+          stat5 = statOperation(path2);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             return void 0;
           }
           throw err2;
         }
-        const inspectObj = createInspectObj(path2, opts, stat4);
+        const inspectObj = createInspectObj(path2, opts, stat5);
         addExtraFieldsSync(path2, inspectObj, opts);
         return inspectObj;
       };
@@ -1257,8 +1257,8 @@ const getRuntime = () => {
           if (opts.symlinks === "follow") {
             statOperation = fs3.stat;
           }
-          statOperation(path2).then((stat4) => {
-            const inspectObj = createInspectObj(path2, opts, stat4);
+          statOperation(path2).then((stat5) => {
+            const inspectObj = createInspectObj(path2, opts, stat5);
             addExtraFieldsAsync(path2, inspectObj, opts).then(resolve, reject);
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
@@ -2704,10 +2704,10 @@ const getRuntime = () => {
       };
       var existsSync = (path2) => {
         try {
-          const stat4 = fs3.statSync(path2);
-          if (stat4.isDirectory()) {
+          const stat5 = fs3.statSync(path2);
+          if (stat5.isDirectory()) {
             return "dir";
-          } else if (stat4.isFile()) {
+          } else if (stat5.isFile()) {
             return "file";
           }
           return "other";
@@ -2720,10 +2720,10 @@ const getRuntime = () => {
       };
       var existsAsync2 = (path2) => {
         return new Promise((resolve, reject) => {
-          fs3.stat(path2).then((stat4) => {
-            if (stat4.isDirectory()) {
+          fs3.stat(path2).then((stat5) => {
+            if (stat5.isDirectory()) {
               resolve("dir");
-            } else if (stat4.isFile()) {
+            } else if (stat5.isFile()) {
               resolve("file");
             } else {
               resolve("other");
@@ -28422,6 +28422,22 @@ Extracting To: ${tempdir.substring(process.cwd().length + 1)}`
     await removeAsync((0, import_path10.join)(process.cwd(), "pkgs"));
     await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
     await runPnpm(["i"], process.cwd());
+    const appdir = (0, import_path10.join)(process.cwd(), "app");
+    const dirs = await listAsync(appdir);
+    if (dirs) {
+      for (const f3 of dirs) {
+        if ((await (0, import_promises2.stat)((0, import_path10.join)(appdir, f3))).isDirectory()) {
+          if (await existsAsync((0, import_path10.join)(appdir, f3, "upgrade.ts"))) {
+            const out = await runPnpm(
+              ["jiti", "upgrade.ts"],
+              (0, import_path10.join)(appdir, "srv")
+            );
+            console.log(out);
+            return;
+          }
+        }
+      }
+    }
     console.log(`
 Upgrade finished!`);
   };

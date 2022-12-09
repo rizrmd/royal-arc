@@ -1,7 +1,7 @@
-import { upgradeRule } from "service";
+import { upgrade, upgradeRule } from "service";
 
-export const upgrade = {
+upgrade({
   "*": upgradeRule({ allExcept: ["index.ts", "action.ts"] }),
   "package.json": upgradeRule({ isPackageJson: true }),
   "api/built-in": upgradeRule({ replaceAll: true }),
-};
+});

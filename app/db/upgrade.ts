@@ -1,6 +1,6 @@
-import { upgradeRule } from "service";
+import { upgrade, upgradeRule } from "service";
 
-export const upgrade = {
+upgrade({
   "*": upgradeRule({ replaceAll: true }),
   "package.json": upgradeRule({ isPackageJson: true }),
-};
+});
