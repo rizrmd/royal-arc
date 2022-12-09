@@ -1,10 +1,10 @@
 import { upgrade, upgradeRule } from "service";
 
 upgrade({
-  "*": upgradeRule({ allExcept: ["index.html"] }),
+  "*": upgradeRule({ allFilesExcept: ["index.html"] }),
   "package.json": upgradeRule({ isPackageJson: true }),
-  "types": upgradeRule({ allExcept: ["layout.ts", "page.ts"] }),
-  "src/base/page/built-in": upgradeRule({ replaceAll: true }),
-  "src/components/built-in": upgradeRule({ replaceAll: true }),
-  "src/gen/built-in": upgradeRule({ replaceAll: true }),
+  "types": upgradeRule({ allFilesExcept: ["layout.ts", "page.ts"] }),
+  "src/base/page/built-in": upgradeRule({ replaceDir: true }),
+  "src/components/built-in": upgradeRule({ replaceDir: true }),
+  "src/gen/built-in": upgradeRule({ replaceDir: true }),
 });
