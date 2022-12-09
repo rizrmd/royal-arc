@@ -914,7 +914,7 @@ const getRuntime = () => {
           }).then(resolve, reject);
         });
       };
-      var writeAsync3 = (path2, data, options) => {
+      var writeAsync4 = (path2, data, options) => {
         const opts = options || {};
         const processedData = serializeToJsonMaybe(data, opts.jsonIndent);
         let writeStrategy = writeFileAsync;
@@ -925,7 +925,7 @@ const getRuntime = () => {
       };
       exports.validateInput = validateInput;
       exports.sync = writeSync;
-      exports.async = writeAsync3;
+      exports.async = writeAsync4;
     }
   });
 
@@ -2966,7 +2966,7 @@ const getRuntime = () => {
         }
         return Promise.resolve();
       };
-      var copyAsync2 = (from, to, options) => {
+      var copyAsync3 = (from, to, options) => {
         return new Promise((resolve, reject) => {
           const opts = parseOptions(options, from);
           checksBeforeCopyingAsync(from, to, opts).then(() => {
@@ -3006,7 +3006,7 @@ const getRuntime = () => {
       };
       exports.validateInput = validateInput;
       exports.sync = copySync;
-      exports.async = copyAsync2;
+      exports.async = copyAsync3;
     }
   });
 
@@ -3180,7 +3180,7 @@ const getRuntime = () => {
         }
         return data;
       };
-      var readAsync2 = (path2, returnAs) => {
+      var readAsync3 = (path2, returnAs) => {
         return new Promise((resolve, reject) => {
           const retAs = returnAs || "utf8";
           let encoding = "utf8";
@@ -3210,7 +3210,7 @@ const getRuntime = () => {
       };
       exports.validateInput = validateInput;
       exports.sync = readSync;
-      exports.async = readAsync2;
+      exports.async = readAsync3;
     }
   });
 
@@ -28418,22 +28418,57 @@ Extracting To: ${tempdir.substring(process.cwd().length + 1)}`
     }
     clearLine();
     console.log(` \u203A ${entries.length} files extracted`);
-    console.log(`Updating pkgs`);
-    await removeAsync((0, import_path10.join)(process.cwd(), "pkgs"));
-    await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
-    await runPnpm(["i"], process.cwd());
-    const appdir = (0, import_path10.join)(process.cwd(), "app");
-    const dirs = await listAsync(appdir);
+    const root2 = process.cwd();
+    const dirs = await listAsync((0, import_path10.join)(root2, "app"));
     if (dirs) {
       for (const f3 of dirs) {
-        if ((await (0, import_promises2.stat)((0, import_path10.join)(appdir, f3))).isDirectory()) {
-          if (await existsAsync((0, import_path10.join)(appdir, f3, "upgrade.ts"))) {
-            const out = await runPnpm(
+        if ((await (0, import_promises2.stat)((0, import_path10.join)(root2, "app", f3))).isDirectory()) {
+          if (!await existsAsync((0, import_path10.join)(tempdir, "app", f3)))
+            continue;
+          if (!await existsAsync((0, import_path10.join)(root2, "app", f3, "node_modules", "jiti"))) {
+            await runPnpm(["i"], process.cwd());
+          }
+          if (await existsAsync((0, import_path10.join)(root2, "app", f3, "upgrade.ts"))) {
+            const json = await runPnpm(
               ["jiti", "upgrade.ts"],
-              (0, import_path10.join)(appdir, "srv")
+              (0, import_path10.join)(root2, "app", f3)
             );
-            console.log(out);
-            return;
+            const out = JSON.parse(json);
+            const paths = Object.keys(out).map(
+              (e2) => (0, import_path10.join)(root2, "app", f3, e2.replace(/\//ig, import_path10.sep))
+            );
+            for (const [_path2, v] of Object.entries(out)) {
+              let path2 = _path2.replace(/\//ig, import_path10.sep);
+              if (_path2 === "*") {
+                path2 = "";
+              }
+              const rule = v["___rule___"];
+              if (rule) {
+                if (rule.allExcept) {
+                  for (const fileName of rule.allExcept) {
+                    const filePath = (0, import_path10.join)(f3, path2, fileName);
+                    if (paths.includes(filePath))
+                      continue;
+                    if (await existsAsync((0, import_path10.join)(tempdir, "app", filePath))) {
+                      if ((await (0, import_promises2.stat)((0, import_path10.join)(tempdir, "app", filePath))).isFile()) {
+                        await moveAsync(
+                          (0, import_path10.join)(tempdir, "app", filePath),
+                          (0, import_path10.join)(root2, "app", filePath),
+                          { overwrite: true }
+                        );
+                      }
+                    }
+                  }
+                } else if (rule.isPackageJson) {
+                  let installDep2 = false;
+                  console.log((0, import_path10.join)(root2, "app", f3, "package.json"));
+                  console.log((0, import_path10.join)(tempdir, "app", f3, "package.json"));
+                } else if (rule.replaceAll) {
+                  const from = (0, import_path10.join)(tempdir, "app", f3, path2);
+                  const target = (0, import_path10.join)(root2, "app", f3, path2);
+                }
+              }
+            }
           }
         }
       }

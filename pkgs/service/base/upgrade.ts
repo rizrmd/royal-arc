@@ -70,7 +70,6 @@ export const baseUpgrade = async () => {
   // console.log(`Updating pkgs`);
   // await removeAsync(join(process.cwd(), "pkgs"));
   // await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
-  // await runPnpm(["i"], process.cwd());
 
   const root = process.cwd();
   const dirs = await listAsync(join(root, "app"));
@@ -79,33 +78,53 @@ export const baseUpgrade = async () => {
       if (((await stat(join(root, "app", f))).isDirectory())) {
         if (!await existsAsync(join(tempdir, "app", f))) continue;
 
-        console.log(` › Updating ${f}`);
+        if (!await existsAsync(join(root, "app", f, "node_modules", "jiti"))) {
+          await runPnpm(["i"], process.cwd());
+        }
 
-        let installDep = false;
         if (await existsAsync(join(root, "app", f, "upgrade.ts"))) {
-          const out = JSON.parse(
-            await runPnpm(
-              ["jiti", "upgrade.ts"],
-              join(root, "app", f),
-            ),
-          ) as Record<string, { ___rule___: UpgradeRuleArg }>;
+          const json = await runPnpm(
+            ["jiti", "upgrade.ts"],
+            join(root, "app", f),
+          );
+
+          const out = JSON.parse(json) as Record<
+            string,
+            { ___rule___: UpgradeRuleArg }
+          >;
+
+          const paths = Object.keys(out).map((e) =>
+            join(root, "app", f, e.replace(/\//ig, sep))
+          );
 
           for (const [_path, v] of Object.entries(out)) {
-            const path = _path.replace(/\//ig, sep);
+            let path = _path.replace(/\//ig, sep);
+            if (_path === "*") {
+              path = "";
+            }
             const rule = v["___rule___"];
             if (rule) {
               if (rule.allExcept) {
                 for (const fileName of rule.allExcept) {
                   const filePath = join(f, path, fileName);
+
+                  if (paths.includes(filePath)) continue;
+
                   if (await existsAsync(join(tempdir, "app", filePath))) {
-                    await moveAsync(
-                      join(tempdir, "app", filePath),
-                      join(root, "app", filePath),
-                      { overwrite: true },
-                    );
+                    if ((await stat(join(tempdir, "app", filePath))).isFile()) {
+                      await moveAsync(
+                        join(tempdir, "app", filePath),
+                        join(root, "app", filePath),
+                        { overwrite: true },
+                      );
+                    }
                   }
                 }
               } else if (rule.isPackageJson) {
+                let installDep = false;
+
+                console.log(join(root, "app", f, "package.json"));
+                console.log(join(tempdir, "app", f, "package.json"));
                 const oldPkg = await readAsync(
                   join(root, "app", f, "package.json"),
                   "json",
@@ -117,8 +136,15 @@ export const baseUpgrade = async () => {
                 );
 
                 for (let [k, v] of Object.entries(newPkg.dependencies)) {
-                  if (oldPkg[k] !== v) {
-                    oldPkg[k] = v;
+                  if (oldPkg.dependencies[k] !== v) {
+                    oldPkg.dependencies[k] = v;
+                    installDep = true;
+                  }
+                }
+
+                for (let [k, v] of Object.entries(newPkg.devDependencies)) {
+                  if (oldPkg.devDependencies[k] !== v) {
+                    oldPkg.devDependencies[k] = v;
                     installDep = true;
                   }
                 }
@@ -138,11 +164,11 @@ export const baseUpgrade = async () => {
               }
             }
           }
-
-          await runPnpm(["i"], join(root, "app", f));
         }
       }
     }
+
+    await runPnpm(["i"], process.cwd());
   }
 
   console.log(`\nUpgrade finished!`);
