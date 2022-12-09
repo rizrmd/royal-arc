@@ -70,7 +70,7 @@ export const baseUpgrade = async () => {
   console.log(`Updating pkgs`);
   await removeAsync(join(process.cwd(), "pkgs"));
   await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
-  process.stdout.write(` ▒`);
+  process.stdout.write(` › ▒`);
   await runPnpm(["i"], process.cwd());
 
   const root = process.cwd();
@@ -81,8 +81,8 @@ export const baseUpgrade = async () => {
         if (!await existsAsync(join(tempdir, "app", f))) continue;
 
         if (await existsAsync(join(root, "app", f, "upgrade.ts"))) {
-          console.log(`\n › Upgrading ${f}`);
-          process.stdout.write(` ▒`);
+          console.log(`\nUpgrading ${f}`);
+          process.stdout.write(` › ▒`);
           if (
             !await existsAsync(join(root, "app", f, "node_modules", "jiti"))
           ) {
