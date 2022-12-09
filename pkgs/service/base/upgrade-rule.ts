@@ -1,6 +1,6 @@
 export type UpgradeRuleArg = {
-  allExcept?: string[];
-  replaceAll?: true;
+  allFilesExcept?: string[];
+  replaceDir?: true;
   isPackageJson?: true;
 };
 

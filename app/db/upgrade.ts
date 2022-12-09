@@ -1,6 +1,6 @@
 import { upgrade, upgradeRule } from "service";
 
 upgrade({
-  "*": upgradeRule({ replaceAll: true }),
+  "*": upgradeRule({ allFilesExcept: [] }),
   "package.json": upgradeRule({ isPackageJson: true }),
 });

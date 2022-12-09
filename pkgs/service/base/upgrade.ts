@@ -67,9 +67,9 @@ export const baseUpgrade = async () => {
   clearLine();
   console.log(` › ${entries.length} files extracted`);
 
-  // console.log(`Updating pkgs`);
-  // await removeAsync(join(process.cwd(), "pkgs"));
-  // await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
+  console.log(`Updating pkgs`);
+  await removeAsync(join(process.cwd(), "pkgs"));
+  await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
 
   const root = process.cwd();
   const dirs = await listAsync(join(root, "app"));
@@ -78,11 +78,15 @@ export const baseUpgrade = async () => {
       if (((await stat(join(root, "app", f))).isDirectory())) {
         if (!await existsAsync(join(tempdir, "app", f))) continue;
 
-        if (!await existsAsync(join(root, "app", f, "node_modules", "jiti"))) {
-          await runPnpm(["i"], process.cwd());
-        }
-
         if (await existsAsync(join(root, "app", f, "upgrade.ts"))) {
+          console.log(`\n › Upgrading ${f}`);
+          process.stdout.write(`    ▒`);
+          if (
+            !await existsAsync(join(root, "app", f, "node_modules", "jiti"))
+          ) {
+            await runPnpm(["i"], process.cwd());
+          }
+
           const json = await runPnpm(
             ["jiti", "upgrade.ts"],
             join(root, "app", f),
@@ -104,8 +108,8 @@ export const baseUpgrade = async () => {
             }
             const rule = v["___rule___"];
             if (rule) {
-              if (rule.allExcept) {
-                for (const fileName of rule.allExcept) {
+              if (rule.allFilesExcept) {
+                for (const fileName of rule.allFilesExcept) {
                   const filePath = join(f, path, fileName);
 
                   if (paths.includes(filePath)) continue;
@@ -123,8 +127,6 @@ export const baseUpgrade = async () => {
               } else if (rule.isPackageJson) {
                 let installDep = false;
 
-                console.log(join(root, "app", f, "package.json"));
-                console.log(join(tempdir, "app", f, "package.json"));
                 const oldPkg = await readAsync(
                   join(root, "app", f, "package.json"),
                   "json",
@@ -155,7 +157,7 @@ export const baseUpgrade = async () => {
                     oldPkg,
                   );
                 }
-              } else if (rule.replaceAll) {
+              } else if (rule.replaceDir) {
                 const from = join(tempdir, "app", f, path);
                 const target = join(root, "app", f, path);
 
