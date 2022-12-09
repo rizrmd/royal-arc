@@ -67,7 +67,7 @@ export const baseUpgrade = async () => {
   clearLine();
   console.log(` › ${entries.length} files extracted`);
 
-  console.log(`Updating pkgs`);
+  console.log(`Replacing pkgs`);
   await removeAsync(join(process.cwd(), "pkgs"));
   await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
   process.stdout.write(` › ▒`);
