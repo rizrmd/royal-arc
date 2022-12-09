@@ -15,6 +15,7 @@ import { resolveDeps } from "../internal/service/build/resolve-deps";
 import { runPnpm } from "../internal/service/build/run-pnpm";
 import { generateMeta } from "../internal/service/gen-meta";
 import { isRoyalLatest } from "./git";
+import { baseUpgrade } from "./upgrade";
 import { isEqual } from "./util/is-equal";
 import { scaff } from "./util/scaff";
 
@@ -65,6 +66,12 @@ const main = (async () => {
     await removeAsync(join(process.cwd(), ".output", "deploy"));
     await removeAsync(join(process.cwd(), ".output", "deploy.zip"));
   }
+
+  if (args.includes("upgrade")) {
+    await baseUpgrade();
+    return;
+  }
+
   if (args.length === 0) {
     args.push("debug");
   }

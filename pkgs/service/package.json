@@ -13,6 +13,7 @@
     "cjs-module-lexer": "^1.2.2",
     "cuid": "^2.1.8",
     "esbuild": "^0.15.15",
+    "fflate": "^0.7.4",
     "gen": "workspace:^",
     "isomorphic-git": "^1.21.0",
     "jiti": "^1.16.0",

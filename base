@@ -427,9 +427,9 @@ const getRuntime = () => {
             args[i2] = arguments[i2];
           }
           return new Promise((resolve, reject) => {
-            args.push((err, data) => {
-              if (err) {
-                reject(err);
+            args.push((err2, data) => {
+              if (err2) {
+                reject(err2);
               } else {
                 resolve(data);
               }
@@ -687,9 +687,9 @@ const getRuntime = () => {
         let stat4;
         try {
           stat4 = fs3.statSync(path2);
-        } catch (err) {
-          if (err.code !== "ENOENT") {
-            throw err;
+        } catch (err2) {
+          if (err2.code !== "ENOENT") {
+            throw err2;
           }
         }
         if (stat4 && !stat4.isDirectory()) {
@@ -701,13 +701,13 @@ const getRuntime = () => {
         const options = opts || {};
         try {
           fs3.mkdirSync(path2, options.mode);
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             createBrandNewDirectorySync(pathUtil.dirname(path2), options);
             fs3.mkdirSync(path2, options.mode);
-          } else if (err.code === "EEXIST") {
+          } else if (err2.code === "EEXIST") {
           } else {
-            throw err;
+            throw err2;
           }
         }
       };
@@ -746,11 +746,11 @@ const getRuntime = () => {
             } else {
               reject(generatePathOccupiedByNotDirectoryError(path2));
             }
-          }).catch((err) => {
-            if (err.code === "ENOENT") {
+          }).catch((err2) => {
+            if (err2.code === "ENOENT") {
               resolve(void 0);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -793,21 +793,21 @@ const getRuntime = () => {
       var createBrandNewDirectoryAsync = (path2, opts) => {
         const options = opts || {};
         return new Promise((resolve, reject) => {
-          fs3.mkdir(path2, options.mode).then(resolve).catch((err) => {
-            if (err.code === "ENOENT") {
+          fs3.mkdir(path2, options.mode).then(resolve).catch((err2) => {
+            if (err2.code === "ENOENT") {
               createBrandNewDirectoryAsync(pathUtil.dirname(path2), options).then(() => {
                 return fs3.mkdir(path2, options.mode);
-              }).then(resolve).catch((err2) => {
-                if (err2.code === "EEXIST") {
+              }).then(resolve).catch((err22) => {
+                if (err22.code === "EEXIST") {
                   resolve();
                 } else {
-                  reject(err2);
+                  reject(err22);
                 }
               });
-            } else if (err.code === "EEXIST") {
+            } else if (err2.code === "EEXIST") {
               resolve();
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -872,12 +872,12 @@ const getRuntime = () => {
       var writeFileSync = (path2, data, options) => {
         try {
           fs3.writeFileSync(path2, data, options);
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             dir2.createSync(pathUtil.dirname(path2));
             fs3.writeFileSync(path2, data, options);
           } else {
-            throw err;
+            throw err2;
           }
         }
       };
@@ -896,13 +896,13 @@ const getRuntime = () => {
       };
       var writeFileAsync = (path2, data, options) => {
         return new Promise((resolve, reject) => {
-          fs3.writeFile(path2, data, options).then(resolve).catch((err) => {
-            if (err.code === "ENOENT") {
+          fs3.writeFile(path2, data, options).then(resolve).catch((err2) => {
+            if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(path2)).then(() => {
                 return fs3.writeFile(path2, data, options);
               }).then(resolve, reject);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -947,21 +947,21 @@ const getRuntime = () => {
       var appendSync = (path2, data, options) => {
         try {
           fs3.appendFileSync(path2, data, options);
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             write2.sync(path2, data, options);
           } else {
-            throw err;
+            throw err2;
           }
         }
       };
       var appendAsync2 = (path2, data, options) => {
         return new Promise((resolve, reject) => {
-          fs3.appendFile(path2, data, options).then(resolve).catch((err) => {
-            if (err.code === "ENOENT") {
+          fs3.appendFile(path2, data, options).then(resolve).catch((err2) => {
+            if (err2.code === "ENOENT") {
               write2.async(path2, data, options).then(resolve, reject);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -1005,9 +1005,9 @@ const getRuntime = () => {
         let stat4;
         try {
           stat4 = fs3.statSync(path2);
-        } catch (err) {
-          if (err.code !== "ENOENT") {
-            throw err;
+        } catch (err2) {
+          if (err2.code !== "ENOENT") {
+            throw err2;
           }
         }
         if (stat4 && !stat4.isFile()) {
@@ -1064,11 +1064,11 @@ const getRuntime = () => {
             } else {
               reject(generatePathOccupiedByNotFileError(path2));
             }
-          }).catch((err) => {
-            if (err.code === "ENOENT") {
+          }).catch((err2) => {
+            if (err2.code === "ENOENT") {
               resolve(void 0);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -1213,11 +1213,11 @@ const getRuntime = () => {
         }
         try {
           stat4 = statOperation(path2);
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             return void 0;
           }
-          throw err;
+          throw err2;
         }
         const inspectObj = createInspectObj(path2, opts, stat4);
         addExtraFieldsSync(path2, inspectObj, opts);
@@ -1260,11 +1260,11 @@ const getRuntime = () => {
           statOperation(path2).then((stat4) => {
             const inspectObj = createInspectObj(path2, opts, stat4);
             addExtraFieldsAsync(path2, inspectObj, opts).then(resolve, reject);
-          }).catch((err) => {
-            if (err.code === "ENOENT") {
+          }).catch((err2) => {
+            if (err2.code === "ENOENT") {
               resolve(void 0);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -1290,22 +1290,22 @@ const getRuntime = () => {
       var listSync = (path2) => {
         try {
           return fs3.readdirSync(path2);
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             return void 0;
           }
-          throw err;
+          throw err2;
         }
       };
       var listAsync2 = (path2) => {
         return new Promise((resolve, reject) => {
           fs3.readdir(path2).then((list2) => {
             resolve(list2);
-          }).catch((err) => {
-            if (err.code === "ENOENT") {
+          }).catch((err2) => {
+            if (err2.code === "ENOENT") {
               resolve(void 0);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -1436,9 +1436,9 @@ const getRuntime = () => {
             }
           };
           whenConcurrencySlotAvailable(() => {
-            fs3.readdir(path3, { withFileTypes: true }, (err, files) => {
-              if (err) {
-                doneCallback(err);
+            fs3.readdir(path3, { withFileTypes: true }, (err2, files) => {
+              if (err2) {
+                doneCallback(err2);
               } else {
                 files.forEach((direntItem) => {
                   const withFileTypesNotSupported = typeof direntItem === "string";
@@ -1463,17 +1463,17 @@ const getRuntime = () => {
                           goDeeperIfDir(fileItemPath, fileItem);
                         }
                         concurrentOperationDone();
-                      }).catch((err2) => {
-                        doneCallback(err2);
+                      }).catch((err3) => {
+                        doneCallback(err3);
                       });
                     });
                   } else {
                     const type = fileType(direntItem);
                     if (type === "symlink" && options.symlinks === "follow") {
                       whenConcurrencySlotAvailable(() => {
-                        fs3.stat(fileItemPath, (err2, symlinkPointsTo) => {
-                          if (err2) {
-                            doneCallback(err2);
+                        fs3.stat(fileItemPath, (err3, symlinkPointsTo) => {
+                          if (err3) {
+                            doneCallback(err3);
                           } else {
                             const fileItem = {
                               name: direntItem.name,
@@ -1513,8 +1513,8 @@ const getRuntime = () => {
             callback(path2, void 0);
             doneCallback();
           }
-        }).catch((err) => {
-          doneCallback(err);
+        }).catch((err2) => {
+          doneCallback(err2);
         });
       };
       exports.sync = initialWalkSync;
@@ -1896,7 +1896,7 @@ const getRuntime = () => {
             { "this": this, file: file2, pattern }
           );
           this.debug("matchOne", file2.length, pattern.length);
-          for (var fi = 0, pi = 0, fl = file2.length, pl = pattern.length; fi < fl && pi < pl; fi++, pi++) {
+          for (var fi = 0, pi = 0, fl2 = file2.length, pl = pattern.length; fi < fl2 && pi < pl; fi++, pi++) {
             this.debug("matchOne loop");
             var p = pattern[pi];
             var f3 = file2[fi];
@@ -1909,17 +1909,17 @@ const getRuntime = () => {
               var pr = pi + 1;
               if (pr === pl) {
                 this.debug("** at the end");
-                for (; fi < fl; fi++) {
+                for (; fi < fl2; fi++) {
                   if (file2[fi] === "." || file2[fi] === ".." || !options.dot && file2[fi].charAt(0) === ".")
                     return false;
                 }
                 return true;
               }
-              while (fr < fl) {
+              while (fr < fl2) {
                 var swallowee = file2[fr];
                 this.debug("\nglobstar while", file2, fr, pattern, pr, swallowee);
                 if (this.matchOne(file2.slice(fr), pattern.slice(pr), partial)) {
-                  this.debug("globstar found match!", fr, fl, swallowee);
+                  this.debug("globstar found match!", fr, fl2, swallowee);
                   return true;
                 } else {
                   if (swallowee === "." || swallowee === ".." || !options.dot && swallowee.charAt(0) === ".") {
@@ -1932,7 +1932,7 @@ const getRuntime = () => {
               }
               if (partial) {
                 this.debug("\n>>> no match, partial?", file2, fr, pattern, pr);
-                if (fr === fl)
+                if (fr === fl2)
                   return true;
               }
               return false;
@@ -1948,12 +1948,12 @@ const getRuntime = () => {
             if (!hit)
               return false;
           }
-          if (fi === fl && pi === pl) {
+          if (fi === fl2 && pi === pl) {
             return true;
-          } else if (fi === fl) {
+          } else if (fi === fl2) {
             return partial;
           } else if (pi === pl) {
-            return fi === fl - 1 && file2[fi] === "";
+            return fi === fl2 - 1 && file2[fi] === "";
           }
           throw new Error("wtf?");
         }
@@ -2398,16 +2398,16 @@ const getRuntime = () => {
         });
       };
       var generatePathDoesntExistError = (path2) => {
-        const err = new Error(`Path you want to find stuff in doesn't exist ${path2}`);
-        err.code = "ENOENT";
-        return err;
+        const err2 = new Error(`Path you want to find stuff in doesn't exist ${path2}`);
+        err2.code = "ENOENT";
+        return err2;
       };
       var generatePathNotDirectoryError = (path2) => {
-        const err = new Error(
+        const err2 = new Error(
           `Path you want to find stuff in must be a directory ${path2}`
         );
-        err.code = "ENOTDIR";
-        return err;
+        err2.code = "ENOTDIR";
+        return err2;
       };
       var findSync = (path2, options) => {
         const foundAbsolutePaths = [];
@@ -2497,8 +2497,8 @@ const getRuntime = () => {
                         }
                         waitingForFiltersToFinish -= 1;
                         maybeDone();
-                      }).catch((err) => {
-                        reject(err);
+                      }).catch((err2) => {
+                        reject(err2);
                       });
                     } else if (passedThroughFilter) {
                       foundAbsolutePaths.push(itemPath);
@@ -2509,9 +2509,9 @@ const getRuntime = () => {
                 }
               }
             },
-            (err) => {
-              if (err) {
-                reject(err);
+            (err2) => {
+              if (err2) {
+                reject(err2);
               } else {
                 treeWalkerDone = true;
                 maybeDone();
@@ -2673,9 +2673,9 @@ const getRuntime = () => {
                 }
               }
             },
-            (err) => {
-              if (err) {
-                reject(err);
+            (err2) => {
+              if (err2) {
+                reject(err2);
               } else {
                 if (tree) {
                   calculateTreeDependentProperties(void 0, tree, options);
@@ -2711,9 +2711,9 @@ const getRuntime = () => {
             return "file";
           }
           return "other";
-        } catch (err) {
-          if (err.code !== "ENOENT") {
-            throw err;
+        } catch (err2) {
+          if (err2.code !== "ENOENT") {
+            throw err2;
           }
         }
         return false;
@@ -2728,11 +2728,11 @@ const getRuntime = () => {
             } else {
               resolve("other");
             }
-          }).catch((err) => {
-            if (err.code === "ENOENT") {
+          }).catch((err2) => {
+            if (err2.code === "ENOENT") {
               resolve(false);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -2788,14 +2788,14 @@ const getRuntime = () => {
         return parsedOptions;
       };
       var generateNoSourceError = (path2) => {
-        const err = new Error(`Path to copy doesn't exist ${path2}`);
-        err.code = "ENOENT";
-        return err;
+        const err2 = new Error(`Path to copy doesn't exist ${path2}`);
+        err2.code = "ENOENT";
+        return err2;
       };
       var generateDestinationExistsError = (path2) => {
-        const err = new Error(`Destination path already exists ${path2}`);
-        err.code = "EEXIST";
-        return err;
+        const err2 = new Error(`Destination path already exists ${path2}`);
+        err2.code = "EEXIST";
+        return err2;
       };
       var inspectOptions = {
         mode: true,
@@ -2825,17 +2825,17 @@ const getRuntime = () => {
         const data = fs3.readFileSync(srcPath);
         try {
           fs3.writeFileSync(destPath, data, { mode, flag: "wx" });
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             write2.sync(destPath, data, { mode });
-          } else if (err.code === "EEXIST") {
+          } else if (err2.code === "EEXIST") {
             if (canOverwriteItSync(context)) {
               fs3.writeFileSync(destPath, data, { mode });
             } else if (shouldThrowDestinationExistsError(context)) {
               throw generateDestinationExistsError(context.destPath);
             }
           } else {
-            throw err;
+            throw err2;
           }
         }
       };
@@ -2843,12 +2843,12 @@ const getRuntime = () => {
         const symlinkPointsAt = fs3.readlinkSync(from);
         try {
           fs3.symlinkSync(symlinkPointsAt, to);
-        } catch (err) {
-          if (err.code === "EEXIST") {
+        } catch (err2) {
+          if (err2.code === "EEXIST") {
             fs3.unlinkSync(to);
             fs3.symlinkSync(symlinkPointsAt, to);
           } else {
-            throw err;
+            throw err2;
           }
         }
       };
@@ -2910,16 +2910,16 @@ const getRuntime = () => {
           const readStream = fs3.createReadStream(srcPath);
           const writeStream = fs3.createWriteStream(destPath, { mode, flags });
           readStream.on("error", reject);
-          writeStream.on("error", (err) => {
+          writeStream.on("error", (err2) => {
             readStream.resume();
-            if (err.code === "ENOENT") {
+            if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(destPath)).then(() => {
                 copyFileAsync(srcPath, destPath, mode, context).then(
                   resolve,
                   reject
                 );
               }).catch(reject);
-            } else if (err.code === "EEXIST") {
+            } else if (err2.code === "EEXIST") {
               canOverwriteItAsync(context).then((canOverwite) => {
                 if (canOverwite) {
                   copyFileAsync(srcPath, destPath, mode, context, {
@@ -2932,7 +2932,7 @@ const getRuntime = () => {
                 }
               }).catch(reject);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
           writeStream.on("finish", resolve);
@@ -2942,13 +2942,13 @@ const getRuntime = () => {
       var copySymlinkAsync = (from, to) => {
         return fs3.readlink(from).then((symlinkPointsAt) => {
           return new Promise((resolve, reject) => {
-            fs3.symlink(symlinkPointsAt, to).then(resolve).catch((err) => {
-              if (err.code === "EEXIST") {
+            fs3.symlink(symlinkPointsAt, to).then(resolve).catch((err2) => {
+              if (err2.code === "EEXIST") {
                 fs3.unlink(to).then(() => {
                   return fs3.symlink(symlinkPointsAt, to);
                 }).then(resolve, reject);
               } else {
-                reject(err);
+                reject(err2);
               }
             });
           });
@@ -2990,9 +2990,9 @@ const getRuntime = () => {
                   }
                 }
               },
-              (err) => {
-                if (err) {
-                  reject(err);
+              (err2) => {
+                if (err2) {
+                  reject(err2);
                 } else {
                   allFilesDelivered = true;
                   if (allFilesDelivered && filesInProgress === 0) {
@@ -3034,14 +3034,14 @@ const getRuntime = () => {
         return opts;
       };
       var generateDestinationExistsError = (path2) => {
-        const err = new Error(`Destination path already exists ${path2}`);
-        err.code = "EEXIST";
-        return err;
+        const err2 = new Error(`Destination path already exists ${path2}`);
+        err2.code = "EEXIST";
+        return err2;
       };
       var generateSourceDoesntExistError = (path2) => {
-        const err = new Error(`Path to move doesn't exist ${path2}`);
-        err.code = "ENOENT";
-        return err;
+        const err2 = new Error(`Path to move doesn't exist ${path2}`);
+        err2.code = "ENOENT";
+        return err2;
       };
       var moveSync = (from, to, options) => {
         const opts = parseOptions(options);
@@ -3050,21 +3050,21 @@ const getRuntime = () => {
         }
         try {
           fs3.renameSync(from, to);
-        } catch (err) {
-          if (err.code === "EISDIR" || err.code === "EPERM") {
+        } catch (err2) {
+          if (err2.code === "EISDIR" || err2.code === "EPERM") {
             remove2.sync(to);
             fs3.renameSync(from, to);
-          } else if (err.code === "EXDEV") {
+          } else if (err2.code === "EXDEV") {
             copy2.sync(from, to, { overwrite: true });
             remove2.sync(from);
-          } else if (err.code === "ENOENT") {
+          } else if (err2.code === "ENOENT") {
             if (!exists2.sync(from)) {
               throw generateSourceDoesntExistError(from);
             }
             dir2.createSync(pathUtil.dirname(to));
             fs3.renameSync(from, to);
           } else {
-            throw err;
+            throw err2;
           }
         }
       };
@@ -3087,12 +3087,12 @@ const getRuntime = () => {
             if (destinationExists !== false && opts.overwrite !== true) {
               reject(generateDestinationExistsError(to));
             } else {
-              fs3.rename(from, to).then(resolve).catch((err) => {
-                if (err.code === "EISDIR" || err.code === "EPERM") {
+              fs3.rename(from, to).then(resolve).catch((err2) => {
+                if (err2.code === "EISDIR" || err2.code === "EPERM") {
                   remove2.async(to).then(() => fs3.rename(from, to)).then(resolve, reject);
-                } else if (err.code === "EXDEV") {
+                } else if (err2.code === "EXDEV") {
                   copy2.async(from, to, { overwrite: true }).then(() => remove2.async(from)).then(resolve, reject);
-                } else if (err.code === "ENOENT") {
+                } else if (err2.code === "ENOENT") {
                   exists2.async(from).then((srcExists) => {
                     if (!srcExists) {
                       reject(generateSourceDoesntExistError(from));
@@ -3103,7 +3103,7 @@ const getRuntime = () => {
                     }
                   }).catch(reject);
                 } else {
-                  reject(err);
+                  reject(err2);
                 }
               });
             }
@@ -3147,11 +3147,11 @@ const getRuntime = () => {
         }
         return value;
       };
-      var makeNicerJsonParsingError = (path2, err) => {
+      var makeNicerJsonParsingError = (path2, err2) => {
         const nicerError = new Error(
-          `JSON parsing failed while reading ${path2} [${err}]`
+          `JSON parsing failed while reading ${path2} [${err2}]`
         );
-        nicerError.originalError = err;
+        nicerError.originalError = err2;
         return nicerError;
       };
       var readSync = (path2, returnAs) => {
@@ -3163,11 +3163,11 @@ const getRuntime = () => {
         }
         try {
           data = fs3.readFileSync(path2, { encoding });
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             return void 0;
           }
-          throw err;
+          throw err2;
         }
         try {
           if (retAs === "json") {
@@ -3175,8 +3175,8 @@ const getRuntime = () => {
           } else if (retAs === "jsonWithDates") {
             data = JSON.parse(data, jsonDateParser);
           }
-        } catch (err) {
-          throw makeNicerJsonParsingError(path2, err);
+        } catch (err2) {
+          throw makeNicerJsonParsingError(path2, err2);
         }
         return data;
       };
@@ -3196,14 +3196,14 @@ const getRuntime = () => {
               } else {
                 resolve(data);
               }
-            } catch (err) {
-              reject(makeNicerJsonParsingError(path2, err));
+            } catch (err2) {
+              reject(makeNicerJsonParsingError(path2, err2));
             }
-          }).catch((err) => {
-            if (err.code === "ENOENT") {
+          }).catch((err2) => {
+            if (err2.code === "ENOENT") {
               resolve(void 0);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -3264,24 +3264,24 @@ const getRuntime = () => {
       var symlinkSync = (symlinkValue, path2) => {
         try {
           fs3.symlinkSync(symlinkValue, path2);
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             dir2.createSync(pathUtil.dirname(path2));
             fs3.symlinkSync(symlinkValue, path2);
           } else {
-            throw err;
+            throw err2;
           }
         }
       };
       var symlinkAsync2 = (symlinkValue, path2) => {
         return new Promise((resolve, reject) => {
-          fs3.symlink(symlinkValue, path2).then(resolve).catch((err) => {
-            if (err.code === "ENOENT") {
+          fs3.symlink(symlinkValue, path2).then(resolve).catch((err2) => {
+            if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(path2)).then(() => {
                 return fs3.symlink(symlinkValue, path2);
               }).then(resolve, reject);
             } else {
-              reject(err);
+              reject(err2);
             }
           });
         });
@@ -3344,11 +3344,11 @@ const getRuntime = () => {
         );
         try {
           fs3.mkdirSync(dirPath);
-        } catch (err) {
-          if (err.code === "ENOENT") {
+        } catch (err2) {
+          if (err2.code === "ENOENT") {
             dir2.sync(dirPath);
           } else {
-            throw err;
+            throw err2;
           }
         }
         return dirPath;
@@ -3356,23 +3356,23 @@ const getRuntime = () => {
       var tmpDirAsync2 = (cwdPath, passedOptions) => {
         return new Promise((resolve, reject) => {
           const options = getOptionsDefaults(passedOptions, cwdPath);
-          crypto.randomBytes(randomStringLength / 2, (err, bytes) => {
-            if (err) {
-              reject(err);
+          crypto.randomBytes(randomStringLength / 2, (err2, bytes) => {
+            if (err2) {
+              reject(err2);
             } else {
               const randomString = bytes.toString("hex");
               const dirPath = pathUtil.join(
                 options.basePath,
                 options.prefix + randomString
               );
-              fs3.mkdir(dirPath, (err2) => {
-                if (err2) {
-                  if (err2.code === "ENOENT") {
+              fs3.mkdir(dirPath, (err3) => {
+                if (err3) {
+                  if (err3.code === "ENOENT") {
                     dir2.async(dirPath).then(() => {
                       resolve(dirPath);
                     }, reject);
                   } else {
-                    reject(err2);
+                    reject(err3);
                   }
                 } else {
                   resolve(dirPath);
@@ -3622,11 +3622,11 @@ const getRuntime = () => {
           this.destroy();
         }
       }
-      function duplexOnError(err) {
+      function duplexOnError(err2) {
         this.removeListener("error", duplexOnError);
         this.destroy();
         if (this.listenerCount("error") === 0) {
-          this.emit("error", err);
+          this.emit("error", err2);
         }
       }
       function createWebSocketStream2(ws, options) {
@@ -3643,31 +3643,31 @@ const getRuntime = () => {
           if (!duplex.push(data))
             ws.pause();
         });
-        ws.once("error", function error(err) {
+        ws.once("error", function error(err2) {
           if (duplex.destroyed)
             return;
           terminateOnDestroy = false;
-          duplex.destroy(err);
+          duplex.destroy(err2);
         });
         ws.once("close", function close() {
           if (duplex.destroyed)
             return;
           duplex.push(null);
         });
-        duplex._destroy = function(err, callback) {
+        duplex._destroy = function(err2, callback) {
           if (ws.readyState === ws.CLOSED) {
-            callback(err);
+            callback(err2);
             process.nextTick(emitClose, duplex);
             return;
           }
           let called = false;
-          ws.once("error", function error(err2) {
+          ws.once("error", function error(err3) {
             called = true;
-            callback(err2);
+            callback(err3);
           });
           ws.once("close", function close() {
             if (!called)
-              callback(err);
+              callback(err2);
             process.nextTick(emitClose, duplex);
           });
           if (terminateOnDestroy)
@@ -3758,7 +3758,7 @@ const getRuntime = () => {
           var name = runtimeRequire(path2.join(dir2, "package.json")).name.toUpperCase().replace(/-/g, "_");
           if (process.env[name + "_PREBUILD"])
             dir2 = process.env[name + "_PREBUILD"];
-        } catch (err) {
+        } catch (err2) {
         }
         if (!prebuildsOnly) {
           var release = getFirst(path2.join(dir2, "build/Release"), matchBuild);
@@ -3803,7 +3803,7 @@ const getRuntime = () => {
       function readdirSync(dir2) {
         try {
           return fs3.readdirSync(dir2);
-        } catch (err) {
+        } catch (err2) {
           return [];
         }
       }
@@ -4229,17 +4229,17 @@ const getRuntime = () => {
         }
         decompress(data, fin, callback) {
           zlibLimiter.add((done) => {
-            this._decompress(data, fin, (err, result) => {
+            this._decompress(data, fin, (err2, result) => {
               done();
-              callback(err, result);
+              callback(err2, result);
             });
           });
         }
         compress(data, fin, callback) {
           zlibLimiter.add((done) => {
-            this._compress(data, fin, (err, result) => {
+            this._compress(data, fin, (err2, result) => {
               done();
-              callback(err, result);
+              callback(err2, result);
             });
           });
         }
@@ -4263,11 +4263,11 @@ const getRuntime = () => {
           if (fin)
             this._inflate.write(TRAILER);
           this._inflate.flush(() => {
-            const err = this._inflate[kError];
-            if (err) {
+            const err2 = this._inflate[kError];
+            if (err2) {
               this._inflate.close();
               this._inflate = null;
-              callback(err);
+              callback(err2);
               return;
             }
             const data2 = bufferUtil.concat(
@@ -4339,10 +4339,10 @@ const getRuntime = () => {
         this.removeListener("data", inflateOnData);
         this.reset();
       }
-      function inflateOnError(err) {
+      function inflateOnError(err2) {
         this[kPerMessageDeflate]._inflate = null;
-        err[kStatusCode] = 1007;
-        this[kCallback](err);
+        err2[kStatusCode] = 1007;
+        this[kCallback](err2);
       }
     }
   });
@@ -4650,31 +4650,31 @@ const getRuntime = () => {
           return dst;
         }
         startLoop(cb) {
-          let err;
+          let err2;
           this._loop = true;
           do {
             switch (this._state) {
               case GET_INFO:
-                err = this.getInfo();
+                err2 = this.getInfo();
                 break;
               case GET_PAYLOAD_LENGTH_16:
-                err = this.getPayloadLength16();
+                err2 = this.getPayloadLength16();
                 break;
               case GET_PAYLOAD_LENGTH_64:
-                err = this.getPayloadLength64();
+                err2 = this.getPayloadLength64();
                 break;
               case GET_MASK:
                 this.getMask();
                 break;
               case GET_DATA:
-                err = this.getData(cb);
+                err2 = this.getData(cb);
                 break;
               default:
                 this._loop = false;
                 return;
             }
           } while (this._loop);
-          cb(err);
+          cb(err2);
         }
         getInfo() {
           if (this._bufferedBytes < 2) {
@@ -4894,9 +4894,9 @@ const getRuntime = () => {
         }
         decompress(data, cb) {
           const perMessageDeflate = this._extensions[PerMessageDeflate.extensionName];
-          perMessageDeflate.decompress(data, this._fin, (err, buf) => {
-            if (err)
-              return cb(err);
+          perMessageDeflate.decompress(data, this._fin, (err2, buf) => {
+            if (err2)
+              return cb(err2);
             if (buf.length) {
               this._messageLength += buf.length;
               if (this._messageLength > this._maxPayload && this._maxPayload > 0) {
@@ -5001,13 +5001,13 @@ const getRuntime = () => {
       };
       module.exports = Receiver2;
       function error(ErrorCtor, message, prefix, statusCode, errorCode) {
-        const err = new ErrorCtor(
+        const err2 = new ErrorCtor(
           prefix ? `Invalid WebSocket frame: ${message}` : message
         );
-        Error.captureStackTrace(err, error);
-        err.code = errorCode;
-        err[kStatusCode] = statusCode;
-        return err;
+        Error.captureStackTrace(err2, error);
+        err2.code = errorCode;
+        err2[kStatusCode] = statusCode;
+        return err2;
       }
     }
   });
@@ -5267,16 +5267,16 @@ const getRuntime = () => {
           this._deflating = true;
           perMessageDeflate.compress(data, options.fin, (_, buf) => {
             if (this._socket.destroyed) {
-              const err = new Error(
+              const err2 = new Error(
                 "The socket was closed while data was being compressed"
               );
               if (typeof cb === "function")
-                cb(err);
+                cb(err2);
               for (let i2 = 0; i2 < this._queue.length; i2++) {
                 const params = this._queue[i2];
                 const callback = params[params.length - 1];
                 if (typeof callback === "function")
-                  callback(err);
+                  callback(err2);
               }
               return;
             }
@@ -5802,8 +5802,8 @@ const getRuntime = () => {
             return;
           }
           this._readyState = WebSocket2.CLOSING;
-          this._sender.close(code, data, !this._isServer, (err) => {
-            if (err)
+          this._sender.close(code, data, !this._isServer, (err2) => {
+            if (err2)
               return;
             this._closeFrameSent = true;
             if (this._closeFrameReceived || this._receiver._writableState.errorEmitted) {
@@ -6029,11 +6029,11 @@ const getRuntime = () => {
           invalidUrlMessage = "The URL contains a fragment identifier";
         }
         if (invalidUrlMessage) {
-          const err = new SyntaxError(invalidUrlMessage);
+          const err2 = new SyntaxError(invalidUrlMessage);
           if (websocket._redirects === 0) {
-            throw err;
+            throw err2;
           } else {
-            emitErrorAndClose(websocket, err);
+            emitErrorAndClose(websocket, err2);
             return;
           }
         }
@@ -6129,11 +6129,11 @@ const getRuntime = () => {
             abortHandshake(websocket, req, "Opening handshake has timed out");
           });
         }
-        req.on("error", (err) => {
+        req.on("error", (err2) => {
           if (req === null || req[kAborted])
             return;
           req = websocket._req = null;
-          emitErrorAndClose(websocket, err);
+          emitErrorAndClose(websocket, err2);
         });
         req.on("response", (res) => {
           const location = res.headers.location;
@@ -6148,8 +6148,8 @@ const getRuntime = () => {
             try {
               addr = new URL2(location, address);
             } catch (e2) {
-              const err = new SyntaxError(`Invalid URL: ${location}`);
-              emitErrorAndClose(websocket, err);
+              const err2 = new SyntaxError(`Invalid URL: ${location}`);
+              emitErrorAndClose(websocket, err2);
               return;
             }
             initAsClient(websocket, addr, protocols, options);
@@ -6202,7 +6202,7 @@ const getRuntime = () => {
             let extensions;
             try {
               extensions = parse2(secWebSocketExtensions);
-            } catch (err) {
+            } catch (err2) {
               const message = "Invalid Sec-WebSocket-Extensions header";
               abortHandshake(websocket, socket, message);
               return;
@@ -6215,7 +6215,7 @@ const getRuntime = () => {
             }
             try {
               perMessageDeflate.accept(extensions[PerMessageDeflate.extensionName]);
-            } catch (err) {
+            } catch (err2) {
               const message = "Invalid Sec-WebSocket-Extensions header";
               abortHandshake(websocket, socket, message);
               return;
@@ -6230,9 +6230,9 @@ const getRuntime = () => {
         });
         req.end();
       }
-      function emitErrorAndClose(websocket, err) {
+      function emitErrorAndClose(websocket, err2) {
         websocket._readyState = WebSocket2.CLOSING;
-        websocket.emit("error", err);
+        websocket.emit("error", err2);
         websocket.emitClose();
       }
       function netConnect(options) {
@@ -6248,17 +6248,17 @@ const getRuntime = () => {
       }
       function abortHandshake(websocket, stream, message) {
         websocket._readyState = WebSocket2.CLOSING;
-        const err = new Error(message);
-        Error.captureStackTrace(err, abortHandshake);
+        const err2 = new Error(message);
+        Error.captureStackTrace(err2, abortHandshake);
         if (stream.setHeader) {
           stream[kAborted] = true;
           stream.abort();
           if (stream.socket && !stream.socket.destroyed) {
             stream.socket.destroy();
           }
-          process.nextTick(emitErrorAndClose, websocket, err);
+          process.nextTick(emitErrorAndClose, websocket, err2);
         } else {
-          stream.destroy(err);
+          stream.destroy(err2);
           stream.once("error", websocket.emit.bind(websocket, "error"));
           stream.once("close", websocket.emitClose.bind(websocket));
         }
@@ -6272,10 +6272,10 @@ const getRuntime = () => {
             websocket._bufferedAmount += length;
         }
         if (cb) {
-          const err = new Error(
+          const err2 = new Error(
             `WebSocket is not open: readyState ${websocket.readyState} (${readyStates[websocket.readyState]})`
           );
-          cb(err);
+          cb(err2);
         }
       }
       function receiverOnConclude(code, reason) {
@@ -6297,14 +6297,14 @@ const getRuntime = () => {
         if (!websocket.isPaused)
           websocket._socket.resume();
       }
-      function receiverOnError(err) {
+      function receiverOnError(err2) {
         const websocket = this[kWebSocket];
         if (websocket._socket[kWebSocket] !== void 0) {
           websocket._socket.removeListener("data", socketOnData);
           process.nextTick(resume, websocket._socket);
-          websocket.close(err[kStatusCode]);
+          websocket.close(err2[kStatusCode]);
         }
-        websocket.emit("error", err);
+        websocket.emit("error", err2);
       }
       function receiverOnFinish() {
         this[kWebSocket].emitClose();
@@ -6582,7 +6582,7 @@ const getRuntime = () => {
           if (secWebSocketProtocol !== void 0) {
             try {
               protocols = subprotocol.parse(secWebSocketProtocol);
-            } catch (err) {
+            } catch (err2) {
               const message = "Invalid Sec-WebSocket-Protocol header";
               abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
               return;
@@ -6602,7 +6602,7 @@ const getRuntime = () => {
                 perMessageDeflate.accept(offers[PerMessageDeflate.extensionName]);
                 extensions[PerMessageDeflate.extensionName] = perMessageDeflate;
               }
-            } catch (err) {
+            } catch (err2) {
               const message = "Invalid or unacceptable Sec-WebSocket-Extensions header";
               abortHandshakeOrEmitwsClientError(this, req, socket, 400, message);
               return;
@@ -6721,9 +6721,9 @@ const getRuntime = () => {
       }
       function abortHandshakeOrEmitwsClientError(server, req, socket, code, message) {
         if (server.listenerCount("wsClientError")) {
-          const err = new Error(message);
-          Error.captureStackTrace(err, abortHandshakeOrEmitwsClientError);
-          server.emit("wsClientError", err, socket, req);
+          const err2 = new Error(message);
+          Error.captureStackTrace(err2, abortHandshakeOrEmitwsClientError);
+          server.emit("wsClientError", err2, socket, req);
         } else {
           abortHandshake(socket, code, message);
         }
@@ -7334,7 +7334,7 @@ const getRuntime = () => {
       var stateBeforeNumericEntity = ifElseState("X", 66, 65);
       var Tokenizer = function() {
         function Tokenizer2(options, cbs) {
-          var _a;
+          var _a2;
           this._state = 1;
           this.buffer = "";
           this.sectionStart = 0;
@@ -7346,7 +7346,7 @@ const getRuntime = () => {
           this.ended = false;
           this.cbs = cbs;
           this.xmlMode = !!(options === null || options === void 0 ? void 0 : options.xmlMode);
-          this.decodeEntities = (_a = options === null || options === void 0 ? void 0 : options.decodeEntities) !== null && _a !== void 0 ? _a : true;
+          this.decodeEntities = (_a2 = options === null || options === void 0 ? void 0 : options.decodeEntities) !== null && _a2 !== void 0 ? _a2 : true;
         }
         Tokenizer2.prototype.reset = function() {
           this._state = 1;
@@ -8080,7 +8080,7 @@ const getRuntime = () => {
           if (options === void 0) {
             options = {};
           }
-          var _a, _b, _c, _d, _e;
+          var _a2, _b2, _c, _d, _e;
           this.startIndex = 0;
           this.endIndex = null;
           this.tagname = "";
@@ -8091,8 +8091,8 @@ const getRuntime = () => {
           this.foreignContext = [];
           this.options = options;
           this.cbs = cbs !== null && cbs !== void 0 ? cbs : {};
-          this.lowerCaseTagNames = (_a = options.lowerCaseTags) !== null && _a !== void 0 ? _a : !options.xmlMode;
-          this.lowerCaseAttributeNames = (_b = options.lowerCaseAttributeNames) !== null && _b !== void 0 ? _b : !options.xmlMode;
+          this.lowerCaseTagNames = (_a2 = options.lowerCaseTags) !== null && _a2 !== void 0 ? _a2 : !options.xmlMode;
+          this.lowerCaseAttributeNames = (_b2 = options.lowerCaseAttributeNames) !== null && _b2 !== void 0 ? _b2 : !options.xmlMode;
           this.tokenizer = new ((_c = options.Tokenizer) !== null && _c !== void 0 ? _c : Tokenizer_1.default)(this.options, this);
           (_e = (_d = this.cbs).onparserinit) === null || _e === void 0 ? void 0 : _e.call(_d, this);
         }
@@ -8109,13 +8109,13 @@ const getRuntime = () => {
           this.endIndex = this.tokenizer.getAbsoluteIndex();
         };
         Parser2.prototype.ontext = function(data) {
-          var _a, _b;
+          var _a2, _b2;
           this.updatePosition(1);
           this.endIndex--;
-          (_b = (_a = this.cbs).ontext) === null || _b === void 0 ? void 0 : _b.call(_a, data);
+          (_b2 = (_a2 = this.cbs).ontext) === null || _b2 === void 0 ? void 0 : _b2.call(_a2, data);
         };
         Parser2.prototype.onopentagname = function(name) {
-          var _a, _b;
+          var _a2, _b2;
           if (this.lowerCaseTagNames) {
             name = name.toLowerCase();
           }
@@ -8134,15 +8134,15 @@ const getRuntime = () => {
               this.foreignContext.push(false);
             }
           }
-          (_b = (_a = this.cbs).onopentagname) === null || _b === void 0 ? void 0 : _b.call(_a, name);
+          (_b2 = (_a2 = this.cbs).onopentagname) === null || _b2 === void 0 ? void 0 : _b2.call(_a2, name);
           if (this.cbs.onopentag)
             this.attribs = {};
         };
         Parser2.prototype.onopentagend = function() {
-          var _a, _b;
+          var _a2, _b2;
           this.updatePosition(1);
           if (this.attribs) {
-            (_b = (_a = this.cbs).onopentag) === null || _b === void 0 ? void 0 : _b.call(_a, this.tagname, this.attribs);
+            (_b2 = (_a2 = this.cbs).onopentag) === null || _b2 === void 0 ? void 0 : _b2.call(_a2, this.tagname, this.attribs);
             this.attribs = null;
           }
           if (!this.options.xmlMode && this.cbs.onclosetag && voidElements.has(this.tagname)) {
@@ -8185,11 +8185,11 @@ const getRuntime = () => {
           }
         };
         Parser2.prototype.closeCurrentTag = function() {
-          var _a, _b;
+          var _a2, _b2;
           var name = this.tagname;
           this.onopentagend();
           if (this.stack[this.stack.length - 1] === name) {
-            (_b = (_a = this.cbs).onclosetag) === null || _b === void 0 ? void 0 : _b.call(_a, name);
+            (_b2 = (_a2 = this.cbs).onclosetag) === null || _b2 === void 0 ? void 0 : _b2.call(_a2, name);
             this.stack.pop();
           }
         };
@@ -8203,8 +8203,8 @@ const getRuntime = () => {
           this.attribvalue += value;
         };
         Parser2.prototype.onattribend = function(quote) {
-          var _a, _b;
-          (_b = (_a = this.cbs).onattribute) === null || _b === void 0 ? void 0 : _b.call(_a, this.attribname, this.attribvalue, quote);
+          var _a2, _b2;
+          (_b2 = (_a2 = this.cbs).onattribute) === null || _b2 === void 0 ? void 0 : _b2.call(_a2, this.attribname, this.attribvalue, quote);
           if (this.attribs && !Object.prototype.hasOwnProperty.call(this.attribs, this.attribname)) {
             this.attribs[this.attribname] = this.attribvalue;
           }
@@ -8232,37 +8232,37 @@ const getRuntime = () => {
           }
         };
         Parser2.prototype.oncomment = function(value) {
-          var _a, _b, _c, _d;
+          var _a2, _b2, _c, _d;
           this.updatePosition(4);
-          (_b = (_a = this.cbs).oncomment) === null || _b === void 0 ? void 0 : _b.call(_a, value);
+          (_b2 = (_a2 = this.cbs).oncomment) === null || _b2 === void 0 ? void 0 : _b2.call(_a2, value);
           (_d = (_c = this.cbs).oncommentend) === null || _d === void 0 ? void 0 : _d.call(_c);
         };
         Parser2.prototype.oncdata = function(value) {
-          var _a, _b, _c, _d, _e, _f;
+          var _a2, _b2, _c, _d, _e, _f;
           this.updatePosition(1);
           if (this.options.xmlMode || this.options.recognizeCDATA) {
-            (_b = (_a = this.cbs).oncdatastart) === null || _b === void 0 ? void 0 : _b.call(_a);
+            (_b2 = (_a2 = this.cbs).oncdatastart) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
             (_d = (_c = this.cbs).ontext) === null || _d === void 0 ? void 0 : _d.call(_c, value);
             (_f = (_e = this.cbs).oncdataend) === null || _f === void 0 ? void 0 : _f.call(_e);
           } else {
             this.oncomment("[CDATA[" + value + "]]");
           }
         };
-        Parser2.prototype.onerror = function(err) {
-          var _a, _b;
-          (_b = (_a = this.cbs).onerror) === null || _b === void 0 ? void 0 : _b.call(_a, err);
+        Parser2.prototype.onerror = function(err2) {
+          var _a2, _b2;
+          (_b2 = (_a2 = this.cbs).onerror) === null || _b2 === void 0 ? void 0 : _b2.call(_a2, err2);
         };
         Parser2.prototype.onend = function() {
-          var _a, _b;
+          var _a2, _b2;
           if (this.cbs.onclosetag) {
             for (var i2 = this.stack.length; i2 > 0; this.cbs.onclosetag(this.stack[--i2]))
               ;
           }
-          (_b = (_a = this.cbs).onend) === null || _b === void 0 ? void 0 : _b.call(_a);
+          (_b2 = (_a2 = this.cbs).onend) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
         };
         Parser2.prototype.reset = function() {
-          var _a, _b, _c, _d;
-          (_b = (_a = this.cbs).onreset) === null || _b === void 0 ? void 0 : _b.call(_a);
+          var _a2, _b2, _c, _d;
+          (_b2 = (_a2 = this.cbs).onreset) === null || _b2 === void 0 ? void 0 : _b2.call(_a2);
           this.tokenizer.reset();
           this.tagname = "";
           this.attribname = "";
@@ -8338,12 +8338,12 @@ const getRuntime = () => {
       "use strict";
       var __extends = exports && exports.__extends || function() {
         var extendStatics = function(d, b) {
-          extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-            d2.__proto__ = b2;
-          } || function(d2, b2) {
-            for (var p in b2)
-              if (Object.prototype.hasOwnProperty.call(b2, p))
-                d2[p] = b2[p];
+          extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b3) {
+            d2.__proto__ = b3;
+          } || function(d2, b3) {
+            for (var p in b3)
+              if (Object.prototype.hasOwnProperty.call(b3, p))
+                d2[p] = b3[p];
           };
           return extendStatics(d, b);
         };
@@ -8393,8 +8393,8 @@ const getRuntime = () => {
         }
         Object.defineProperty(Node2.prototype, "nodeType", {
           get: function() {
-            var _a;
-            return (_a = nodeTypes.get(this.type)) !== null && _a !== void 0 ? _a : 1;
+            var _a2;
+            return (_a2 = nodeTypes.get(this.type)) !== null && _a2 !== void 0 ? _a2 : 1;
           },
           enumerable: false,
           configurable: true
@@ -8493,8 +8493,8 @@ const getRuntime = () => {
         }
         Object.defineProperty(NodeWithChildren2.prototype, "firstChild", {
           get: function() {
-            var _a;
-            return (_a = this.children[0]) !== null && _a !== void 0 ? _a : null;
+            var _a2;
+            return (_a2 = this.children[0]) !== null && _a2 !== void 0 ? _a2 : null;
           },
           enumerable: false,
           configurable: true
@@ -8555,12 +8555,12 @@ const getRuntime = () => {
           get: function() {
             var _this = this;
             return Object.keys(this.attribs).map(function(name) {
-              var _a, _b;
+              var _a2, _b2;
               return {
                 name,
                 value: _this.attribs[name],
-                namespace: (_a = _this["x-attribsNamespace"]) === null || _a === void 0 ? void 0 : _a[name],
-                prefix: (_b = _this["x-attribsPrefix"]) === null || _b === void 0 ? void 0 : _b[name]
+                namespace: (_a2 = _this["x-attribsNamespace"]) === null || _a2 === void 0 ? void 0 : _a2[name],
+                prefix: (_b2 = _this["x-attribsPrefix"]) === null || _b2 === void 0 ? void 0 : _b2[name]
               };
             });
           },
@@ -8931,8 +8931,8 @@ const getRuntime = () => {
       function getInverseReplacer(inverse) {
         var single = [];
         var multiple = [];
-        for (var _i = 0, _a = Object.keys(inverse); _i < _a.length; _i++) {
-          var k = _a[_i];
+        for (var _i = 0, _a2 = Object.keys(inverse); _i < _a2.length; _i++) {
+          var k = _a2[_i];
           if (k.length === 1) {
             single.push("\\" + k);
           } else {
@@ -9229,10 +9229,10 @@ const getRuntime = () => {
         if (!attributes)
           return;
         return Object.keys(attributes).map(function(key) {
-          var _a, _b;
-          var value = (_a = attributes[key]) !== null && _a !== void 0 ? _a : "";
+          var _a2, _b2;
+          var value = (_a2 = attributes[key]) !== null && _a2 !== void 0 ? _a2 : "";
           if (opts.xmlMode === "foreign") {
-            key = (_b = foreignNames_1.attributeNames.get(key)) !== null && _b !== void 0 ? _b : key;
+            key = (_b2 = foreignNames_1.attributeNames.get(key)) !== null && _b2 !== void 0 ? _b2 : key;
           }
           if (!opts.emptyAttrs && !opts.xmlMode && value === "") {
             return key;
@@ -9305,9 +9305,9 @@ const getRuntime = () => {
       ]);
       var foreignElements = /* @__PURE__ */ new Set(["svg", "math"]);
       function renderTag(elem, opts) {
-        var _a;
+        var _a2;
         if (opts.xmlMode === "foreign") {
-          elem.name = (_a = foreignNames_1.elementNames.get(elem.name)) !== null && _a !== void 0 ? _a : elem.name;
+          elem.name = (_a2 = foreignNames_1.elementNames.get(elem.name)) !== null && _a2 !== void 0 ? _a2 : elem.name;
           if (elem.parent && foreignModeIntegrationPoints.has(elem.parent.name)) {
             opts = __assign(__assign({}, opts), { xmlMode: false });
           }
@@ -9422,8 +9422,8 @@ const getRuntime = () => {
       var domhandler_1 = require_lib2();
       var emptyArray = [];
       function getChildren(elem) {
-        var _a;
-        return (_a = elem.children) !== null && _a !== void 0 ? _a : emptyArray;
+        var _a2;
+        return (_a2 = elem.children) !== null && _a2 !== void 0 ? _a2 : emptyArray;
       }
       exports.getChildren = getChildren;
       function getParent(elem) {
@@ -9431,7 +9431,7 @@ const getRuntime = () => {
       }
       exports.getParent = getParent;
       function getSiblings(elem) {
-        var _a, _b;
+        var _a2, _b2;
         var parent = getParent(elem);
         if (parent != null)
           return getChildren(parent);
@@ -9439,18 +9439,18 @@ const getRuntime = () => {
         var prev = elem.prev, next = elem.next;
         while (prev != null) {
           siblings.unshift(prev);
-          _a = prev, prev = _a.prev;
+          _a2 = prev, prev = _a2.prev;
         }
         while (next != null) {
           siblings.push(next);
-          _b = next, next = _b.next;
+          _b2 = next, next = _b2.next;
         }
         return siblings;
       }
       exports.getSiblings = getSiblings;
       function getAttributeValue(elem, name) {
-        var _a;
-        return (_a = elem.attribs) === null || _a === void 0 ? void 0 : _a[name];
+        var _a2;
+        return (_a2 = elem.attribs) === null || _a2 === void 0 ? void 0 : _a2[name];
       }
       exports.getAttributeValue = getAttributeValue;
       function hasAttrib(elem, name) {
@@ -9462,18 +9462,18 @@ const getRuntime = () => {
       }
       exports.getName = getName;
       function nextElementSibling(elem) {
-        var _a;
+        var _a2;
         var next = elem.next;
         while (next !== null && !(0, domhandler_1.isTag)(next))
-          _a = next, next = _a.next;
+          _a2 = next, next = _a2.next;
         return next;
       }
       exports.nextElementSibling = nextElementSibling;
       function prevElementSibling(elem) {
-        var _a;
+        var _a2;
         var prev = elem.prev;
         while (prev !== null && !(0, domhandler_1.isTag)(prev))
-          _a = prev, prev = _a.prev;
+          _a2 = prev, prev = _a2.prev;
         return prev;
       }
       exports.prevElementSibling = prevElementSibling;
@@ -9645,12 +9645,12 @@ const getRuntime = () => {
       }
       exports.existsOne = existsOne;
       function findAll(test, nodes) {
-        var _a;
+        var _a2;
         var result = [];
         var stack = nodes.filter(domhandler_1.isTag);
         var elem;
         while (elem = stack.shift()) {
-          var children = (_a = elem.children) === null || _a === void 0 ? void 0 : _a.filter(domhandler_1.isTag);
+          var children = (_a2 = elem.children) === null || _a2 === void 0 ? void 0 : _a2.filter(domhandler_1.isTag);
           if (children && children.length > 0) {
             stack.unshift.apply(stack, children);
           }
@@ -9870,17 +9870,17 @@ const getRuntime = () => {
       }
       exports.getFeed = getFeed;
       function getAtomFeed(feedRoot) {
-        var _a;
+        var _a2;
         var childs = feedRoot.children;
         var feed = {
           type: "atom",
           items: (0, legacy_1.getElementsByTagName)("entry", childs).map(function(item) {
-            var _a2;
+            var _a3;
             var children = item.children;
             var entry = { media: getMediaElements(children) };
             addConditionally(entry, "id", "id", children);
             addConditionally(entry, "title", "title", children);
-            var href2 = (_a2 = getOneElement("link", children)) === null || _a2 === void 0 ? void 0 : _a2.attribs.href;
+            var href2 = (_a3 = getOneElement("link", children)) === null || _a3 === void 0 ? void 0 : _a3.attribs.href;
             if (href2) {
               entry.link = href2;
             }
@@ -9897,7 +9897,7 @@ const getRuntime = () => {
         };
         addConditionally(feed, "id", "id", childs);
         addConditionally(feed, "title", "title", childs);
-        var href = (_a = getOneElement("link", childs)) === null || _a === void 0 ? void 0 : _a.attribs.href;
+        var href = (_a2 = getOneElement("link", childs)) === null || _a2 === void 0 ? void 0 : _a2.attribs.href;
         if (href) {
           feed.link = href;
         }
@@ -9910,8 +9910,8 @@ const getRuntime = () => {
         return feed;
       }
       function getRssFeed(feedRoot) {
-        var _a, _b;
-        var childs = (_b = (_a = getOneElement("channel", feedRoot.children)) === null || _a === void 0 ? void 0 : _a.children) !== null && _b !== void 0 ? _b : [];
+        var _a2, _b2;
+        var childs = (_b2 = (_a2 = getOneElement("channel", feedRoot.children)) === null || _a2 === void 0 ? void 0 : _a2.children) !== null && _b2 !== void 0 ? _b2 : [];
         var feed = {
           type: feedRoot.name.substr(0, 3),
           id: "",
@@ -9962,8 +9962,8 @@ const getRuntime = () => {
               media[attrib] = attribs[attrib];
             }
           }
-          for (var _a = 0, MEDIA_KEYS_INT_1 = MEDIA_KEYS_INT; _a < MEDIA_KEYS_INT_1.length; _a++) {
-            var attrib = MEDIA_KEYS_INT_1[_a];
+          for (var _a2 = 0, MEDIA_KEYS_INT_1 = MEDIA_KEYS_INT; _a2 < MEDIA_KEYS_INT_1.length; _a2++) {
+            var attrib = MEDIA_KEYS_INT_1[_a2];
             if (attribs[attrib]) {
               media[attrib] = parseInt(attribs[attrib], 10);
             }
@@ -10054,12 +10054,12 @@ const getRuntime = () => {
       "use strict";
       var __extends = exports && exports.__extends || function() {
         var extendStatics = function(d, b) {
-          extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-            d2.__proto__ = b2;
-          } || function(d2, b2) {
-            for (var p in b2)
-              if (Object.prototype.hasOwnProperty.call(b2, p))
-                d2[p] = b2[p];
+          extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b3) {
+            d2.__proto__ = b3;
+          } || function(d2, b3) {
+            for (var p in b3)
+              if (Object.prototype.hasOwnProperty.call(b3, p))
+                d2[p] = b3[p];
           };
           return extendStatics(d, b);
         };
@@ -10135,7 +10135,7 @@ const getRuntime = () => {
           return _this;
         }
         FeedHandler2.prototype.onend = function() {
-          var _a, _b;
+          var _a2, _b2;
           var feedRoot = getOneElement(isValidFeed, this.dom);
           if (!feedRoot) {
             this.handleCallback(new Error("couldn't find root of feed"));
@@ -10178,7 +10178,7 @@ const getRuntime = () => {
               return entry;
             });
           } else {
-            var childs = (_b = (_a = getOneElement("channel", feedRoot.children)) === null || _a === void 0 ? void 0 : _a.children) !== null && _b !== void 0 ? _b : [];
+            var childs = (_b2 = (_a2 = getOneElement("channel", feedRoot.children)) === null || _a2 === void 0 ? void 0 : _a2.children) !== null && _b2 !== void 0 ? _b2 : [];
             feed.type = feedRoot.name.substr(0, 3);
             feed.id = "";
             addConditionally(feed, "title", "title", childs);
@@ -14604,9 +14604,9 @@ const getRuntime = () => {
             return attr != null && attr.length >= value.length && regex.test(attr) && next(elem);
           };
         },
-        exists: function(next, _a, _b) {
-          var name = _a.name;
-          var adapter = _b.adapter;
+        exists: function(next, _a2, _b2) {
+          var name = _a2.name;
+          var adapter = _b2.adapter;
           return function(elem) {
             return adapter.hasAttrib(elem, name) && next(elem);
           };
@@ -14627,8 +14627,8 @@ const getRuntime = () => {
             };
           }
           return function(elem) {
-            var _a;
-            return !!((_a = adapter.getAttributeValue(elem, name)) === null || _a === void 0 ? void 0 : _a.startsWith(value)) && next(elem);
+            var _a2;
+            return !!((_a2 = adapter.getAttributeValue(elem, name)) === null || _a2 === void 0 ? void 0 : _a2.startsWith(value)) && next(elem);
           };
         },
         end: function(next, data, options) {
@@ -14642,13 +14642,13 @@ const getRuntime = () => {
           if (shouldIgnoreCase(data, options)) {
             value = value.toLowerCase();
             return function(elem) {
-              var _a;
-              return ((_a = adapter.getAttributeValue(elem, name)) === null || _a === void 0 ? void 0 : _a.substr(len).toLowerCase()) === value && next(elem);
+              var _a2;
+              return ((_a2 = adapter.getAttributeValue(elem, name)) === null || _a2 === void 0 ? void 0 : _a2.substr(len).toLowerCase()) === value && next(elem);
             };
           }
           return function(elem) {
-            var _a;
-            return !!((_a = adapter.getAttributeValue(elem, name)) === null || _a === void 0 ? void 0 : _a.endsWith(value)) && next(elem);
+            var _a2;
+            return !!((_a2 = adapter.getAttributeValue(elem, name)) === null || _a2 === void 0 ? void 0 : _a2.endsWith(value)) && next(elem);
           };
         },
         any: function(next, data, options) {
@@ -14665,8 +14665,8 @@ const getRuntime = () => {
             };
           }
           return function(elem) {
-            var _a;
-            return !!((_a = adapter.getAttributeValue(elem, name)) === null || _a === void 0 ? void 0 : _a.includes(value)) && next(elem);
+            var _a2;
+            return !!((_a2 = adapter.getAttributeValue(elem, name)) === null || _a2 === void 0 ? void 0 : _a2.includes(value)) && next(elem);
           };
         },
         not: function(next, data, options) {
@@ -14868,21 +14868,21 @@ const getRuntime = () => {
         };
       }
       exports.filters = {
-        contains: function(next, text, _a) {
-          var adapter = _a.adapter;
+        contains: function(next, text, _a2) {
+          var adapter = _a2.adapter;
           return function contains(elem) {
             return next(elem) && adapter.getText(elem).includes(text);
           };
         },
-        icontains: function(next, text, _a) {
-          var adapter = _a.adapter;
+        icontains: function(next, text, _a2) {
+          var adapter = _a2.adapter;
           var itext = text.toLowerCase();
           return function icontains(elem) {
             return next(elem) && adapter.getText(elem).toLowerCase().includes(itext);
           };
         },
-        "nth-child": function(next, rule, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "nth-child": function(next, rule, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var func = (0, nth_check_1.default)(rule);
           if (func === boolbase_1.falseFunc)
             return boolbase_1.falseFunc;
@@ -14901,8 +14901,8 @@ const getRuntime = () => {
             return func(pos) && next(elem);
           };
         },
-        "nth-last-child": function(next, rule, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "nth-last-child": function(next, rule, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var func = (0, nth_check_1.default)(rule);
           if (func === boolbase_1.falseFunc)
             return boolbase_1.falseFunc;
@@ -14921,8 +14921,8 @@ const getRuntime = () => {
             return func(pos) && next(elem);
           };
         },
-        "nth-of-type": function(next, rule, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "nth-of-type": function(next, rule, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var func = (0, nth_check_1.default)(rule);
           if (func === boolbase_1.falseFunc)
             return boolbase_1.falseFunc;
@@ -14942,8 +14942,8 @@ const getRuntime = () => {
             return func(pos) && next(elem);
           };
         },
-        "nth-last-of-type": function(next, rule, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "nth-last-of-type": function(next, rule, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var func = (0, nth_check_1.default)(rule);
           if (func === boolbase_1.falseFunc)
             return boolbase_1.falseFunc;
@@ -14963,8 +14963,8 @@ const getRuntime = () => {
             return func(pos) && next(elem);
           };
         },
-        root: function(next, _rule, _a) {
-          var adapter = _a.adapter;
+        root: function(next, _rule, _a2) {
+          var adapter = _a2.adapter;
           return function(elem) {
             var parent = adapter.getParent(elem);
             return (parent == null || !adapter.isTag(parent)) && next(elem);
@@ -14989,8 +14989,8 @@ const getRuntime = () => {
         active: dynamicStatePseudo("isActive")
       };
       function dynamicStatePseudo(name) {
-        return function dynamicPseudo(next, _rule, _a) {
-          var adapter = _a.adapter;
+        return function dynamicPseudo(next, _rule, _a2) {
+          var adapter = _a2.adapter;
           var func = adapter[name];
           if (typeof func !== "function") {
             return boolbase_1.falseFunc;
@@ -15010,21 +15010,21 @@ const getRuntime = () => {
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.verifyPseudoArgs = exports.pseudos = void 0;
       exports.pseudos = {
-        empty: function(elem, _a) {
-          var adapter = _a.adapter;
+        empty: function(elem, _a2) {
+          var adapter = _a2.adapter;
           return !adapter.getChildren(elem).some(function(elem2) {
             return adapter.isTag(elem2) || adapter.getText(elem2) !== "";
           });
         },
-        "first-child": function(elem, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "first-child": function(elem, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var firstChild = adapter.getSiblings(elem).find(function(elem2) {
             return adapter.isTag(elem2);
           });
           return firstChild != null && equals(elem, firstChild);
         },
-        "last-child": function(elem, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "last-child": function(elem, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var siblings = adapter.getSiblings(elem);
           for (var i2 = siblings.length - 1; i2 >= 0; i2--) {
             if (equals(elem, siblings[i2]))
@@ -15034,8 +15034,8 @@ const getRuntime = () => {
           }
           return false;
         },
-        "first-of-type": function(elem, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "first-of-type": function(elem, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var siblings = adapter.getSiblings(elem);
           var elemName = adapter.getName(elem);
           for (var i2 = 0; i2 < siblings.length; i2++) {
@@ -15048,8 +15048,8 @@ const getRuntime = () => {
           }
           return false;
         },
-        "last-of-type": function(elem, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "last-of-type": function(elem, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var siblings = adapter.getSiblings(elem);
           var elemName = adapter.getName(elem);
           for (var i2 = siblings.length - 1; i2 >= 0; i2--) {
@@ -15062,15 +15062,15 @@ const getRuntime = () => {
           }
           return false;
         },
-        "only-of-type": function(elem, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "only-of-type": function(elem, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           var elemName = adapter.getName(elem);
           return adapter.getSiblings(elem).every(function(sibling) {
             return equals(elem, sibling) || !adapter.isTag(sibling) || adapter.getName(sibling) !== elemName;
           });
         },
-        "only-child": function(elem, _a) {
-          var adapter = _a.adapter, equals = _a.equals;
+        "only-child": function(elem, _a2) {
+          var adapter = _a2.adapter, equals = _a2.equals;
           return adapter.getSiblings(elem).every(function(sibling) {
             return equals(elem, sibling) || !adapter.isTag(sibling);
           });
@@ -15207,7 +15207,7 @@ const getRuntime = () => {
             };
           }
           var hasElement = ensureIsTag(compiled, adapter);
-          var _a = compiled.shouldTestNextSiblings, shouldTestNextSiblings = _a === void 0 ? false : _a;
+          var _a2 = compiled.shouldTestNextSiblings, shouldTestNextSiblings = _a2 === void 0 ? false : _a2;
           if (context) {
             return function(elem) {
               context[0] = elem;
@@ -15452,8 +15452,8 @@ const getRuntime = () => {
         name: "scope",
         data: null
       };
-      function absolutize(token, _a, context) {
-        var adapter = _a.adapter;
+      function absolutize(token, _a2, context) {
+        var adapter = _a2.adapter;
         var hasContext = !!(context === null || context === void 0 ? void 0 : context.every(function(e2) {
           var parent = adapter.isTag(e2) && adapter.getParent(e2);
           return e2 === subselects_1.PLACEHOLDER_ELEMENT || parent && adapter.isTag(parent);
@@ -15470,12 +15470,12 @@ const getRuntime = () => {
         }
       }
       function compileToken(token, options, context) {
-        var _a;
+        var _a2;
         token = token.filter(function(t2) {
           return t2.length > 0;
         });
         token.forEach(sort_1.default);
-        context = (_a = options.context) !== null && _a !== void 0 ? _a : context;
+        context = (_a2 = options.context) !== null && _a2 !== void 0 ? _a2 : context;
         var isArrayContext = Array.isArray(context);
         var finalContext = context && (Array.isArray(context) ? context : [context]);
         absolutize(token, options, finalContext);
@@ -15497,10 +15497,10 @@ const getRuntime = () => {
       }
       exports.compileToken = compileToken;
       function compileRules(rules, options, context) {
-        var _a;
+        var _a2;
         return rules.reduce(function(previous, rule) {
           return previous === boolbase_1.falseFunc ? boolbase_1.falseFunc : (0, general_1.compileGeneralSelector)(previous, rule, options, context, compileToken);
-        }, (_a = options.rootFunc) !== null && _a !== void 0 ? _a : boolbase_1.trueFunc);
+        }, (_a2 = options.rootFunc) !== null && _a2 !== void 0 ? _a2 : boolbase_1.trueFunc);
       }
       function reduceRules(a, b) {
         if (b === boolbase_1.falseFunc || a === boolbase_1.trueFunc) {
@@ -15566,10 +15566,10 @@ const getRuntime = () => {
         equals: defaultEquals
       };
       function convertOptionFormats(options) {
-        var _a, _b, _c, _d;
+        var _a2, _b2, _c, _d;
         var opts = options !== null && options !== void 0 ? options : defaultOptions;
-        (_a = opts.adapter) !== null && _a !== void 0 ? _a : opts.adapter = DomUtils;
-        (_b = opts.equals) !== null && _b !== void 0 ? _b : opts.equals = (_d = (_c = opts.adapter) === null || _c === void 0 ? void 0 : _c.equals) !== null && _d !== void 0 ? _d : defaultEquals;
+        (_a2 = opts.adapter) !== null && _a2 !== void 0 ? _a2 : opts.adapter = DomUtils;
+        (_b2 = opts.equals) !== null && _b2 !== void 0 ? _b2 : opts.equals = (_d = (_c = opts.adapter) === null || _c === void 0 ? void 0 : _c.equals) !== null && _d !== void 0 ? _d : defaultEquals;
         return opts;
       }
       function wrapCompile(func) {
@@ -21094,8 +21094,8 @@ const getRuntime = () => {
               let warnings;
               try {
                 ({ warnings } = await require_esbuild().transform(contents, { format: "esm", logLevel: "silent" }));
-              } catch (err) {
-                ({ warnings } = err);
+              } catch (err2) {
+                ({ warnings } = err2);
               }
               let lines = contents.split("\n");
               let getOffset = cachedReduce(lines, (a, b) => a + 1 + b.length, 0);
@@ -21193,7 +21193,7 @@ const getRuntime = () => {
         function setPromiseIsHandledToTrue(promise) {
           PerformPromiseThen(promise, void 0, rethrowAssertionErrorRejection);
         }
-        const queueMicrotask = (() => {
+        const queueMicrotask2 = (() => {
           const globalQueueMicrotask = globals && globals.queueMicrotask;
           if (typeof globalQueueMicrotask === "function") {
             return globalQueueMicrotask;
@@ -21578,7 +21578,7 @@ const getRuntime = () => {
             const readRequest = {
               _chunkSteps: (chunk) => {
                 this._ongoingPromise = void 0;
-                queueMicrotask(() => resolvePromise({ value: chunk, done: false }));
+                queueMicrotask2(() => resolvePromise({ value: chunk, done: false }));
               },
               _closeSteps: () => {
                 this._ongoingPromise = void 0;
@@ -21647,7 +21647,7 @@ const getRuntime = () => {
           }
           try {
             return x2._asyncIteratorImpl instanceof ReadableStreamAsyncIteratorImpl;
-          } catch (_a) {
+          } catch (_a2) {
             return false;
           }
         }
@@ -22504,7 +22504,7 @@ const getRuntime = () => {
           }
           try {
             return typeof value.aborted === "boolean";
-          } catch (_a) {
+          } catch (_a2) {
             return false;
           }
         }
@@ -22617,12 +22617,12 @@ const getRuntime = () => {
           return true;
         }
         function WritableStreamAbort(stream, reason) {
-          var _a;
+          var _a2;
           if (stream._state === "closed" || stream._state === "errored") {
             return promiseResolvedWith(void 0);
           }
           stream._writableStreamController._abortReason = reason;
-          (_a = stream._writableStreamController._abortController) === null || _a === void 0 ? void 0 : _a.abort();
+          (_a2 = stream._writableStreamController._abortController) === null || _a2 === void 0 ? void 0 : _a2.abort();
           const state = stream._state;
           if (state === "closed" || state === "errored") {
             return promiseResolvedWith(void 0);
@@ -23297,7 +23297,7 @@ const getRuntime = () => {
           try {
             new ctor();
             return true;
-          } catch (_a) {
+          } catch (_a2) {
             return false;
           }
         }
@@ -23723,7 +23723,7 @@ const getRuntime = () => {
             reading = true;
             const readRequest = {
               _chunkSteps: (chunk) => {
-                queueMicrotask(() => {
+                queueMicrotask2(() => {
                   readAgain = false;
                   const chunk1 = chunk;
                   const chunk2 = chunk;
@@ -23826,7 +23826,7 @@ const getRuntime = () => {
             }
             const readRequest = {
               _chunkSteps: (chunk) => {
-                queueMicrotask(() => {
+                queueMicrotask2(() => {
                   readAgainForBranch1 = false;
                   readAgainForBranch2 = false;
                   const chunk1 = chunk;
@@ -23889,7 +23889,7 @@ const getRuntime = () => {
             const otherBranch = forBranch2 ? branch1 : branch2;
             const readIntoRequest = {
               _chunkSteps: (chunk) => {
-                queueMicrotask(() => {
+                queueMicrotask2(() => {
                   readAgainForBranch1 = false;
                   readAgainForBranch2 = false;
                   const byobCanceled = forBranch2 ? canceled2 : canceled1;
@@ -24320,7 +24320,7 @@ const getRuntime = () => {
             value: "size",
             configurable: true
           });
-        } catch (_a) {
+        } catch (_a2) {
         }
         class ByteLengthQueuingStrategy {
           constructor(options) {
@@ -24371,7 +24371,7 @@ const getRuntime = () => {
             value: "size",
             configurable: true
           });
-        } catch (_a) {
+        } catch (_a2) {
         }
         class CountQueuingStrategy {
           constructor(options) {
@@ -25081,8 +25081,8 @@ Content-Type: ${v.type || "application/octet-stream"}\r
         try {
           const { MessageChannel } = __require("worker_threads"), port = new MessageChannel().port1, ab = new ArrayBuffer();
           port.postMessage(ab, [ab, ab]);
-        } catch (err) {
-          err.constructor.name === "DOMException" && (globalThis.DOMException = err.constructor);
+        } catch (err2) {
+          err2.constructor.name === "DOMException" && (globalThis.DOMException = err2.constructor);
         }
       }
       module.exports = globalThis.DOMException;
@@ -25614,8 +25614,8 @@ Content-Type: ${v.type || "application/octet-stream"}\r
     }
     return 0;
   };
-  function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+  function getRandomInt(min, max2) {
+    return Math.floor(Math.random() * (max2 - min + 1) + min);
   }
   var Locked = class extends Error {
     constructor(port) {
@@ -26137,8 +26137,8 @@ Content-Type: ${v.type || "application/octet-stream"}\r
       rs.on("close", function() {
         resolve(acc.slice(0, acc.indexOf("\n")));
       });
-      rs.on("error", function(err) {
-        reject(err);
+      rs.on("error", function(err2) {
+        reject(err2);
       });
     });
   };
@@ -27971,6 +27971,562 @@ ${src}`
     }
   };
 
+  // ../../node_modules/.pnpm/fflate@0.7.4/node_modules/fflate/esm/index.mjs
+  var import_module = __require("module");
+  var require2 = (0, import_module.createRequire)("/");
+  var Worker;
+  try {
+    Worker = require2("worker_threads").Worker;
+  } catch (e2) {
+  }
+  var u8 = Uint8Array;
+  var u16 = Uint16Array;
+  var u32 = Uint32Array;
+  var fleb = new u8([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 0, 0, 0]);
+  var fdeb = new u8([0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 0, 0]);
+  var clim = new u8([16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15]);
+  var freb = function(eb, start) {
+    var b = new u16(31);
+    for (var i2 = 0; i2 < 31; ++i2) {
+      b[i2] = start += 1 << eb[i2 - 1];
+    }
+    var r2 = new u32(b[30]);
+    for (var i2 = 1; i2 < 30; ++i2) {
+      for (var j = b[i2]; j < b[i2 + 1]; ++j) {
+        r2[j] = j - b[i2] << 5 | i2;
+      }
+    }
+    return [b, r2];
+  };
+  var _a = freb(fleb, 2);
+  var fl = _a[0];
+  var revfl = _a[1];
+  fl[28] = 258, revfl[258] = 28;
+  var _b = freb(fdeb, 0);
+  var fd = _b[0];
+  var revfd = _b[1];
+  var rev = new u16(32768);
+  for (i2 = 0; i2 < 32768; ++i2) {
+    x2 = (i2 & 43690) >>> 1 | (i2 & 21845) << 1;
+    x2 = (x2 & 52428) >>> 2 | (x2 & 13107) << 2;
+    x2 = (x2 & 61680) >>> 4 | (x2 & 3855) << 4;
+    rev[i2] = ((x2 & 65280) >>> 8 | (x2 & 255) << 8) >>> 1;
+  }
+  var x2;
+  var i2;
+  var hMap = function(cd, mb, r2) {
+    var s2 = cd.length;
+    var i2 = 0;
+    var l = new u16(mb);
+    for (; i2 < s2; ++i2) {
+      if (cd[i2])
+        ++l[cd[i2] - 1];
+    }
+    var le = new u16(mb);
+    for (i2 = 0; i2 < mb; ++i2) {
+      le[i2] = le[i2 - 1] + l[i2 - 1] << 1;
+    }
+    var co;
+    if (r2) {
+      co = new u16(1 << mb);
+      var rvb = 15 - mb;
+      for (i2 = 0; i2 < s2; ++i2) {
+        if (cd[i2]) {
+          var sv = i2 << 4 | cd[i2];
+          var r_1 = mb - cd[i2];
+          var v = le[cd[i2] - 1]++ << r_1;
+          for (var m2 = v | (1 << r_1) - 1; v <= m2; ++v) {
+            co[rev[v] >>> rvb] = sv;
+          }
+        }
+      }
+    } else {
+      co = new u16(s2);
+      for (i2 = 0; i2 < s2; ++i2) {
+        if (cd[i2]) {
+          co[i2] = rev[le[cd[i2] - 1]++] >>> 15 - cd[i2];
+        }
+      }
+    }
+    return co;
+  };
+  var flt = new u8(288);
+  for (i2 = 0; i2 < 144; ++i2)
+    flt[i2] = 8;
+  var i2;
+  for (i2 = 144; i2 < 256; ++i2)
+    flt[i2] = 9;
+  var i2;
+  for (i2 = 256; i2 < 280; ++i2)
+    flt[i2] = 7;
+  var i2;
+  for (i2 = 280; i2 < 288; ++i2)
+    flt[i2] = 8;
+  var i2;
+  var fdt = new u8(32);
+  for (i2 = 0; i2 < 32; ++i2)
+    fdt[i2] = 5;
+  var i2;
+  var flrm = /* @__PURE__ */ hMap(flt, 9, 1);
+  var fdrm = /* @__PURE__ */ hMap(fdt, 5, 1);
+  var max = function(a) {
+    var m2 = a[0];
+    for (var i2 = 1; i2 < a.length; ++i2) {
+      if (a[i2] > m2)
+        m2 = a[i2];
+    }
+    return m2;
+  };
+  var bits = function(d, p, m2) {
+    var o = p / 8 | 0;
+    return (d[o] | d[o + 1] << 8) >> (p & 7) & m2;
+  };
+  var bits16 = function(d, p) {
+    var o = p / 8 | 0;
+    return (d[o] | d[o + 1] << 8 | d[o + 2] << 16) >> (p & 7);
+  };
+  var shft = function(p) {
+    return (p + 7) / 8 | 0;
+  };
+  var slc = function(v, s2, e2) {
+    if (s2 == null || s2 < 0)
+      s2 = 0;
+    if (e2 == null || e2 > v.length)
+      e2 = v.length;
+    var n = new (v.BYTES_PER_ELEMENT == 2 ? u16 : v.BYTES_PER_ELEMENT == 4 ? u32 : u8)(e2 - s2);
+    n.set(v.subarray(s2, e2));
+    return n;
+  };
+  var ec = [
+    "unexpected EOF",
+    "invalid block type",
+    "invalid length/literal",
+    "invalid distance",
+    "stream finished",
+    "no stream handler",
+    ,
+    "no callback",
+    "invalid UTF-8 data",
+    "extra field too long",
+    "date not in range 1980-2099",
+    "filename too long",
+    "stream finishing",
+    "invalid zip data"
+  ];
+  var err = function(ind, msg, nt) {
+    var e2 = new Error(msg || ec[ind]);
+    e2.code = ind;
+    if (Error.captureStackTrace)
+      Error.captureStackTrace(e2, err);
+    if (!nt)
+      throw e2;
+    return e2;
+  };
+  var inflt = function(dat, buf, st) {
+    var sl = dat.length;
+    if (!sl || st && st.f && !st.l)
+      return buf || new u8(0);
+    var noBuf = !buf || st;
+    var noSt = !st || st.i;
+    if (!st)
+      st = {};
+    if (!buf)
+      buf = new u8(sl * 3);
+    var cbuf = function(l2) {
+      var bl = buf.length;
+      if (l2 > bl) {
+        var nbuf = new u8(Math.max(bl * 2, l2));
+        nbuf.set(buf);
+        buf = nbuf;
+      }
+    };
+    var final = st.f || 0, pos = st.p || 0, bt = st.b || 0, lm = st.l, dm = st.d, lbt = st.m, dbt = st.n;
+    var tbts = sl * 8;
+    do {
+      if (!lm) {
+        final = bits(dat, pos, 1);
+        var type = bits(dat, pos + 1, 3);
+        pos += 3;
+        if (!type) {
+          var s2 = shft(pos) + 4, l = dat[s2 - 4] | dat[s2 - 3] << 8, t2 = s2 + l;
+          if (t2 > sl) {
+            if (noSt)
+              err(0);
+            break;
+          }
+          if (noBuf)
+            cbuf(bt + l);
+          buf.set(dat.subarray(s2, t2), bt);
+          st.b = bt += l, st.p = pos = t2 * 8, st.f = final;
+          continue;
+        } else if (type == 1)
+          lm = flrm, dm = fdrm, lbt = 9, dbt = 5;
+        else if (type == 2) {
+          var hLit = bits(dat, pos, 31) + 257, hcLen = bits(dat, pos + 10, 15) + 4;
+          var tl = hLit + bits(dat, pos + 5, 31) + 1;
+          pos += 14;
+          var ldt = new u8(tl);
+          var clt = new u8(19);
+          for (var i2 = 0; i2 < hcLen; ++i2) {
+            clt[clim[i2]] = bits(dat, pos + i2 * 3, 7);
+          }
+          pos += hcLen * 3;
+          var clb = max(clt), clbmsk = (1 << clb) - 1;
+          var clm = hMap(clt, clb, 1);
+          for (var i2 = 0; i2 < tl; ) {
+            var r2 = clm[bits(dat, pos, clbmsk)];
+            pos += r2 & 15;
+            var s2 = r2 >>> 4;
+            if (s2 < 16) {
+              ldt[i2++] = s2;
+            } else {
+              var c = 0, n = 0;
+              if (s2 == 16)
+                n = 3 + bits(dat, pos, 3), pos += 2, c = ldt[i2 - 1];
+              else if (s2 == 17)
+                n = 3 + bits(dat, pos, 7), pos += 3;
+              else if (s2 == 18)
+                n = 11 + bits(dat, pos, 127), pos += 7;
+              while (n--)
+                ldt[i2++] = c;
+            }
+          }
+          var lt = ldt.subarray(0, hLit), dt = ldt.subarray(hLit);
+          lbt = max(lt);
+          dbt = max(dt);
+          lm = hMap(lt, lbt, 1);
+          dm = hMap(dt, dbt, 1);
+        } else
+          err(1);
+        if (pos > tbts) {
+          if (noSt)
+            err(0);
+          break;
+        }
+      }
+      if (noBuf)
+        cbuf(bt + 131072);
+      var lms = (1 << lbt) - 1, dms = (1 << dbt) - 1;
+      var lpos = pos;
+      for (; ; lpos = pos) {
+        var c = lm[bits16(dat, pos) & lms], sym = c >>> 4;
+        pos += c & 15;
+        if (pos > tbts) {
+          if (noSt)
+            err(0);
+          break;
+        }
+        if (!c)
+          err(2);
+        if (sym < 256)
+          buf[bt++] = sym;
+        else if (sym == 256) {
+          lpos = pos, lm = null;
+          break;
+        } else {
+          var add = sym - 254;
+          if (sym > 264) {
+            var i2 = sym - 257, b = fleb[i2];
+            add = bits(dat, pos, (1 << b) - 1) + fl[i2];
+            pos += b;
+          }
+          var d = dm[bits16(dat, pos) & dms], dsym = d >>> 4;
+          if (!d)
+            err(3);
+          pos += d & 15;
+          var dt = fd[dsym];
+          if (dsym > 3) {
+            var b = fdeb[dsym];
+            dt += bits16(dat, pos) & (1 << b) - 1, pos += b;
+          }
+          if (pos > tbts) {
+            if (noSt)
+              err(0);
+            break;
+          }
+          if (noBuf)
+            cbuf(bt + 131072);
+          var end = bt + add;
+          for (; bt < end; bt += 4) {
+            buf[bt] = buf[bt - dt];
+            buf[bt + 1] = buf[bt + 1 - dt];
+            buf[bt + 2] = buf[bt + 2 - dt];
+            buf[bt + 3] = buf[bt + 3 - dt];
+          }
+          bt = end;
+        }
+      }
+      st.l = lm, st.p = lpos, st.b = bt, st.f = final;
+      if (lm)
+        final = 1, st.m = lbt, st.d = dm, st.n = dbt;
+    } while (!final);
+    return bt == buf.length ? buf : slc(buf, 0, bt);
+  };
+  var et = /* @__PURE__ */ new u8(0);
+  var b2 = function(d, b) {
+    return d[b] | d[b + 1] << 8;
+  };
+  var b4 = function(d, b) {
+    return (d[b] | d[b + 1] << 8 | d[b + 2] << 16 | d[b + 3] << 24) >>> 0;
+  };
+  var b8 = function(d, b) {
+    return b4(d, b) + b4(d, b + 4) * 4294967296;
+  };
+  function inflateSync(data, out) {
+    return inflt(data, out);
+  }
+  var td = typeof TextDecoder != "undefined" && /* @__PURE__ */ new TextDecoder();
+  var tds = 0;
+  try {
+    td.decode(et, { stream: true });
+    tds = 1;
+  } catch (e2) {
+  }
+  var dutf8 = function(d) {
+    for (var r2 = "", i2 = 0; ; ) {
+      var c = d[i2++];
+      var eb = (c > 127) + (c > 223) + (c > 239);
+      if (i2 + eb > d.length)
+        return [r2, slc(d, i2 - 1)];
+      if (!eb)
+        r2 += String.fromCharCode(c);
+      else if (eb == 3) {
+        c = ((c & 15) << 18 | (d[i2++] & 63) << 12 | (d[i2++] & 63) << 6 | d[i2++] & 63) - 65536, r2 += String.fromCharCode(55296 | c >> 10, 56320 | c & 1023);
+      } else if (eb & 1)
+        r2 += String.fromCharCode((c & 31) << 6 | d[i2++] & 63);
+      else
+        r2 += String.fromCharCode((c & 15) << 12 | (d[i2++] & 63) << 6 | d[i2++] & 63);
+    }
+  };
+  function strFromU8(dat, latin1) {
+    if (latin1) {
+      var r2 = "";
+      for (var i2 = 0; i2 < dat.length; i2 += 16384)
+        r2 += String.fromCharCode.apply(null, dat.subarray(i2, i2 + 16384));
+      return r2;
+    } else if (td)
+      return td.decode(dat);
+    else {
+      var _a2 = dutf8(dat), out = _a2[0], ext = _a2[1];
+      if (ext.length)
+        err(8);
+      return out;
+    }
+  }
+  var slzh = function(d, b) {
+    return b + 30 + b2(d, b + 26) + b2(d, b + 28);
+  };
+  var zh = function(d, b, z) {
+    var fnl = b2(d, b + 28), fn = strFromU8(d.subarray(b + 46, b + 46 + fnl), !(b2(d, b + 8) & 2048)), es = b + 46 + fnl, bs = b4(d, b + 20);
+    var _a2 = z && bs == 4294967295 ? z64e(d, es) : [bs, b4(d, b + 24), b4(d, b + 42)], sc = _a2[0], su = _a2[1], off = _a2[2];
+    return [b2(d, b + 10), sc, su, fn, es + b2(d, b + 30) + b2(d, b + 32), off];
+  };
+  var z64e = function(d, b) {
+    for (; b2(d, b) != 1; b += 4 + b2(d, b + 2))
+      ;
+    return [b8(d, b + 12), b8(d, b + 4), b8(d, b + 20)];
+  };
+  var UnzipPassThrough = /* @__PURE__ */ function() {
+    function UnzipPassThrough2() {
+    }
+    UnzipPassThrough2.prototype.push = function(data, final) {
+      this.ondata(null, data, final);
+    };
+    UnzipPassThrough2.compression = 0;
+    return UnzipPassThrough2;
+  }();
+  var Unzip = /* @__PURE__ */ function() {
+    function Unzip2(cb) {
+      this.onfile = cb;
+      this.k = [];
+      this.o = {
+        0: UnzipPassThrough
+      };
+      this.p = et;
+    }
+    Unzip2.prototype.push = function(chunk, final) {
+      var _this_1 = this;
+      if (!this.onfile)
+        err(5);
+      if (!this.p)
+        err(4);
+      if (this.c > 0) {
+        var len = Math.min(this.c, chunk.length);
+        var toAdd = chunk.subarray(0, len);
+        this.c -= len;
+        if (this.d)
+          this.d.push(toAdd, !this.c);
+        else
+          this.k[0].push(toAdd);
+        chunk = chunk.subarray(len);
+        if (chunk.length)
+          return this.push(chunk, final);
+      } else {
+        var f3 = 0, i2 = 0, is = void 0, buf = void 0;
+        if (!this.p.length)
+          buf = chunk;
+        else if (!chunk.length)
+          buf = this.p;
+        else {
+          buf = new u8(this.p.length + chunk.length);
+          buf.set(this.p), buf.set(chunk, this.p.length);
+        }
+        var l = buf.length, oc = this.c, add = oc && this.d;
+        var _loop_2 = function() {
+          var _a2;
+          var sig = b4(buf, i2);
+          if (sig == 67324752) {
+            f3 = 1, is = i2;
+            this_1.d = null;
+            this_1.c = 0;
+            var bf = b2(buf, i2 + 6), cmp_1 = b2(buf, i2 + 8), u = bf & 2048, dd = bf & 8, fnl = b2(buf, i2 + 26), es = b2(buf, i2 + 28);
+            if (l > i2 + 30 + fnl + es) {
+              var chks_3 = [];
+              this_1.k.unshift(chks_3);
+              f3 = 2;
+              var sc_1 = b4(buf, i2 + 18), su_1 = b4(buf, i2 + 22);
+              var fn_1 = strFromU8(buf.subarray(i2 + 30, i2 += 30 + fnl), !u);
+              if (sc_1 == 4294967295) {
+                _a2 = dd ? [-2] : z64e(buf, i2), sc_1 = _a2[0], su_1 = _a2[1];
+              } else if (dd)
+                sc_1 = -1;
+              i2 += es;
+              this_1.c = sc_1;
+              var d_1;
+              var file_1 = {
+                name: fn_1,
+                compression: cmp_1,
+                start: function() {
+                  if (!file_1.ondata)
+                    err(5);
+                  if (!sc_1)
+                    file_1.ondata(null, et, true);
+                  else {
+                    var ctr = _this_1.o[cmp_1];
+                    if (!ctr)
+                      file_1.ondata(err(14, "unknown compression type " + cmp_1, 1), null, false);
+                    d_1 = sc_1 < 0 ? new ctr(fn_1) : new ctr(fn_1, sc_1, su_1);
+                    d_1.ondata = function(err2, dat3, final2) {
+                      file_1.ondata(err2, dat3, final2);
+                    };
+                    for (var _i = 0, chks_4 = chks_3; _i < chks_4.length; _i++) {
+                      var dat2 = chks_4[_i];
+                      d_1.push(dat2, false);
+                    }
+                    if (_this_1.k[0] == chks_3 && _this_1.c)
+                      _this_1.d = d_1;
+                    else
+                      d_1.push(et, true);
+                  }
+                },
+                terminate: function() {
+                  if (d_1 && d_1.terminate)
+                    d_1.terminate();
+                }
+              };
+              if (sc_1 >= 0)
+                file_1.size = sc_1, file_1.originalSize = su_1;
+              this_1.onfile(file_1);
+            }
+            return "break";
+          } else if (oc) {
+            if (sig == 134695760) {
+              is = i2 += 12 + (oc == -2 && 8), f3 = 3, this_1.c = 0;
+              return "break";
+            } else if (sig == 33639248) {
+              is = i2 -= 4, f3 = 3, this_1.c = 0;
+              return "break";
+            }
+          }
+        };
+        var this_1 = this;
+        for (; i2 < l - 4; ++i2) {
+          var state_1 = _loop_2();
+          if (state_1 === "break")
+            break;
+        }
+        this.p = et;
+        if (oc < 0) {
+          var dat = f3 ? buf.subarray(0, is - 12 - (oc == -2 && 8) - (b4(buf, is - 16) == 134695760 && 4)) : buf.subarray(0, i2);
+          if (add)
+            add.push(dat, !!f3);
+          else
+            this.k[+(f3 == 2)].push(dat);
+        }
+        if (f3 & 2)
+          return this.push(buf.subarray(i2), final);
+        this.p = buf.subarray(i2);
+      }
+      if (final) {
+        if (this.c)
+          err(13);
+        this.p = null;
+      }
+    };
+    Unzip2.prototype.register = function(decoder) {
+      this.o[decoder.compression] = decoder;
+    };
+    return Unzip2;
+  }();
+  function unzipSync(data, opts) {
+    var files = {};
+    var e2 = data.length - 22;
+    for (; b4(data, e2) != 101010256; --e2) {
+      if (!e2 || data.length - e2 > 65558)
+        err(13);
+    }
+    ;
+    var c = b2(data, e2 + 8);
+    if (!c)
+      return {};
+    var o = b4(data, e2 + 16);
+    var z = o == 4294967295 || c == 65535;
+    if (z) {
+      var ze = b4(data, e2 - 12);
+      z = b4(data, ze) == 101075792;
+      if (z) {
+        c = b4(data, ze + 32);
+        o = b4(data, ze + 48);
+      }
+    }
+    var fltr = opts && opts.filter;
+    for (var i2 = 0; i2 < c; ++i2) {
+      var _a2 = zh(data, o, z), c_2 = _a2[0], sc = _a2[1], su = _a2[2], fn = _a2[3], no = _a2[4], off = _a2[5], b = slzh(data, off);
+      o = no;
+      if (!fltr || fltr({
+        name: fn,
+        size: sc,
+        originalSize: su,
+        compression: c_2
+      })) {
+        if (!c_2)
+          files[fn] = slc(data, b, b + sc);
+        else if (c_2 == 8)
+          files[fn] = inflateSync(data.subarray(b, b + sc), new u8(su));
+        else
+          err(14, "unknown compression type " + c_2);
+      }
+    }
+    return files;
+  }
+
+  // base/upgrade.ts
+  var unzipper = new Unzip();
+  var baseUpgrade = async () => {
+    console.log(`Downloading royal-arc upgrade...`);
+    const res = await fetch(
+      `https://github.com/rizrmd/royal-arc/archive/refs/heads/main.zip`
+    );
+    const filebuf = await (await res.blob()).arrayBuffer();
+    const fileuint8 = new Uint8Array(filebuf);
+    const decompressed = unzipSync(fileuint8, {
+      filter(file2) {
+        console.log(file2);
+        return true;
+      }
+    });
+  };
+
   // base/util/is-equal.ts
   var isEqual = (obj1, obj2, checkDataOrder = false) => {
     const checkDataOrderParanoic = false;
@@ -28075,6 +28631,10 @@ ${src}`
     if (args.includes("deploy")) {
       await removeAsync((0, import_path11.join)(process.cwd(), ".output", "deploy"));
       await removeAsync((0, import_path11.join)(process.cwd(), ".output", "deploy.zip"));
+    }
+    if (args.includes("upgrade")) {
+      await baseUpgrade();
+      return;
     }
     if (args.length === 0) {
       args.push("debug");
