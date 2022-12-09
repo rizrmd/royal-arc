@@ -28516,8 +28516,10 @@ Upgrading ${f3}`);
                 } else if (rule.replaceDir) {
                   const from = (0, import_path10.join)(tempdir, "app", f3, path2);
                   const target = (0, import_path10.join)(root2, "app", f3, path2);
-                  await removeAsync(target);
-                  await moveAsync(from, target);
+                  if (await existsAsync(from)) {
+                    await removeAsync(target);
+                    await moveAsync(from, target);
+                  }
                 }
               }
             }

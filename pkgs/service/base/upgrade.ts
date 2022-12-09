@@ -181,8 +181,10 @@ export const baseUpgrade = async () => {
                 const from = join(tempdir, "app", f, path);
                 const target = join(root, "app", f, path);
 
-                await removeAsync(target);
-                await moveAsync(from, target);
+                if (await existsAsync(from)) {
+                  await removeAsync(target);
+                  await moveAsync(from, target);
+                }
               }
             }
           }
