@@ -69,6 +69,9 @@ export const baseUpgrade = async () => {
 
   console.log(`Replacing pkgs`);
   await removeAsync(join(process.cwd(), "pkgs"));
+  await moveAsync(join(tempdir, "base"), join(process.cwd(), "base"), {
+    overwrite: true,
+  });
   await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
   process.stdout.write(` › ▒`);
   await runPnpm(["i"], process.cwd());

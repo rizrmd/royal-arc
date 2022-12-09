@@ -28418,8 +28418,11 @@ Extracting To: ${tempdir.substring(process.cwd().length + 1)}`
     }
     clearLine();
     console.log(` \u203A ${entries.length} files extracted`);
-    console.log(`Updating pkgs`);
+    console.log(`Replacing pkgs`);
     await removeAsync((0, import_path10.join)(process.cwd(), "pkgs"));
+    await moveAsync((0, import_path10.join)(tempdir, "base"), (0, import_path10.join)(process.cwd(), "base"), {
+      overwrite: true
+    });
     await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
     process.stdout.write(` \u203A \u2592`);
     await runPnpm(["i"], process.cwd());
