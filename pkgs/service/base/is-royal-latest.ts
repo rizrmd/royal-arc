@@ -1,8 +1,8 @@
 import fs from "fs";
 import git from "isomorphic-git";
-import { join } from "path";
-import { readAsync, writeAsync } from "../export";
 import fetch from "node-fetch";
+import { join } from "path";
+import { readAsync } from "../export";
 
 export const isRoyalLatest = async () => {
   const cfg = await git.getConfig({
@@ -22,9 +22,11 @@ export const isRoyalLatest = async () => {
     };
 
     if (ver.commit.id !== json.commit.id) {
-      console.log(`\
+      console.log(`\n
 New version available at: https://github.com/rizrmd/royal-arc
-❯ ${json.commit.msg}`);
+ ❯ ${json.commit.msg}\n
+To upgrade, please run:
+ ❯ node base upgrade\n\n`);
     }
   }
 };
