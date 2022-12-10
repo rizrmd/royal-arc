@@ -8,7 +8,7 @@ import {
   existsAsync,
   listAsync,
   readAsync,
-  removeAsync
+  removeAsync,
 } from "../export";
 import { buildApp } from "../internal/service/build/build-app";
 import { resolveDeps } from "../internal/service/build/resolve-deps";
@@ -99,7 +99,9 @@ const main = (async () => {
             }
             process.stdout.write(picocolors.gray(`${capitalize(item)} `));
 
-            await runPnpm(["jiti", "build.ts", "preBuild"], svcDir);
+            process.stdout.write(
+              await runPnpm(["jiti", "build.ts", "preBuild"], svcDir),
+            );
           }
         }
       }

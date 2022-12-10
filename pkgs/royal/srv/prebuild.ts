@@ -15,6 +15,7 @@ export const preBuildSrv = async () => {
       if (name.startsWith("srv")) {
         srvs.push(name);
         const apipath = join(cwd(), "..", "..", "app", name, "api");
+
         if (
           svcname === name &&
           await existsAsync(apipath)

@@ -25569,8 +25569,13 @@ Content-Type: ${v.type || "application/octet-stream"}\r
             });
           }
           rpcQueue[request.id] = { resolve, reject };
-          const serialized = cleanStringify(request);
-          ws.send(serialized);
+          try {
+            const serialized = JSON.stringify(request, null, 2);
+            ws.send(serialized);
+          } catch (e2) {
+            console.log(cleanStringify(request));
+            throw e2;
+          }
         }
       });
     }
@@ -25579,7 +25584,7 @@ Content-Type: ${v.type || "application/octet-stream"}\r
     if (object && typeof object === "object") {
       object = copyWithoutCircularReferences([object], object);
     }
-    return JSON.stringify(object);
+    return JSON.stringify(object, null, 2);
     function copyWithoutCircularReferences(references, object2) {
       var cleanObject = {};
       Object.keys(object2).forEach(function(key) {
@@ -28731,7 +28736,9 @@ Upgrade finished!`);
                 process.stdout.write(import_picocolors5.default.gray(`PreBuild: `));
               }
               process.stdout.write(import_picocolors5.default.gray(`${(0, import_lodash8.default)(item)} `));
-              await runPnpm(["jiti", "build.ts", "preBuild"], svcDir);
+              process.stdout.write(
+                await runPnpm(["jiti", "build.ts", "preBuild"], svcDir)
+              );
             }
           }
         }

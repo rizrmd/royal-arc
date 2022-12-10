@@ -11,7 +11,7 @@ import {
 import { stat } from "fs/promises";
 import { ApiMetaParams } from "service";
 import { InspectResult } from "service/internal/service/build/jetpack/types";
-import swc from "@swc/core";
+import type swc from "@swc/core";
 import Visitor from "../scaff/swc/visitor";
 
 type MTime = Record<
@@ -201,6 +201,7 @@ export const _ = {
       );
       shouldParse = true;
     }
+
     if (shouldParse || !_params[apiName] || !_url[apiName]) {
       const source = await readAsync(file.absolutePath, "utf8");
 
@@ -210,6 +211,9 @@ export const _ = {
           url: [],
           service: [],
         };
+
+        const { parse } = await import("@swc/core");
+
         _url[apiName] = await new Promise<string>(async (resolve) => {
           try {
             let url = "";
@@ -248,12 +252,13 @@ export const _ = {
                 return c;
               }
             }
-            const parsed = await swc.parse(source, {
+            const parsed = await parse(source, {
               syntax: "typescript",
               tsx: true,
             });
             new Traverse().visitModule(parsed);
           } catch (e) {
+            console.log(e);
           }
         });
 
