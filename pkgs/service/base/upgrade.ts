@@ -137,7 +137,7 @@ export const baseUpgrade = async () => {
             if (rule) {
               if (rule.allFilesExcept) {
                 const exceptFiles = rule.allFilesExcept.map((fileName) =>
-                  join(f, path, fileName)
+                  join(root, "app", f, path, fileName)
                 );
 
                 const files = await listAsync(

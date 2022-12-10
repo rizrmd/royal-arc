@@ -28477,7 +28477,7 @@ Upgrading ${f3}`);
               if (rule) {
                 if (rule.allFilesExcept) {
                   const exceptFiles = rule.allFilesExcept.map(
-                    (fileName) => (0, import_path10.join)(f3, path2, fileName)
+                    (fileName) => (0, import_path10.join)(root2, "app", f3, path2, fileName)
                   );
                   const files = await listAsync(
                     (0, import_path10.join)(root2, "app", f3, path2)
