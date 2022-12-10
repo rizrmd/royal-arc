@@ -42,7 +42,13 @@ export const rpcSender: (rpc: "boot" | "service") => RequestSender = (rpc) => ({
 
         rpcQueue[request.id] = { resolve, reject };
 
-        ws.send(JSON.stringify(request));
+        try {
+          const serialized = JSON.stringify(request, null, 2);
+          ws.send(serialized);
+        } catch (e) {
+          console.log(cleanStringify(request));
+          throw e;
+        }
       }
     });
   },
@@ -97,7 +103,7 @@ export const initClientRPC = (
                 argv: res.argv,
                 params: res.params,
                 starter: res.starter,
-                metafile: res.metafile
+                metafile: res.metafile,
               });
             } catch (e: any) {
               console.log("");
@@ -215,4 +221,30 @@ function parseJSC(line: string) {
       column_start: parts[5] ? +parts[5] : null,
     },
   };
+}
+
+function cleanStringify(object: any) {
+  if (object && typeof object === "object") {
+    object = copyWithoutCircularReferences([object], object);
+  }
+  return JSON.stringify(object, null, 2);
+
+  function copyWithoutCircularReferences(references: any, object: any) {
+    var cleanObject: any = {};
+    Object.keys(object).forEach(function (key) {
+      var value = object[key];
+      if (value && typeof value === "object") {
+        if (references.indexOf(value) < 0) {
+          references.push(value);
+          cleanObject[key] = copyWithoutCircularReferences(references, value);
+          references.pop();
+        } else {
+          cleanObject[key] = "###_Circular_###";
+        }
+      } else if (typeof value !== "function") {
+        cleanObject[key] = value;
+      }
+    });
+    return cleanObject;
+  }
 }

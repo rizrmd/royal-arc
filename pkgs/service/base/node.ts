@@ -8,13 +8,13 @@ import {
   existsAsync,
   listAsync,
   readAsync,
-  removeAsync,
+  removeAsync
 } from "../export";
 import { buildApp } from "../internal/service/build/build-app";
 import { resolveDeps } from "../internal/service/build/resolve-deps";
 import { runPnpm } from "../internal/service/build/run-pnpm";
 import { generateMeta } from "../internal/service/gen-meta";
-import { isRoyalLatest } from "./git";
+import { isRoyalLatest } from "./is-royal-latest";
 import { baseUpgrade } from "./upgrade";
 import { isEqual } from "./util/is-equal";
 import { scaff } from "./util/scaff";
@@ -107,22 +107,6 @@ const main = (async () => {
   }
 
   await dirAsync(appcwd);
-
-  // if (args.includes("genbase")) {
-  //   spawnSync(
-  //     process.execPath,
-  //     ["-r", "jiti/register", "./base/gen.ts"],
-  //     {
-  //       stdio: "inherit",
-  //       cwd: join(process.cwd(), "pkgs", "service"),
-  //       env: {
-  //         JITI_CACHE: join(process.cwd(), ".output", ".jiti"),
-  //         JITI_ESM_RESOLVE: "1",
-  //       },
-  //     },
-  //   );
-  //   return;
-  // }
 
   const start = async () => {
     const pkgjson = await readAsync(

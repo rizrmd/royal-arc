@@ -914,7 +914,7 @@ const getRuntime = () => {
           }).then(resolve, reject);
         });
       };
-      var writeAsync3 = (path2, data, options) => {
+      var writeAsync2 = (path2, data, options) => {
         const opts = options || {};
         const processedData = serializeToJsonMaybe(data, opts.jsonIndent);
         let writeStrategy = writeFileAsync;
@@ -925,7 +925,7 @@ const getRuntime = () => {
       };
       exports.validateInput = validateInput;
       exports.sync = writeSync;
-      exports.async = writeAsync3;
+      exports.async = writeAsync2;
     }
   });
 
@@ -25569,11 +25569,36 @@ Content-Type: ${v.type || "application/octet-stream"}\r
             });
           }
           rpcQueue[request.id] = { resolve, reject };
-          ws.send(JSON.stringify(request));
+          const serialized = cleanStringify(request);
+          ws.send(serialized);
         }
       });
     }
   });
+  function cleanStringify(object) {
+    if (object && typeof object === "object") {
+      object = copyWithoutCircularReferences([object], object);
+    }
+    return JSON.stringify(object);
+    function copyWithoutCircularReferences(references, object2) {
+      var cleanObject = {};
+      Object.keys(object2).forEach(function(key) {
+        var value = object2[key];
+        if (value && typeof value === "object") {
+          if (references.indexOf(value) < 0) {
+            references.push(value);
+            cleanObject[key] = copyWithoutCircularReferences(references, value);
+            references.pop();
+          } else {
+            cleanObject[key] = "###_Circular_###";
+          }
+        } else if (typeof value !== "function") {
+          cleanObject[key] = value;
+        }
+      });
+      return cleanObject;
+    }
+  }
 
   // internal/rpc/get-runtime.ts
   var getRuntime = () => {
@@ -26330,12 +26355,12 @@ export default {
         };
       }
     },
-    start(name, params) {
+    start(name, params, pid) {
       return new Promise((resolve) => {
         const ws = getWs(this);
         const starter = g.ws.get(ws)?.name || "root";
-        const pid = import_cuid.default.slug();
-        const svc = getSvc(name, pid, true);
+        const _pid = pid || import_cuid.default.slug();
+        const svc = getSvc(name, _pid, true);
         const path2 = (0, import_path7.join)(process.cwd(), "service", name);
         svc.params = params;
         svc.starter = starter;
@@ -26369,7 +26394,7 @@ export default {
               console.log(
                 red("Stopped"),
                 green(`\u203A ${(0, import_lodash5.default)((0, import_lodash4.default)(name) + " ", 13, " ")}`),
-                `[pid: ${blue((0, import_lodash5.default)(pid, 7, " "))}] ${yellow(reason || "")}`
+                `[pid: ${blue((0, import_lodash5.default)(_pid, 7, " "))}] ${yellow(reason || "")}`
               );
             };
             if (svc.pendingExit && svc.pendingExit.resolve) {
@@ -26381,7 +26406,7 @@ export default {
               } else {
                 stoplog(`${reason}`);
                 svc.pendingExit.resolve(exitCode);
-                delete g.svc[name][pid];
+                delete g.svc[name][_pid];
               }
             } else {
               const text = desc[exitCode.toString()] || "Unknown Exit Code";
@@ -26398,12 +26423,12 @@ export default {
                 if (g.mode !== "dev") {
                   restart(true);
                 } else {
-                  delete g.svc[name][pid];
+                  delete g.svc[name][_pid];
                 }
                 return;
               }
             }
-            delete g.svc[name][pid];
+            delete g.svc[name][_pid];
           };
           if (_runtime[name] === "node") {
             const args = [
@@ -26412,7 +26437,7 @@ export default {
               (0, import_path7.join)(path2, "index.js"),
               svc.crashed ? "crashed" : "running",
               g.svcPort.toString(),
-              pid
+              _pid
             ].filter((e2) => e2);
             if (svcRuntime === "bun") {
               svc.child = Bun.spawn({
@@ -26733,10 +26758,9 @@ ${src}`
     return (0, import_path8.join)(targetDir, "app.js");
   };
 
-  // base/git.ts
+  // base/is-royal-latest.ts
   var import_fs2 = __toESM(__require("fs"));
   var import_isomorphic_git = __toESM(__require("./pkgs/service/node_modules/isomorphic-git/index.cjs"));
-  var import_path9 = __require("path");
 
   // ../../node_modules/.pnpm/node-fetch@3.3.0/node_modules/node-fetch/src/index.js
   var import_node_http2 = __toESM(__require("node:http"), 1);
@@ -27949,7 +27973,8 @@ ${src}`
     });
   }
 
-  // base/git.ts
+  // base/is-royal-latest.ts
+  var import_path9 = __require("path");
   var isRoyalLatest = async () => {
     const cfg = await import_isomorphic_git.default.getConfig({
       fs: import_fs2.default,
@@ -27965,8 +27990,15 @@ ${src}`
         "json"
       );
       if (ver.commit.id !== json.commit.id) {
-        console.log(`New version available at: https://github.com/rizrmd/royal-arc
-\u276F ${json.commit.msg}`);
+        console.log(`
+
+New version available at: https://github.com/rizrmd/royal-arc
+ \u276F ${json.commit.msg}
+
+To upgrade, please run:
+ \u276F node base upgrade
+
+`);
       }
     }
   };

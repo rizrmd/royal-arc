@@ -8,7 +8,6 @@ export default declareService<SrvParams>({
   hook: {
     onStart: async ({ restarted, params }) => {
       g.isRestarted = restarted;
-      db._cache._init(g, "dbcache");
       session.init({ cookieKey: `royal-sid-${DeployKey.substring(30, 40)}` });
       await initServer(params);
     },

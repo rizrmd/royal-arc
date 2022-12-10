@@ -21,7 +21,6 @@ export const g = global as unknown as {
     web: Record<string, ReturnType<typeof watch>>;
     create: ReturnType<typeof watch>;
   };
-
   serverName: "default";
   root: string;
   servers: Record<string, TemplatedApp>;

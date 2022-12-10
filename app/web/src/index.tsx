@@ -5,8 +5,6 @@ import page from "../types/page";
 import "./index.css";
 
 initEnv({ page, layout }).then(() => {
-  db._cache._init(window, "dbcache");
-
   const rootNode = document.getElementById("root");
   if (rootNode) {
     const root = createRoot(rootNode);
