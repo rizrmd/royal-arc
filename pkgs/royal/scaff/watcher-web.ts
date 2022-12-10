@@ -17,7 +17,7 @@ export const watcherWeb = (path: string) => {
     pagePath,
     layoutPath,
   ], { ignoreInitial: true });
-
+ 
   w.on("all", async (e, filePath) => {
     if (filePath.startsWith(layoutPath)) {
       if (e === "add" && filePath.endsWith(".tsx")) {

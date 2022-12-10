@@ -1,14 +1,10 @@
 import { basename, join } from "path";
-import { readAsync, writeAsync } from "service";
+import { writeAsync } from "service";
 import { walkDir } from "../web/utils";
 
-import { parse } from "@babel/core";
-import pluginJsx from "@babel/plugin-syntax-jsx";
-import pluginTs from "@babel/plugin-syntax-typescript";
-import _traverse from "@babel/traverse";
+import * as swc from "@swc/core";
+import { parseWebPage } from "./util/create-web-page-parser";
 
-let reloadPageTimer = 0 as any;
-const traverse = (_traverse as any).default as typeof _traverse;
 const pageOutput = {} as Record<string, Record<string, any>>;
 
 export const createWebPage = async (path: string) => {
@@ -37,42 +33,14 @@ export const reloadWebPageSingle = async (
   const pageOut = join(basedir, "..", "..", "..", "types", "page.ts");
 
   try {
-    const source = await readAsync(filepath);
     const page = {
       layout: "",
       url: "",
     };
 
-    const parsed = parse(source, {
-      sourceType: "module",
-      plugins: [pluginJsx, [pluginTs, { isTSX: true }]],
-    });
-
-    traverse(parsed, {
-      CallExpression: (p) => {
-        if (page.url) return;
-
-        const c = p.node;
-        if (c.callee.type === "Identifier" && c.callee.name === "page") {
-          const arg = c.arguments[0];
-
-          if (arg && arg.type === "ObjectExpression") {
-            for (let prop of arg.properties) {
-              if (
-                prop.type === "ObjectProperty" &&
-                prop.key.type === "Identifier" &&
-                prop.value.type === "StringLiteral"
-              ) {
-                if (prop.key.name === "url") {
-                  page.url = prop.value.value;
-                } else if (prop.key.name === "layout") {
-                  page.layout = prop.value.value;
-                }
-              }
-            }
-          }
-        }
-      },
+    await parseWebPage(filepath, ({ type, value }) => {
+      if (type === "url") page.url = value;
+      if (type === "layout") page.layout = value;
     });
 
     let pathNoExt = filepath.endsWith(".tsx")
@@ -139,41 +107,12 @@ export const reloadWebPage = async (basedir: string) => {
         .substring(basedir.length + 1)
         .replace(/[\/\\]/gi, ".");
 
-      const source = await readAsync(path);
-      const parsed = parse(source, {
-        sourceType: "module",
-        plugins: [pluginJsx, [pluginTs, { isTSX: true }]],
-      });
-
       let layout = "default";
       let url = "";
 
-      traverse(parsed, {
-        CallExpression: (p) => {
-          if (url) return;
-
-          const c = p.node;
-          if (c.callee.type === "Identifier" && c.callee.name === "page") {
-            const arg = c.arguments[0];
-
-            if (arg && arg.type === "ObjectExpression") {
-              for (let prop of arg.properties) {
-                if (
-                  prop.type === "ObjectProperty" &&
-                  prop.key.type === "Identifier" &&
-                  prop.value.type === "StringLiteral"
-                ) {
-                  if (prop.key.name === "url") {
-                    url = prop.value.value;
-                  } else if (prop.key.name === "layout") {
-                    layout = prop.value.value;
-                  }
-                }
-              }
-              // const prop = arg.properties[0]
-            }
-          }
-        },
+      await parseWebPage(path, ({ type, value }) => {
+        if (type === "url" && !url) url = value;
+        if (type === "layout") layout = value;
       });
 
       if (url === "") {

@@ -18,4 +18,10 @@ declare global {
     [K in TApiKey]: TApiFn<K>;
   };
   const db: typeof prisma["db"] & ExtendPrisma<"db">;
+
+  const gen: {
+    coba: {
+      customer: any;
+    };
+  };
 }

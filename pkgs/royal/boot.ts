@@ -71,10 +71,10 @@ export const boot = async () => {
     } else {
       await viteBuild();
     }
+    await initScaff();
   }
 
   if (!g.isRestarted) {
-    await initScaff();
     await startServices();
   }
 

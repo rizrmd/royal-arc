@@ -8,11 +8,11 @@ import {
   writeAsync,
 } from "service";
 
-import { parse, traverse } from "@babel/core";
-import pluginTs from "@babel/plugin-syntax-typescript";
 import { stat } from "fs/promises";
 import { ApiMetaParams } from "service";
 import { InspectResult } from "service/internal/service/build/jetpack/types";
+import swc from "@swc/core";
+import Visitor from "../scaff/swc/visitor";
 
 type MTime = Record<
   string,
@@ -210,41 +210,49 @@ export const _ = {
           url: [],
           service: [],
         };
-        _url[apiName] = await new Promise<string>((resolve) => {
+        _url[apiName] = await new Promise<string>(async (resolve) => {
           try {
-            const parsed = parse(source, {
-              sourceType: "module",
-              plugins: [[pluginTs]],
-            });
-
             let url = "";
-            traverse(parsed, {
-              ObjectMethod: (p) => {
-                const c = p.node;
-                const params: string[] = [];
-                if (c.key.type === "Identifier" && c.key.name === "api") {
+            class Traverse extends Visitor {
+              visitObjectProperty(
+                c: swc.SpreadElement | swc.Property,
+              ): swc.SpreadElement | swc.Property {
+                if (
+                  c.type === "MethodProperty" &&
+                  c.key.type === "Identifier" &&
+                  c.key.value === "api"
+                ) {
+                  const params: string[] = [];
+
                   for (let [_, param] of Object.entries(c.params)) {
                     let name = "";
-                    if (param.type === "Identifier") {
-                      name = param.name;
+                    if (param.pat.type === "Identifier") {
+                      name = param.pat.value;
                     }
                     params.push(name);
                   }
-                }
-                _params[apiName].api = params;
-              },
-              ObjectProperty: (p) => {
-                if (url) return;
-
-                const c = p.node;
-                if (c.key.type === "Identifier" && c.key.name === "url") {
-                  if (c.value.type === "StringLiteral") {
-                    url = c.value.value;
-                    resolve(url);
+                  _params[apiName].api = params;
+                } else if (!url) {
+                  if (
+                    c.type === "KeyValueProperty" &&
+                    c.key.type === "Identifier" &&
+                    c.key.value === "url"
+                  ) {
+                    if (c.value.type === "StringLiteral") {
+                      url = c.value.value;
+                      resolve(url);
+                    }
                   }
                 }
-              },
+
+                return c;
+              }
+            }
+            const parsed = await swc.parse(source, {
+              syntax: "typescript",
+              tsx: true,
             });
+            new Traverse().visitModule(parsed);
           } catch (e) {
           }
         });

@@ -22,8 +22,6 @@ export const createNewWeb = async (path: string) => {
         "web-utils": "workspace:^",
       },
       "devDependencies": {
-        "@babel/preset-react": "^7.18.6",
-        "@babel/core": "^7.20.2",
         "@types/react": "^18.0.25",
         "@types/react-dom": "^18.0.9",
         "@vitejs/plugin-react": "^2.2.0",
