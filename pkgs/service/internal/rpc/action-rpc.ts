@@ -57,13 +57,13 @@ const _service = () => ({
       };
     }
   },
-  start(name: _names, params?: any) {
+  start(name: _names, params?: any, pid?: string) {
     return new Promise<{ pid: string }>((resolve) => {
       const ws = getWs(this);
       const starter = g.ws.get(ws)?.name || "root";
 
-      const pid = cuid.slug();
-      const svc = getSvc(name, pid, true);
+      const _pid = pid || cuid.slug();
+      const svc = getSvc(name, _pid, true);
       const path = join(process.cwd(), "service", name);
       svc.params = params;
       svc.starter = starter;
@@ -98,7 +98,7 @@ const _service = () => ({
             console.log(
               red("Stopped"),
               green(`› ${padEnd(capitalize(name) + " ", 13, " ")}`),
-              `[pid: ${blue(padEnd(pid, 7, " "))}] ${yellow(reason || "")}`,
+              `[pid: ${blue(padEnd(_pid, 7, " "))}] ${yellow(reason || "")}`,
             ); 
           }; 
 
@@ -112,7 +112,7 @@ const _service = () => ({
             } else {
               stoplog(`${reason}`);
               svc.pendingExit.resolve(exitCode);
-              delete g.svc[name][pid];
+              delete g.svc[name][_pid];
             }
           } else {
             const text = desc[exitCode.toString()] || "Unknown Exit Code";
@@ -131,12 +131,12 @@ const _service = () => ({
               if (g.mode !== "dev") {
                 restart(true);
               } else {
-                delete g.svc[name][pid];
+                delete g.svc[name][_pid];
               }
               return;
             }
           }
-          delete g.svc[name][pid];
+          delete g.svc[name][_pid];
         };
         if (_runtime[name] === "node") {
           const args = [
@@ -145,7 +145,7 @@ const _service = () => ({
             join(path, "index.js"),
             svc.crashed ? "crashed" : "running",
             g.svcPort.toString(),
-            pid,
+            _pid,
           ].filter((e) => e);
           if (svcRuntime === "bun") {
             svc.child = Bun.spawn({
