@@ -5,6 +5,7 @@ import { loadPageAndLayout } from "./core/router";
 import { ErrorBoundary } from "./error";
 
 const w = window as typeof window & {
+  appRoot: typeof appRoot;
   lazyPages: any;
   lazyLayout: any;
 };
@@ -51,7 +52,7 @@ export const App = () => {
       return () => {
         w.appRoot.mounted = false;
       };
-    }
+    },
   );
 
   w.appRoot = local;
@@ -89,11 +90,11 @@ export const App = () => {
 };
 
 const OptionalSuspense: FC<{ children: any }> = ({ children }) => {
-  return children.$$typeof ? (
-    <Suspense fallback={null}>
-      <ErrorBoundary>{children}</ErrorBoundary>
-    </Suspense>
-  ) : (
-    <ErrorBoundary>{children}</ErrorBoundary>
-  );
+  return children.$$typeof
+    ? (
+      <Suspense fallback={null}>
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </Suspense>
+    )
+    : <ErrorBoundary>{children}</ErrorBoundary>;
 };
