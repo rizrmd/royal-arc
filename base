@@ -28426,6 +28426,7 @@ Extracting To: ${tempdir.substring(process.cwd().length + 1)}`
     await moveAsync((0, import_path10.join)(tempdir, "pkgs"), (0, import_path10.join)(process.cwd(), "pkgs"));
     process.stdout.write(` \u203A \u2592`);
     await runPnpm(["i"], process.cwd());
+    console.log("");
     const root2 = process.cwd();
     const dirs = await listAsync((0, import_path10.join)(root2, "app"));
     if (dirs) {
@@ -28453,6 +28454,7 @@ Upgrading ${f3}`);
               ["jiti", "upgrade.ts"],
               (0, import_path10.join)(root2, "app", f3)
             );
+            console.log("");
             let out = {};
             try {
               out = JSON.parse(json);
@@ -28460,8 +28462,11 @@ Upgrading ${f3}`);
               console.log(`Failed to execute ${f3}/upgrade.ts:`, out);
               continue;
             }
-            const paths = Object.keys(out).map(
+            const pathPatterns = Object.keys(out).map(
               (e2) => (0, import_path10.join)(root2, "app", f3, e2.replace(/\//ig, import_path10.sep))
+            );
+            pathPatterns.push(
+              (0, import_path10.join)(root2, "app", f3, "upgrade.ts")
             );
             for (const [_path2, v] of Object.entries(out)) {
               let path2 = _path2.replace(/\//ig, import_path10.sep);
@@ -28471,17 +28476,32 @@ Upgrading ${f3}`);
               const rule = v["___rule___"];
               if (rule) {
                 if (rule.allFilesExcept) {
-                  for (const fileName of rule.allFilesExcept) {
-                    const filePath = (0, import_path10.join)(f3, path2, fileName);
-                    if (paths.includes(filePath))
-                      continue;
-                    if (await existsAsync((0, import_path10.join)(tempdir, "app", filePath))) {
-                      if ((await (0, import_promises2.stat)((0, import_path10.join)(tempdir, "app", filePath))).isFile()) {
-                        await moveAsync(
-                          (0, import_path10.join)(tempdir, "app", filePath),
-                          (0, import_path10.join)(root2, "app", filePath),
-                          { overwrite: true }
-                        );
+                  const exceptFiles = rule.allFilesExcept.map(
+                    (fileName) => (0, import_path10.join)(f3, path2, fileName)
+                  );
+                  const files = await listAsync(
+                    (0, import_path10.join)(root2, "app", f3, path2)
+                  );
+                  if (files) {
+                    for (const fileName of files) {
+                      const filePath = (0, import_path10.join)(f3, path2, fileName);
+                      const toPath = (0, import_path10.join)(root2, "app", filePath);
+                      const fromPath = (0, import_path10.join)(tempdir, "app", filePath);
+                      if (pathPatterns.includes(toPath))
+                        continue;
+                      if (exceptFiles.includes(toPath))
+                        continue;
+                      if (await existsAsync(fromPath)) {
+                        if ((await (0, import_promises2.stat)(fromPath)).isFile()) {
+                          console.log(
+                            ` Replace: ${toPath.substring(root2.length + 1)}`
+                          );
+                          await moveAsync(
+                            fromPath,
+                            toPath,
+                            { overwrite: true }
+                          );
+                        }
                       }
                     }
                   }
@@ -28517,6 +28537,9 @@ Upgrading ${f3}`);
                   const from = (0, import_path10.join)(tempdir, "app", f3, path2);
                   const target = (0, import_path10.join)(root2, "app", f3, path2);
                   if (await existsAsync(from)) {
+                    console.log(
+                      ` Replace: ${target.substring(root2.length + 1)}`
+                    );
                     await removeAsync(target);
                     await moveAsync(from, target);
                   }
@@ -28526,6 +28549,9 @@ Upgrading ${f3}`);
           }
         }
       }
+      console.log(`
+Installing dependencies`);
+      process.stdout.write(` \u203A \u2592`);
       await runPnpm(["i"], process.cwd());
     }
     console.log(`

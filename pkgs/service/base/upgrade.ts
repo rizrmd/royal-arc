@@ -75,6 +75,7 @@ export const baseUpgrade = async () => {
   await moveAsync(join(tempdir, "pkgs"), join(process.cwd(), "pkgs"));
   process.stdout.write(` › ▒`);
   await runPnpm(["i"], process.cwd());
+  console.log("");
 
   const root = process.cwd();
   const dirs = await listAsync(join(root, "app"));
@@ -106,6 +107,8 @@ export const baseUpgrade = async () => {
             join(root, "app", f),
           );
 
+          console.log("");
+
           let out = {} as Record<
             string,
             { ___rule___: UpgradeRuleArg }
@@ -117,8 +120,12 @@ export const baseUpgrade = async () => {
             continue;
           }
 
-          const paths = Object.keys(out).map((e) =>
+          const pathPatterns = Object.keys(out).map((e) =>
             join(root, "app", f, e.replace(/\//ig, sep))
+          );
+
+          pathPatterns.push(
+            join(root, "app", f, "upgrade.ts"),
           );
 
           for (const [_path, v] of Object.entries(out)) {
@@ -129,18 +136,34 @@ export const baseUpgrade = async () => {
             const rule = v["___rule___"];
             if (rule) {
               if (rule.allFilesExcept) {
-                for (const fileName of rule.allFilesExcept) {
-                  const filePath = join(f, path, fileName);
+                const exceptFiles = rule.allFilesExcept.map((fileName) =>
+                  join(f, path, fileName)
+                );
 
-                  if (paths.includes(filePath)) continue;
+                const files = await listAsync(
+                  join(root, "app", f, path),
+                );
+                if (files) {
+                  for (const fileName of files) {
+                    const filePath = join(f, path, fileName);
+                    const toPath = join(root, "app", filePath);
+                    const fromPath = join(tempdir, "app", filePath);
+                    if (pathPatterns.includes(toPath)) continue;
+                    if (exceptFiles.includes(toPath)) continue;
 
-                  if (await existsAsync(join(tempdir, "app", filePath))) {
-                    if ((await stat(join(tempdir, "app", filePath))).isFile()) {
-                      await moveAsync(
-                        join(tempdir, "app", filePath),
-                        join(root, "app", filePath),
-                        { overwrite: true },
-                      );
+                    if (await existsAsync(fromPath)) {
+                      if (
+                        (await stat(fromPath)).isFile()
+                      ) {
+                        console.log(
+                          ` Replace: ${toPath.substring(root.length + 1)}`,
+                        );
+                        await moveAsync(
+                          fromPath,
+                          toPath,
+                          { overwrite: true },
+                        );
+                      }
                     }
                   }
                 }
@@ -182,6 +205,9 @@ export const baseUpgrade = async () => {
                 const target = join(root, "app", f, path);
 
                 if (await existsAsync(from)) {
+                  console.log(
+                    ` Replace: ${target.substring(root.length + 1)}`,
+                  );
                   await removeAsync(target);
                   await moveAsync(from, target);
                 }
@@ -192,6 +218,8 @@ export const baseUpgrade = async () => {
       }
     }
 
+    console.log(`\nInstalling dependencies`);
+    process.stdout.write(` › ▒`);
     await runPnpm(["i"], process.cwd());
   }
 
