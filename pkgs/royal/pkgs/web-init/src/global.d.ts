@@ -21,6 +21,7 @@ declare global {
   const devStamp: number;
   const preventPopRender: boolean;
   const appRoot: IAppRoot & { render: () => void };
+  const apiHeaders: Record<string, string>;
   const dbDefinitions: Record<string, any>;
   const auth: any;
   const basepath: string;

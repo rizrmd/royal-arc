@@ -6,11 +6,13 @@ import { reloadWebPage } from "./scaff-web-page";
 import { scaff } from "./util/scaff";
 
 export const reloadWeb = async () => {
+
   await Promise.all([
     reloadWebLayoutAll(),
     // reloadWebPage(),
     // reloadWebGen(),
   ]);
+
 };
 
 export const createNewWeb = async (path: string) => {

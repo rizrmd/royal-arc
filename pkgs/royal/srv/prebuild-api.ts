@@ -13,6 +13,7 @@ import { ApiMetaParams } from "service";
 import { InspectResult } from "service/internal/service/build/jetpack/types";
 import type swc from "@swc/core";
 import Visitor from "../scaff/swc/visitor";
+import { jsonReplacer } from "../scaff/util/stringify-replacer";
 
 type MTime = Record<
   string,
@@ -93,11 +94,11 @@ export const scaffoldAPI = async (
 
   await writeAsync(
     apimetaPath,
-    JSON.stringify(apimeta, replacer, 2),
+    JSON.stringify(apimeta, jsonReplacer, 2),
   );
   await writeAsync(
     mtimePath,
-    JSON.stringify(mtime, replacer, 2),
+    JSON.stringify(mtime, jsonReplacer, 2),
   );
   await writeAsync(
     join(dirname(apiPath), "..", "..", "gen", `api.${name}.ts`),
@@ -146,15 +147,6 @@ const parseParameterizedPathname = (pathname: string) => {
   return Object.keys(params);
 };
 
-function replacer(key: any, value: any) {
-  if (value == null || value.constructor != Object) {
-    return value;
-  }
-  return Object.keys(value).sort().reduce((s, k) => {
-    s[k] = value[k];
-    return s;
-  }, {});
-}
 const scanAPIMeta = async (
   { file, apiPath, mtime, index, relPath, _params, _url }: {
     file: InspectResult;

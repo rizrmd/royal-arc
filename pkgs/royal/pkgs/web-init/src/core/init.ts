@@ -4,6 +4,11 @@ import { jsx } from "./jsx";
 import { createFrameCors } from "./iframe-cors";
 import { importPageAndLayout } from "./router";
 
+//@ts-ignore
+import layout from "gen/web.layout";
+
+//@ts-ignore
+import page from "gen/web.page";
 
 const w = window as unknown as {
   importedLayouts: any;
@@ -35,8 +40,8 @@ const w = window as unknown as {
 export const initEnv = async (
   webName: string,
 ) => {
-  // w.importedLayouts = layout[webName];
-  // w.importedPages = page[webName];
+  w.importedLayouts = layout[webName];
+  w.importedPages = page[webName];
   w.apiHeaders = {};
 
   // if (!w.serverurl) {
