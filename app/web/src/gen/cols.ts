@@ -1,5 +1,3 @@
-import { DBName, DBTables, JsxGenerator } from "royal";
-
-export const generator: JsxGenerator = async (tableName: DBTables<DBName>) => {
+export const _ = async (halo: "joni" | "sura") => {
   return "";
 };

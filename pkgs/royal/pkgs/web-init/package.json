@@ -13,8 +13,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "web-init": "workspace:^",
-    "web-utils": "workspace:^",
-    "gen": "workspace:^"
+    "web-utils": "workspace:^"
   },
   "devDependencies": {
     "@types/lodash.find": "^4.6.7",

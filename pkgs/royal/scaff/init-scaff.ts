@@ -1,6 +1,7 @@
 import { join } from "path";
 import { listAsync } from "service";
 import { g } from "../global";
+import { reloadWeb } from "./create-web";
 import { isDirectory } from "./util/is-directory";
 import { watcherAttach } from "./watcher-attach";
 import { createNew } from "./watcher-create";
@@ -27,4 +28,6 @@ export const initScaff = async () => {
       }
     }
   }
+
+  await reloadWeb();
 };

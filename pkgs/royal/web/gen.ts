@@ -1,1 +1,6 @@
-export type JsxGenerator = (arg1: any, arg2?: any) => Promise<string>;
+export const extendGen = <T extends object>(object:T) => {
+  return new Proxy(object, {
+    get(target, p, receiver) {
+    },
+  }) as T;
+};

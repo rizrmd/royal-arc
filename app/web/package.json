@@ -7,7 +7,6 @@
     "react-dom": "^18.2.0",
     "db": "workspace:^",
     "dbgen": "../db/node_modules/.gen",
-    "gen": "workspace:^",
     "royal": "workspace:^",
     "service": "workspace:^",
     "web-init": "workspace:^",

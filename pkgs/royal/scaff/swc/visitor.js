@@ -779,7 +779,9 @@ class Visitor {
     }
   }
   visitOptionalChainingExpression(n) {
-    n.expr = this.visitExpression(n.expr);
+    if (n.expr) {
+      n.expr = this.visitExpression(n.expr);
+    }
     return n;
   }
   visitAssignmentExpression(n) {
@@ -1165,7 +1167,7 @@ class Visitor {
     return a;
   }
   visitTsType(n) {
-    throw new Error("Method visitTsType not implemented.");
+    return n;
   }
   visitPatterns(nodes) {
     return nodes.map(this.visitPattern.bind(this));

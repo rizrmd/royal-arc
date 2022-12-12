@@ -1,7 +1,7 @@
 import { watch } from "chokidar";
 import { basename, join } from "path";
 import { g } from "../global";
-import { createNewWeb } from "./create-web";
+import { createNewWeb, reloadWeb } from "./create-web";
 import picocolors from "picocolors";
 import { createNewDB } from "./create-db";
 import { runPnpm } from "service/internal/service/build/run-pnpm";
@@ -25,7 +25,7 @@ export const watcherCreate = async () => {
   );
   w.on("addDir", async (path) => {
     await createNew(path);
-    watcherAttach(path)
+    await reloadWeb();
     process.exit(111);
   });
   w.on("unlinkDir", async (p) => {

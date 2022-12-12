@@ -4,6 +4,7 @@ import { jsx } from "./jsx";
 import { createFrameCors } from "./iframe-cors";
 import { importPageAndLayout } from "./router";
 
+
 const w = window as unknown as {
   importedLayouts: any;
   importedPages: any;
@@ -31,9 +32,11 @@ const w = window as unknown as {
   db: any;
 };
 
-export const initEnv = async (arg: { layout: any; page: any }) => {
-  w.importedLayouts = arg.layout;
-  w.importedPages = arg.page;
+export const initEnv = async (
+  webName: string,
+) => {
+  // w.importedLayouts = layout[webName];
+  // w.importedPages = page[webName];
   w.apiHeaders = {};
 
   // if (!w.serverurl) {

@@ -5,3 +5,4 @@ node_modules/
 **/node_modules/
 **/bun.lockb
 **/*.bun
+gen/api.mtime.json

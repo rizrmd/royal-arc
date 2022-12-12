@@ -2,6 +2,7 @@ import type * as _api from "gen/api";
 import { prisma } from "gen/prisma";
 import { ExtendPrisma } from "royal";
 import "web-init/src/global";
+import _gen from "gen/web.gen";
 
 type TApi = typeof _api["srv"];
 type TApiKey = keyof TApi;
@@ -19,9 +20,5 @@ declare global {
   };
   const db: typeof prisma["db"] & ExtendPrisma<"db">;
 
-  const gen: {
-    coba: {
-      customer: any;
-    };
-  };
+  const gen: typeof _gen;
 }

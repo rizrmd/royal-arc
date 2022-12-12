@@ -2,8 +2,7 @@ import { basename, join } from "path";
 import { writeAsync } from "service";
 import { walkDir } from "../web/utils";
 
-import * as swc from "@swc/core";
-import { parseWebPage } from "./util/create-web-page-parser";
+import { parseWebPage } from "./parser/web-page-parser";
 
 const pageOutput = {} as Record<string, Record<string, any>>;
 
@@ -24,7 +23,7 @@ export default page({
   await writeAsync(path, src);
 };
 
-export const reloadWebPageSingle = async (
+export const reloadWebPageChange = async (
   basedir: string,
   filepath: string,
 ) => {
@@ -91,7 +90,9 @@ export default {
   }
 };
 
-export const reloadWebPage = async (basedir: string) => {
+export const reloadWebPage = async () => {};
+
+export const reloadWebPageSingle = async (basedir: string) => {
   const list = await walkDir(basedir);
   const root = await join(basedir, "..", "..", "..");
   const pageOut = join(basedir, "..", "..", "..", "types", "page.ts");

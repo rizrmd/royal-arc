@@ -13,8 +13,7 @@ export default page({
       <div>
         Halo mantap sekali
 
-
-        { (<div>Haloha</div>)}
+        {<div>Haloha</div>}
       </div>
     );
   },
