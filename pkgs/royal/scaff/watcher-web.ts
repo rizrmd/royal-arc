@@ -1,6 +1,7 @@
 import { watch } from "chokidar";
 import { basename, join } from "path";
 import { createWebLayout, reloadWebLayoutSingle } from "./scaff-web-layout";
+import { createWebPage, reloadWebPageSingle } from "./scaff-web-page";
 
 export const watcherWeb = (path: string) => {
   const webName = basename(path);
@@ -27,17 +28,11 @@ export const watcherWeb = (path: string) => {
         break;
       case filePath.startsWith(pagePath):
         {
-          // if (e === "add" && filePath.endsWith(".tsx")) {
-          //   if (((await stat(filePath)).size) === 0) {
-          //     await createWebPage(filePath);
-          //   }
-          // }
+          if (e === "add" && filePath.endsWith(".tsx")) {
+            await createWebPage(filePath);
+          }
 
-          // if (e === "change") {
-          //   reloadWebPageChange(pagePath, filePath);
-          // } else {
-          //   await reloadWebPage();
-          // }
+          await reloadWebPageSingle(webName);
         }
         break;
       case filePath.startsWith(genPath):

@@ -73,6 +73,7 @@ const writeWebLayoutInternal = async (root: string) => {
 export default {
 ${
     Object.entries(layouts)
+      .sort()
       .map((arg: any) => {
         const [key, value] = arg;
         return `'${key}':${JSON.stringify(value, jsonReplacer, 2)},`;
