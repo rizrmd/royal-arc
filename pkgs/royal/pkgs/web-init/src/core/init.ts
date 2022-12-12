@@ -40,9 +40,10 @@ const w = window as unknown as {
 export const initEnv = async (
   webName: string,
 ) => {
-  w.importedLayouts = layout[webName];
-  w.importedPages = page[webName];
+  w.importedLayouts = (layout as any)[webName];
+  w.importedPages = (page as any)[webName];
   w.apiHeaders = {};
+  w.webname = webName;
 
   // if (!w.serverurl) {
   //   try {

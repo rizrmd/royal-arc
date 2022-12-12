@@ -4,7 +4,11 @@
 
 export default {
   web: {
-    blank: () => import("../app/web/src/base/layout/blank"),
-    default: () => import("../app/web/src/base/layout/default"),
+    home: ["/", "default", () => import("../app/web/src/base/page/home")],
+    "upload-sample": [
+      "/x",
+      "default",
+      () => import("../app/web/src/base/page/upload-sample"),
+    ],
   },
 };

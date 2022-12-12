@@ -14,8 +14,11 @@ const w = window as typeof window & {
 
 export const importPageAndLayout = async (name: string) => {
   w.lazyPages = {};
-  Object.entries(w.importedPages).map(([name, imp]: any) => {
-    w.lazyPages[name] = lazy(async () => {
+  Object.entries(w.importedPages).map(([key, imp]: any) => {
+    console.log(name, key, typeof imp);
+
+    w.lazyPages[key] = lazy(async () => {
+
       const component = (await imp[2]()).default.component;
       // this is commented because component is blinking after first load
       // w.lazyPages[name] = component
@@ -26,8 +29,8 @@ export const importPageAndLayout = async (name: string) => {
   });
 
   w.lazyLayout = {};
-  Object.entries(w.importedLayouts).map(([name, imp]) => {
-    w.lazyLayout[name] = lazy(async () => {
+  Object.entries(w.importedLayouts).map(([key, imp]) => {
+    w.lazyLayout[key] = lazy(async () => {
       // @ts-ignore
       const component = (await imp()).default;
       // this is commented because component is blinking after first load

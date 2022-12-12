@@ -22,12 +22,13 @@ export default layout({
 export const reloadWebLayoutAll = async () => {
   const list = await listAsync(join(root, "app"));
   if (list) {
-    for (const svname of list) {
-      if (svname.startsWith("web")) {
-        layouts[svname] = {} as any;
+    for (const webName of list) {
+      if (webName.startsWith("web")) {
+        layouts[webName] = {} as any;
         await reloadWebLayoutInternal(
-          join(root, "app", svname, "src", "base", "layout"),
-          layouts[svname],
+          webName,
+          join(root, "app", webName, "src", "base", "layout"),
+          layouts[webName],
         );
       }
     }
@@ -40,6 +41,7 @@ export const reloadWebLayoutSingle = async (
 ) => {
   delete layouts[webName];
   await reloadWebLayoutInternal(
+    webName,
     join(root, "app", webName),
     layouts[webName],
   );
@@ -47,6 +49,7 @@ export const reloadWebLayoutSingle = async (
 };
 
 const reloadWebLayoutInternal = async (
+  webName: string,
   basedir: string,
   curLayout: any,
 ) => {
@@ -56,7 +59,7 @@ const reloadWebLayoutInternal = async (
     const name = basename(
       i.endsWith(".tsx") ? i.substring(0, i.length - 4) : i,
     );
-    curLayout[name] = `() => import('../src/base/layout${
+    curLayout[name] = `() => import('../app/${webName}/src/base/layout${
       i
         .substring(basedir.length, i.length - 4)
         .replace(/\\/gi, "/")
@@ -76,7 +79,16 @@ ${
       .sort()
       .map((arg: any) => {
         const [key, value] = arg;
-        return `'${key}':${JSON.stringify(value, jsonReplacer, 2)},`;
+        return `'${key}':{${
+          Object
+            .entries(value).sort((a, b) =>
+              a[0]
+                .localeCompare(b[0])
+            )
+            .map(([k, v]) => {
+              return `"${k}":${v}`;
+            })
+        }},`;
       })
       .join("\n")
   }
