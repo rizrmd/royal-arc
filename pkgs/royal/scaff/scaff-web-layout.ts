@@ -42,7 +42,7 @@ export const reloadWebLayoutSingle = async (
   layouts[webName] = {};
   await reloadWebLayoutInternal(
     webName,
-    join(root, "app", webName),
+    join(root, "app", webName, "src", "base", "layout"),
     layouts[webName],
   );
   await writeWebLayoutInternal(root);

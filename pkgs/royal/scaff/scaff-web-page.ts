@@ -46,7 +46,7 @@ export const reloadWebPageSingle = async (
   delete pages[webName];
   pages[webName] = {};
   await reloadWebPageInternal(
-    join(root, "app", webName),
+    join(root, "app", webName, "src", "base", "page"),
     pages[webName],
   );
   await writeWebPageInternal(root);
