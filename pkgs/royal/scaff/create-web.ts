@@ -1,5 +1,6 @@
 import { basename } from "path";
 import { dirAsync } from "service";
+import { reloadWebGenAll } from "./scaff-web-gen";
 import { reloadWebLayoutAll } from "./scaff-web-layout";
 import { reloadWebPageAll } from "./scaff-web-page";
 import { scaff } from "./util/scaff";
@@ -9,7 +10,7 @@ export const reloadWeb = async () => {
   await Promise.all([
     reloadWebLayoutAll(),
     reloadWebPageAll(),
-    // reloadWebGen(),
+    reloadWebGenAll(),
   ]);
 
 };

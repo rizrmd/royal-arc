@@ -1,8 +1,7 @@
 import { basename, join } from "path";
-import { walkDir } from "../web/utils";
 import { format } from "prettier";
 import { listAsync, writeAsync } from "service";
-import { jsonReplacer } from "./util/stringify-replacer";
+import { walkDir } from "../web/utils";
 
 const layouts: any = {};
 const root = join(process.cwd(), "..", "..");
@@ -40,6 +39,7 @@ export const reloadWebLayoutSingle = async (
   webName: string,
 ) => {
   delete layouts[webName];
+  layouts[webName] = {};
   await reloadWebLayoutInternal(
     webName,
     join(root, "app", webName),

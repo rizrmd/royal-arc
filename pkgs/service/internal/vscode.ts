@@ -41,6 +41,7 @@ const defaultVsSettings = {
     "**/node_modules": true,
     "**/bun.lockb": true,
     "**/.gitignore": true,
+    "app/package.json": true,
     ".prettierrc": true,
     ".gitignore": true,
     "pnpm-workspace.yaml": true,
@@ -52,6 +53,7 @@ const defaultVsSettings = {
   "hide-files.files": [
     ".gitignore",
     "pnpm-workspace.yaml",
+    "app/package.json",
     "pnpm-lock.yaml",
     ".vscode",
     ".idea",

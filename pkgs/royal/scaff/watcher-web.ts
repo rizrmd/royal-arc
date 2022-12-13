@@ -1,5 +1,6 @@
 import { watch } from "chokidar";
 import { basename, join } from "path";
+import { createWebGen, reloadWebGenSingle } from "./scaff-web-gen";
 import { createWebLayout, reloadWebLayoutSingle } from "./scaff-web-layout";
 import { createWebPage, reloadWebPageSingle } from "./scaff-web-page";
 
@@ -37,13 +38,12 @@ export const watcherWeb = (path: string) => {
         break;
       case filePath.startsWith(genPath):
         {
-          // if (e === "add" && filePath.endsWith(".ts")) {
-          //   if (((await stat(filePath)).size) === 0) {
-          //     await createWebGen(filePath);
-          //   }
-          // }
+          console.log(e, filePath);
+          if (e === "add" && filePath.endsWith(".ts")) {
+            await createWebGen(filePath);
+          }
 
-          // await reloadWebGen();
+          await reloadWebGenSingle(webName);
         }
         break;
     }
