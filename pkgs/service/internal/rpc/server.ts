@@ -28,6 +28,7 @@ export const initServerRPC = async (port: number) => {
       .ws("/*", {
         idleTimeout: 0,
         sendPingsAutomatically: true,
+        maxPayloadLength: 99999 * 1024 * 1024,
         close(ws, code, message) {
           ws.closed = true;
           onClose(ws);
