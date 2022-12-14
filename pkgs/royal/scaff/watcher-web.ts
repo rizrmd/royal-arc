@@ -1,20 +1,26 @@
 import { watch } from "chokidar";
 import { basename, join } from "path";
+import { dirAsync } from "service";
 import { createWebGen, reloadWebGenSingle } from "./scaff-web-gen";
 import { createWebLayout, reloadWebLayoutSingle } from "./scaff-web-layout";
 import { createWebPage, reloadWebPageSingle } from "./scaff-web-page";
 
-export const watcherWeb = (path: string) => {
+export const watcherWeb = async (path: string) => {
   const webName = basename(path);
 
   const pagePath = join(path, "src", "base", "page");
   const layoutPath = join(path, "src", "base", "layout");
   const genPath = join(path, "src", "gen");
-  const w = watch([
+
+  const paths = [
     pagePath,
     layoutPath,
     genPath,
-  ], { ignoreInitial: true });
+  ];
+
+  await Promise.all(paths.map((e) => dirAsync(e)));
+
+  const w = watch(paths, { ignoreInitial: true });
 
   w.on("all", async (e, filePath) => {
     switch (true) {
