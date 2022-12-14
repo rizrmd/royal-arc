@@ -24,7 +24,7 @@ export const isRoyalLatest = async () => {
     if (ver.commit.id !== json.commit.id) {
       console.log(`\n
 New version available at: https://github.com/rizrmd/royal-arc
- ❯ ${json.commit.msg}\n
+ ❯ ${json.commit.msg}
 To upgrade, please run:
  ❯ node base upgrade\n\n`);
     }
