@@ -11,6 +11,11 @@
           ""
         ]
       },
+      "_deploy": {
+        "api": [],
+        "service": [],
+        "url": []
+      },
       "_file": {
         "api": [],
         "service": [],
@@ -67,6 +72,7 @@
     },
     "_url": {
       "_dbs": "/_dbs/:dbName...:action",
+      "_deploy": "/_deploy",
       "_file": "/_file/*",
       "_img": "/_img/*",
       "_pdf": "/_pdf",

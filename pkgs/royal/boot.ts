@@ -66,12 +66,12 @@ export const boot = async () => {
 
   if (g.execFromBase) {
     await watcherCreate();
+    await initScaff();
     if (g.mode === "dev") {
       await viteServe();
     } else {
       await viteBuild();
     }
-    await initScaff();
   }
 
   if (!g.isRestarted) {

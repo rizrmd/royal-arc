@@ -150,14 +150,18 @@ function parseBody(
         if (isLast) {
           const content = buffer ? Buffer.concat([buffer, chunk]) : chunk;
           const type = req.headers["content-type"];
-          if (type.includes("json")) {
-            try {
-              req.body = JSON.parse(content.toString("utf-8"));
-            } catch (e) {
-              console.log(e);
+          if (type) {
+            if (type.includes("json")) {
+              try {
+                req.body = JSON.parse(content.toString("utf-8"));
+              } catch (e) {
+                console.log(e);
+              }
+            } else if (type.includes("multipart/form-data")) {
+              req.body = getParts(content, type);
             }
-          } else if (type.includes("multipart/form-data")) {
-            req.body = getParts(content, type);
+          } else {
+            req.body = content;
           }
           resolve();
         } else {

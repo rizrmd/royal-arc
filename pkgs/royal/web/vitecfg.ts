@@ -2,7 +2,7 @@ import { join } from "path";
 
 export const viteCfg = ({ react }: { react: any }) => {
   const hash = Math.floor(Math.random() * 90000) + 10000;
-  const pkgsdir = join(process.cwd(), "..", "..", "pkgs");
+  const root = join(process.cwd(), "..", "..");
 
   return {
     build: {
@@ -24,8 +24,9 @@ export const viteCfg = ({ react }: { react: any }) => {
       alias: {
         src: join(process.cwd(), "src"),
         types: join(process.cwd(), "types"),
-        "web-init": join(pkgsdir, "royal", "pkgs", "web-init"),
-        "web-utils": join(pkgsdir, "royal", "pkgs", "web-utils"),
+        "gen": join(root, "gen"),
+        "web-init": join(root, "pkgs", "royal", "pkgs", "web-init"),
+        "web-utils": join(root, "pkgs", "royal", "pkgs", "web-utils"),
       },
     },
     esbuild: {

@@ -12,10 +12,10 @@ export default BaseConfig({
     },
     prod: {
       "web": {
-        url: "http://localhost:4500",
+        url: "http://127.0.0.1:4500",
       },
       "srv": {
-        url: "http://localhost:4500",
+        url: "http://127.0.0.1:4500",
       },
     },
     staging: {

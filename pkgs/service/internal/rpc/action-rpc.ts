@@ -47,13 +47,19 @@ const _service = () => ({
         !!svc.restarted ? yellow("Restarted") : "",
       );
 
+      let metafile = undefined;
+
+      if (g.node.build && g.node.build[name] && g.node.build[name].metafile) {
+        g.node.build[name].metafile = metafile;
+      }
+
       return {
         params: svc.params,
         argv: process.argv.slice(2),
         runtime: svc.runtime,
         restarted: !!svc.restarted,
         starter: svc.starter,
-        metafile: g.node.build[name].metafile,
+        metafile,
       };
     }
   },
@@ -99,15 +105,15 @@ const _service = () => ({
               red("Stopped"),
               green(`› ${padEnd(capitalize(name) + " ", 13, " ")}`),
               `[pid: ${blue(padEnd(_pid, 7, " "))}] ${yellow(reason || "")}`,
-            ); 
-          }; 
+            );
+          };
 
           if (svc.pendingExit && svc.pendingExit.resolve) {
             const reason = svc.pendingExit.from;
 
             if (reason === "Hot Reload") {
               svc.pendingExit.resolve(exitCode);
-              restart(); 
+              restart();
               return;
             } else {
               stoplog(`${reason}`);

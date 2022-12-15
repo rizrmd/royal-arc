@@ -24,20 +24,18 @@ export const buildApp = async (
   await writeAsync(join(targetDir, "package.json"), {
     name: "app",
     version: "1.0.0",
-    type: "module",
     dependencies: deps,
   });
 
   const { build } = await import("esbuild");
-  const { commonjs } = await import("@hyrious/esbuild-plugin-commonjs");
+  // const { commonjs } = await import("@hyrious/esbuild-plugin-commonjs");
 
   await build({
     bundle: true,
     logLevel: "silent",
     platform: "node",
-    format: "esm",
+    format: "cjs",
     entryPoints: [join(appDir, "app.ts")],
-    plugins: [commonjs()],
     outfile: join(targetDir, "app.js"),
     external: [...Object.keys(deps), "esbuild"],
   });
@@ -48,26 +46,24 @@ export const buildApp = async (
     join(targetDir, "app.js"),
     `\
 /*
-▄▄▄         ▄· ▄▌ ▄▄▄· ▄▄▌  
-▀▄ █·▪     ▐█▪██▌▐█ ▀█ ██•  
-▐▀▀▄  ▄█▀▄ ▐█▌▐█▪▄█▀▀█ ██▪  
+▄▄▄         ▄· ▄▌ ▄▄▄· ▄▄▌
+▀▄ █·▪     ▐█▪██▌▐█ ▀█ ██•
+▐▀▀▄  ▄█▀▄ ▐█▌▐█▪▄█▀▀█ ██▪
 ▐█•█▌▐█▌.▐▌ ▐█▀·.▐█ ▪▐▌▐█▌▐▌
-.▀  ▀ ▀█▄▀▪  ▀ •  ▀  ▀ .▀▀▀ 
+.▀  ▀ ▀█▄▀▪  ▀ •  ▀  ▀ .▀▀▀
 */
-(async () => {
-  const { existsSync } = await import('fs')
-  const { join } = await import('path')
-  const { spawnSync } = await import('child_process')
-  if (!existsSync(join(process.cwd(), 'node_modules'))) {
-    spawnSync(
-      /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
-      ["i"],
-      {
-        stdio: "inherit",
-      }
-    );
-  }
-})()
+const { existsSync } = require("fs");
+const { join } = require("path");
+const { spawnSync } = require("child_process");
+if (!existsSync(join(process.cwd(), "node_modules"))) {
+  spawnSync(
+    /^win/.test(process.platform) ? "pnpm.cmd" : "pnpm",
+    ["i"],
+    {
+      stdio: "inherit",
+    },
+  );
+}
 ${src}`,
   );
 

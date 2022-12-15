@@ -1,4 +1,5 @@
-import { basename } from "path";
+import { basename, join } from "path";
+import { copyAsync, existsAsync, listAsync } from "service";
 import { scaff } from "./util/scaff";
 
 export const defaultPrismaSrc = `\
@@ -18,6 +19,36 @@ model user {
   password        String
 }
 `;
+
+const root = join(process.cwd(), "..", "..");
+export const reloadDb = async (target: string) => {
+  const list = await listAsync(join(root, "app"));
+  if (list) {
+    for (const dbName of list) {
+      if (dbName.startsWith("db")) {
+        if (await existsAsync(join(root, "app", dbName, "prisma"))) {
+          await copyAsync(
+            join(root, "app", dbName, "prisma"),
+            join(target, "service", dbName, "prisma"),
+            {
+              overwrite: true,
+            },
+          );
+        }
+
+        if (await existsAsync(join(root, "app", dbName, ".env"))) {
+          await copyAsync(
+            join(root, "app", dbName, ".env"),
+            join(target, "service", dbName, ".env"),
+            {
+              overwrite: true,
+            },
+          );
+        }
+      }
+    }
+  }
+};
 
 export const createNewDB = async (path: string) => {
   const name = basename(path);
