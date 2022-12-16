@@ -15,10 +15,7 @@ const w = window as typeof window & {
 export const importPageAndLayout = async (name: string) => {
   w.lazyPages = {};
   Object.entries(w.importedPages).map(([key, imp]: any) => {
-    console.log(name, key, typeof imp);
-
     w.lazyPages[key] = lazy(async () => {
-
       const component = (await imp[2]()).default.component;
       // this is commented because component is blinking after first load
       // w.lazyPages[name] = component
@@ -71,13 +68,12 @@ export const loadPageAndLayout = (local: IAppRoot & { render: () => void }) => {
     if (!found) {
       if (local.url.endsWith("/")) {
         found = local.router.lookup(
-          local.url.substring(local.url.length - 1),
+          local.url.substring(0, local.url.length - 1),
         ) as IFoundPage | null | undefined;
       } else {
-        found = local.router.lookup(local.url + "/") as
-          | IFoundPage
-          | null
-          | undefined;
+        found = local.router.lookup(
+          local.url + "/",
+        ) as IFoundPage | null | undefined;
       }
     }
 

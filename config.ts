@@ -7,7 +7,7 @@ export default BaseConfig({
         url: "http://localhost:4500",
       },
       "srv": {
-        url: "http://localhost:4500",
+        url: "http://localhost:4600",
       },
     },
     prod: {

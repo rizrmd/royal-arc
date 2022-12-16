@@ -8,32 +8,22 @@ type IUpstream = { method: string; headers: any };
 const dec = new TextDecoder("utf-8");
 export const fetchProxy = async (
   url: string,
-  baseurl: string,
-  serverurl: string,
   upstream: IUpstream,
   res: MHttpResponse,
-  successCode?: string[],
+  opt?: {
+    onRequest?: (
+      r: Awaited<ReturnType<typeof sendRequest>>,
+    ) => boolean | Promise<boolean>;
+    overrideBody?: (
+      r: Awaited<ReturnType<typeof sendRequest>>,
+    ) => string | ArrayBuffer;
+  },
 ) => {
   try {
     const r = await sendRequest(url, upstream, res);
-
-    // if (url.startsWith("http://127.0.0.1")) console.log(r, url);
     if (r) {
-      if (successCode) {
-        let serving = false;
-        for (let code of successCode) {
-          if (code.startsWith(">=")) {
-            if (parseInt(r.status) >= parseInt(code.substring(2))) {
-              serving = true;
-            }
-          }
-
-          if (r.status === code) {
-            serving = true;
-          }
-        }
-
-        if (!serving) {
+      if (opt && opt.onRequest) {
+        if (!await opt.onRequest(r)) {
           return false;
         }
       }
@@ -46,11 +36,9 @@ export const fetchProxy = async (
             res.writeHeader(k, v);
           }
           if (r.body) {
-            if (r.headers["content-type"] === "text/html") {
-              const body = typeof r.body === "string"
-                ? r.body
-                : dec.decode(r.body);
-              res.write(replaceBodyDev(body, baseurl, serverurl));
+            if (opt && opt.overrideBody) {
+              const body = opt.overrideBody(r);
+              res.write(body);
             } else {
               res.write(r.body);
             }

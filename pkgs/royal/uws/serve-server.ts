@@ -2,8 +2,9 @@ import { WebSocket as uWebSocket } from "uWebSockets.js";
 import ws from "websocket";
 import { g, MHttpResponse } from "../global";
 import { fetchProxy } from "./fetch-proxy";
-import { IUpstream, localHostName } from "./tools";
+import { IUpstream, localHostName, replaceBodyDev } from "./tools";
 
+const dec = new TextDecoder();
 const WebSocket = ws.client;
 export const serveServer = async (
   upstream: IUpstream,
@@ -24,11 +25,43 @@ export const serveServer = async (
     if (
       !(await fetchProxy(
         url,
-        `http://${localHostName}:${port}`,
-        `http://${localHostName}:${port}`,
         upstream,
         res,
-        ["200", "304", ">=500"],
+        {
+          onRequest(r) {
+            let serving = false;
+            for (let code of ["200", "304", ">=500"]) {
+              if (code.startsWith(">=")) {
+                if (parseInt(r.status) >= parseInt(code.substring(2))) {
+                  serving = true;
+                }
+              }
+
+              if (r.status === code) {
+                serving = true;
+              }
+            }
+
+            if (!serving) {
+              return false;
+            }
+            return true;
+          },
+          overrideBody(r) {
+            if (r.headers["content-type"] === "text/html") {
+              const body = typeof r.body === "string"
+                ? r.body
+                : dec.decode(r.body);
+
+              return replaceBodyDev(
+                body,
+                `http://${localHostName}:${port}`,
+                `http://${localHostName}:${port}`,
+              );
+            }
+            return r.body;
+          },
+        },
       ))
     ) {
       return false;

@@ -12,8 +12,9 @@ import { PanelActions } from "./panel/panel-actions";
 import { progress } from "./panel/panel-build";
 import { deployOnServer } from "./serve-deploy";
 import { serveStatic } from "./serve-static";
-import { IUpstream } from "./tools";
+import { IUpstream, replaceBodyDev } from "./tools";
 
+const dec = new TextDecoder();
 export const findBoot = (matches: string[]) =>
   matches.find((e) => e === "boot");
 export const serveBoot = async (
@@ -85,10 +86,23 @@ export const serveBoot = async (
     if (
       !(await fetchProxy(
         `${base}${pathname.startsWith("/") ? pathname : `/${pathname}`}`,
-        conf.boot.run_url,
-        conf.boot.run_url,
         upstream,
         res,
+        {
+          overrideBody(r) {
+            if (r.headers["content-type"] === "text/html") {
+              const body = typeof r.body === "string"
+                ? r.body
+                : dec.decode(r.body);
+              return replaceBodyDev(
+                body,
+                conf.boot.run_url,
+                conf.boot.run_url,
+              );
+            }
+            return r.body;
+          },
+        },
       ))
     ) {
       return false;

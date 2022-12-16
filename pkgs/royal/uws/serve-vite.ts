@@ -4,10 +4,11 @@ import ws from "websocket";
 import config from "../../../config";
 import { g, MHttpResponse } from "../global";
 import { fetchProxy } from "./fetch-proxy";
-import { IUpstream, localHostName, plog } from "./tools";
+import { IUpstream, localHostName, plog, replaceBodyDev } from "./tools";
 export const findWeb = (matches: string[]) =>
   matches.find((e) => e?.startsWith("web"));
 
+const dec = new TextDecoder();
 const WebSocket = ws.client;
 export const serveVite = async (
   webName: string,
@@ -25,10 +26,23 @@ export const serveVite = async (
     if (
       !(await fetchProxy(
         `${host}${pathname.startsWith("/") ? pathname : `/${pathname}`}`,
-        conf[webName].url,
-        srvurl,
         upstream,
         res,
+        {
+          overrideBody(r) {
+            if (r.headers["content-type"] === "text/html") {
+              const body = typeof r.body === "string"
+                ? r.body
+                : dec.decode(r.body);
+              return replaceBodyDev(
+                body,
+                conf[webName].url,
+                srvurl,
+              );
+            }
+            return r.body;
+          },
+        },
       ))
     ) {
       if (!res.aborted) {
