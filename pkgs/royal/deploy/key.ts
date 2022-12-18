@@ -1,4 +1,4 @@
-import { createHash, generateKeyPairSync } from "crypto";
+import { generateKeyPairSync } from "crypto";
 import { join } from "path";
 import { readAsync, writeAsync } from "service";
 import { DeployKey } from "../../../config";
@@ -24,7 +24,7 @@ export const getDeployKey = async () => {
     confSrc = confSrc.replace(
       "export const DeployKey = \`\`",
       "export const DeployKey = `\\\n" +
-        privSplit.slice(1, privSplit.length - 2).join("\n") + "`",
+      privSplit.slice(1, privSplit.length - 2).join("\n") + "`",
     );
 
     await writeAsync(deployKeyPath, confSrc);

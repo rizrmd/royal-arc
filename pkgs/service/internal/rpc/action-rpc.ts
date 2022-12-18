@@ -4,8 +4,9 @@ import cuid from "cuid";
 import { _names, _runtime } from "gen";
 import capitalize from "lodash.capitalize";
 import padEnd from "lodash.padend";
-import { join } from "path";
+import { dirname, join } from "path";
 import picocolors from "picocolors";
+import { dirAsync, listAsync, moveAsync } from "../../export";
 import { ActionItem, ActionKey, g } from "../global";
 import { buildSvc } from "../service/build/build-svc";
 import { generateMeta } from "../service/gen-meta";
@@ -27,6 +28,34 @@ const _boot = () => ({
     return await getPort();
   },
   buildSvc: buildSvc,
+  async deployDir(dir: string) {
+    const backdir = join(
+      process.cwd(),
+      "..",
+      "content",
+      "_backup",
+      Date.now().toString(),
+    );
+    await dirAsync(dirname(backdir));
+    await serverCleanUp();
+    console.log("All Services Stopped");
+
+    const list = await listAsync(process.cwd());
+    if (list) {
+      for (const file of list) {
+        await moveAsync(join(process.cwd(), file), join(backdir, file));
+      }
+    }
+
+    const nlist = await listAsync(dir);
+    if (nlist) {
+      for (const file of nlist) {
+        await moveAsync(join(dir, file), join(process.cwd(), file));
+      }
+    }
+
+    process.exit(0);
+  },
 });
 
 const _service = () => ({

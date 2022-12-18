@@ -12,7 +12,7 @@ export default declareService({
   hook: {
     onStop: async () => {
     },
-    onStart: async ({ argv, restarted, params, metafile }) => {
+    onStart: async ({ argv, restarted, params }) => {
       g.root = join(process.cwd(), "..", "..");
       g.vite = {};
 

@@ -1,17 +1,16 @@
+import { createReadStream } from "fs";
+import fetch from "node-fetch";
 import { join } from "path";
 import picocolors from "picocolors";
 import { removeAsync, writeAsync } from "service";
 import { buildAll } from "service/internal/service/build/build-all";
 import { buildApp } from "service/internal/service/build/build-app";
 import { zip } from "zip-a-folder";
+import { DeployKey } from "../../../config";
 import { g } from "../global";
 import { reloadDb } from "../scaff/create-db";
 import { reloadWeb } from "../scaff/create-web";
 import { viteBuild } from "../web/build";
-import fetch from "node-fetch";
-import { stat } from "fs/promises";
-import { createReadStream } from "fs";
-import { DeployKey } from "../../../config";
 export const deploy = async () => {
   const target = join(process.cwd(), "..", "deploy");
   console.log(`\n\n── BUILD: ${picocolors.magenta(g.mode.toUpperCase())}`);
@@ -56,17 +55,16 @@ const uploadDeployed = async (target: string) => {
     srv.pathname = pathname;
 
     const readStream = createReadStream(target + ".zip");
-    const fileSize = (await stat(target + ".zip")).size;
 
     const res = await fetch(srv.toString(), {
       method: "POST",
       headers: {
-        "Content-length": fileSize + "",
-        "Deploy-Key": encodeURIComponent(DeployKey)
+        "Deploy-Key": encodeURIComponent(DeployKey),
       },
       body: readStream, // Here, stringContent or bufferContent would also work
     });
-    console.log(await res.text(), srv.toString());
+
+    console.log("Deploy Uploaded.");
   } else {
     console.log(
       `Failed to deploy, configuration for "${g.mode}.srv" not found in config.ts`,
