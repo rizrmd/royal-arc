@@ -1,4 +1,5 @@
 import { join } from "path";
+import { UserConfig } from "vite";
 
 export const viteCfg = ({ react }: { react: any }) => {
   const hash = Math.floor(Math.random() * 90000) + 10000;
@@ -41,5 +42,5 @@ export const viteCfg = ({ react }: { react: any }) => {
         },
       }),
     ],
-  };
+  } as UserConfig;
 };

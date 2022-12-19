@@ -20,6 +20,7 @@
     "lodash.trim": "^4.5.1",
     "mime-types": "^2.1.35",
     "node-fetch": "^3.3.0",
+    "vite": "^4.0.1",
     "picocolors": "^1.0.0",
     "prettier": "^2.7.1",
     "service": "workspace:^",
