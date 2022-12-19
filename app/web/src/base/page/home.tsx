@@ -1,3 +1,4 @@
+import { Button } from "@fluentui/react-components";
 import { page } from "types/content";
 import { useLocal } from "web-utils";
 
@@ -10,10 +11,8 @@ export default page({
     });
 
     return (
-      <div>
-        Halo mantap sekali
-
-        {<div>Haloha</div>}
+      <div css={css`padding:100px;`}>
+        <Button appearance="primary">Get started</Button>
       </div>
     );
   },
