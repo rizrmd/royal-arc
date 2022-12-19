@@ -1,7 +1,9 @@
-import { Theme, webDarkTheme, webLightTheme } from "@fluentui/react-components";
+import { Theme } from "@fluentui/react-components";
 
-export const customTheme: Theme = {
+export const customTheme = {
   borderRadiusSmall: "2px",
   borderRadiusMedium: "2px",
   borderRadiusLarge: "2px",
-} as any;
+  fontFamilyBase:
+    `"Source Sans Pro", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`,
+} as Theme;
