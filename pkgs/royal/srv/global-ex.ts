@@ -22,8 +22,13 @@ export type SrvHttpResponse = HttpResponse & {
   sentBody?: any;
   send: (data: string | number | object) => void;
   sendStatus: (code: number) => void;
-  sendFile: (filepath: string) => Promise<void>;
-  sendStream: (stream: ReadStream, totalSize: number) => Promise<void>;
+  fileCache: Record<string, { mime: string; src: Buffer | string }>;
+  sendFile: (filepath: string, opt?: { cache?: boolean }) => Promise<void>;
+  sendStream: (
+    stream: ReadStream,
+    totalSize: number,
+    onData?: (chunk: string | Buffer) => void,
+  ) => Promise<void>;
   sendStreamLastOffset: number;
   sendHeader: (key: string, value: string) => void;
   redirect: (url: string, code?: number) => void;

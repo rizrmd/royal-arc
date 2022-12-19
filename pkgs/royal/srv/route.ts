@@ -1,8 +1,10 @@
 import { ex, SrvHttpRequest, SrvHttpResponse, statusCode } from "./global-ex";
 import Router from "find-my-way";
 import { getParts } from "uWebSockets.js";
-import { createReadStream, ReadStream } from "fs";
+import { createReadStream, ReadStream, statSync } from "fs";
 import { stat } from "fs/promises";
+import mime from "mime-types";
+
 type URLArg = string;
 type RouteHandler = (
   req: SrvHttpRequest,
@@ -20,102 +22,141 @@ export const route = (
   router.get(url, handler as any);
 };
 
+export const decorateReqRes = (req: SrvHttpRequest, res: SrvHttpResponse) => {
+  res.onAborted(() => {
+    res.aborted = true;
+  });
+
+  res.sendHeader = (key: string, value: string) => {
+    if (!res.aborted) {
+      res.writeHeader(key, value);
+      res.sentHeader = true;
+    }
+  };
+  res.setHeader = res.sendHeader;
+  res.redirect = (url, code) => {
+    res.sendStatus(code || 301);
+    res.sendHeader("location", url);
+  };
+
+  res.sendStream = (
+    stream: ReadStream,
+    totalSize: number,
+    onData?: (chunk: string | Buffer) => void,
+  ) => {
+    return new Promise<void>((resolve, reject) => {
+      stream
+        .on("data", (chunk) => {
+          res.sentBody = true;
+          if (res.aborted) {
+            resolve();
+            return;
+          }
+          const ab = toArrayBuffer(chunk as Buffer);
+          if (onData) {
+            onData(chunk);
+          }
+
+          res.sendStreamLastOffset = res.getWriteOffset();
+          let [ok, done] = res.tryEnd(ab, totalSize);
+          if (done) {
+            res.ended = true;
+            resolve();
+          } else if (!ok) {
+            stream.pause();
+            res.ab = ab;
+            res.abOffset = res.sendStreamLastOffset;
+            res.onWritable((offset) => {
+              let [ok, done] = res.tryEnd(
+                res.ab.slice(offset - res.abOffset),
+                totalSize,
+              );
+              if (done) {
+                resolve();
+              } else if (ok) {
+                stream.resume();
+              }
+              return ok;
+            });
+          }
+        })
+        .on("error", (e) => {
+          reject(e);
+        });
+    });
+  };
+
+  res.sendFile = async (path: string, opt?: { cache?: boolean }) => {
+    let onData: any;
+    if (opt && opt.cache) {
+      if (res.fileCache[path]) {
+        res.writeHeader("content-type", res.fileCache[path].mime);
+        res.write(res.fileCache[path].src);
+        return;
+      }
+      res.fileCache[path] = { mime: "", src: null };
+      onData = (chunk: string | Buffer) => {
+        if (res.fileCache[path].src === null) {
+          res.fileCache[path].src = chunk;
+        }
+      };
+    }
+
+    const totalSize = (await stat(path)).size;
+    const readStream = createReadStream(path);
+    res.sentBody = true;
+
+    const contentType = mime.lookup(path);
+    if (contentType) {
+      res.fileCache[path].mime = contentType;
+      res.writeHeader("content-type", contentType);
+    }
+
+    await res.sendStream(readStream, totalSize, onData);
+    res.ended = true;
+  };
+
+  res.sendStatus = (code: number) => {
+    if (!res.aborted) {
+      const text = statusCode[code] || `Unknown`;
+      res.writeStatus(`${code} ${text}`);
+      res.sentStatus = code;
+    }
+  };
+
+  res.send = (data) => {
+    if (!res.aborted) {
+      if (typeof data === "string") {
+        res.write(data);
+        res.sentBody = data;
+      } else if (typeof data === "number") {
+        res.write(data + "");
+        res.sentBody = data;
+      } else if (typeof data === "object" || !data) {
+        res.sentBody = JSON.stringify(data);
+        res.writeHeader("content-type", "application/json");
+        res.write(res.sentBody);
+      }
+    } else {
+      console.log("Response aborted, failed to send");
+    }
+  };
+
+  req.headers = {};
+  req.forEach((k, v) => {
+    req.headers[k] = v;
+  });
+
+  res.fileCache = {};
+  req.url = req.getUrl();
+  req.queryString = req.getQuery();
+  return { req, res };
+};
+
 export const attachRouter = () => {
   const app = ex.app;
   app.any("/*", async (res: SrvHttpResponse, req: SrvHttpRequest) => {
-    res.onAborted(() => {
-      res.aborted = true;
-    });
-
-    res.sendHeader = (key: string, value: string) => {
-      if (!res.aborted) {
-        res.writeHeader(key, value);
-        res.sentHeader = true;
-      }
-    };
-    res.setHeader = res.sendHeader;
-    res.redirect = (url, code) => {
-      res.sendStatus(code || 301);
-      res.sendHeader("location", url);
-    };
-
-    res.sendStream = (stream: ReadStream, totalSize: number) => {
-      return new Promise<void>((resolve, reject) => {
-        stream
-          .on("data", (chunk) => {
-            res.sentBody = true;
-            if (res.aborted) {
-              resolve();
-              return;
-            }
-            const ab = toArrayBuffer(chunk);
-            res.sendStreamLastOffset = res.getWriteOffset();
-            let [ok, done] = res.tryEnd(ab, totalSize);
-            if (done) {
-              res.ended = true;
-              resolve();
-            } else if (!ok) {
-              stream.pause();
-              res.ab = ab;
-              res.abOffset = res.sendStreamLastOffset;
-              res.onWritable((offset) => {
-                let [ok, done] = res.tryEnd(
-                  res.ab.slice(offset - res.abOffset),
-                  totalSize,
-                );
-                if (done) {
-                  resolve();
-                } else if (ok) {
-                  stream.resume();
-                }
-                return ok;
-              });
-            }
-          })
-          .on("error", (e) => {
-            reject(e);
-          });
-      });
-    };
-
-    res.sendFile = async (path: string) => {
-      const totalSize = (await stat(path)).size;
-      const readStream = createReadStream(path);
-      res.sentBody = true;
-      await res.sendStream(readStream, totalSize);
-    };
-
-    res.sendStatus = (code: number) => {
-      if (!res.aborted) {
-        const text = statusCode[code] || `Unknown`;
-        res.writeStatus(`${code} ${text}`);
-        res.sentStatus = code;
-      }
-    };
-
-    res.send = (data) => {
-      if (!res.aborted) {
-        if (typeof data === "string") {
-          res.write(data);
-          res.sentBody = data;
-        } else if (typeof data === "number") {
-          res.write(data + "");
-          res.sentBody = data;
-        } else if (typeof data === "object" || !data) {
-          res.sentBody = JSON.stringify(data);
-          res.writeHeader("content-type", "application/json");
-          res.write(res.sentBody);
-        }
-      }
-    };
-
-    req.headers = {};
-    req.forEach((k, v) => {
-      req.headers[k] = v;
-    });
-
-    req.url = req.getUrl();
-    req.queryString = req.getQuery();
+    decorateReqRes(req, res);
 
     const found = router.find("GET", req.url + "?" + req.queryString);
 
@@ -178,7 +219,7 @@ function parseBody(
   });
 }
 
-function toArrayBuffer(buffer) {
+function toArrayBuffer(buffer: Buffer) {
   return buffer.buffer.slice(
     buffer.byteOffset,
     buffer.byteOffset + buffer.byteLength,

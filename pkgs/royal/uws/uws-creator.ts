@@ -3,7 +3,9 @@ import padEnd from "lodash.padend";
 import { join } from "path";
 import picocolors from "picocolors";
 import { HttpRequest, HttpResponse, TemplatedApp } from "uWebSockets.js";
+import { SrvHttpRequest, SrvHttpResponse } from "../export";
 import { g, MHttpResponse } from "../global";
+import { decorateReqRes } from "../srv/route";
 import { findBoot, onPanelWSReceiveMsg, serveBoot } from "./serve-boot";
 import {
   findServer as findSrv,
@@ -24,6 +26,25 @@ export const createUWS = async (
   const { App, getParts } = await import("uWebSockets.js");
   g.getParts = getParts;
   const app = App({});
+
+  const clientPreServe: Record<
+    string,
+    (
+      req: SrvHttpRequest,
+      res: SrvHttpResponse,
+      name: string,
+    ) => Promise<boolean>
+  > = {};
+
+  for (const k of Object.keys(urls)) {
+    if (k === "web") {
+      try {
+        //@ts-ignore
+        clientPreServe[k] = (await import("../../../app/web/serve"))
+          .default as any;
+      } catch (e) {}
+    }
+  }
 
   app
     .ws("/*", {
@@ -139,6 +160,26 @@ export const createUWS = async (
 
       const web = findWeb(matches);
       if (web) {
+        if (clientPreServe[web]) {
+          const dec = decorateReqRes(req as any, res as any);
+          const rq = dec.req;
+          const rs = dec.res;
+          try {
+            const pre = await clientPreServe[web](rq, rs, web);
+            if (pre) {
+              if (!rs.ended) {
+                if (rs.aborted) {
+                  return;
+                }
+                rs.end();
+              }
+              return;
+            }
+          } catch (e) {
+            console.log(e);
+          }
+        }
+
         if (g.mode === "dev") {
           if (await serveVite(web, upstream, pathname, res)) {
             return;
@@ -157,8 +198,8 @@ export const createUWS = async (
         res.write("All System Operational");
         res.end();
       }
-    }); 
- 
+    });
+
   return new Promise<TemplatedApp>((resolve) => {
     app.listen("0.0.0.0", parseInt(listen.port), (socket) => {
       const urlent = Object.entries(urls);
