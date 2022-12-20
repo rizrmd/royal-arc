@@ -38,7 +38,7 @@ export type IAppRoot = {
   mounted: boolean;
 };
 
-export const App = () => {
+export const App: FC<{ onInit?: (local: IAppRoot) => void }> = ({ onInit }) => {
   const local = useLocal(
     {
       url: "",
@@ -59,6 +59,10 @@ export const App = () => {
 
   if (local.url !== location.pathname || !local.initialized) {
     local.url = location.pathname;
+
+    if (typeof onInit === 'function') {
+      onInit(local);
+    }
     loadPageAndLayout(local);
   }
 

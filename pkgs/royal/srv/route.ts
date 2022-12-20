@@ -22,10 +22,8 @@ export const route = (
   router.get(url, handler as any);
 };
 
-export const decorateReqRes = (req: SrvHttpRequest, res: SrvHttpResponse) => {
-  res.onAborted(() => {
-    res.aborted = true;
-  });
+export const decorateReqRes = async (req: SrvHttpRequest, res: SrvHttpResponse) => {
+  if (res && res.aborted) return;
 
   res.sendHeader = (key: string, value: string) => {
     if (!res.aborted) {
@@ -159,7 +157,11 @@ export const decorateReqRes = (req: SrvHttpRequest, res: SrvHttpResponse) => {
 export const attachRouter = () => {
   const app = ex.app;
   app.any("/*", async (res: SrvHttpResponse, req: SrvHttpRequest) => {
-    decorateReqRes(req, res);
+    res.onAborted(() => {
+      res.aborted = true;
+    });
+
+    await decorateReqRes(req, res);
 
     const found = router.find("GET", req.url + "?" + req.queryString);
 

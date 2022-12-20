@@ -42,7 +42,7 @@ export const createUWS = async (
         //@ts-ignore
         clientPreServe[k] = (await import("../../../app/web/serve"))
           .default as any;
-      } catch (e) {}
+      } catch (e) { }
     }
   }
 
@@ -88,18 +88,20 @@ export const createUWS = async (
         }
       },
     })
-    .any("/*", async (res: MHttpResponse, req) => {
-      res.onAborted(() => {
-        res.aborted = true;
+    .any("/*", async (_res, _req) => {
+      _res.onAborted(() => {
+        _res.aborted = true;
       });
-      let pathname = req.getUrl();
-      const q = req.getQuery();
+      const { req, res } = await decorateReqRes(_req as any, _res as any);
+
+      let pathname = req.url;
+      const q = req.queryString;
       if (q) {
         pathname = pathname + "?" + q;
       }
 
       const upstream = generateUpstream(req);
-      const matches = pathMatcher(urls, req.getUrl());
+      const matches = pathMatcher(urls, req.url);
 
       if (pathname.endsWith("/_api_frm")) {
         if (!res.aborted) allowFrameCors(res, upstream);
@@ -125,18 +127,10 @@ export const createUWS = async (
       const web = findWeb(matches);
       if (web) {
         if (clientPreServe[web]) {
-          const dec = decorateReqRes(req as any, res as any);
-          const rq = dec.req;
-          const rs = dec.res;
+          if (res.aborted) return;
           try {
-            const pre = await clientPreServe[web](rq, rs, web);
+            const pre = await clientPreServe[web](req, res, web);
             if (pre) {
-              if (rs.sentBody || rs.sentHeader) {
-                if (rs.aborted) {
-                  return;
-                }
-                rs.end();
-              }
               return;
             }
           } catch (e) {
@@ -153,22 +147,19 @@ export const createUWS = async (
           const path = join(root, pathname);
           const indexhtml = join(root, "index.html");
 
-          const dec = decorateReqRes(req as any, res as any);
-          const rs = dec.res;
-
-          if (rs.fileCache[path]) {
-            await rs.sendFile(path, { cache: true });
+          if (res.fileCache[path]) {
+            await res.sendFile(path, { cache: true });
           } else {
             let isDir = true;
             try {
               isDir = !!await isDirectory(path);
-            } catch (e) {}
+            } catch (e) { }
             if (isDir) {
-              await rs.sendFile(indexhtml, { cache: true });
-              rs.fileCache[path] = rs.fileCache[indexhtml];
+              await res.sendFile(indexhtml, { cache: true });
+              res.fileCache[path] = res.fileCache[indexhtml];
             } else {
               try {
-                await rs.sendFile(path, { cache: true });
+                await res.sendFile(path, { cache: true });
               } catch (e) {
                 console.log(path);
                 throw e;
@@ -202,12 +193,11 @@ export const createUWS = async (
         }
 
         plog(
-          ` ${picocolors.cyan(char)} ${
-            padEnd(
-              capitalize(camelCase(name).replace(/([A-Z])/g, " $1")),
-              18,
-              ".",
-            )
+          ` ${picocolors.cyan(char)} ${padEnd(
+            capitalize(camelCase(name).replace(/([A-Z])/g, " $1")),
+            18,
+            ".",
+          )
           }: ${(url.toString())}`,
         );
         i++;
