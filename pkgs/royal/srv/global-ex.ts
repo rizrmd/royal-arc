@@ -32,7 +32,6 @@ export type SrvHttpResponse = HttpResponse & {
   sendStreamLastOffset: number;
   sendHeader: (key: string, value: string) => void;
   redirect: (url: string, code?: number) => void;
-  ended: boolean;
 };
 
 export type SrvHttpRequest = HttpRequest & {

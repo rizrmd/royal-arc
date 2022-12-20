@@ -104,16 +104,19 @@ export const decorateReqRes = (req: SrvHttpRequest, res: SrvHttpResponse) => {
 
     const totalSize = (await stat(path)).size;
     const readStream = createReadStream(path);
-    res.sentBody = true;
 
     const contentType = mime.lookup(path);
+    if (res.aborted) {
+      return;
+    }
+
     if (contentType) {
       res.fileCache[path].mime = contentType;
       res.writeHeader("content-type", contentType);
     }
 
     await res.sendStream(readStream, totalSize, onData);
-    res.ended = true;
+    res.sentBody = true;
   };
 
   res.sendStatus = (code: number) => {

@@ -1,8 +1,8 @@
+import fetch from "node-fetch";
 import { Readable } from "stream";
 import { RecognizedString } from "uWebSockets.js";
 import { MHttpResponse } from "../global";
-import { plog, replaceBodyDev } from "./tools";
-import fetch from "node-fetch";
+import { plog } from "./tools";
 type IUpstream = { method: string; headers: any };
 
 const dec = new TextDecoder("utf-8");

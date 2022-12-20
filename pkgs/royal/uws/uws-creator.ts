@@ -1,3 +1,4 @@
+import { stat } from "fs/promises";
 import camelCase from "lodash.camelcase";
 import padEnd from "lodash.padend";
 import { join } from "path";
@@ -5,14 +6,13 @@ import picocolors from "picocolors";
 import { HttpRequest, HttpResponse, TemplatedApp } from "uWebSockets.js";
 import { SrvHttpRequest, SrvHttpResponse } from "../export";
 import { g, MHttpResponse } from "../global";
+import { isDirectory } from "../scaff/util/is-directory";
 import { decorateReqRes } from "../srv/route";
-import { findBoot, onPanelWSReceiveMsg, serveBoot } from "./serve-boot";
 import {
   findServer as findSrv,
   serveServer,
   serveServerWS,
 } from "./serve-server";
-import { serveStatic } from "./serve-static";
 import { findWeb, serveVite, serveViteWS } from "./serve-vite";
 import { generateUpstream, IUpstream, pathMatcher, plog } from "./tools";
 
@@ -54,23 +54,6 @@ export const createUWS = async (
       async open(_ws) {
         const matches = pathMatcher(urls, _ws.url || "/");
 
-        const boot = findBoot(matches);
-        if (boot) {
-          const pathname = _ws.url.substring(urls[boot].pathname.length);
-          if (pathname === "/ws" || pathname === "ws") {
-            if (!g.panelWS) {
-              g.panelWS = [];
-            }
-            g.panelWS.push(_ws);
-          } else if (
-            g.mode === "dev" &&
-            g.vite["royal-panel"] &&
-            g.vite["royal-panel"].host
-          ) {
-            serveViteWS("royal-panel", _ws, listen.port);
-          }
-          return;
-        }
         const server = findSrv(matches);
         if (server) {
           serveServerWS(_ws);
@@ -93,9 +76,6 @@ export const createUWS = async (
         }
       },
       message(_ws, message, isBinary) {
-        if (g.panelWS && g.panelWS.includes(_ws)) {
-          onPanelWSReceiveMsg(_ws, JSON.parse(dec.decode(message)));
-        }
         if (g.serverWS.has(_ws)) {
           const ws = g.serverWS.get(_ws);
           if (ws && ws.connected) {
@@ -126,22 +106,6 @@ export const createUWS = async (
         return;
       }
 
-      const boot = findBoot(matches);
-      if (boot) {
-        if (await serveBoot(upstream, pathname, res)) {
-          return;
-        } else {
-          if (matches.length === 1) {
-            if (!res.aborted) {
-              res.writeStatus("502 Gateway Timeout");
-              res.write(`Failed to run boot.`);
-              res.end();
-            }
-            return;
-          }
-        }
-      }
-
       const server = findSrv(matches);
       if (server) {
         if (await serveServer(upstream, pathname, res, server)) {
@@ -167,7 +131,7 @@ export const createUWS = async (
           try {
             const pre = await clientPreServe[web](rq, rs, web);
             if (pre) {
-              if (!rs.ended) {
+              if (rs.sentBody || rs.sentHeader) {
                 if (rs.aborted) {
                   return;
                 }
@@ -186,11 +150,33 @@ export const createUWS = async (
           }
         } else {
           const root = join(g.outpath, "client", web);
+          const path = join(root, pathname);
+          const indexhtml = join(root, "index.html");
 
-          const conf = g.config[g.serverName][g.mode];
-          if (await serveStatic(root, pathname, conf[web].url, res)) {
-            return;
+          const dec = decorateReqRes(req as any, res as any);
+          const rs = dec.res;
+
+          if (rs.fileCache[path]) {
+            await rs.sendFile(path, { cache: true });
+          } else {
+            let isDir = true;
+            try {
+              isDir = !!await isDirectory(path);
+            } catch (e) {}
+            if (isDir) {
+              await rs.sendFile(indexhtml, { cache: true });
+              rs.fileCache[path] = rs.fileCache[indexhtml];
+            } else {
+              try {
+                await rs.sendFile(path, { cache: true });
+              } catch (e) {
+                console.log(path);
+                throw e;
+              }
+            }
           }
+
+          return;
         }
       }
 
