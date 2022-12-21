@@ -26,6 +26,10 @@ export const execQuery = async (args: DBArg, obj: any, key: string) => {
     if (method) {
       try {
         const result = await method(...params);
+        if (typeof result === 'number' && result === 0) {
+          return JSON.stringify(result)
+        }
+
         return result;
       } catch (e) {
         console.log(e);
