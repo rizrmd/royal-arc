@@ -21,7 +21,7 @@ const dec = new TextDecoder();
 export const createUWS = async (
   listen: URL,
   urls: Record<string, URL>,
-  index: number,
+  index: number
 ) => {
   const { App, getParts } = await import("uWebSockets.js");
   g.getParts = getParts;
@@ -32,7 +32,7 @@ export const createUWS = async (
     (
       req: SrvHttpRequest,
       res: SrvHttpResponse,
-      name: string,
+      name: string
     ) => Promise<boolean>
   > = {};
 
@@ -42,7 +42,7 @@ export const createUWS = async (
         //@ts-ignore
         clientPreServe[k] = (await import("../../../app/web/serve"))
           .default as any;
-      } catch (e) { }
+      } catch (e) {}
     }
   }
 
@@ -131,6 +131,9 @@ export const createUWS = async (
           try {
             const pre = await clientPreServe[web](req, res, web);
             if (pre) {
+              if (!res.aborted && !res.ended) {
+                res.end();
+              }
               return;
             }
           } catch (e) {
@@ -152,8 +155,8 @@ export const createUWS = async (
           } else {
             let isDir = true;
             try {
-              isDir = !!await isDirectory(path);
-            } catch (e) { }
+              isDir = !!(await isDirectory(path));
+            } catch (e) {}
             if (isDir) {
               await res.sendFile(indexhtml, { cache: true });
               res.fileCache[path] = res.fileCache[indexhtml];
@@ -165,6 +168,10 @@ export const createUWS = async (
                 throw e;
               }
             }
+          }
+
+          if (!res.aborted && !res.ended) {
+            res.end();
           }
 
           return;
@@ -196,9 +203,8 @@ export const createUWS = async (
           ` ${picocolors.cyan(char)} ${padEnd(
             capitalize(camelCase(name).replace(/([A-Z])/g, " $1")),
             18,
-            ".",
-          )
-          }: ${(url.toString())}`,
+            "."
+          )}: ${url.toString()}`
         );
         i++;
       }
@@ -216,7 +222,7 @@ const upgradeWS = (res: HttpResponse, req: HttpRequest, context: any) => {
       req.getHeader("sec-websocket-key"),
       req.getHeader("sec-websocket-protocol"),
       req.getHeader("sec-websocket-extensions"),
-      context,
+      context
     );
   } catch (e: any) {
     plog("Failed to upgrade ws: ", e.message);
