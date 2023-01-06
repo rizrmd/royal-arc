@@ -14,6 +14,7 @@
     "dbgen": "../db/node_modules/.gen",
     "gen": "workspace:^",
     "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "royal": "workspace:^",
     "scheduler": "^0.20.0",
     "service": "workspace:^",
