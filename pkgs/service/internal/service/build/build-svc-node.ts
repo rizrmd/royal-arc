@@ -27,7 +27,8 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
   const spath = dirname(indexPath);
   const deps = await resolveDeps(spath);
 
-  const format = (name as any) === "db" ? "cjs" : "esm";
+  const format = "cjs";
+  // const format = (name as any) === "db" ? "cjs" : "esm";
 
   await writeAsync(join(tpath, "package.json"), {
     name,
@@ -62,11 +63,22 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
           sourcemap: true,
           incremental: true,
           metafile: true,
-          minify: true,
+          loader: {
+            ".css": "text",
+            ".png": "dataurl",
+            ".webp": "dataurl",
+            ".avif": "dataurl",
+            ".mp4": "dataurl",
+            ".jpg": "dataurl",
+            ".jpeg": "dataurl",
+            ".gif": "dataurl",
+            ".svg": "dataurl",
+          },
+          // minify: true,
           plugins: format === "cjs" ? undefined : [commonjs()],
           entryPoints: [indexPath],
           outfile: join(tpath, "index.js"),
-          external: Object.keys(deps),
+          external: [...Object.keys(deps)],
         });
 
         if (g.node.watch[name]) {
@@ -86,7 +98,7 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
 export const recoverFromError = async (
   name: _names,
   e: BuildFailure,
-  rebuild: () => Promise<void>,
+  rebuild: () => Promise<void>
 ) => {
   if (e && e.errors) {
     printError(e, name);
@@ -102,27 +114,26 @@ export const recoverFromError = async (
     const cmd = join(
       "node_modules",
       ".bin",
-      /^win/.test(process.platform) ? "jiti.cmd" : "jiti",
+      /^win/.test(process.platform) ? "jiti.cmd" : "jiti"
     );
     if (runtime === "bun") {
       // file watcher is not available in bun
       // so we need nodejs help for this
       g.node.recoverError[name] = Bun.spawn({
-        cmd: [
-          cmd,
-          join(__dirname, "node-watcher.ts"),
-        ],
+        cmd: [cmd, join(__dirname, "node-watcher.ts")],
         cwd: process.cwd(),
         stdin: "pipe",
         stdout: "pipe",
       });
       const { stdin, stdout } = g.node.recoverError[name];
 
-      const fstdin = stdin as FileSink;
-      for (const file of files) {
-        fstdin.write(file + "\n");
+      const fstdin = stdin as unknown as FileSink;
+      if (fstdin) {
+        for (const file of files) {
+          fstdin.write(file + "\n");
+        }
+        fstdin.write("!!start!!" + "\n");
       }
-      fstdin.write("!!start!!" + "\n");
       const rstdout = stdout as ReadableStream;
       const reader = rstdout.getReader();
       while (true) {
@@ -156,7 +167,7 @@ const printError = (e: any, svcName?: string) => {
     if (idx === "0") {
       console.log(
         svcName ? `[${picocolors.green(capitalize(svcName))}]` : "",
-        picocolors.red(line),
+        picocolors.red(line)
       );
     } else {
       console.log(`  ${line}`);

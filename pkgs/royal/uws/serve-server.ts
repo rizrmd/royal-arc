@@ -47,7 +47,7 @@ export const serveServer = async (
             }
             return true;
           },
-          overrideBody(r) {
+          override(r) {
             if (r.headers["content-type"] === "text/html") {
               const body = typeof r.body === "string"
                 ? r.body

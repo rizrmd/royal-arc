@@ -6,46 +6,45 @@ import { reloadWebPageAll } from "./scaff-web-page";
 import { scaff } from "./util/scaff";
 
 export const reloadWeb = async () => {
-
   await Promise.all([
     reloadWebLayoutAll(),
     reloadWebPageAll(),
     reloadWebGenAll(),
   ]);
-
 };
 
 export const createNewWeb = async (path: string) => {
   await dirAsync(path);
   const name = basename(path);
-  await scaff({
-    //-------------------------------------------------
-    "package.json": {
-      "name": name,
-      "version": "1.0.0",
-      "dependencies": {
-        "@emotion/react": "^11.10.5",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "vite": "^3.2.4",
-        "gen": "workspace:^",
-        "royal": "workspace:^",
-        "service": "workspace:^",
-        "web-init": "workspace:^",
-        "web-utils": "workspace:^",
+  await scaff(
+    {
+      //-------------------------------------------------
+      "package.json": {
+        name: name,
+        version: "1.0.0",
+        dependencies: {
+          "@emotion/react": "^11.10.5",
+          react: "^18.2.0",
+          "react-dom": "^18.2.0",
+          vite: "^3.2.4",
+          gen: "workspace:^",
+          royal: "workspace:^",
+          service: "workspace:^",
+          "web-init": "workspace:^",
+          "web-utils": "workspace:^",
+        },
+        devDependencies: {
+          "@types/react": "^18.0.25",
+          "@types/react-dom": "^18.0.9",
+          "@vitejs/plugin-react": "^2.2.0",
+          autoprefixer: "^10.4.13",
+          postcss: "^8.4.19",
+          vite: "^3.2.4",
+          tailwindcss: "^3.2.4",
+        },
       },
-      "devDependencies": {
-        "@types/react": "^18.0.25",
-        "@types/react-dom": "^18.0.9",
-        "@vitejs/plugin-react": "^2.2.0",
-        "autoprefixer": "^10.4.13",
-        "postcss": "^8.4.19",
-        "vite": "^3.2.4",
-        "tailwindcss": "^3.2.4",
-      },
-    },
-    //-------------------------------------------------
-    "index.html": `\
+      //-------------------------------------------------
+      "index.html": `\
 <!DOCTYPE html>
 <html lang="en" data-theme="emerald">
   <head>
@@ -59,8 +58,8 @@ export const createNewWeb = async (path: string) => {
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>`,
-    //-------------------------------------------------
-    "postcss.config.js": `\
+      //-------------------------------------------------
+      "postcss.config.js": `\
 const path = require('path')
 module.exports = {
   plugins: {
@@ -68,8 +67,8 @@ module.exports = {
     autoprefixer: {},
   },
 }`,
-    //-------------------------------------------------
-    "tailwind.config.js": `\
+      //-------------------------------------------------
+      "tailwind.config.js": `\
 /** @type {import('tailwindcss').Config} */
 const color = require('tailwindcss/colors')
 module.exports = {
@@ -86,37 +85,37 @@ module.exports = {
   plugins: [],
 }
 `,
-    //-------------------------------------------------
-    "tsconfig.json": {
-      "compilerOptions": {
-        "target": "ESNext",
-        "useDefineForClassFields": true,
-        "lib": ["DOM", "DOM.Iterable", "ESNext"],
-        "allowJs": false,
-        "skipLibCheck": false,
-        "esModuleInterop": false,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "module": "ESNext",
-        "moduleResolution": "Node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "noEmit": true,
-        "jsx": "preserve",
-        "jsxFactory": "jsx",
-        "jsxFragmentFactory": "React.Fragment",
-        "jsxImportSource": "@emotion/react",
-        "baseUrl": "./",
-        "paths": {
-          "src/*": ["src/*"],
-          "types/*": ["types/*"],
+      //-------------------------------------------------
+      "tsconfig.json": {
+        compilerOptions: {
+          target: "ESNext",
+          useDefineForClassFields: true,
+          lib: ["DOM", "DOM.Iterable", "ESNext"],
+          allowJs: false,
+          skipLibCheck: false,
+          esModuleInterop: false,
+          allowSyntheticDefaultImports: true,
+          strict: true,
+          forceConsistentCasingInFileNames: true,
+          module: "ESNext",
+          moduleResolution: "Node",
+          resolveJsonModule: true,
+          isolatedModules: true,
+          noEmit: true,
+          jsx: "preserve",
+          jsxFactory: "jsx",
+          jsxFragmentFactory: "React.Fragment",
+          jsxImportSource: "@emotion/react",
+          baseUrl: "./",
+          paths: {
+            "src/*": ["src/*"],
+            "types/*": ["types/*"],
+          },
         },
+        include: ["./src/**/*", "./types/**/*"],
       },
-      "include": ["./src/**/*", "./types/**/*"],
-    },
-    //-------------------------------------------------
-    "vite.config.js": `\
+      //-------------------------------------------------
+      "vite.config.js": `\
 import react from '@vitejs/plugin-react';
 import { join } from 'path';
 import { defineConfig } from 'vite';
@@ -158,8 +157,8 @@ export default defineConfig({
   ],
 });
 `,
-    //-------------------------------------------------
-    "src/base/layout/blank.tsx": `\
+      //-------------------------------------------------
+      "src/base/layout/blank.tsx": `\
 import { layout } from 'web-init'
 
 export default layout({
@@ -168,8 +167,8 @@ export default layout({
   },
 })
 `,
-    //-------------------------------------------------
-    "src/base/layout/default.tsx": `\
+      //-------------------------------------------------
+      "src/base/layout/default.tsx": `\
 import { layout } from 'web-init'
 
 export default layout({
@@ -178,8 +177,8 @@ return <>{children}</>
 },
 })
 `,
-    //-------------------------------------------------
-    "src/base/page/home.tsx": `\
+      //-------------------------------------------------
+      "src/base/page/home.tsx": `\
 import { page } from "types/content";
 import { useLocal } from "web-utils";
 
@@ -195,14 +194,14 @@ export default page({
 });
 `,
 
-    //-------------------------------------------------
-    "src/index.css": `\
+      //-------------------------------------------------
+      "src/index.css": `\
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 `,
-    //-------------------------------------------------
-    "src/index.tsx": `\
+      //-------------------------------------------------
+      "src/index.tsx": `\
 import { createRoot } from "react-dom/client";
 import { App, initEnv } from "web-init";
 import layout from "../types/layout";
@@ -216,8 +215,8 @@ initEnv({ page, layout }).then(() => {
     root.render(<App />);
   }
 });`,
-    //-------------------------------------------------
-    "types/content.ts": `\
+      //-------------------------------------------------
+      "types/content.ts": `\
 import { FC } from 'react'
 import type layouts from './layout'
 
@@ -234,15 +233,15 @@ type IPage = {
 export const page = (opt: IPage) => {
   return opt
 }`,
-    //-------------------------------------------------
-    "types/react-app-env.d.ts": `\
+      //-------------------------------------------------
+      "types/react-app-env.d.ts": `\
 declare module "*.png";
 declare module "*.svg";
 declare module "*.jpeg";
 declare module "*.jpg";
 `,
-    //-------------------------------------------------
-    "types/global.d.ts": `\
+      //-------------------------------------------------
+      "types/global.d.ts": `\
 import { prisma } from "gen/prisma";
 import type * as _api from "gen/api";
 import "web-init/src/global";
@@ -264,5 +263,7 @@ declare global {
   };
   const db: typeof prisma["db"];
 }`,
-  }, path);
+    },
+    path
+  );
 };

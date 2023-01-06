@@ -1,6 +1,6 @@
 import { unzipSync } from "fflate";
 import { appendFile, stat } from "fs/promises";
-import fetch from "node-fetch";
+import fetch from "node-fetch-commonjs";
 import { dirname, join, sep } from "path";
 import {
   copyAsync,
@@ -18,7 +18,7 @@ import { runPnpm } from "../internal/service/build/run-pnpm";
 export const baseUpgrade = async () => {
   console.log(`Downloading royal-arc upgrade...`);
   const res = await fetch(
-    `https://github.com/rizrmd/royal-arc/archive/refs/heads/main.zip`,
+    `https://github.com/rizrmd/royal-arc/archive/refs/heads/main.zip`
   );
 
   const length = {
@@ -27,16 +27,14 @@ export const baseUpgrade = async () => {
   };
   res.body?.on("data", (chunk) => {
     length.current += chunk.length;
-    const percent = Math.round(length.current / length.total * 100);
+    const percent = Math.round((length.current / length.total) * 100);
     if (length.current > 0) clearLine();
     if (length.total > 0) {
       process.stdout.write(
-        ` › ${percent}% (${byt(length.current)} / ${byt(length.total)}) `,
+        ` › ${percent}% (${byt(length.current)} / ${byt(length.total)}) `
       );
     } else {
-      process.stdout.write(
-        ` › ${byt(length.current)} `,
-      );
+      process.stdout.write(` › ${byt(length.current)} `);
     }
   });
 
@@ -44,7 +42,7 @@ export const baseUpgrade = async () => {
 
   const tempdir = join(process.cwd(), ".output", "content", "temp-upgrade");
   console.log(
-    `\nExtracting To: ${tempdir.substring(process.cwd().length + 1)}`,
+    `\nExtracting To: ${tempdir.substring(process.cwd().length + 1)}`
   );
   const fileuint8 = new Uint8Array(filebuf);
   await removeAsync(tempdir);
@@ -81,38 +79,32 @@ export const baseUpgrade = async () => {
   const dirs = await listAsync(join(root, "app"));
   if (dirs) {
     for (const f of dirs) {
-      if (((await stat(join(root, "app", f))).isDirectory())) {
-        if (!await existsAsync(join(tempdir, "app", f))) continue;
+      if ((await stat(join(root, "app", f))).isDirectory()) {
+        if (!(await existsAsync(join(tempdir, "app", f)))) continue;
 
         if (await existsAsync(join(root, "app", f, "upgrade.ts"))) {
           console.log(`\nUpgrading ${f}`);
           process.stdout.write(` › ▒`);
           if (
-            !await existsAsync(join(root, "app", f, "node_modules", "jiti"))
+            !(await existsAsync(join(root, "app", f, "node_modules", "jiti")))
           ) {
             const oldPkg = await readAsync(
               join(root, "app", f, "package.json"),
-              "json",
+              "json"
             );
             oldPkg.devDependencies["jiti"] = "^1.16.0";
-            await writeAsync(
-              join(root, "app", f, "package.json"),
-              oldPkg,
-            );
+            await writeAsync(join(root, "app", f, "package.json"), oldPkg);
             await runPnpm(["i"], process.cwd());
           }
 
           const json = await runPnpm(
             ["jiti", "upgrade.ts"],
-            join(root, "app", f),
+            join(root, "app", f)
           );
 
           console.log("");
 
-          let out = {} as Record<
-            string,
-            { ___rule___: UpgradeRuleArg }
-          >;
+          let out = {} as Record<string, { ___rule___: UpgradeRuleArg }>;
           try {
             out = JSON.parse(json);
           } catch (e) {
@@ -121,15 +113,13 @@ export const baseUpgrade = async () => {
           }
 
           const pathPatterns = Object.keys(out).map((e) =>
-            join(root, "app", f, e.replace(/\//ig, sep))
+            join(root, "app", f, e.replace(/\//gi, sep))
           );
 
-          pathPatterns.push(
-            join(root, "app", f, "upgrade.ts"),
-          );
+          pathPatterns.push(join(root, "app", f, "upgrade.ts"));
 
           for (const [_path, v] of Object.entries(out)) {
-            let path = _path.replace(/\//ig, sep);
+            let path = _path.replace(/\//gi, sep);
             if (_path === "*") {
               path = "";
             }
@@ -140,9 +130,7 @@ export const baseUpgrade = async () => {
                   join(root, "app", f, path, fileName)
                 );
 
-                const files = await listAsync(
-                  join(root, "app", f, path),
-                );
+                const files = await listAsync(join(root, "app", f, path));
                 if (files) {
                   for (const fileName of files) {
                     const filePath = join(f, path, fileName);
@@ -152,17 +140,11 @@ export const baseUpgrade = async () => {
                     if (exceptFiles.includes(toPath)) continue;
 
                     if (await existsAsync(fromPath)) {
-                      if (
-                        (await stat(fromPath)).isFile()
-                      ) {
+                      if ((await stat(fromPath)).isFile()) {
                         console.log(
-                          ` Replace: ${toPath.substring(root.length + 1)}`,
+                          ` Replace: ${toPath.substring(root.length + 1)}`
                         );
-                        await moveAsync(
-                          fromPath,
-                          toPath,
-                          { overwrite: true },
-                        );
+                        await moveAsync(fromPath, toPath, { overwrite: true });
                       }
                     }
                   }
@@ -172,12 +154,12 @@ export const baseUpgrade = async () => {
 
                 const oldPkg = await readAsync(
                   join(root, "app", f, "package.json"),
-                  "json",
+                  "json"
                 );
 
                 const newPkg = await readAsync(
                   join(tempdir, "app", f, "package.json"),
-                  "json",
+                  "json"
                 );
 
                 for (let [k, v] of Object.entries(newPkg.dependencies)) {
@@ -197,7 +179,7 @@ export const baseUpgrade = async () => {
                 if (installDep) {
                   await writeAsync(
                     join(root, "app", f, "package.json"),
-                    oldPkg,
+                    oldPkg
                   );
                 }
               } else if (rule.replaceDir) {
@@ -205,9 +187,7 @@ export const baseUpgrade = async () => {
                 const target = join(root, "app", f, path);
 
                 if (await existsAsync(from)) {
-                  console.log(
-                    ` Replace: ${target.substring(root.length + 1)}`,
-                  );
+                  console.log(` Replace: ${target.substring(root.length + 1)}`);
                   await removeAsync(target);
                   await moveAsync(from, target);
                 }

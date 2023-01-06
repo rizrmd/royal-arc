@@ -1,9 +1,7 @@
 import { join, sep } from "path";
 import { dirAsync, readAsync, writeAsync } from "./jetpack";
 import { resolveDeps } from "./resolve-deps";
-export const buildApp = async (
-  targetDir: string,
-) => {
+export const buildApp = async (targetDir: string) => {
   const cwdsplit = process.cwd().split(sep);
   const root = (
     cwdsplit.includes(".output")
@@ -64,7 +62,7 @@ if (!existsSync(join(process.cwd(), "node_modules"))) {
     },
   );
 }
-${src}`,
+${src}`
   );
 
   await writeAsync(
@@ -72,8 +70,7 @@ ${src}`,
     `\
   packages:
     - "./service/**"
-
-  `,
+  `
   );
 
   return join(targetDir, "app.js");

@@ -1,14 +1,19 @@
-import { basename, join } from "path";
-import { format } from "prettier";
-import { listAsync, writeAsync } from "service";
-import { walkDir } from "../web/utils";
-import { parseWebPage } from "./parser/web-page-parser";
+import { build } from 'esbuild'
+import { basename, join } from 'path'
+import { format } from 'prettier'
+import { listAsync, writeAsync } from 'service'
+import { g } from '../global'
+import { loadSSR } from '../uws/load-ssr'
+import { walkDir } from '../web/utils'
+import { loader } from './parser/build-ssr-opt'
+import { parseWebPage } from './parser/web-page-parser'
 
-const pages: Record<string, Record<string, any[]>> = {};
-const root = join(process.cwd(), "..", "..");
+const ssr: Record<string, Record<string, true>> = {}
+const pages: Record<string, Record<string, string>> = {}
+const root = join(process.cwd(), '..', '..')
 
 export const createWebPage = async (path: string) => {
-  const name = basename(path).substring(0, basename(path).length - 4);
+  const name = basename(path).substring(0, basename(path).length - 4)
   const src = `\
 import { page } from "types/content";
 import { useLocal } from "web-utils";
@@ -19,100 +24,176 @@ export default page({
     return <div>Halo</div>;
   },
 });
-  `;
+  `
 
-  await writeAsync(path, src);
-};
+  await writeAsync(path, src)
+}
 
 export const reloadWebPageAll = async () => {
-  const list = await listAsync(join(root, "app"));
+  const list = await listAsync(join(root, 'app'))
   if (list) {
     for (const webName of list) {
-      if (webName.startsWith("web")) {
-        pages[webName] = {} as any;
-        await reloadWebPageInternal(
-          join(root, "app", webName, "src", "base", "page"),
-          pages[webName],
-        );
+      if (webName.startsWith('web')) {
+        pages[webName] = {} as any
+        ssr[webName] = {}
+        await reloadAllInternal(
+          join(root, 'app', webName, 'src', 'base', 'page'),
+          webName
+        )
       }
     }
   }
-  await writeWebPageInternal(root);
-};
+  await writeWebPageInternal(root)
+  await buildSSR()
+}
 
-export const reloadWebPageSingle = async (
-  webName: string,
-) => {
-  delete pages[webName];
-  pages[webName] = {};
-  await reloadWebPageInternal(
-    join(root, "app", webName, "src", "base", "page"),
-    pages[webName],
-  );
-  await writeWebPageInternal(root);
-};
+export const reloadWebPageSingle = async (webName: string, path: string) => {
+  if (!pages[webName]) {
+    pages[webName] = {}
+  }
 
-const reloadWebPageInternal = async (
-  basedir: string,
-  curPage: any,
-) => {
-  const list = await walkDir(basedir);
+  if (Object.keys(pages[webName]).length === 0) {
+    pages[webName] = {} as any
+    ssr[webName] = {}
+    await reloadAllInternal(
+      join(root, 'app', webName, 'src', 'base', 'page'),
+      webName
+    )
+    await writeWebPageInternal(root)
+    await buildSSR()
+  } else {
+    console.log('single')
+    const res = await reloadInternal(
+      join(root, 'app', webName, 'src', 'base', 'page'),
+      webName,
+      path
+    )
+    await writeWebPageInternal(root)
+    if (res.ssr) {
+      await buildSSR()
+    }
+  }
+}
+
+const reloadAllInternal = async (basedir: string, webName: string) => {
+  const list = await walkDir(basedir)
 
   for (let path of list) {
-    let pathNoExt = path.endsWith(".tsx")
-      ? path.substring(0, path.length - 4)
-      : path;
-
-    const name = pathNoExt
-      .substring(basedir.length + 1)
-      .replace(/[\/\\]/gi, ".");
-
-    let layout = "default";
-    let url = "";
-
-    await parseWebPage(path, ({ type, value }) => {
-      if (type === "url" && !url) url = value;
-      if (type === "layout") layout = value;
-    });
-
-    curPage[name] = `["${url}", "${layout}", () => import('..${
-      path
-        .substring(root.length, path.length - 4)
-        .replace(/\\/gi, "/")
-    }')]`;
+    await reloadInternal(basedir, webName, path)
   }
-};
+}
+
+const reloadInternal = async (
+  basedir: string,
+  webName: string,
+  path: string
+) => {
+  let pathNoExt = path.endsWith('.tsx')
+    ? path.substring(0, path.length - 4)
+    : path
+  const name = pathNoExt.substring(basedir.length + 1).replace(/[\/\\]/gi, '.')
+
+  const parsed = { url: '', layout: '', ssr: false }
+  await parseWebPage(path, ({ type, value }) => {
+    if (type === 'url') parsed.url = value
+    if (type === 'layout') parsed.layout = value
+    if (type === 'ssr') parsed.ssr = value
+  })
+
+  if (!pages[webName]) pages[webName] = {}
+
+  pages[webName][name] = `["${parsed.url}", "${
+    parsed.layout
+  }", () => import('..${path
+    .substring(root.length, path.length - 4)
+    .replace(/\\/gi, '/')}')]`
+
+  if (parsed.ssr) {
+    if (!ssr[webName]) ssr[webName] = {}
+    ssr[webName][name] = true
+  }
+
+  return parsed
+}
 
 const writeWebPageInternal = async (root: string) => {
-  const output = `\
-/******************************************************/
-/************* autogenerated - do not edit ************/
-/******************************************************/
-
-export default {
-  ${
-    Object.entries(pages)
+  const pageFmtd = format(
+    `\
+  /******************************************************/
+  /************* autogenerated - do not edit ************/
+  /******************************************************/
+  
+  export default {
+    ${Object.entries(pages)
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map((arg: any) => {
-        const [key, value] = arg;
+        const [key, value] = arg
         return `'${key}':{
-          ${
-          Object.entries(value)
-            .sort((a, b) => a[0].localeCompare(b[0]))
-            .map(([k, v]) => {
-              return `"${k}": ${v}`;
-            })
-            .join("\n,")
-        }},`;
+            ${Object.entries(value)
+              .sort((a, b) => a[0].localeCompare(b[0]))
+              .map(([k, v]) => {
+                return `"${k}": ${v}`
+              })
+              .join('\n,')}},`
       })
-      .join("\n  ")
+      .join('\n  ')}
+  }`,
+    { parser: 'babel' }
+  )
+
+  const ssrFmtd = format(
+    `\
+  /******************************************************/
+  /************* autogenerated - do not edit ************/
+  /******************************************************/
+  
+  export default {
+    ${Object.entries(pages)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map((arg: any) => {
+        const [key, value] = arg
+        return `'${key}':{
+            ${Object.entries(value)
+              .filter(([k, v]) => {
+                if (ssr[key][k]) {
+                  return true
+                }
+
+                return false
+              })
+              .sort((a, b) => a[0].localeCompare(b[0]))
+              .map(([k, v]) => {
+                return `"${k}": ${v}`
+              })
+              .join('\n,')}},`
+      })
+      .join('\n  ')}
+  }`,
+    { parser: 'babel' }
+  )
+  await writeAsync(join(root, 'gen', 'web.page.ts'), pageFmtd)
+  await writeAsync(join(root, 'gen', 'web.page.ssr.ts'), ssrFmtd)
+}
+
+const buildSSR = async () => {
+  try {
+    const scriptPath = join(root, 'gen', 'web.page.ssr.compiled.js')
+    await build({
+      entryPoints: [join(root, 'gen', 'web.page.ssr.ts')],
+      bundle: true,
+      platform: 'node',
+      format: 'cjs',
+      loader,
+      alias: {
+        'gen/web.page': join(root, 'gen', 'web.page.ssr.ts'),
+      },
+      outfile: scriptPath,
+    })
+
+    if (!g.isPrebuild) {
+      await loadSSR()
+    }
+  } catch (e) {
+    console.log(e)
   }
-}`;
-
-  const formatted = format(output, { parser: "babel" });
-
-  await writeAsync(
-    join(root, "gen", "web.page.ts"),
-    formatted,
-  );
-};
+}

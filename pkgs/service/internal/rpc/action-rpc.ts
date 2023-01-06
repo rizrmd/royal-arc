@@ -34,7 +34,7 @@ const _boot = () => ({
       "..",
       "content",
       "_backup",
-      Date.now().toString(),
+      Date.now().toString()
     );
     await dirAsync(dirname(backdir));
     await serverCleanUp();
@@ -73,7 +73,7 @@ const _service = () => ({
         magenta("Started"),
         green(`› ${padEnd(capitalize(name) + " ", 13, " ")}`),
         `[pid: ${blue(padEnd(pid, 7, " "))}]`,
-        !!svc.restarted ? yellow("Restarted") : "",
+        !!svc.restarted ? yellow("Restarted") : ""
       );
 
       let metafile = undefined;
@@ -133,7 +133,7 @@ const _service = () => ({
             console.log(
               red("Stopped"),
               green(`› ${padEnd(capitalize(name) + " ", 13, " ")}`),
-              `[pid: ${blue(padEnd(_pid, 7, " "))}] ${yellow(reason || "")}`,
+              `[pid: ${blue(padEnd(_pid, 7, " "))}] ${yellow(reason || "")}`
             );
           };
 
@@ -188,8 +188,8 @@ const _service = () => ({
               cwd: process.cwd(),
               stderr: "inherit",
               stdout: "inherit",
-              onExit(exitCode) {
-                onExit(exitCode);
+              onExit({ exitCode }) {
+                onExit(exitCode || 0);
               },
             });
           } else if (svcRuntime === "node") {
@@ -234,10 +234,10 @@ const _service = () => ({
                     JSON.stringify({
                       type: "event",
                       event: "kill",
-                    }),
+                    })
                   );
                 }
-              }),
+              })
             );
           }
         }
@@ -256,7 +256,7 @@ const _service = () => ({
           JSON.stringify({
             type: "event",
             event: "kill",
-          }),
+          })
         );
       }
     });
@@ -266,7 +266,7 @@ const _service = () => ({
 export const getSvc = (
   name: _names,
   pid: string | undefined,
-  initWhenNotFound?: true,
+  initWhenNotFound?: true
 ) => {
   if (!g.svc[name]) g.svc[name] = {};
 
@@ -289,7 +289,8 @@ const getWs = (a: any) => {
 };
 
 export const rootAction =
-  (sender: RequestSender) => <N extends ActionKey>(name: N, pid?: string) => {
+  (sender: RequestSender) =>
+  <N extends ActionKey>(name: N, pid?: string) => {
     return new Proxy(
       {},
       {
@@ -303,7 +304,7 @@ export const rootAction =
             });
           };
         },
-      },
+      }
     ) as Handlers<ReturnType<ActionItem[N]>>;
   };
 
@@ -311,7 +312,7 @@ export const invokeAction = <N extends ActionKey>(
   name: N,
   fn: keyof ReturnType<ActionItem[N]>,
   args?: any[],
-  pid?: string,
+  pid?: string
 ) => {
   return new Promise<any>((resolve, reject) => {
     const svc = getSvc(name as any, pid);
@@ -325,13 +326,13 @@ export const invokeAction = <N extends ActionKey>(
           aid,
           fn,
           args,
-        }),
+        })
       );
     } else {
       reject(
-        `Failed to call ${fn.toString()}: Service ${
-          String(name)
-        } not started yet.`,
+        `Failed to call ${fn.toString()}: Service ${String(
+          name
+        )} not started yet.`
       );
     }
   });

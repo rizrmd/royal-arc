@@ -8,7 +8,7 @@ export const optimizeImage = async (
     w: number;
     h: number;
     fit: keyof FitEnum;
-  },
+  }
 ) => {
   if (path.endsWith(".jpg") || path.endsWith(".jpeg")) {
     await sharp(path)
@@ -29,6 +29,16 @@ export const optimizeImage = async (
         fit: conf.fit,
       })
       .toFormat("png", { progressive: true, quality: 70 })
+      .toFile(target);
+  } else if (path.endsWith(".gif")) {
+    await sharp(path)
+      .resize({
+        withoutEnlargement: true,
+        width: conf.w,
+        height: conf.h,
+        fit: conf.fit,
+      })
+      .toFormat("gif")
       .toFile(target);
   }
 };

@@ -28,6 +28,4 @@ export const initScaff = async () => {
       }
     }
   }
-
-  await reloadWeb();
 };

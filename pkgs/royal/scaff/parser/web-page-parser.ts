@@ -3,16 +3,23 @@ import { readAsync, writeAsync } from "service";
 import Visitor from "../swc/visitor";
 
 type ParseWebPageCallback = (
-  arg: {
-    type: "url";
-    value: string;
-  } | {
-    type: "layout";
-    value: string;
-  } | {
-    type: "gen";
-    value: string;
-  },
+  arg:
+    | {
+        type: "url";
+        value: string;
+      }
+    | {
+        type: "layout";
+        value: string;
+      }
+    | {
+        type: "gen";
+        value: string;
+      }
+    | {
+        type: "ssr";
+        value: boolean;
+      }
 ) => void;
 
 export const parseWebPage = async (path: string, cb: ParseWebPageCallback) => {
@@ -25,7 +32,8 @@ export const parseWebPage = async (path: string, cb: ParseWebPageCallback) => {
     }
     if (c.object.type === "MemberExpression") {
       if (
-        c.object.object.type === "Identifier" && c.object.object.value === "gen"
+        c.object.object.type === "Identifier" &&
+        c.object.object.value === "gen"
       ) {
         return true;
       }
@@ -58,13 +66,16 @@ export const parseWebPage = async (path: string, cb: ParseWebPageCallback) => {
           for (let prop of arg.expression.properties) {
             if (
               prop.type === "KeyValueProperty" &&
-              prop.key.type === "Identifier" &&
-              prop.value.type === "StringLiteral"
+              prop.key.type === "Identifier"
             ) {
-              if (prop.key.value === "url") {
-                cb({ type: "url", value: prop.value.value });
-              } else if (prop.key.value === "layout") {
-                cb({ type: "layout", value: prop.value.value });
+              if (prop.value.type === "StringLiteral") {
+                if (prop.key.value === "url") {
+                  cb({ type: "url", value: prop.value.value });
+                } else if (prop.key.value === "layout") {
+                  cb({ type: "layout", value: prop.value.value });
+                }
+              } else if (prop.key.value === "ssr") {
+                cb({ type: "ssr", value: true });
               }
             }
           }

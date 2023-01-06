@@ -7,7 +7,9 @@ export const createFrameCors = (url: string) => {
     iframe.style.display = 'none'
     iframe.id = id
 
-    iframe.src = `${url.endsWith('/') ? url : `${url}/`}_api_frm`
+    const _url = new URL(url)
+    _url.pathname = '/_api_frm'
+    iframe.src = _url.toString()
     const onInit = () => {
       iframe.setAttribute('loaded', 'y')
       window.removeEventListener('message', onInit)
@@ -54,8 +56,14 @@ export const createFrameCors = (url: string) => {
   }
 
   return {
-    send(input: string | RequestInfo | URL, data?: any, headers?: any) {
+    send(input: string | RequestInfo | URL, data?: any, _headers?: any) {
       const uri = input.toString()
+      const headers = { ..._headers }
+
+      if (!(data instanceof FormData || data instanceof File)) {
+        headers['content-type'] = 'application/json'
+      }
+
       return sendRaw(
         `${url.endsWith('/') ? url : `${url}/`}${
           uri.startsWith('/') ? uri.substring(1) : uri
@@ -63,11 +71,11 @@ export const createFrameCors = (url: string) => {
         data
           ? {
               method: 'post',
-              headers: {
-                'content-type': 'application/json',
-                ...headers,
-              },
-              body: JSON.stringify(data),
+              headers,
+              body:
+                data instanceof FormData || data instanceof File
+                  ? data
+                  : JSON.stringify(data),
             }
           : {}
       )

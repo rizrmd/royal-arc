@@ -41,14 +41,11 @@ export const replaceBodyDev = (
 <script>
   window.serverurl = "${serverurl}";
   window.baseurl = "${baseurl}";
-  window.webPanelDev = window.baseurl;
 
   const pathname = new URL(window.baseurl).pathname;
-
   if (location.pathname.length < pathname.length) {
     location.href = pathname;
   }
-
 </script>    
 </body>`
   )

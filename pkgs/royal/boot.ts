@@ -5,10 +5,12 @@ import picocolors from "picocolors";
 import { cwd } from "process";
 import { root } from "service";
 import { TSingleConfig, TSingleConfigOutput } from "./config";
+import { dbs } from "./export";
 import { g } from "./global";
 import { initScaff } from "./scaff/init-scaff";
 import { watcherCreate } from "./scaff/watcher-create";
-import { startServices, stopServices } from "./service";
+import { startServices } from "./service";
+import { loadSSR } from "./uws/load-ssr";
 import { plog } from "./uws/tools";
 import { createUWS } from "./uws/uws-creator";
 import { viteBuild } from "./web/build";
@@ -40,7 +42,7 @@ export const boot = async () => {
     const url = new URL(v.run_url);
     if (url.protocol === "https:") {
       console.log(
-        `ERROR: Cannot listen to ${v.run_url}. SSL is not developed yet.`,
+        `ERROR: Cannot listen to ${v.run_url}. SSL is not developed yet.`
       );
       process.exit(0);
     }
@@ -48,7 +50,7 @@ export const boot = async () => {
     if (!_path[k as _names] && !k.startsWith("web")) {
       console.log(
         picocolors.yellow(` › WARNING:`),
-        `Skipping ${k} config, service not found`,
+        `Skipping ${k} config, service not found`
       );
       continue;
     }
@@ -78,6 +80,14 @@ export const boot = async () => {
     await startServices();
   }
 
+  g.isSSR = true;
+  g.db = dbs("db");
+  g.window = {
+    requestAnimationFrame() {},
+    cancelAnimationFrame() {},
+  };
+  await loadSSR();
+
   console.log(picocolors.green(`Royal `));
   let i = 0;
   for (let [host, urls] of Object.entries(servers)) {
@@ -87,13 +97,11 @@ export const boot = async () => {
         const url = urls[urlkeys[0]];
         const char = `∙─`;
         plog(
-          ` ${picocolors.cyan(char)} ${
-            padEnd(
-              capitalize(camelCase(urlkeys[0]).replace(/([A-Z])/g, " $1")),
-              18,
-              ".",
-            )
-          }: ${(url.toString())}`,
+          ` ${picocolors.cyan(char)} ${padEnd(
+            capitalize(camelCase(urlkeys[0]).replace(/([A-Z])/g, " $1")),
+            18,
+            "."
+          )}: ${url.toString()}`
         );
         continue;
       }
@@ -105,7 +113,7 @@ export const boot = async () => {
 
 const ensurePorts = async (
   conf: TSingleConfig<TSingleConfigOutput>,
-  servers: Record<string, Record<string, URL>>,
+  servers: Record<string, Record<string, URL>>
 ) => {
   const confkey = Object.keys(conf);
   let askForPort = confkey.length;
@@ -115,11 +123,7 @@ const ensurePorts = async (
 
       for (let [_, urls] of Object.entries(servers)) {
         const names = Object.keys(urls);
-        if (
-          names.length === 1 &&
-          names[0] === k &&
-          k.startsWith("srv")
-        ) {
+        if (names.length === 1 && names[0] === k && k.startsWith("srv")) {
           g.ports[k] = parseInt(urls[names[0]].port);
           break;
         }

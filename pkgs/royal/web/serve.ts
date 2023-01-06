@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 import { join } from "path";
-import { existsAsync } from "service";
+import { existsAsync, removeAsync } from "service";
 import { runPnpm } from "service/internal/service/build/run-pnpm";
 import { g } from "../global";
 import { getWebDirs } from "./utils";
@@ -18,6 +18,8 @@ export const viteServe = async () => {
         continue;
       }
     }
+
+    await removeAsync(join(dir, "node_modules", ".vite"));
 
     const vite = spawn(
       viteCmd,

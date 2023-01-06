@@ -5,6 +5,10 @@
     "target": "ESNext",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "jsxFactory": "jsx",
+    "jsxFragmentFactory": "React.Fragment",
+    "jsxImportSource": "@emotion/react",
     "types": [
       "node"
     ]

@@ -4,7 +4,7 @@ import { GlobalContext, useLocal } from "web-utils";
 import { loadPageAndLayout } from "./core/router";
 import { ErrorBoundary } from "./error";
 
-const w = window as typeof window & {
+let w = window as typeof window & {
   appRoot: typeof appRoot;
   lazyPages: any;
   lazyLayout: any;
@@ -39,6 +39,10 @@ export type IAppRoot = {
 };
 
 export const App: FC<{ onInit?: (local: IAppRoot) => void }> = ({ onInit }) => {
+  if (isSSR) {
+    w = global.window as any;
+  }
+
   const local = useLocal(
     {
       url: "",
@@ -52,15 +56,15 @@ export const App: FC<{ onInit?: (local: IAppRoot) => void }> = ({ onInit }) => {
       return () => {
         w.appRoot.mounted = false;
       };
-    },
+    }
   );
 
   w.appRoot = local;
 
-  if (local.url !== location.pathname || !local.initialized) {
-    local.url = location.pathname;
+  if (local.url !== w.location.pathname || !local.initialized) {
+    local.url = w.location.pathname;
 
-    if (typeof onInit === 'function') {
+    if (typeof onInit === "function") {
       onInit(local);
     }
     loadPageAndLayout(local);
@@ -94,11 +98,11 @@ export const App: FC<{ onInit?: (local: IAppRoot) => void }> = ({ onInit }) => {
 };
 
 const OptionalSuspense: FC<{ children: any }> = ({ children }) => {
-  return children.$$typeof
-    ? (
-      <Suspense fallback={null}>
-        <ErrorBoundary>{children}</ErrorBoundary>
-      </Suspense>
-    )
-    : <ErrorBoundary>{children}</ErrorBoundary>;
+  return children.$$typeof ? (
+    <Suspense fallback={null}>
+      <ErrorBoundary>{children}</ErrorBoundary>
+    </Suspense>
+  ) : (
+    <ErrorBoundary>{children}</ErrorBoundary>
+  );
 };

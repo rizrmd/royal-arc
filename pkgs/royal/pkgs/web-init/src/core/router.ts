@@ -2,7 +2,9 @@ import { IAppRoot } from "index";
 import { createRouter } from "radix3";
 import { FC, lazy } from "react";
 
-const w = window as typeof window & {
+let w = (
+  typeof isSSR === "undefined" ? window : global.window
+) as typeof window & {
   importedPages: any;
   importedLayouts: any;
   lazyPages: any;
@@ -17,8 +19,6 @@ export const importPageAndLayout = async (name: string) => {
   Object.entries(w.importedPages).map(([key, imp]: any) => {
     w.lazyPages[key] = lazy(async () => {
       const component = (await imp[2]()).default.component;
-      // this is commented because component is blinking after first load
-      // w.lazyPages[name] = component
       return {
         default: component,
       };
@@ -30,8 +30,6 @@ export const importPageAndLayout = async (name: string) => {
     w.lazyLayout[key] = lazy(async () => {
       // @ts-ignore
       const component = (await imp()).default;
-      // this is commented because component is blinking after first load
-      // w.lazyLayout[name] = component
       return {
         default: component,
       };
@@ -47,13 +45,17 @@ export type IFoundPage = {
   params: any;
 };
 
-if (w.appRoot) {
+if (w && w.appRoot) {
   w.appRoot.router = undefined;
   if (w.appRoot.render) w.appRoot.render();
 }
 
 // this will be run on each app render, so it cannot be an aysnc func
 export const loadPageAndLayout = (local: IAppRoot & { render: () => void }) => {
+  if (isSSR) {
+    w = global.window as any;
+  }
+
   local.page.list = w.importedPages;
   local.layout.list = w.importedLayouts;
 
@@ -64,17 +66,8 @@ export const loadPageAndLayout = (local: IAppRoot & { render: () => void }) => {
 
   if (local.router) {
     let found = local.router.lookup(local.url) as IFoundPage | null | undefined;
-
-    if (!found) {
-      if (local.url.endsWith("/")) {
-        found = local.router.lookup(
-          local.url.substring(0, local.url.length - 1),
-        ) as IFoundPage | null | undefined;
-      } else {
-        found = local.router.lookup(
-          local.url + "/",
-        ) as IFoundPage | null | undefined;
-      }
+    if (!found || (found && !found.page)) {
+      found = local.router.lookup(local.url + "/") as any;
     }
 
     if (found) {
@@ -93,35 +86,32 @@ export const loadPageAndLayout = (local: IAppRoot & { render: () => void }) => {
 
 const initializeRoute = (local: IAppRoot) => {
   if (local.router) {
-    for (let [pageName, page] of Object.entries(local.page.list)) {
-      const [url, layoutName, pageDef] = page as unknown as [
-        string,
-        string,
-        () => Promise<{
-          default: {
-            url: string;
-            layout: string;
-            component: () => {
-              default: React.ComponentType<any>;
+    if (local.page.list) {
+      for (let [pageName, page] of Object.entries(local.page.list)) {
+        let [url, layoutName, pageDef] = page as unknown as [
+          string,
+          string,
+          () => Promise<{
+            default: {
+              url: string;
+              layout: string;
+              component: () => {
+                default: React.ComponentType<any>;
+              };
             };
-          };
-        }>,
-      ];
+          }>
+        ];
+        if (!layoutName) layoutName = "default";
 
-      local.router.insert(
-        convertUrl(w.basepath === "/" ? "" : w.basepath + url),
-        {
+        let _url = url.replace(/\*\*/gi, "*");
+        _url = url.replace(/\*/gi, "**");
+        local.router.insert(_url, {
           layout: layoutName,
           page: pageName,
           Page: w.lazyPages[pageName],
           Layout: w.lazyLayout[layoutName],
-        },
-      );
+        });
+      }
     }
   }
-};
-
-const convertUrl = (url: string) => {
-  let newUrl = url.replace(/\:(.+)\?/gi, ":$1");
-  return newUrl;
 };

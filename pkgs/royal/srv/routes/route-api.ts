@@ -1,22 +1,23 @@
-import { _names } from "gen";
-import { ApiMetaParams } from "service";
-import { route } from "../route";
+import { _names } from 'gen'
+import { ApiMetaParams } from 'service'
+import { route } from '../route'
 
 export const routeAPI = async (serviceName: _names) => {
   try {
     //@ts-ignore
-    const apiImports = await import("../../../../gen/api");
+    const apiImports = await import('../../../../gen/api')
     //@ts-ignore
-    const _apiMeta = (await import("../../../../gen/api.meta.json")).default;
+    const _apiMeta = (await import('../../../../gen/api.meta.json')).default
 
-    const apiMeta = _apiMeta[
-      serviceName
-    ] as { _url: Record<string, string>; _params: ApiMetaParams };
-    const api = apiImports[serviceName];
+    const apiMeta = _apiMeta[serviceName] as {
+      _url: Record<string, string>
+      _params: ApiMetaParams
+    }
+    const api = apiImports[serviceName]
 
     for (let [apiName, url] of Object.entries(apiMeta._url || {})) {
       if (!api[apiName]) {
-        continue;
+        continue
       }
 
       route(url, async (req, res) => {
@@ -24,61 +25,86 @@ export const routeAPI = async (serviceName: _names) => {
           const im = api[apiName].api.bind({
             req,
             res,
-          });
-          const params: any = req.body ? req.body : {};
+          })
+          const params: any = {}
 
-          if (typeof params === "object") {
+          // parse from query string (?name=...)
+          if (req.query) {
+            for (const [k, v] of Object.entries(req.query)) {
+              if (v) params[k] = v
+            }
+          }
+
+          // parse from parameterized url (/:name/)
+          if (req.params) {
+            for (const [k, v] of Object.entries(req.params)) {
+              if (v) params[k] = v
+            }
+          }
+
+          // parse from POST-ed body ({name: "..."})
+          if (
+            req.body &&
+            typeof req.body === 'object' &&
+            !Array.isArray(req.body)
+          ) {
+            for (const [k, v] of Object.entries(req.body)) {
+              if (v) params[k] = v
+            }
+          }
+
+          if (typeof params === 'object') {
             if (Array.isArray(params)) {
-              const apires = await (im as any)(...params);
-              res.sendStatus(200);
-              res.send(apires);
+              const apires = await (im as any)(...params)
+              res.sendStatus(200)
+              res.send(apires)
             } else {
-              const prm = apiMeta._params[apiName];
+              const prm = apiMeta._params[apiName]
+
               if (prm) {
-                const passedParams: any[] = [];
-                for (const paramName of Object.values(prm.api) as string[]) {
-                  let value = params[paramName];
-                  if (req.params[paramName]) {
-                    value = req.params[paramName];
-                  }
-                  passedParams.push(value);
+                const passedParams: any[] = Array.isArray(req.body)
+                  ? [...req.body]
+                  : []
+
+                for (const [k, paramName] of Object.entries(prm.api)) {
+                  if (params[paramName]) passedParams[k] = params[paramName]
                 }
 
-                let apires;
-                let reason = "";
+                let apires: any
+                let reason = ''
                 try {
-                  apires = await (im as any)(...passedParams);
+                  apires = await (im as any)(...passedParams)
                 } catch (e: any) {
-                  reason = e.message;
+                  reason = e.message
                 }
 
-                const sent = res.sentBody;
+                const sent = res.sentBody
                 if (!sent) {
                   if (apires !== undefined) {
-                    res.sendStatus(200);
-                    res.send(apires);
+                    res.sendStatus(200)
+                    res.send(apires)
                   } else {
-                    res.sendStatus(500);
-                    res.send({ status: "failed", reason });
+                    res.sendStatus(500)
+                    res.send({ status: 'failed', reason })
                   }
                 }
               }
             }
           }
         } catch (e: any) {
-          console.log(`Failed to call API ${url}:`, e);
+          console.log(`Failed to call API ${url}:`, e)
 
           if (!res.headersSent) {
-            res.sendStatus(500);
-            res.send({ status: "failed", reason: e.message });
+            res.sendStatus(500)
+            res.send({ status: 'failed', reason: e.message })
           }
         }
-      });
+      })
     }
   } catch (e) {
-    if (e.message.includes("Cannot find module")) {
+    if (e.message.includes('Cannot find module')) {
     } else {
-      throw e;
+      throw e
     }
   }
-};
+}
