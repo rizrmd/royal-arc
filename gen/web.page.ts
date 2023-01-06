@@ -5,6 +5,11 @@
 export default {
   web: {
     home: ["/", "", () => import("../app/web/src/base/page/home")],
+    site: [
+      "/site/:name/*",
+      "ssr",
+      () => import("../app/web/src/base/page/site"),
+    ],
     "upload-sample": [
       "/x",
       "",

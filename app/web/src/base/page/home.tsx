@@ -1,19 +1,52 @@
-import { Button } from "@fluentui/react-components";
 import { page } from "types/content";
 import { useLocal } from "web-utils";
+import { Editor } from "../../compo/editor/editor";
+import { IContent } from "../../compo/editor/panel/item/_type";
+import { Loading } from "../../compo/loading";
+import { loadSite } from "../../compo/site/loader";
+import { SiteEditor } from "../../compo/site/site";
+import { Layout, Page, Site } from "../../compo/site/type";
+
+type Content = IContent;
 
 export default page({
   url: "/",
   component: ({}) => {
-    const local = useLocal({}, async () => {
-      await db.user.create({ data: { password: "123", username: "123" } });
-      console.log(await db.user.findFirst());
-    });
+    const local = useLocal(
+      {
+        site: null as null | Site,
+        current: null as null | Page | Layout,
+      },
+      async () => {
+        local.site = await loadSite("07a93488-d35e-4847-949d-66050d1949e2");
+        if (local.site) {
+          local.current = local.site.pages[0];
+        }
+        local.render();
+      }
+    );
+
+    if (!local.site || (local.site && !local.site.id) || !local.current) {
+      return <Loading />;
+    }
 
     return (
-      <div css={css`padding:100px;`}>
-        <Button appearance="primary">Get started</Button>
-      </div>
+      <SiteEditor site={local.site} current={local.current}>
+        {({ toolbar }) => {
+          if (!local.current) return <></>;
+          return (
+            <Editor
+              toolbar={toolbar}
+              content={local.current.parseTree()}
+              updateContent={(content) => {
+                console.log(content);
+                local.current?.updateTree(content);
+                local.render();
+              }}
+            />
+          );
+        }}
+      </SiteEditor>
     );
   },
 });

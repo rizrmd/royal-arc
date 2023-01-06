@@ -1,33 +1,20 @@
-import {
-  FluentProvider,
-  webDarkTheme,
-  webLightTheme,
-} from "@fluentui/react-components";
-import { createRoot } from "react-dom/client";
-import { App, initEnv } from "web-init";
-import 'virtual:fonts.css'
+import { hydrateRoot, createRoot } from "react-dom/client";
+import "virtual:fonts.css";
+import { initEnv } from "web-init";
 import "./index.css";
-import { customTheme } from "./theme";
+import { Start } from "./start";
 
+const w = window as any;
 
 initEnv("web").then(() => {
   const rootNode = document.getElementById("root");
   if (rootNode) {
-    const root = createRoot(rootNode);
+    const el = <Start />;
 
-    let theme = {} as any;
-    if (window.matchMedia) {
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        theme = webDarkTheme;
-      } else {
-        theme = webLightTheme;
-      }
-    } else theme = webLightTheme;
-
-    root.render(
-      <FluentProvider theme={{ ...theme, ...customTheme }}>
-        <App />
-      </FluentProvider>,
-    );
+    if (w._hyd) {
+      hydrateRoot(rootNode, el);
+    } else {
+      createRoot(rootNode).render(el);
+    }
   }
 });

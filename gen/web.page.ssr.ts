@@ -3,5 +3,11 @@
 /******************************************************/
 
 export default {
-  web: {},
+  web: {
+    site: [
+      "/site/:name/*",
+      "ssr",
+      () => import("../app/web/src/base/page/site"),
+    ],
+  },
 };
