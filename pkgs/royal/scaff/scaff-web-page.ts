@@ -62,7 +62,6 @@ export const reloadWebPageSingle = async (webName: string, path: string) => {
     await writeWebPageInternal(root)
     await buildSSR()
   } else {
-    console.log('single')
     const res = await reloadInternal(
       join(root, 'app', webName, 'src', 'base', 'page'),
       webName,

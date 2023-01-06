@@ -73,6 +73,7 @@ export const buildSvcNode = async (name: _names, outPath: string) => {
             ".jpeg": "dataurl",
             ".gif": "dataurl",
             ".svg": "dataurl",
+            ".node": "dataurl",
           },
           // minify: true,
           plugins: format === "cjs" ? undefined : [commonjs()],

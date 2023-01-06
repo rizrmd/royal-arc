@@ -1,5 +1,0 @@
-{
-  "web": {
-    "/site/:name/*": true
-  }
-}
