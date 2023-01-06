@@ -32,10 +32,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// pkgs/web-init/src/layout.tsx
+// ../../pkgs/royal/pkgs/web-init/src/layout.tsx
 var layout;
 var init_layout = __esm({
-  "pkgs/web-init/src/layout.tsx"() {
+  "../../pkgs/royal/pkgs/web-init/src/layout.tsx"() {
     "use strict";
     layout = (opt) => {
       return opt.component;
@@ -2225,19 +2225,19 @@ var require_react = __commonJS({
   }
 });
 
-// pkgs/web-utils/src/use-local.ts
+// ../../pkgs/royal/pkgs/web-utils/src/use-local.ts
 var import_react;
 var init_use_local = __esm({
-  "pkgs/web-utils/src/use-local.ts"() {
+  "../../pkgs/royal/pkgs/web-utils/src/use-local.ts"() {
     "use strict";
     import_react = __toESM(require_react());
   }
 });
 
-// pkgs/web-utils/src/use-global.ts
+// ../../pkgs/royal/pkgs/web-utils/src/use-global.ts
 var import_react2, GlobalContext;
 var init_use_global = __esm({
-  "pkgs/web-utils/src/use-global.ts"() {
+  "../../pkgs/royal/pkgs/web-utils/src/use-global.ts"() {
     "use strict";
     import_react2 = __toESM(require_react());
     GlobalContext = (0, import_react2.createContext)({
@@ -2248,10 +2248,10 @@ var init_use_global = __esm({
   }
 });
 
-// pkgs/web-utils/src/wait-until.ts
+// ../../pkgs/royal/pkgs/web-utils/src/wait-until.ts
 var waitUntil;
 var init_wait_until = __esm({
-  "pkgs/web-utils/src/wait-until.ts"() {
+  "../../pkgs/royal/pkgs/web-utils/src/wait-until.ts"() {
     "use strict";
     waitUntil = (condition, timeout) => {
       return new Promise(async (resolve) => {
@@ -2287,19 +2287,19 @@ var init_wait_until = __esm({
   }
 });
 
-// pkgs/web-utils/src/index.ts
+// ../../pkgs/royal/pkgs/web-utils/src/index.ts
 var init_src = __esm({
-  "pkgs/web-utils/src/index.ts"() {
+  "../../pkgs/royal/pkgs/web-utils/src/index.ts"() {
     init_use_local();
     init_use_global();
     init_wait_until();
   }
 });
 
-// pkgs/web-init/src/core/router.ts
+// ../../pkgs/royal/pkgs/web-init/src/core/router.ts
 var import_react3, w;
 var init_router = __esm({
-  "pkgs/web-init/src/core/router.ts"() {
+  "../../pkgs/royal/pkgs/web-init/src/core/router.ts"() {
     "use strict";
     import_react3 = __toESM(require_react());
     w = typeof isSSR === "undefined" ? window : global.window;
@@ -5027,20 +5027,20 @@ var init_emotion_react_jsx_runtime_esm = __esm({
   }
 });
 
-// pkgs/web-init/src/error.tsx
+// ../../pkgs/royal/pkgs/web-init/src/error.tsx
 var import_react6;
 var init_error = __esm({
-  "pkgs/web-init/src/error.tsx"() {
+  "../../pkgs/royal/pkgs/web-init/src/error.tsx"() {
     "use strict";
     import_react6 = __toESM(require_react());
     init_emotion_react_jsx_runtime_esm();
   }
 });
 
-// pkgs/web-init/src/app.tsx
+// ../../pkgs/royal/pkgs/web-init/src/app.tsx
 var import_react7;
 var init_app = __esm({
-  "pkgs/web-init/src/app.tsx"() {
+  "../../pkgs/royal/pkgs/web-init/src/app.tsx"() {
     "use strict";
     import_react7 = __toESM(require_react());
     init_src();
@@ -5138,10 +5138,10 @@ var require_cuid = __commonJS({
   }
 });
 
-// pkgs/web-init/src/core/iframe-cors.ts
+// ../../pkgs/royal/pkgs/web-init/src/core/iframe-cors.ts
 var import_cuid, createFrameCors;
 var init_iframe_cors = __esm({
-  "pkgs/web-init/src/core/iframe-cors.ts"() {
+  "../../pkgs/royal/pkgs/web-init/src/core/iframe-cors.ts"() {
     "use strict";
     init_src();
     import_cuid = __toESM(require_cuid());
@@ -5205,10 +5205,10 @@ var init_iframe_cors = __esm({
   }
 });
 
-// pkgs/web-init/src/core/init.ts
+// ../../pkgs/royal/pkgs/web-init/src/core/init.ts
 var import_react8, w2, dbClient, fetchSendDb;
 var init_init = __esm({
-  "pkgs/web-init/src/core/init.ts"() {
+  "../../pkgs/royal/pkgs/web-init/src/core/init.ts"() {
     "use strict";
     import_react8 = __toESM(require_react());
     init_iframe_cors();
@@ -5274,16 +5274,16 @@ var init_init = __esm({
   }
 });
 
-// pkgs/web-init/src/core/modify-props.tsx
+// ../../pkgs/royal/pkgs/web-init/src/core/modify-props.tsx
 var init_modify_props = __esm({
-  "pkgs/web-init/src/core/modify-props.tsx"() {
+  "../../pkgs/royal/pkgs/web-init/src/core/modify-props.tsx"() {
     "use strict";
   }
 });
 
-// pkgs/web-init/src/index.tsx
+// ../../pkgs/royal/pkgs/web-init/src/index.tsx
 var init_src2 = __esm({
-  "pkgs/web-init/src/index.tsx"() {
+  "../../pkgs/royal/pkgs/web-init/src/index.tsx"() {
     init_layout();
     init_app();
     init_init();
