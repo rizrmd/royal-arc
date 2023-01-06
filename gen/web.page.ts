@@ -4,10 +4,10 @@
 
 export default {
   web: {
-    home: ["/", "default", () => import("../app/web/src/base/page/home")],
+    home: ["/", "", () => import("../app/web/src/base/page/home")],
     "upload-sample": [
       "/x",
-      "default",
+      "",
       () => import("../app/web/src/base/page/upload-sample"),
     ],
   },
