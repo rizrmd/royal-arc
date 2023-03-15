@@ -1,0 +1,9 @@
+{
+  "name": "service",
+  "dependencies": {
+    "hyper-express": "^6.5.8"
+  },
+  "exclude": [
+    "hyper-express"
+  ]
+}

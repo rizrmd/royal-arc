@@ -1,0 +1,7 @@
+packages:
+  - 'app'
+  - 'app/*'
+  - 'app/*/pkgs/*'
+  - 'pkgs/*'
+  - 'pkgs/*/pkgs/*'
+  - 'pkgs/*/pkgs/*/pkgs/*'

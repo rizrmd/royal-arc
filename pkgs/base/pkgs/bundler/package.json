@@ -1,0 +1,9 @@
+{
+  "name": "bundler",
+  "main": "export.ts",
+  "dependencies": {
+    "dir": "workspace:*",
+    "@parcel/core": "^2.8.3",
+    "@parcel/types": "^2.8.3"
+  }
+}
