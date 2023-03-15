@@ -15,7 +15,7 @@ if (
 
 const { spawn, spawnSync } = require("child_process");
 const { existsSync } = require("fs");
-const { join } = require("path");
+const { join } = require("path"); 
 
 (async () => {
   if (!existsSync(join(process.cwd(), "node_modules"))) {
