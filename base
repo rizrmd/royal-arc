@@ -13,28 +13,33 @@ if (
 `);
 }
 
-const { spawnSync } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 const { existsSync } = require("fs");
 const { join } = require("path");
 
-if (!existsSync(join(process.cwd(), "node_modules"))) {
-  spawnSync("pnpm", ["i"], { stdio: "inherit" });
-}
-
-while (true) {
-  const base = spawnSync(
-    "node",
-    [
-      "-r",
-      "@swc-node/register",
-      "pkgs/base/entry.ts",
-      ...process.argv.slice(2),
-    ],
-    {
-      stdio: "inherit",
-    }
-  );
-  if (base.status !== 99) {
-    break;
+(async () => {
+  if (!existsSync(join(process.cwd(), "node_modules"))) {
+    await new Promise((resolve) => {
+      const pnpm = spawn("pnpm", ["i"], { stdio: "inherit", shell: true });
+      pnpm.on("exit", resolve);
+    });
   }
-}
+
+  while (true) {
+    const base = spawnSync(
+      "node",
+      [
+        "-r",
+        "@swc-node/register",
+        "pkgs/base/entry.ts",
+        ...process.argv.slice(2),
+      ],
+      {
+        stdio: "inherit",
+      }
+    );
+    if (base.status !== 99) {
+      break;
+    }
+  }
+})();
