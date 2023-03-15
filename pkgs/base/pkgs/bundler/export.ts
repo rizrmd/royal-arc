@@ -1,6 +1,6 @@
 import Parcel from "@parcel/core";
 import { BuildEvent, AsyncSubscription } from "@parcel/types";
-import { join } from "path";
+import { basename, dirname, join } from "path";
 import { dir } from "dir";
 import { IPty, spawn } from "node-pty";
 
@@ -14,6 +14,8 @@ export const listRunning = () => {
   return g.runs;
 };
 
+export type Running = ReturnType<typeof run>;
+
 export const run = (arg: {
   path: string;
   args?: string[];
@@ -22,16 +24,20 @@ export const run = (arg: {
   cwd: string;
 }) => {
   const { path, onData, args, cwd, onStop } = arg;
+
   g.runs[path] = spawn(
-    "node",
+    process.execPath,
     ["--enable-source-maps", path, ...(args || [])],
     { cwd: cwd }
   );
 
   if (onData) g.runs[path].onData(onData);
+  else g.runs[path].onData((e) => process.stdout.write(e));
+
   if (onStop) g.runs[path].onExit(onStop);
 
   return {
+    pty: g.runs[path],
     stop: () => {
       g.runs[path].kill();
       delete g.runs[path];
@@ -61,11 +67,12 @@ export const bundle = async (arg: {
       config: join(process.cwd(), ".parcelrc"),
       shouldBundleIncrementally: true,
       cacheDir: dir.root(
-        `.output/.cache/${input.substring(dir.root("").length + 1)}`
+        `.output/.cache/${input.substring(dir.root("").length + 1)}.cache`
       ),
       targets: {
         default: {
-          distDir: output,
+          distDir: dirname(output),
+          distEntry: basename(output),
           sourceMap: true,
           includeNodeModules: true,
           engines: {

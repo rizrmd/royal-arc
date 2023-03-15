@@ -20,7 +20,7 @@ importers:
       '@swc/core': 1.3.40
       fs-jetpack: 5.1.0
       node-pty: 0.10.1
-      parcel-resolver-exclude: link:pkgs/base/pkgs/parcel-resolver-exclude
+      parcel-resolver-exclude: link:pkgs/base/pkgs/parcel-exclude
       typescript: 4.9.5
     devDependencies:
       '@types/node': 18.15.3
@@ -30,21 +30,23 @@ importers:
       '@types/lodash.padend': ^4.6.7
       bundler: workspace:*
       catch-exit: 1.2.2
-      chalk: 5.2.0
+      chalk: ^4
       date-fns: 2.29.3
       dir: workspace:*
       fflate: 0.7.4
       fs-jetpack: ^5.1.0
       lodash.padend: ^4.6.1
+      node-pty: ^0.10.1
     dependencies:
       bundler: link:pkgs/bundler
       catch-exit: 1.2.2
-      chalk: 5.2.0
+      chalk: 4.1.2
       date-fns: 2.29.3
       dir: link:pkgs/dir
       fflate: 0.7.4
       fs-jetpack: 5.1.0
       lodash.padend: 4.6.1
+      node-pty: 0.10.1
     devDependencies:
       '@types/lodash.padend': 4.6.7
 
@@ -61,7 +63,7 @@ importers:
   pkgs/base/pkgs/dir:
     specifiers: {}
 
-  pkgs/base/pkgs/parcel-resolver-exclude:
+  pkgs/base/pkgs/parcel-exclude:
     specifiers:
       '@parcel/core': ^2.8.3
       '@parcel/plugin': ^2.8.3

@@ -2,15 +2,19 @@
   "name": "base",
   "dependencies": {
     "catch-exit": "1.2.2",
-    "chalk": "5.2.0",
+    "chalk": "^4",
     "date-fns": "2.29.3",
     "dir": "workspace:*",
     "bundler": "workspace:*",
     "fflate": "0.7.4",
     "fs-jetpack": "^5.1.0",
+    "node-pty": "^0.10.1",
     "lodash.padend": "^4.6.1"
   },
   "devDependencies": {
     "@types/lodash.padend": "^4.6.7"
-  }
+  },
+  "exclude": [
+    "node-pty"
+  ]
 }
