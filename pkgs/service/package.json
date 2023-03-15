@@ -1,9 +1,21 @@
 {
   "name": "service",
+  "main": "export.ts",
+  "private": true,
   "dependencies": {
-    "hyper-express": "^6.5.8"
+    "chalk": "5.2.0",
+    "lodash.padend": "4.6.1",
+    "lodash.get": "4.4.2",
+    "fs-jetpack": "5.1.0",
+    "rpc": "workspace:*",
+    "dir": "workspace:*",
+    "pkg": "workspace:*",
+    "catch-exit": "1.2.2",
+    "builder": "workspace:^",
+    "@qiwi/deep-proxy": "2.0.3"
   },
-  "exclude": [
-    "hyper-express"
-  ]
+  "devDependencies": {
+    "@types/lodash.get": "4.4.7",
+    "@types/lodash.padend": "4.6.7"
+  }
 }
