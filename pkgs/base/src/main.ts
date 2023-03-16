@@ -1,8 +1,8 @@
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
 import padEnd from "lodash.padend";
-import { buildApp } from "./build/app";
-import { buildService } from "./build/service";
+import { buildApp } from "./builder/app";
+import { buildService } from "./builder/service";
 import { commitHook } from "./commit-hook";
 import { upgradeHook } from "./upgrade";
 import { versionCheck } from "./version-check";

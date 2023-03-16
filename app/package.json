@@ -5,7 +5,6 @@
     "service": "workspace:*"
   },
   "external": [
-    "uWebSockets.js",
-    "esbuild"
+    "node-pty"
   ]
 }

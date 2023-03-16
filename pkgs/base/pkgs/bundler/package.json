@@ -2,8 +2,11 @@
   "name": "bundler",
   "main": "export.ts",
   "dependencies": {
-    "dir": "workspace:*",
+    "@parcel/config-default": "^2.8.3",
+    "parcel-resolver-exclude": "workspace:^",
     "@parcel/core": "^2.8.3",
-    "@parcel/types": "^2.8.3"
+    "@parcel/types": "^2.8.3",
+    "dir": "workspace:*",
+    "pkg": "workspace:*"
   }
 }

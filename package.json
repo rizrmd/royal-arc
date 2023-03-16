@@ -1,22 +1,5 @@
 {
   "name": "royal-arc",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "@parcel/config-default": "^2.8.3",
-    "@parcel/core": "^2.8.3",
-    "@swc-node/register": "^1.6.2",
-    "@swc/core": "^1.3.40",
-    "fs-jetpack": "^5.1.0",
-    "node-pty": "^0.10.1",
-    "typescript": "^4.9.5",
-    "parcel-resolver-exclude": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^18.15.3"
-  }
+  "main": "index.js"
 }
