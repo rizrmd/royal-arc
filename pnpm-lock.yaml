@@ -1,9 +1,15 @@
 lockfileVersion: 5.4
 
+overrides:
+  '@fluentui/react-icons': workspace:*
+
 importers:
 
   .:
-    specifiers: {}
+    specifiers:
+      husky: ^8.0.3
+    devDependencies:
+      husky: 8.0.3
 
   app:
     specifiers:
@@ -1637,6 +1643,12 @@ packages:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
     dev: false
+
+  /husky/8.0.3:
+    resolution: {integrity: sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
 
   /hyper-express/6.5.8:
     resolution: {integrity: sha512-EORFBjFW4PZCC4eC91tEXrkQLIIaB+ugLqWr59ZI4Yo2qsbaocN+e40lfOJwlNvJLBKzb03rUgbqR+/07SMGOQ==}
