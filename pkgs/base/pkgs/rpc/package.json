@@ -1,19 +1,19 @@
 {
   "name": "rpc",
-  "main": "server.ts",
+  "main": "entry.ts",
   "private": "true",
   "dependencies": {
-    "@qiwi/deep-proxy": "2.0.3",
     "@paralleldrive/cuid2": "2.0.1",
+    "@qiwi/deep-proxy": "2.0.3",
+    "hyper-express": "^6.5.8",
     "lodash.get": "4.4.2",
     "msgpackr": "1.8.3",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.19.0",
-    "ws": "8.12.1",
-    "pretty-error": "4.0.0"
+    "pretty-error": "4.0.0",
+    "ws": "8.12.1"
   },
   "devDependencies": {
-    "@types/ws": "8.5.4",
     "@types/lodash.get": "4.4.7",
-    "@types/node": "^18.13.0"
+    "@types/node": "^18.13.0",
+    "@types/ws": "8.5.4"
   }
 }

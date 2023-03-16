@@ -11,7 +11,7 @@
     "dir": "workspace:*",
     "pkg": "workspace:*",
     "catch-exit": "1.2.2",
-    "builder": "workspace:^",
+    "bundler": "workspace:^",
     "@qiwi/deep-proxy": "2.0.3"
   },
   "devDependencies": {

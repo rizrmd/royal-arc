@@ -3,7 +3,7 @@
   "main": "export.ts",
   "private": true,
   "dependencies": {
-    "chalk": "^5.2.0",
+    "chalk": "^4",
     "dir": "workspace:*",
     "fs-jetpack": "5.1.0"
   },
