@@ -1,6 +1,6 @@
 {
   "name": "rpc",
-  "main": "entry.ts",
+  "main": "export.ts",
   "private": "true",
   "dependencies": {
     "@paralleldrive/cuid2": "2.0.1",

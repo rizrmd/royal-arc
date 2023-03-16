@@ -2,6 +2,15 @@ import { existsSync } from "fs";
 import { join } from "path";
 import { cwd } from "process";
 
+export const globalize = <T>(name: string, defaultValue: T) => {
+  const g = global as any;
+  if (typeof g[name] === "undefined") {
+    g[name] = defaultValue;
+  }
+
+  return g[name] as T;
+};
+
 export const dir = new Proxy(
   {},
   {
