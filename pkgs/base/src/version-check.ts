@@ -3,13 +3,23 @@ import { format } from "date-fns";
 import { dir } from "dir";
 import { readAsync } from "fs-jetpack";
 
-export const versionCheck = async () => {
+export const versionCheck = async (opt: { timeout: number }) => {
   //check version on dev
   const version = await readAsync(dir.root("pkgs/version.json"), "json");
-  fetch(`https://raw.githubusercontent.com/avolut/royal/main/pkgs/version.json`)
+  const abortctrl = new AbortController();
+  let timeout = {
+    timer: null as any,
+  };
+
+  fetch(
+    `https://raw.githubusercontent.com/avolut/royal/main/pkgs/version.json`,
+    {
+      signal: abortctrl.signal,
+    }
+  )
     .then(async (res) => {
       const remoteVersion = await res.json();
-      setTimeout(async () => {
+      timeout.timer = setTimeout(async () => {
         try {
           if (remoteVersion.ts > version.ts) {
             console.log(`
@@ -34,7 +44,7 @@ If somehow upgrade failed you can rollback using
             );
           }
         } catch (e) {}
-      }, 5000);
+      }, opt.timeout);
     })
     .catch(() => {});
 };

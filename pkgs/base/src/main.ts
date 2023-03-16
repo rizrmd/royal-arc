@@ -17,7 +17,6 @@ export const baseMain = async () => {
   if (await upgradeHook(args)) return;
 
   console.log(`── ${padEnd(chalk.yellow(`BASE`) + " ", 47, "─")}`);
-  console.log("args", args);
 
   if (
     args.includes("build") ||
@@ -26,11 +25,12 @@ export const baseMain = async () => {
     args.includes("staging")
   ) {
   } else {
-    versionCheck();
-    addExitCallback(() => {});
+    versionCheck({ timeout: 3000 });
 
     const app = await buildApp({ watch: true });
     await Promise.all(app.serviceNames.map(buildService));
+
+    console.log("mantap jiwa");
   }
 };
 

@@ -3,7 +3,7 @@ import { BuildEvent, AsyncSubscription } from "@parcel/types";
 import { basename, dirname, join } from "path";
 import { dir } from "dir";
 import { IPty, spawn } from "node-pty";
-import { dirAsync } from "fs-jetpack";
+import { dirAsync, removeAsync } from "fs-jetpack";
 
 const g = globalThis as unknown as {
   runs: Record<string, IPty & { arg: any }>;
@@ -60,6 +60,7 @@ export type Running = ReturnType<typeof runner.run>;
 export const bundle = async (arg: {
   input: string;
   output: string;
+  incremental?: boolean;
   watch?: (
     watcher: AsyncSubscription,
     err: Error | null | undefined,
@@ -69,13 +70,16 @@ export const bundle = async (arg: {
   const { input, output, watch } = arg;
   try {
     const cacheDir = dir.root(
-      `.output/.cache/${dirname(input.substring(dir.root("").length + 1))}`
+      `.output/.cache/${dirname(
+        input.substring(dir.root("").length + 1)
+      )}/cache`
     );
     await dirAsync(cacheDir);
+
     const bundler = new Parcel({
       entries: input,
       config: join(process.cwd(), ".parcelrc"),
-      shouldBundleIncrementally: true,
+      shouldBundleIncrementally: arg.incremental ? arg.incremental : true,
       cacheDir,
       targets: {
         default: {

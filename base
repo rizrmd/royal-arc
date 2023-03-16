@@ -17,7 +17,10 @@ const { spawn, spawnSync } = require("child_process");
 const { existsSync } = require("fs");
 const { join } = require("path");
 
-(async () => {
+const basePath = join(process.cwd(), ".output", ".cache", "base", "main.js");
+const args = process.argv.slice(2);
+
+const main = async () => {
   if (!existsSync(join(process.cwd(), "node_modules"))) {
     await new Promise((resolve) => {
       const pnpm = spawn("pnpm", ["i"], { stdio: "inherit", shell: true });
@@ -25,34 +28,40 @@ const { join } = require("path");
     });
   }
 
-  const basePath = join(process.cwd(), ".output", ".cache", "base", "main.js");
-
-  const args = process.argv.slice(2);
   while (true) {
-    let base = null;
-    if (existsSync(basePath)) {
-      base = spawn(
-        process.execPath,
-        ["--enable-source-maps", basePath, ...args],
-        {
-          cwd: process.cwd(),
-          stdio: "inherit",
-        }
-      );
-    }
-
-    spawnSync(
-      "node",
+    const build = spawn(
+      process.execPath,
       ["-r", "@swc-node/register", "pkgs/base/src/build-main.ts", ...args],
       {
         stdio: "inherit",
       }
     );
 
-    if (!!base) {
-      await new Promise((resolve) => {
-        base.onExit(resolve);
-      });
+    let run = false;
+    if (existsSync(basePath)) {
+      run = true;
+      runBase();
+    }
+
+    await new Promise((resolve) => {
+      build.on("exit", resolve);
+    });
+
+    if (!run && existsSync(basePath)) {
+      runBase();
     }
   }
-})();
+};
+
+const runBase = async () => {
+  base = spawn(process.execPath, ["--enable-source-maps", basePath, ...args], {
+    cwd: process.cwd(),
+    stdio: "inherit",
+  });
+
+  await new Promise((resolve) => {
+    base.on("exit", resolve);
+  });
+};
+
+main();
