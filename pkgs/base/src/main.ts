@@ -9,6 +9,7 @@ import { versionCheck } from "./version-check";
 import { vscodeSettings } from "./vscode";
 
 export const baseMain = async () => {
+  process.removeAllListeners("warning");
   vscodeSettings();
 
   const args = process.argv.slice(2);
@@ -30,7 +31,6 @@ export const baseMain = async () => {
     const app = await buildApp({ watch: true });
     await Promise.all(app.serviceNames.map(buildService));
 
-    console.log("mantap jiwa");
   }
 };
 

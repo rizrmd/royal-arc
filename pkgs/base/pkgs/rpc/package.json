@@ -5,6 +5,8 @@
   "dependencies": {
     "@paralleldrive/cuid2": "2.0.1",
     "@qiwi/deep-proxy": "2.0.3",
+    "dir": "workspace:*",
+    "get-port": "^6.1.2",
     "hyper-express": "^6.5.8",
     "lodash.get": "4.4.2",
     "msgpackr": "1.8.3",

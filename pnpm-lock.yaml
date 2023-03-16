@@ -91,6 +91,8 @@ importers:
       '@types/lodash.get': 4.4.7
       '@types/node': ^18.13.0
       '@types/ws': 8.5.4
+      dir: workspace:*
+      get-port: ^6.1.2
       hyper-express: ^6.5.8
       lodash.get: 4.4.2
       msgpackr: 1.8.3
@@ -99,6 +101,8 @@ importers:
     dependencies:
       '@paralleldrive/cuid2': 2.0.1
       '@qiwi/deep-proxy': 2.0.3
+      dir: link:../dir
+      get-port: 6.1.2
       hyper-express: 6.5.8
       lodash.get: 4.4.2
       msgpackr: 1.8.3
@@ -1554,6 +1558,11 @@ packages:
     resolution: {integrity: sha512-Xn4fDhLydXkuzepZVsr02jakLlmoARPy+YWIclo4kh0GyNGUHnTqeH/w/qIsVn50dFxtp8otPL2t/HcPJBbxUA==}
     dependencies:
       minimatch: 5.1.6
+    dev: false
+
+  /get-port/6.1.2:
+    resolution: {integrity: sha512-BrGGraKm2uPqurfGVj/z97/zv8dPleC6x9JBNRTrDNtCkkRF4rPwrQXFgL7+I+q8QSdU4ntLQX2D7KIxSy8nGw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dev: false
 
   /globals/13.20.0:
