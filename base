@@ -36,38 +36,51 @@ const main = async () => {
   }
 
   while (true) {
-    const res = spawnSync(
-      process.execPath,
-      ["-r", "@swc-node/register", "pkgs/base/src/builder/base.ts", ...args],
-      {
-        stdio: "inherit",
-        env: {
-          ...process.env,
-          NODE_PATH: nodePath,
-        },
-        cwd: process.cwd(),
-      }
-    );
+    if (args.includes("devbase")) {
 
-    if (res.status === 1) {
-      break;
-    } else {
-      if (existsSync(basePath)) {
-        runBase();
+
+
+      const res = spawnSync(
+        process.execPath,
+        ["-r", "@swc-node/register", "pkgs/base/src/builder/base.ts", ...args],
+        {
+          stdio: "inherit",
+          env: {
+            ...process.env,
+            NODE_PATH: nodePath,
+          },
+          cwd: process.cwd(),
+        }
+      );
+
+      if (res.status === 1) {
+        break;
       }
+    }
+
+    if (existsSync(basePath)) {
+      runBase();
     }
   }
 };
 
 const runBase = () => {
-  spawnSync(process.execPath, ["--enable-source-maps", basePath, ...args], {
-    env: {
-      ...process.env,
-      NODE_PATH: nodePath,
-    },
-    cwd: process.cwd(),
-    stdio: "inherit",
-  });
+  const res = spawnSync(
+    process.execPath,
+    ["--enable-source-maps", basePath, ...args],
+    {
+      env: {
+        ...process.env,
+        NODE_PATH: nodePath,
+      },
+      cwd: process.cwd(),
+      stdio: "inherit",
+    }
+  );
+
+  if (res.status === 1) {
+    process.exit(1);
+  }
 };
 
 main();
