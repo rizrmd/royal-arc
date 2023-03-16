@@ -15,13 +15,17 @@ if (
 
 const { spawn, spawnSync } = require("child_process");
 const { existsSync } = require("fs");
-const { join } = require("path");
+const { join, delimiter } = require("path");
 
 const basePath = join(
   process.cwd(),
   ...".output/.cache/base/main.js".split("/")
 );
 const args = process.argv.slice(2);
+const nodePath = [
+  join(process.cwd(), "pkgs", "base", "node_modules"),
+  join(process.cwd(), "pkgs", "base", "pkgs", "bundler", "node_modules"),
+].join(delimiter);
 
 const main = async () => {
   if (!existsSync(join(process.cwd(), "node_modules"))) {
@@ -39,7 +43,7 @@ const main = async () => {
         stdio: "inherit",
         env: {
           ...process.env,
-          NODE_PATH: join(process.cwd(), "pkgs", "base", "node_modules"),
+          NODE_PATH: nodePath,
         },
         cwd: process.cwd(),
       }
@@ -59,7 +63,7 @@ const runBase = () => {
   spawnSync(process.execPath, ["--enable-source-maps", basePath, ...args], {
     env: {
       ...process.env,
-      NODE_PATH: join(process.cwd(), "pkgs", "base", "node_modules"),
+      NODE_PATH: nodePath,
     },
     cwd: process.cwd(),
     stdio: "inherit",
