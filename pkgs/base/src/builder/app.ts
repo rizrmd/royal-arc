@@ -1,3 +1,4 @@
+import { bundle } from "bundler";
 import { dir } from "dir";
 import { existsSync, readdirSync, statSync } from "fs";
 import { writeAsync } from "fs-jetpack";
@@ -19,6 +20,15 @@ packages:
       ({ stat, name }) =>
         stat.isDirectory() && existsSync(dir.path(`app/${name}/main.ts`))
     );
+
+  if (
+    !(await bundle({
+      input: dir.root("app/app.ts"),
+      output: dir.root(".output/app/app.js"),
+    }))
+  ) {
+    console.log("build failed");
+  }
 
   return { serviceNames: dirs.map((e) => e.name) as string[] };
 };

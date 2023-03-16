@@ -18,6 +18,7 @@
     "@types/lodash.padend": "^4.6.7"
   },
   "exclude": [
+    "@parcel/core",
     "node-pty",
     "@swc/core",
     "@swc-node/register"

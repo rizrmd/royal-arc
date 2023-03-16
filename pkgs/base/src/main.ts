@@ -30,7 +30,6 @@ export const baseMain = async () => {
 
     const app = await buildApp({ watch: true });
     await Promise.all(app.serviceNames.map(buildService));
-
   }
 };
 
