@@ -1,3 +1,3 @@
 export const action = {
-  start() {},
+  async start(arg: { name: string; multiInstance?: boolean }) {},
 };

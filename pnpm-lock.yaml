@@ -25,6 +25,12 @@ importers:
     devDependencies:
       '@types/node': 18.15.3
 
+  app:
+    specifiers:
+      service: workspace:*
+    dependencies:
+      service: link:../pkgs/service
+
   pkgs/base:
     specifiers:
       '@types/lodash.padend': ^4.6.7

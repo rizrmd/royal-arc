@@ -1,0 +1,11 @@
+{
+  "name": "app",
+  "main": "app.ts",
+  "dependencies": {
+    "service": "workspace:*"
+  },
+  "external": [
+    "uWebSockets.js",
+    "esbuild"
+  ]
+}

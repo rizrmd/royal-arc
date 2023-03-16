@@ -2,10 +2,18 @@ import { existsSync } from "fs";
 import { join } from "path";
 import { cwd } from "process";
 
-export const globalize = <T>(name: string, defaultValue: T) => {
+export const globalize = <T extends object>(
+  name: string,
+  defaultValue: T,
+  init?: (g: T) => Promise<void>
+) => {
   const g = global as any;
   if (typeof g[name] === "undefined") {
     g[name] = defaultValue;
+  }
+
+  if (init) {
+    init(g[name]);
   }
 
   return g[name] as T;
