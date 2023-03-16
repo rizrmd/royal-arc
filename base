@@ -15,7 +15,7 @@ if (
 
 const { spawn, spawnSync } = require("child_process");
 const { existsSync } = require("fs");
-const { join } = require("path"); 
+const { join } = require("path");
 
 (async () => {
   if (!existsSync(join(process.cwd(), "node_modules"))) {
@@ -25,21 +25,34 @@ const { join } = require("path");
     });
   }
 
+  const basePath = join(process.cwd(), ".output", ".cache", "base", "main.js");
+
+  const args = process.argv.slice(2);
   while (true) {
-    const base = spawnSync(
+    let base = null;
+    if (existsSync(basePath)) {
+      base = spawn(
+        process.execPath,
+        ["--enable-source-maps", basePath, ...args],
+        {
+          cwd: process.cwd(),
+          stdio: "inherit",
+        }
+      );
+    }
+
+    spawnSync(
       "node",
-      [
-        "-r",
-        "@swc-node/register",
-        "pkgs/base/entry.ts",
-        ...process.argv.slice(2),
-      ],
+      ["-r", "@swc-node/register", "pkgs/base/src/build-main.ts", ...args],
       {
         stdio: "inherit",
       }
     );
-    if (base.status !== 99) {
-      break;
+
+    if (!!base) {
+      await new Promise((resolve) => {
+        base.onExit(resolve);
+      });
     }
   }
 })();

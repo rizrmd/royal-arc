@@ -17,6 +17,7 @@ export const baseMain = async () => {
   if (await upgradeHook(args)) return;
 
   console.log(`── ${padEnd(chalk.yellow(`BASE`) + " ", 47, "─")}`);
+  console.log("args", args);
 
   if (
     args.includes("build") ||
@@ -32,3 +33,5 @@ export const baseMain = async () => {
     await Promise.all(app.serviceNames.map(buildService));
   }
 };
+
+baseMain();

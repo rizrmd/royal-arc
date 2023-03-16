@@ -13,6 +13,7 @@
     "**/Thumbs.db": true,
     "**/bun.lockb": true,
     "**/go.sum": true,
+    ".output/.cache": true,
     "**/.parcelrc": true,
     "**/pnpm-lock.yaml": true,
     "**/.gitignore": true,

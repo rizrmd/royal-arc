@@ -1,11 +1,19 @@
 import { dir } from "dir";
-import { dirAsync, writeAsync } from "fs-jetpack";
+import { dirAsync, existsAsync, readAsync, writeAsync } from "fs-jetpack";
 import { dirname } from "path";
 
 export const vscodeSettings = async () => {
   const vscodeFile = dir.path(".vscode/settings.json");
+
+  const source = JSON.stringify(defaultVsSettings, null, 2);
+  if (await existsAsync(vscodeFile)) {
+    if ((await readAsync(vscodeFile, "utf8")) === source) {
+      return;
+    }
+  }
+
   await dirAsync(dirname(vscodeFile));
-  await writeAsync(vscodeFile, defaultVsSettings);
+  await writeAsync(vscodeFile, source);
 };
 
 const defaultVsSettings = {
@@ -23,6 +31,7 @@ const defaultVsSettings = {
     "**/Thumbs.db": true,
     "**/bun.lockb": true,
     "**/go.sum": true,
+    ".output/.cache": true,
     "**/.parcelrc": true,
     "**/pnpm-lock.yaml": true,
     "**/.gitignore": true,
