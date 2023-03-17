@@ -5,7 +5,6 @@
 ▐█•█▌▐█▌.▐▌ ▐█▀·.▐█ ▪▐▌▐█▌▐▌
 .▀  ▀ ▀█▄▀▪  ▀ •  ▀  ▀ .▀▀▀
 */
-console.log("init app");
 
 import { initialize, root } from "service";
 

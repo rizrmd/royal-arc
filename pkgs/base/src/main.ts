@@ -42,7 +42,7 @@ export const baseMain = async () => {
     const app = await buildApp({ watch: true });
     await Promise.all(app.serviceNames.map(buildService));
  
-    // runner.run({ path: app.path, cwd: app.cwd });
+    runner.run({ path: app.path, cwd: app.cwd });
   }
 };
 

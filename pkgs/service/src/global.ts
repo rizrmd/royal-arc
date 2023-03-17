@@ -3,13 +3,12 @@ import { createRPC } from "rpc";
 import { RPCActionResult } from "rpc/src/types";
 import { action } from "./action";
 
-export const svc = globalize(
-  "svc",
-  {
+export const svc = globalize({
+  name: "svc",
+  value: {
     rpc: null as unknown as RPCActionResult<typeof action>,
   },
-  async (g) => {
-    console.log("init global");
+  init: async (g) => {
     g.rpc = await createRPC("root", action);
-  }
-);
+  },
+});

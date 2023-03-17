@@ -146,6 +146,7 @@
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "baseMain", ()=>baseMain);
+var _bundler = require("bundler");
 var _watch = require("bundler/src/watch");
 var _catchExit = require("catch-exit");
 var _chalk = require("chalk");
@@ -180,12 +181,15 @@ const baseMain = async ()=>{
             watch: true
         });
         await Promise.all(app.serviceNames.map((0, _service.buildService)));
-    // runner.run({ path: app.path, cwd: app.cwd });
+        (0, _bundler.runner).run({
+            path: app.path,
+            cwd: app.cwd
+        });
     }
 };
 baseMain();
 
-},{"bundler/src/watch":"2P9Gs","catch-exit":"eRV4l","chalk":"1lbiC","lodash.padend":"iZ5sw","./builder/app":"4336l","./builder/service":"7ii00","./commit-hook":"aBIlz","./upgrade":"enXmf","./version-check":"eANhU","./vscode":"1Ws3e","./watcher/all":"auii2","@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl"}],"2P9Gs":[function(require,module,exports) {
+},{"bundler/src/watch":"2P9Gs","catch-exit":"eRV4l","chalk":"1lbiC","lodash.padend":"iZ5sw","./builder/app":"4336l","./builder/service":"7ii00","./commit-hook":"aBIlz","./upgrade":"enXmf","./version-check":"eANhU","./vscode":"1Ws3e","./watcher/all":"auii2","@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl","bundler":"fcLYH"}],"2P9Gs":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "watcher", ()=>watcher);
@@ -3756,10 +3760,13 @@ parcelHelpers.export(exports, "ascendFile", ()=>ascendFile);
 var _fs = require("fs");
 var _path = require("path");
 var _process = require("process");
-const globalize = (name, defaultValue, init)=>{
+const globalize = (arg)=>{
+    const { name , init  } = arg;
     const g = global;
-    if (typeof g[name] === "undefined") g[name] = defaultValue;
-    if (init) init(g[name]);
+    if (typeof g[name] === "undefined") g[name] = arg.value;
+    g[name].init = async ()=>{
+        if (init) await init(g[name]);
+    };
     return g[name];
 };
 const dir = new Proxy({}, {

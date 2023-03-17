@@ -5,21 +5,24 @@ import { cwd } from "process";
 import { readdirSync, statSync } from "fs";
 import { dirname, resolve } from "path";
 
-export const globalize = <T extends object>(
-  name: string,
-  defaultValue: T,
-  init?: (g: T) => Promise<void>
-) => {
+export const globalize = <T extends object>(arg: {
+  name: string;
+  value: T;
+  init?: (g: T) => Promise<void>;
+}) => {
+  const { name, init } = arg; 
   const g = global as any;
   if (typeof g[name] === "undefined") {
-    g[name] = defaultValue;
+    g[name] = arg.value;
   }
 
-  if (init) {
-    init(g[name]);
-  }
+  g[name].init = async () => {
+    if (init) { 
+      await init(g[name]);
+    }
+  };
 
-  return g[name] as T;
+  return g[name] as T & { init: () => Promise<void> };
 };
 
 export const dir = new Proxy(

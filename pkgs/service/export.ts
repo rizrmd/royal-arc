@@ -4,7 +4,8 @@ import { MODE, SERVICE_NAME } from "./src/types";
 export const initialize = async (fn: () => Promise<void>) => {
   process.removeAllListeners("warning");
 
-  console.log("initialize");
+  await svc.init();
+
   fn();
 };
 
@@ -14,5 +15,7 @@ export const createService = async (
 ) => {};
 
 export const root = {
-  service: svc.rpc,
+  get service() {
+    return svc.rpc;
+  },
 };
