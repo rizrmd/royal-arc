@@ -1,19 +1,23 @@
 {
   "name": "base",
+  "main": "main.js",
   "dependencies": {
+    "@parcel/core": "^2.8.3",
+    "@parcel/watcher": "^2.1.0",
     "@swc-node/register": "^1.6.2",
     "@swc/core": "^1.3.40",
     "bundler": "workspace:*",
-    "pkg": "workspace:*",
     "catch-exit": "1.2.2",
     "chalk": "^4",
     "date-fns": "2.29.3",
     "dir": "workspace:*",
+    "execa": "^7",
     "fflate": "0.7.4",
     "fs-jetpack": "^5.1.0",
-    "execa": "^7",
+    "hyper-express": "^6.5.8",
     "lodash.padend": "^4.6.1",
     "node-pty": "^0.10.1",
+    "pkg": "workspace:*",
     "typescript": "^5"
   },
   "devDependencies": {
