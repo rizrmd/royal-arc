@@ -1,10 +1,10 @@
 {
   "typescript.preferences.importModuleSpecifier": "relative",
-  "search.external": {
+  "search.exclude": {
     "app/gen/**": true
   },
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "files.external": {
+  "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
     "**/.hg": true,
