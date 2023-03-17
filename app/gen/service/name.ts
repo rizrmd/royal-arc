@@ -1,0 +1,1 @@
+export type SERVICE_NAME = "mokaju";

@@ -5,6 +5,7 @@ import { readAsync, writeAsync } from "fs-jetpack";
 import { readdir, stat } from "fs/promises";
 import { basename, join } from "path";
 import { pkg } from "pkg";
+import { serviceGen } from "../appgen/service";
 export const scaffoldServiceOnNewDir = () => {
   watcher.watch([
     {
@@ -13,9 +14,7 @@ export const scaffoldServiceOnNewDir = () => {
         if (!err) {
           for (const c of changes) {
             if (c.type === "delete") {
-              console.log(
-                `Removing service: ${chalk.red(basename(c.path))}`
-              );
+              console.log(`Removing service: ${chalk.red(basename(c.path))}`);
               await pkg.install(dir.root(""));
             } else if (c.type === "create") {
               const s = await stat(c.path);
@@ -42,6 +41,7 @@ export const scaffoldServiceOnNewDir = () => {
                   }
                 }
 
+                await serviceGen();
                 await pkg.install(dir.root(""));
               }
             }

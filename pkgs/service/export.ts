@@ -1,14 +1,10 @@
 import { svc } from "./src/global";
-import {
-  InitServiceResult,
-  MODE,
-  SERVICE_NAME,
-  SERVICE_TYPE,
-} from "./src/types";
+import { MODE, SERVICE_NAME } from "./src/types";
 
 export const initialize = async (fn: () => Promise<void>) => {
   process.removeAllListeners("warning");
 
+  console.log("initialize");
   fn();
 };
 

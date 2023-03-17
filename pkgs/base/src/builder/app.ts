@@ -25,10 +25,15 @@ packages:
     !(await bundle({
       input: dir.root("app/app.ts"),
       output: dir.root(".output/app/app.js"),
+      pkgjson: dir.root(".output/app/package.json"),
     }))
   ) {
     console.log("build failed");
   }
 
-  return { serviceNames: dirs.map((e) => e.name) as string[] };
+  return {
+    path: dir.root(".output/app/app.js"),
+    cwd: dir.root(".output/app"),
+    serviceNames: dirs.map((e) => e.name) as string[],
+  };
 };

@@ -9,6 +9,7 @@ export const svc = globalize(
     rpc: null as unknown as RPCActionResult<typeof action>,
   },
   async (g) => {
-    g.rpc = await createRPC("root.svc", action);
+    console.log("init global");
+    g.rpc = await createRPC("root", action);
   }
 );

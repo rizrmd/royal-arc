@@ -13,9 +13,10 @@ module.exports = new Resolver({
         pkgJSONPath = path.join(root, "..", "package.json");
       }
 
-      const pkgJSON = JSON.parse(fs.readFileSync(pkgJSONPath));
-
-      this.exclude = pkgJSON.exclude || [];
+      if (fs.existsSync(pkgJSONPath)) {
+        const pkgJSON = JSON.parse(fs.readFileSync(pkgJSONPath));
+        this.exclude = pkgJSON.exclude || [];
+      }
     }
 
     if (this.exclude.includes(specifier)) {

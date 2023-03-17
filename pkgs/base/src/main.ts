@@ -1,3 +1,4 @@
+import { runner } from "bundler";
 import { watcher } from "bundler/src/watch";
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
@@ -9,6 +10,7 @@ import { commitHook } from "./commit-hook";
 import { upgradeHook } from "./upgrade";
 import { versionCheck } from "./version-check";
 import { vscodeSettings } from "./vscode";
+import { setupWatchers } from "./watcher/all";
 import { scaffoldServiceOnNewDir } from "./watcher/service";
 
 export const baseMain = async () => {
@@ -35,24 +37,12 @@ export const baseMain = async () => {
       await watcher.dispose();
     };
     addExitCallback(() => {});
- 
-    if (args.includes("devbase")) {
-      watcher.watch({
-        dir: dir.root("pkgs/base"),
-        ignore: ["pkgs", "node_modules"],
-        event: async (err, ev) => {
-          if (!err) {
-            await onExit();
-            process.exit();
-          }
-        },
-      });
-    }
+    setupWatchers(args, onExit);
 
     const app = await buildApp({ watch: true });
     await Promise.all(app.serviceNames.map(buildService));
-
-    scaffoldServiceOnNewDir();
+ 
+    // runner.run({ path: app.path, cwd: app.cwd });
   }
 };
 

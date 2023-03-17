@@ -15,6 +15,15 @@ if (!g.pkgRunner) {
 export const pkg = {
   preventRun: false,
   isRunning: (cwd?: string) => g.pkgRunner.has(cwd || ""),
+  async produce(pkg: { external?: string[] }) {
+    const { $ } = await import("execa");
+
+    console.log(
+      (pkg.external || []).map((e) => {
+        return $`pnpm why ${e} -r`;
+      })
+    );
+  },
   async install(
     paths: string[] | string,
     arg?: { cwd?: undefined | string; silent?: boolean }

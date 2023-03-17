@@ -1,13 +1,15 @@
 import Parcel from "@parcel/core";
 import { AsyncSubscription, BuildEvent } from "@parcel/types";
-import { dir } from "dir";
-import { dirAsync, removeAsync } from "fs-jetpack";
+import { ascendFile, dir } from "dir";
+import { dirAsync, readAsync, removeAsync } from "fs-jetpack";
 import { basename, dirname, join } from "path";
+import { pkg } from "pkg";
 
 export const bundle = async (arg: {
   input: string;
   output: string;
   incremental?: boolean;
+  pkgjson?: string;
   watch?: (
     watcher: AsyncSubscription,
     err: Error | null | undefined,
@@ -40,10 +42,18 @@ export const bundle = async (arg: {
       },
     });
 
+    const genPkgJson = async () => {
+      if (arg.pkgjson) {
+        const oldpkg = await ascendFile(input, "package.json");
+        pkg.produce(await readAsync(oldpkg, "json"));
+      }
+    };
+
     if (watch) {
       const watcher = await bundler.watch(async (err, event) => {
         if (event) {
           if (event.type === "buildSuccess") {
+            await genPkgJson();
             await watch(watcher, err, event);
           } else if (event.type === "buildFailure") {
             console.log(
@@ -55,6 +65,7 @@ export const bundle = async (arg: {
       });
     } else {
       await bundler.run();
+      await genPkgJson();
     }
     return true;
   } catch (e: any) {
