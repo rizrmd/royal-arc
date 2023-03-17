@@ -3666,7 +3666,7 @@ packages:
         input: (0, _dir.dir).root("app/app.ts"),
         output: (0, _dir.dir).root(".output/app/app.js"),
         pkgjson: (0, _dir.dir).root(".output/app/package.json")
-    })) console.log("build failed");
+    })) console.log("build app failed");
     return {
         path: (0, _dir.dir).root(".output/app/app.js"),
         cwd: (0, _dir.dir).root(".output/app"),
@@ -3674,83 +3674,7 @@ packages:
     };
 };
 
-},{"bundler":"fcLYH","dir":"er1Is","fs":"fs","fs-jetpack":"dr8qG","@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl"}],"fcLYH":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _bundle = require("./src/bundle");
-parcelHelpers.exportAll(_bundle, exports);
-var _runner = require("./src/runner");
-parcelHelpers.exportAll(_runner, exports);
-
-},{"./src/bundle":"ewSxj","./src/runner":"h5KBY","@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl"}],"ewSxj":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "bundle", ()=>bundle);
-var _core = require("@parcel/core");
-var _coreDefault = parcelHelpers.interopDefault(_core);
-var _dir = require("dir");
-var _fsJetpack = require("fs-jetpack");
-var _path = require("path");
-var _pkg = require("pkg");
-const bundle = async (arg)=>{
-    const { input , output , watch  } = arg;
-    const cacheDir = (0, _dir.dir).root(`.output/.cache/${(0, _path.dirname)(input.substring((0, _dir.dir).root("").length + 1))}/cache`);
-    try {
-        await (0, _fsJetpack.dirAsync)(cacheDir);
-        const bundler = new (0, _coreDefault.default)({
-            entries: input,
-            config: (0, _dir.dir).root("pkgs/base/pkgs/bundler/parcel.config.json5"),
-            shouldBundleIncrementally: arg.incremental ? arg.incremental : true,
-            cacheDir,
-            targets: {
-                default: {
-                    distDir: (0, _path.dirname)(output),
-                    distEntry: (0, _path.basename)(output),
-                    sourceMap: true,
-                    includeNodeModules: true,
-                    engines: {
-                        node: ">= 18"
-                    }
-                }
-            }
-        });
-        const genPkgJson = async ()=>{
-            if (arg.pkgjson) {
-                const oldpkg = await (0, _dir.ascendFile)(input, "package.json");
-                const json = (0, _pkg.pkg).produce(await (0, _fsJetpack.readAsync)(oldpkg, "json"));
-                await (0, _fsJetpack.writeAsync)(arg.pkgjson, json);
-                await (0, _pkg.pkg).install([
-                    (0, _path.dirname)(arg.pkgjson)
-                ], {
-                    cwd: (0, _path.dirname)(arg.pkgjson)
-                });
-            }
-        };
-        if (watch) {
-            const watcher = await bundler.watch(async (err, event)=>{
-                if (event) {
-                    if (event.type === "buildSuccess") {
-                        await genPkgJson();
-                        await watch(watcher, err, event);
-                    } else if (event.type === "buildFailure") {
-                        console.log(`Error: ${event.diagnostics.map((e)=>e.message).join("\n")}`);
-                        await watcher.unsubscribe();
-                    }
-                }
-            });
-        } else {
-            await bundler.run();
-            await genPkgJson();
-        }
-        return true;
-    } catch (e) {
-        await (0, _fsJetpack.removeAsync)(cacheDir);
-        console.error(e);
-        return false;
-    }
-};
-
-},{"@parcel/core":"@parcel/core","dir":"er1Is","fs-jetpack":"dr8qG","path":"path","pkg":"hBNqT","@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl"}],"er1Is":[function(require,module,exports) {
+},{"dir":"er1Is","fs":"fs","fs-jetpack":"dr8qG","@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl","bundler":"fcLYH"}],"er1Is":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "globalize", ()=>globalize);
@@ -7095,7 +7019,83 @@ exports.validateInput = validateInput;
 exports.sync = tmpDirSync;
 exports.async = tmpDirAsync;
 
-},{"ea91c8e4f119e3f2":"path","63125c0bde46ed7d":"os","7f07bc516de55183":"crypto","7d30f28e2edd3012":"dv3dd","f11522bb9ba1e10":"kdumJ","7619d3a3f9522780":"59cGU"}],"hBNqT":[function(require,module,exports) {
+},{"ea91c8e4f119e3f2":"path","63125c0bde46ed7d":"os","7f07bc516de55183":"crypto","7d30f28e2edd3012":"dv3dd","f11522bb9ba1e10":"kdumJ","7619d3a3f9522780":"59cGU"}],"fcLYH":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _bundle = require("./src/bundle");
+parcelHelpers.exportAll(_bundle, exports);
+var _runner = require("./src/runner");
+parcelHelpers.exportAll(_runner, exports);
+
+},{"./src/bundle":"ewSxj","./src/runner":"h5KBY","@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl"}],"ewSxj":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "bundle", ()=>bundle);
+var _core = require("@parcel/core");
+var _coreDefault = parcelHelpers.interopDefault(_core);
+var _dir = require("dir");
+var _fsJetpack = require("fs-jetpack");
+var _path = require("path");
+var _pkg = require("pkg");
+const bundle = async (arg)=>{
+    const { input , output , watch  } = arg;
+    const cacheDir = (0, _dir.dir).root(`.output/.cache/${(0, _path.dirname)(input.substring((0, _dir.dir).root("").length + 1))}/cache`);
+    try {
+        await (0, _fsJetpack.dirAsync)(cacheDir);
+        const bundler = new (0, _coreDefault.default)({
+            entries: input,
+            config: (0, _dir.dir).root("pkgs/base/pkgs/bundler/parcel.config.json5"),
+            shouldBundleIncrementally: arg.incremental ? arg.incremental : true,
+            cacheDir,
+            targets: {
+                default: {
+                    distDir: (0, _path.dirname)(output),
+                    distEntry: (0, _path.basename)(output),
+                    sourceMap: true,
+                    includeNodeModules: true,
+                    engines: {
+                        node: ">= 18"
+                    }
+                }
+            }
+        });
+        const genPkgJson = async ()=>{
+            if (arg.pkgjson) {
+                const oldpkg = await (0, _dir.ascendFile)(input, "package.json");
+                const json = (0, _pkg.pkg).produce(await (0, _fsJetpack.readAsync)(oldpkg, "json"));
+                await (0, _fsJetpack.writeAsync)(arg.pkgjson, json);
+                await (0, _pkg.pkg).install([
+                    (0, _path.dirname)(arg.pkgjson)
+                ], {
+                    cwd: (0, _path.dirname)(arg.pkgjson)
+                });
+            }
+        };
+        if (watch) {
+            const watcher = await bundler.watch(async (err, event)=>{
+                if (event) {
+                    if (event.type === "buildSuccess") {
+                        await genPkgJson();
+                        await watch(watcher, err, event);
+                    } else if (event.type === "buildFailure") {
+                        console.log(`Error: ${event.diagnostics.map((e)=>e.message).join("\n")}`);
+                        await watcher.unsubscribe();
+                    }
+                }
+            });
+        } else {
+            await bundler.run();
+            await genPkgJson();
+        }
+        return true;
+    } catch (e) {
+        await (0, _fsJetpack.removeAsync)(cacheDir);
+        console.error(e);
+        return false;
+    }
+};
+
+},{"@parcel/core":"@parcel/core","dir":"er1Is","fs-jetpack":"dr8qG","path":"path","pkg":"hBNqT","@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl"}],"hBNqT":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "pkg", ()=>pkg);
@@ -7292,11 +7292,17 @@ const runner = {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "buildService", ()=>buildService);
-const buildService = async (serviceName)=>{
-    console.log(serviceName, process.cwd());
+var _bundler = require("bundler");
+var _dir = require("dir");
+const buildService = async (name)=>{
+    if (!await (0, _bundler.bundle)({
+        input: (0, _dir.dir).root(`app/${name}/main.ts`),
+        output: (0, _dir.dir).root(`.output/app/${name}/index.js`),
+        pkgjson: (0, _dir.dir).root(`.output/app/${name}/package.json`)
+    })) console.log(`build service ${name} failed`);
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl"}],"aBIlz":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl","bundler":"fcLYH","dir":"er1Is"}],"aBIlz":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "commitHook", ()=>commitHook);

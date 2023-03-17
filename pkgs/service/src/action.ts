@@ -1,8 +1,11 @@
 import { SERVICE_NAME } from "./types";
 import { runner } from "bundler";
-
+import { dir } from "dir";
 export const action = {
   async start(arg: { name: SERVICE_NAME; multiInstance?: boolean }) {
-    console.log(arg, process.cwd());
+    const run = await runner.run({
+      path: dir.path(`${arg.name}/index.js`),
+      cwd: process.cwd(),
+    });
   },
 };

@@ -28,7 +28,7 @@ packages:
       pkgjson: dir.root(".output/app/package.json"),
     }))
   ) {
-    console.log("build failed");
+    console.log("build app failed");
   }
 
   return {
