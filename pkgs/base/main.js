@@ -181,7 +181,7 @@ const baseMain = async ()=>{
             watch: true
         });
         await Promise.all(app.serviceNames.map((0, _service.buildService)));
-        (0, _bundler.runner).run({
+        await (0, _bundler.runner).run({
             path: app.path,
             cwd: app.cwd
         });
@@ -7292,7 +7292,9 @@ const runner = {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "buildService", ()=>buildService);
-const buildService = async (serviceName)=>{};
+const buildService = async (serviceName)=>{
+    console.log(serviceName, process.cwd());
+};
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"bmjVl"}],"aBIlz":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -12895,18 +12897,23 @@ var _watch = require("bundler/src/watch");
 var _dir = require("dir");
 var _service = require("./service");
 const setupWatchers = (args, onExit)=>{
-    if (args.includes("devbase")) (0, _watch.watcher).watch({
-        dir: (0, _dir.dir).root("pkgs/base"),
-        ignore: [
-            "pkgs/*/node_modules",
-            "node_modules"
-        ],
-        event: async (err, ev)=>{
-            if (!err) {
-                await onExit();
-                process.exit();
+    if (args.includes("devbase")) [
+        "pkgs/base",
+        "pkgs/service"
+    ].map((e)=>{
+        (0, _watch.watcher).watch({
+            dir: (0, _dir.dir).root(e),
+            ignore: [
+                "pkgs/*/node_modules",
+                "node_modules"
+            ],
+            event: async (err, ev)=>{
+                if (!err) {
+                    await onExit();
+                    process.exit();
+                }
             }
-        }
+        });
     });
     (0, _service.scaffoldServiceOnNewDir)();
 };

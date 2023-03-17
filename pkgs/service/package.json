@@ -10,8 +10,8 @@
     "rpc": "workspace:*",
     "dir": "workspace:*",
     "pkg": "workspace:*",
-    "catch-exit": "1.2.2",
     "bundler": "workspace:^",
+    "catch-exit": "1.2.2",
     "@qiwi/deep-proxy": "2.0.3"
   },
   "devDependencies": {
