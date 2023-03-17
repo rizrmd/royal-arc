@@ -67,7 +67,7 @@ importers:
       '@parcel/types': ^2.8.3
       '@parcel/watcher': ^2.1.0
       dir: workspace:*
-      parcel-resolver-exclude: workspace:^
+      parcel-resolver-external: workspace:^
       pkg: workspace:*
     dependencies:
       '@parcel/config-default': 2.8.3_@parcel+core@2.8.3
@@ -75,13 +75,13 @@ importers:
       '@parcel/types': 2.8.3_@parcel+core@2.8.3
       '@parcel/watcher': 2.1.0
       dir: link:../dir
-      parcel-resolver-exclude: link:../parcel-exclude
+      parcel-resolver-external: link:../parcel-external
       pkg: link:../pkg
 
   pkgs/base/pkgs/dir:
     specifiers: {}
 
-  pkgs/base/pkgs/parcel-exclude:
+  pkgs/base/pkgs/parcel-external:
     specifiers:
       '@parcel/core': ^2.8.3
       '@parcel/plugin': ^2.8.3

@@ -15,11 +15,11 @@ if (
 
 const { spawn, spawnSync } = require("child_process");
 const { existsSync } = require("fs");
-const { join, delimiter } = require("path");
+const { join, delimiter, dirname } = require("path");
 
 const basePath = join(
   process.cwd(),
-  ...".output/.cache/base/main.js".split("/")
+  ..."pkgs/base/main.js".split("/")
 );
 const args = process.argv.slice(2);
 const nodePath = [
@@ -36,7 +36,7 @@ const main = async () => {
   }
 
   while (true) {
-    if (args.includes("devbase")) {
+    if (args.includes("devbase") || !existsSync(basePath)) {
       const res = spawnSync(
         process.execPath,
         ["-r", "@swc-node/register", "pkgs/base/src/builder/base.ts", ...args],
@@ -68,7 +68,7 @@ const runBase = () => {
     {
       env: {
         ...process.env,
-        NODE_PATH: nodePath,
+        NODE_PATH: join(dirname(basePath), "node_modules"),
       },
       cwd: process.cwd(),
       stdio: "inherit",

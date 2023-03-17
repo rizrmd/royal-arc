@@ -1,8 +1,8 @@
 import Parcel from "@parcel/core";
 import { AsyncSubscription, BuildEvent } from "@parcel/types";
 import { ascendFile, dir } from "dir";
-import { dirAsync, readAsync, removeAsync } from "fs-jetpack";
-import { basename, dirname, join } from "path";
+import { dirAsync, readAsync, removeAsync, writeAsync } from "fs-jetpack";
+import { basename, dirname } from "path";
 import { pkg } from "pkg";
 
 export const bundle = async (arg: {
@@ -45,7 +45,11 @@ export const bundle = async (arg: {
     const genPkgJson = async () => {
       if (arg.pkgjson) {
         const oldpkg = await ascendFile(input, "package.json");
-        pkg.produce(await readAsync(oldpkg, "json"));
+        const json = pkg.produce(await readAsync(oldpkg, "json"));
+        await writeAsync(arg.pkgjson, json);
+        await pkg.install([dirname(arg.pkgjson)], {
+          cwd: dirname(arg.pkgjson),
+        });
       }
     };
 

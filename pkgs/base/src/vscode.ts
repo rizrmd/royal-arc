@@ -18,11 +18,11 @@ export const vscodeSettings = async () => {
 
 const defaultVsSettings = {
   "typescript.preferences.importModuleSpecifier": "relative",
-  "search.exclude": {
+  "search.external": {
     "app/gen/**": true,
   },
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "files.exclude": {
+  "files.external": {
     "**/.git": true,
     "**/.svn": true,
     "**/.hg": true,

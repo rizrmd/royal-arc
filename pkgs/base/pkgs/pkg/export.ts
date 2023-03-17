@@ -1,8 +1,9 @@
-import { spawn } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import chalk from "chalk";
 import fs from "fs";
 import path, { dirname } from "path";
 import { shouldInstall } from "./src/should-install";
+import { dir } from "dir";
 
 const g = globalThis as unknown as {
   pkgRunner: Set<string>;
@@ -12,17 +13,32 @@ if (!g.pkgRunner) {
   g.pkgRunner = new Set();
 }
 
+const getModuleVersion = (name: string) => {
+  const res = spawnSync("pnpm", ["why", "-r", name], {
+    cwd: dir.root(""),
+    env: process.env,
+  });
+  const out = res.output.filter((e) => !!e);
+  try {
+    return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
+  } catch (e) {
+    return "";
+  }
+};
+
 export const pkg = {
   preventRun: false,
   isRunning: (cwd?: string) => g.pkgRunner.has(cwd || ""),
-  async produce(pkg: { external?: string[] }) {
-    const { $ } = await import("execa");
+  produce(pkg: { name: string; version: string; external?: string[] }) {
+    const dependencies: Record<string, string> = {};
 
-    console.log(
-      (pkg.external || []).map((e) => {
-        return $`pnpm why ${e} -r`;
-      })
-    );
+    if (pkg.external) {
+      for (const f of pkg.external) {
+        dependencies[f] = getModuleVersion(f);
+      }
+    }
+
+    return { name: pkg.name, version: pkg.version, dependencies };
   },
   async install(
     paths: string[] | string,

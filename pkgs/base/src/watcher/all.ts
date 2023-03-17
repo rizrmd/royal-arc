@@ -15,5 +15,6 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
       },
     });
   }
+  
   scaffoldServiceOnNewDir();
 };
