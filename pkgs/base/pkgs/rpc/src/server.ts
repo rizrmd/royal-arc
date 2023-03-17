@@ -9,7 +9,7 @@ export const createRPC = async <T extends RPCAction>(
 ) => {
   const server = new Server();
   server.post("/", async (req, res) => {
-    let body = req.json();
+    let body = await req.json();
     res.json({ oke: "deh" });
   });
 

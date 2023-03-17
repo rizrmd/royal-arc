@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { existsAsync, readAsync, writeAsync } from "fs-jetpack";
 import { dirname, join } from "path";
 
@@ -12,9 +13,10 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
         if (!(await existsAsync(join(dir, "node_modules", k)))) {
           if (silent === false) {
             console.log(
-              `not found ${join(dir, "node_modules", k).substring(
-                process.cwd().length + 1
-              )}`
+              `module ${chalk.cyan(k)} not found in ${join(
+                dir,
+                "node_modules"
+              ).substring(process.cwd().length + 1)}`
             );
           }
           shouldInstall = true;

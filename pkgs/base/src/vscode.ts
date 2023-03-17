@@ -40,7 +40,6 @@ const defaultVsSettings = {
     "**/pnpm-workspace.yaml": true,
     "**/.vscode": true,
     "**/build": true,
-    "**/tsconfig.json": true,
     "**/node_modules": true,
     "**/.htmlnanorc": true,
     "**/.parcel-cache": true,

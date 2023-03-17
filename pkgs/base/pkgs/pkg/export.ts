@@ -16,7 +16,7 @@ export const pkg = {
   preventRun: false,
   isRunning: (cwd?: string) => g.pkgRunner.has(cwd || ""),
   async install(
-    paths: string[],
+    paths: string[] | string,
     arg?: { cwd?: undefined | string; silent?: boolean }
   ) {
     const _arg = arg ? arg : { cwd: undefined, silent: false };
@@ -34,27 +34,7 @@ export const pkg = {
 
     g.pkgRunner.add(_arg.cwd || "");
 
-    const dirs = await scanDir(paths);
-    let mustInstall = new Set<string>();
-    const all = await Promise.all(
-      dirs.map((e) => [e, shouldInstall(e, arg?.silent)])
-    );
-    for (const [e, i] of all) {
-      if (await i) {
-        mustInstall.add(e as string);
-      }
-    }
-
-    if (mustInstall.size > 0) {
-      console.log(
-        `\n${chalk.magenta("Installing")} deps:\n ${chalk.blue("➥")}`,
-        [...mustInstall]
-          .map((e) =>
-            chalk.green(dirname(e.substring(process.cwd().length + 1)))
-          )
-          .join(" ")
-      );
-
+    if (!Array.isArray(paths)) {
       await new Promise<void>((resolve) => {
         const child = spawn("pnpm", ["i"], {
           stdio: "inherit",
@@ -66,7 +46,40 @@ export const pkg = {
         });
       });
     } else {
-      g.pkgRunner.delete(_arg.cwd || "");
+      const dirs = await scanDir(paths);
+      let mustInstall = new Set<string>();
+      const all = await Promise.all(
+        dirs.map((e) => [e, shouldInstall(e, arg?.silent)])
+      );
+      for (const [e, i] of all) {
+        if (await i) {
+          mustInstall.add(e as string);
+        }
+      }
+
+      if (mustInstall.size > 0) {
+        console.log(
+          `\n${chalk.magenta("Installing")} deps:\n ${chalk.blue("➥")}`,
+          [...mustInstall]
+            .map((e) =>
+              chalk.green(dirname(e.substring(process.cwd().length + 1)))
+            )
+            .join(" ")
+        );
+
+        await new Promise<void>((resolve) => {
+          const child = spawn("pnpm", ["i"], {
+            stdio: "inherit",
+            cwd: _arg.cwd || process.cwd(),
+          });
+          child.on("exit", () => {
+            g.pkgRunner.delete(_arg.cwd || "");
+            resolve();
+          });
+        });
+      } else {
+        g.pkgRunner.delete(_arg.cwd || "");
+      }
     }
   },
 };

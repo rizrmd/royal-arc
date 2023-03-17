@@ -1,5 +1,10 @@
 import { svc } from "./src/global";
-import { InitServiceResult, MODE, SERVICE_TYPE } from "./src/types";
+import {
+  InitServiceResult,
+  MODE,
+  SERVICE_NAME,
+  SERVICE_TYPE,
+} from "./src/types";
 
 export const initialize = async (fn: () => Promise<void>) => {
   process.removeAllListeners("warning");
@@ -7,9 +12,9 @@ export const initialize = async (fn: () => Promise<void>) => {
   fn();
 };
 
-export const initService = async (
-  serviceType: SERVICE_TYPE,
-  fn: (mode: MODE) => Promise<InitServiceResult>
+export const createService = async (
+  serviceName: SERVICE_NAME,
+  fn: (mode: MODE) => Promise<void>
 ) => {};
 
 export const root = {

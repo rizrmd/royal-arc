@@ -37,9 +37,6 @@ const main = async () => {
 
   while (true) {
     if (args.includes("devbase")) {
-
-
-
       const res = spawnSync(
         process.execPath,
         ["-r", "@swc-node/register", "pkgs/base/src/builder/base.ts", ...args],
