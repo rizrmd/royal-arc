@@ -6,9 +6,9 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
   const dir = dirname(path);
   let pkg = {} as any;
   try {
-    let pkg = await readAsync(path, "json");
+    pkg = await readAsync(path, "json");
   } catch (e) {}
-  
+
   let shouldInstall = false;
   await Promise.all(
     ["dependencies", "devDependencies"].map(async (e) => {

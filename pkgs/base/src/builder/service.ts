@@ -6,6 +6,7 @@ import { RPCActionResult } from "rpc/src/types";
 export const buildService = async (
   name: string,
   arg: {
+    onDone?: (arg: { isRebuild: boolean }) => void;
     watch: boolean;
     app: { path: string; cwd: string };
     rpc: RPCActionResult<typeof action>;
@@ -15,19 +16,25 @@ export const buildService = async (
   const rpc = arg.rpc;
   if (
     !(await bundle({
+      incremental: true,
       input: dir.root(`app/${name}/main.ts`),
       output: dir.root(`.output/app/${name}/index.js`),
       pkgjson: dir.root(`.output/app/${name}/package.json`),
+      pkgcwd: dir.root(".output/app"),
+      printTimer: true,
+      onBeforeDone: arg.onDone,
       watch: arg.watch
-        ? async (w, e, b) => {
-            if (b && b.type === "buildSuccess" && runner.list[app.path]) {
-              // todo: told app to restart this service
-              rpc.restart(name as any)
+        ? async ({ isRebuild, installDeps }) => {
+            if (installDeps) return;
+            if (isRebuild && runner.list[app.path]) {
+              await rpc.restart({ name: name as any });
             }
           }
         : undefined,
     }))
   ) {
     console.log(`build service ${name} failed`);
+    return false;
   }
+  return true;
 };

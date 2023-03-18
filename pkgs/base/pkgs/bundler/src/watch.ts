@@ -18,7 +18,7 @@ export const watcher = {
         (await e).unsubscribe();
       })
     );
-  },
+  }, 
   watch(dirs: SingleWatch[] | SingleWatch) {
     const _dirs = Array.isArray(dirs) ? dirs : [dirs];
 

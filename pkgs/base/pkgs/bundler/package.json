@@ -2,12 +2,7 @@
   "name": "bundler",
   "main": "export.ts",
   "dependencies": {
-    "@parcel/config-default": "^2.8.3",
-    "@parcel/core": "^2.8.3",
-    "@parcel/types": "^2.8.3",
-    "@parcel/watcher": "^2.1.0",
     "dir": "workspace:*",
-    "parcel-resolver-external": "workspace:^",
     "pkg": "workspace:*"
   }
 }

@@ -14,6 +14,8 @@
     "**/bun.lockb": true,
     "**/go.sum": true,
     ".output/.cache": true,
+    "pkgs/base/main.js": true,
+    "pkgs/base/main.js.map": true,
     "**/.parcelrc": true,
     "**/pnpm-lock.yaml": true,
     "**/.gitignore": true,
@@ -28,7 +30,6 @@
     ".fleet": true,
     ".vscode": true,
     ".husky": true,
-    "base": true,
     "app/gen": true
   },
   "hide-files.files": []

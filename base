@@ -36,7 +36,7 @@ const main = async () => {
     if (args.includes("devbase") || !existsSync(basePath)) {
       const res = spawnSync(
         process.execPath,
-        ["-r", "@swc-node/register", "pkgs/base/src/builder/base.ts", ...args],
+        ["pkgs/base/src/builder/base.mjs", ...args],
         {
           stdio: "inherit",
           env: {

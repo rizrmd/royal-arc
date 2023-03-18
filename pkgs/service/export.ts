@@ -6,14 +6,15 @@ export const initialize = async (fn: () => Promise<void>) => {
 
   await svc.init();
 
-  fn();
+  await fn();
+  console.log("::RUNNING::");
 };
 
 export const createService = async (
   serviceName: SERVICE_NAME,
   fn: (mode: MODE) => Promise<void>
 ) => {
-  fn('dev');
+  fn("dev");
 };
 
 export const root = {

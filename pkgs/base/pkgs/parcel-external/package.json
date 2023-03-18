@@ -1,8 +1,0 @@
-{
-  "name": "parcel-resolver-external",
-  "main": "./main.js",
-  "dependencies": {
-    "@parcel/core": "^2.8.3",
-    "@parcel/plugin": "^2.8.3"
-  }
-}

@@ -6,7 +6,6 @@
   },
   "external": [
     "node-pty",
-    "hyper-express",
-    "@parcel/core"
+    "hyper-express"
   ]
 }

@@ -1,3 +1,4 @@
+import { dir } from "dir";
 import { existsSync } from "fs";
 import { IPty, spawn } from "node-pty";
 
@@ -12,10 +13,15 @@ export const runner = {
     return g.runs;
   },
   async restart(path: keyof typeof g.runs) {
-    g.runs[path].kill();
-    g.runs[path].onExit(() => {
-      runner.run(g.runs[path].arg);
-    });
+    if (g.runs[path]) {
+      g.runs[path].kill();
+      g.runs[path].onExit(() => {
+        runner.run(g.runs[path].arg);
+      });
+      return true;
+    } else {
+      return false;
+    }
   },
   async stop(path: keyof typeof g.runs) {
     g.runs[path].kill();
@@ -26,6 +32,7 @@ export const runner = {
     args?: string[];
     onData?: (e: string) => unknown;
     onStop?: (e: { exitCode: number; signal?: number | undefined }) => unknown;
+    runningMarker?: (stdout: string) => boolean;
     cwd: string;
   }) {
     try {
@@ -41,12 +48,23 @@ export const runner = {
 
       g.runs[path].arg = arg;
 
-      if (onData) g.runs[path].onData(onData);
-      else g.runs[path].onData((e) => process.stdout.write(e));
-
       if (onStop) g.runs[path].onExit(onStop);
 
-      return true;
+      return new Promise<boolean>((resolve) => {
+        g.runs[path].onData((e) => {
+          if (arg.runningMarker) {
+            if (arg.runningMarker(e)) {
+              resolve(true);
+            } else {
+              return;
+            }
+          }
+
+          if (arg.onData) arg.onData(e);
+          else process.stdout.write(e);
+        });
+        if (!arg.runningMarker) resolve(true);
+      });
     } catch (e) {
       return false;
     }

@@ -1,4 +1,4 @@
-import { bundle } from "bundler";
+import { bundle, runner } from "bundler";
 import { dir } from "dir";
 import { existsSync, readdirSync, statSync } from "fs";
 import { writeAsync } from "fs-jetpack";
@@ -21,19 +21,27 @@ packages:
         stat.isDirectory() && existsSync(dir.path(`app/${name}/main.ts`))
     );
 
-  if (
-    !(await bundle({
-      input: dir.root("app/app.ts"),
-      output: dir.root(".output/app/app.js"),
-      pkgjson: dir.root(".output/app/package.json"),
-    }))
-  ) {
-    console.log("build app failed");
-  }
-
   return {
     path: dir.root(".output/app/app.js"),
     cwd: dir.root(".output/app"),
     serviceNames: dirs.map((e) => e.name) as string[],
+    async build(onDone?: (arg: { isRebuild: boolean }) => void) {
+      const result = await bundle({
+        incremental: true,
+        input: dir.root("app/app.ts"),
+        output: dir.root(".output/app/app.js"),
+        pkgjson: dir.root(".output/app/package.json"),
+        pkgcwd: dir.root(".outpu/app"),
+        printTimer: true,
+        onBeforeDone: onDone,
+        async watch({ isRebuild }) {
+          if (isRebuild) await runner.restart(dir.root(".output/app/app.js"));
+        },
+      });
+
+      if (!result) {
+        console.log("build app failed");
+      }
+    },
   };
 };
