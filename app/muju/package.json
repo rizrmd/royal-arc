@@ -2,11 +2,7 @@
   "name": "muju",
   "version": "0.0.1",
   "dependencies": {
-    "service": "workspace:*",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "chalk": "5.2.0",
-    "colors": "1.4.0"
+    "service": "workspace:*"
   },
   "external": [
     "hyper-express",
