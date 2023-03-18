@@ -84,7 +84,11 @@ export const bundle = async (arg: {
                   await outputPkgJson(json, arg.pkgjson);
                   if (arg.onBeforeDone) await arg.onBeforeDone({ isRebuild });
                   if (printTimer) console.timeEnd(tag);
-                  await watch({ isRebuild, installDeps });
+                  try {
+                    await watch({ isRebuild, installDeps });
+                  } catch (e) {
+                    console.error(e);
+                  }
                   if (!isRebuild) resolve(true);
                 } else {
                   if (!isRebuild) resolve(true);

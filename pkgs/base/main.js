@@ -27278,7 +27278,11 @@ ${import_chalk2.default.magenta("Installing")} deps:
                       yield arg.onBeforeDone({ isRebuild });
                     if (printTimer)
                       console.timeEnd(tag);
-                    yield watch({ isRebuild, installDeps });
+                    try {
+                      yield watch({ isRebuild, installDeps });
+                    } catch (e) {
+                      console.error(e);
+                    }
                     if (!isRebuild)
                       resolve2(true);
                   } else {
@@ -27323,11 +27327,18 @@ ${import_chalk2.default.magenta("Installing")} deps:
     restart(path2) {
       return __async(this, null, function* () {
         if (g2.runs[path2]) {
-          g2.runs[path2].kill();
-          g2.runs[path2].onExit(() => {
-            runner.run(g2.runs[path2].arg);
-          });
-          return true;
+          if (!g2.runs[path2].stopped) {
+            return new Promise((resolve2) => {
+              g2.runs[path2].clearOnExit.dispose();
+              g2.runs[path2].onExit(() => __async(this, null, function* () {
+                g2.runs[path2].stopped = true;
+                resolve2(yield runner.run(g2.runs[path2].arg));
+              }));
+              g2.runs[path2].kill();
+            });
+          } else {
+            return yield runner.run(g2.runs[path2].arg);
+          }
         } else {
           return false;
         }
@@ -27348,14 +27359,19 @@ ${import_chalk2.default.magenta("Installing")} deps:
           const { path: path2, onData, args, cwd: cwd2, onStop } = arg;
           if (!(0, import_fs3.existsSync)(path2))
             return false;
+          if (g2.runs[path2] && !g2.runs[path2].stopped)
+            return false;
           g2.runs[path2] = (0, import_node_pty.spawn)(
             process.execPath,
             ["--enable-source-maps", path2, ...args || []],
             { cwd: cwd2 }
           );
           g2.runs[path2].arg = arg;
-          if (onStop)
-            g2.runs[path2].onExit(onStop);
+          g2.runs[path2].clearOnExit = g2.runs[path2].onExit(() => __async(this, null, function* () {
+            g2.runs[path2].stopped = true;
+            if (onStop)
+              g2.runs[path2].onExit(onStop);
+          }));
           return new Promise((resolve2) => {
             g2.runs[path2].onData((e) => {
               if (arg.runningMarker && !g2.runs[path2].markedRunning) {

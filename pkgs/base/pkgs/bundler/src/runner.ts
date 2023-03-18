@@ -1,9 +1,17 @@
 import { dir } from "dir";
 import { existsSync } from "fs";
-import { IPty, spawn } from "node-pty";
+import { IDisposable, IPty, spawn } from "node-pty";
 
 const g = globalThis as unknown as {
-  runs: Record<string, IPty & { arg: any; markedRunning: boolean }>;
+  runs: Record<
+    string,
+    IPty & {
+      arg: any;
+      markedRunning: boolean;
+      stopped: boolean;
+      clearOnExit: IDisposable;
+    }
+  >;
 };
 
 if (!g.runs) g.runs = {};
@@ -14,11 +22,18 @@ export const runner = {
   },
   async restart(path: keyof typeof g.runs) {
     if (g.runs[path]) {
-      g.runs[path].kill();
-      g.runs[path].onExit(() => {
-        runner.run(g.runs[path].arg);
-      });
-      return true;
+      if (!g.runs[path].stopped) {
+        return new Promise<boolean>((resolve) => {
+          g.runs[path].clearOnExit.dispose();
+          g.runs[path].onExit(async () => {
+            g.runs[path].stopped = true;
+            resolve(await runner.run(g.runs[path].arg));
+          });
+          g.runs[path].kill();
+        });
+      } else {
+        return await runner.run(g.runs[path].arg);
+      }
     } else {
       return false;
     }
@@ -43,6 +58,8 @@ export const runner = {
 
       if (!existsSync(path)) return false;
 
+      if (g.runs[path] && !g.runs[path].stopped) return false;
+
       g.runs[path] = spawn(
         process.execPath,
         ["--enable-source-maps", path, ...(args || [])],
@@ -51,7 +68,10 @@ export const runner = {
 
       g.runs[path].arg = arg;
 
-      if (onStop) g.runs[path].onExit(onStop);
+      g.runs[path].clearOnExit = g.runs[path].onExit(async () => {
+        g.runs[path].stopped = true;
+        if (onStop) g.runs[path].onExit(onStop);
+      });
 
       return new Promise<boolean>((resolve) => {
         g.runs[path].onData((e) => {
