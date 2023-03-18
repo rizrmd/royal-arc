@@ -12,7 +12,7 @@ export const buildService = async (
     rpc: RPCActionResult<typeof action>;
   }
 ) => {
-  const app = arg.app;
+  const app = arg.app; 
   const rpc = arg.rpc;
   if (
     !(await bundle({

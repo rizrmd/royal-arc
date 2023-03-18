@@ -1,1 +1,1 @@
-export type SERVICE_NAME = "mokaju" | "muju";
+export type SERVICE_NAME = "";

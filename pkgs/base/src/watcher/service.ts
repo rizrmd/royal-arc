@@ -16,6 +16,7 @@ export const scaffoldServiceOnNewDir = () => {
           for (const c of changes) {
             if (c.type === "delete") {
               console.log(`Removing service: ${chalk.red(basename(c.path))}`);
+              await serviceGen()
               await pkg.install(dir.root("package.json"));
             } else if (c.type === "create") {
               const s = await stat(c.path);
@@ -43,7 +44,10 @@ export const scaffoldServiceOnNewDir = () => {
                 }
 
                 await serviceGen();
-                await pkg.install(dir.root("package.json"));
+                await pkg.install(
+                  dir.root(`app/${basename(c.path)}/package.json`)
+                ),
+                  { cwd: process.cwd() };
               }
             }
           }

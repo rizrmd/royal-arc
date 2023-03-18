@@ -12,7 +12,7 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
   let shouldInstall = false;
   await Promise.all(
     ["dependencies", "devDependencies"].map(async (e) => {
-      if (!pkg[e]) return;
+      if (!pkg || (pkg && !pkg[e])) return;
       for (const [k, v] of Object.entries(pkg[e])) {
         if (!(await existsAsync(join(dir, "node_modules", k)))) {
           if (silent === false) {

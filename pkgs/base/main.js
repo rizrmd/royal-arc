@@ -27105,7 +27105,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     let shouldInstall2 = false;
     yield Promise.all(
       ["dependencies", "devDependencies"].map((e) => __async(void 0, null, function* () {
-        if (!pkg2[e])
+        if (!pkg2 || pkg2 && !pkg2[e])
           return;
         for (const [k, v] of Object.entries(pkg2[e])) {
           if (!(yield (0, import_fs_jetpack.existsAsync)((0, import_path3.join)(dir2, "node_modules", k)))) {
@@ -28670,6 +28670,7 @@ If somehow upgrade failed you can rollback using
             for (const c of changes) {
               if (c.type === "delete") {
                 console.log(`Removing service: ${import_chalk5.default.red((0, import_path9.basename)(c.path))}`);
+                yield serviceGen();
                 yield pkg.install(dir.root("package.json"));
               } else if (c.type === "create") {
                 const s = yield (0, import_promises2.stat)(c.path);
@@ -28693,7 +28694,9 @@ If somehow upgrade failed you can rollback using
                     }
                   }
                   yield serviceGen();
-                  yield pkg.install(dir.root("package.json"));
+                  yield pkg.install(
+                    dir.root(`app/${(0, import_path9.basename)(c.path)}/package.json`)
+                  ), { cwd: process.cwd() };
                 }
               }
             }
