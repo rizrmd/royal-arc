@@ -12,8 +12,13 @@ export const connectRPC = async <T extends RPCAction>(
 ) => {
   const waitConnection = get(arg, "waitConnection", true);
   let ws = false as false | WSClient;
+  let serverConnected = false;
   if (waitConnection) {
-    ws = await connect(name);
+    const res = await connect(name);
+    if (res) {
+      ws = res.ws;
+      serverConnected = res.serverConnected;
+    }
   }
 
   return new DeepProxy({}, ({ target, PROXY, key, path, handler }) => {
@@ -22,10 +27,17 @@ export const connectRPC = async <T extends RPCAction>(
         return PROXY({}, handler, path);
       }
 
-      if (path.length === 0 && key === "connected") return !!ws;
+      if (path.length === 0 && key === "connected")
+        return !!ws && !!serverConnected;
 
       return async (...args: any[]) => {
-        if (ws === false) ws = await connect(name);
+        if (ws === false) {
+          const res = await connect(name);
+          if (res) {
+            ws = res.ws;
+            serverConnected = res.serverConnected;
+          }
+        }
 
         return new Promise<any>((resolve, reject) => {
           if (ws) {
@@ -34,10 +46,13 @@ export const connectRPC = async <T extends RPCAction>(
                 ws.off("message", onmsg);
 
                 const msg = JSON.parse(raw) as ActionResult;
-                if (!msg.error) {
-                  resolve(msg.result);
-                } else {
-                  reject(msg.error);
+
+                if (msg.type === "action-result") {
+                  if (!msg.error) {
+                    resolve(msg.result);
+                  } else {
+                    reject(msg.error);
+                  }
                 }
               }
             };
@@ -59,13 +74,24 @@ export const connectRPC = async <T extends RPCAction>(
 };
 
 const connect = (name: string) => {
-  return new Promise<false | WSClient>((resolve) => {
-    const ws = new WSClient(`ws://localhost:${config.port}/connect/${name}`);
-    ws.on("open", () => {
-      ws.send(JSON.stringify({ type: "identify", name }));
-      resolve(ws);
-    });
-    ws.on("close", () => resolve(false));
-    ws.on("error", () => resolve(false));
-  });
+  return new Promise<false | { ws: WSClient; serverConnected: boolean }>(
+    (resolve) => {
+      const ws = new WSClient(`ws://localhost:${config.port}/connect/${name}`);
+      ws.on("open", () => {
+        ws.send(JSON.stringify({ type: "identify", name }));
+        ws.on("message", (raw: string) => {
+          const msg = JSON.parse(raw) as {
+            type: "connected";
+            serverConnected: boolean;
+          };
+
+          if (msg.type === "connected") {
+            resolve({ ws, serverConnected: msg.serverConnected });
+          }
+        });
+      });
+      ws.on("close", () => resolve(false));
+      ws.on("error", () => resolve(false));
+    }
+  );
 };

@@ -1829,7 +1829,7 @@
           maxRetries: 3
         });
       };
-      var removeAsync5 = (path2) => {
+      var removeAsync4 = (path2) => {
         return fs.rm(path2, {
           recursive: true,
           force: true,
@@ -1838,7 +1838,7 @@
       };
       exports.validateInput = validateInput;
       exports.sync = removeSync;
-      exports.async = removeAsync5;
+      exports.async = removeAsync4;
     }
   });
 
@@ -4023,8 +4023,8 @@
         times: true,
         absolutePath: true
       };
-      var shouldThrowDestinationExistsError = (context2) => {
-        return typeof context2.opts.overwrite !== "function" && context2.opts.overwrite !== true;
+      var shouldThrowDestinationExistsError = (context) => {
+        return typeof context.opts.overwrite !== "function" && context.opts.overwrite !== true;
       };
       var checksBeforeCopyingSync = (from, to, opts) => {
         if (!exists.sync(from)) {
@@ -4034,14 +4034,14 @@
           throw generateDestinationExistsError(to);
         }
       };
-      var canOverwriteItSync = (context2) => {
-        if (typeof context2.opts.overwrite === "function") {
-          const destInspectData = inspect.sync(context2.destPath, inspectOptions);
-          return context2.opts.overwrite(context2.srcInspectData, destInspectData);
+      var canOverwriteItSync = (context) => {
+        if (typeof context.opts.overwrite === "function") {
+          const destInspectData = inspect.sync(context.destPath, inspectOptions);
+          return context.opts.overwrite(context.srcInspectData, destInspectData);
         }
-        return context2.opts.overwrite === true;
+        return context.opts.overwrite === true;
       };
-      var copyFileSync = (srcPath, destPath, mode, context2) => {
+      var copyFileSync = (srcPath, destPath, mode, context) => {
         const data = fs.readFileSync(srcPath);
         try {
           fs.writeFileSync(destPath, data, { mode, flag: "wx" });
@@ -4049,10 +4049,10 @@
           if (err2.code === "ENOENT") {
             write.sync(destPath, data, { mode });
           } else if (err2.code === "EEXIST") {
-            if (canOverwriteItSync(context2)) {
+            if (canOverwriteItSync(context)) {
               fs.writeFileSync(destPath, data, { mode });
-            } else if (shouldThrowDestinationExistsError(context2)) {
-              throw generateDestinationExistsError(context2.destPath);
+            } else if (shouldThrowDestinationExistsError(context)) {
+              throw generateDestinationExistsError(context.destPath);
             }
           } else {
             throw err2;
@@ -4073,12 +4073,12 @@
         }
       };
       var copyItemSync = (srcPath, srcInspectData, destPath, opts) => {
-        const context2 = { srcPath, destPath, srcInspectData, opts };
+        const context = { srcPath, destPath, srcInspectData, opts };
         const mode = fileMode.normalizeFileMode(srcInspectData.mode);
         if (srcInspectData.type === "dir") {
           dir2.createSync(destPath, { mode });
         } else if (srcInspectData.type === "file") {
-          copyFileSync(srcPath, destPath, mode, context2);
+          copyFileSync(srcPath, destPath, mode, context);
         } else if (srcInspectData.type === "symlink") {
           copySymlinkSync(srcPath, destPath);
         }
@@ -4107,20 +4107,20 @@
           }
         });
       };
-      var canOverwriteItAsync = (context2) => {
+      var canOverwriteItAsync = (context) => {
         return new Promise((resolve2, reject) => {
-          if (typeof context2.opts.overwrite === "function") {
-            inspect.async(context2.destPath, inspectOptions).then((destInspectData) => {
+          if (typeof context.opts.overwrite === "function") {
+            inspect.async(context.destPath, inspectOptions).then((destInspectData) => {
               resolve2(
-                context2.opts.overwrite(context2.srcInspectData, destInspectData)
+                context.opts.overwrite(context.srcInspectData, destInspectData)
               );
             }).catch(reject);
           } else {
-            resolve2(context2.opts.overwrite === true);
+            resolve2(context.opts.overwrite === true);
           }
         });
       };
-      var copyFileAsync = (srcPath, destPath, mode, context2, runOptions) => {
+      var copyFileAsync = (srcPath, destPath, mode, context, runOptions) => {
         return new Promise((resolve2, reject) => {
           const runOpts = runOptions || {};
           let flags = "wx";
@@ -4134,18 +4134,18 @@
             readStream.resume();
             if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(destPath)).then(() => {
-                copyFileAsync(srcPath, destPath, mode, context2).then(
+                copyFileAsync(srcPath, destPath, mode, context).then(
                   resolve2,
                   reject
                 );
               }).catch(reject);
             } else if (err2.code === "EEXIST") {
-              canOverwriteItAsync(context2).then((canOverwite) => {
+              canOverwriteItAsync(context).then((canOverwite) => {
                 if (canOverwite) {
-                  copyFileAsync(srcPath, destPath, mode, context2, {
+                  copyFileAsync(srcPath, destPath, mode, context, {
                     overwrite: true
                   }).then(resolve2, reject);
-                } else if (shouldThrowDestinationExistsError(context2)) {
+                } else if (shouldThrowDestinationExistsError(context)) {
                   reject(generateDestinationExistsError(destPath));
                 } else {
                   resolve2();
@@ -4175,12 +4175,12 @@
         });
       };
       var copyItemAsync = (srcPath, srcInspectData, destPath, opts) => {
-        const context2 = { srcPath, destPath, srcInspectData, opts };
+        const context = { srcPath, destPath, srcInspectData, opts };
         const mode = fileMode.normalizeFileMode(srcInspectData.mode);
         if (srcInspectData.type === "dir") {
           return dir2.createAsync(destPath, { mode });
         } else if (srcInspectData.type === "file") {
-          return copyFileAsync(srcPath, destPath, mode, context2);
+          return copyFileAsync(srcPath, destPath, mode, context);
         } else if (srcInspectData.type === "symlink") {
           return copySymlinkAsync(srcPath, destPath);
         }
@@ -13882,9 +13882,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       exports.default = buildLocalizeFn;
       function buildLocalizeFn(args) {
         return function(dirtyIndex, options) {
-          var context2 = options !== null && options !== void 0 && options.context ? String(options.context) : "standalone";
+          var context = options !== null && options !== void 0 && options.context ? String(options.context) : "standalone";
           var valuesArray;
-          if (context2 === "formatting" && args.formattingValues) {
+          if (context === "formatting" && args.formattingValues) {
             var defaultWidth = args.defaultFormattingWidth || args.defaultWidth;
             var width = options !== null && options !== void 0 && options.width ? String(options.width) : defaultWidth;
             valuesArray = args.formattingValues[width] || args.formattingValues[defaultWidth];
@@ -27081,7 +27081,6 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   };
 
   // pkgs/base/pkgs/bundler/src/bundle.ts
-  var import_esbuild = __require("esbuild");
   var import_fs_jetpack2 = __toESM(require_main());
   var import_lodash = __toESM(require_lodash());
   var import_path5 = __require("path");
@@ -27214,8 +27213,9 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/pkgs/bundler/src/bundle.ts
   var bundle = (arg) => __async(void 0, null, function* () {
-    const { input, output, printTimer, watch } = arg;
     try {
+      const { context } = yield import("esbuild");
+      const { input, output, printTimer, watch } = arg;
       const printableName = import_chalk3.default.green(
         (0, import_path5.dirname)(input.substring(dir.root("").length + 1))
       );
@@ -27243,7 +27243,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
         )
       ];
       return new Promise((resolve2) => __async(void 0, null, function* () {
-        const ctx = yield (0, import_esbuild.context)({
+        const ctx = yield context({
           entryPoints: [input],
           outfile: output,
           bundle: true,
@@ -27565,8 +27565,13 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var connectRPC = (name, arg) => __async(void 0, null, function* () {
     const waitConnection = (0, import_lodash2.default)(arg, "waitConnection", true);
     let ws = false;
+    let serverConnected = false;
     if (waitConnection) {
-      ws = yield connect(name);
+      const res = yield connect(name);
+      if (res) {
+        ws = res.ws;
+        serverConnected = res.serverConnected;
+      }
     }
     return new DeepProxy({}, ({ target, PROXY, key, path: path2, handler }) => {
       if (key) {
@@ -27574,20 +27579,27 @@ ${import_chalk2.default.magenta("Installing")} deps:
           return PROXY({}, handler, path2);
         }
         if (path2.length === 0 && key === "connected")
-          return !!ws;
+          return !!ws && !!serverConnected;
         return (...args) => __async(void 0, null, function* () {
-          if (ws === false)
-            ws = yield connect(name);
+          if (ws === false) {
+            const res = yield connect(name);
+            if (res) {
+              ws = res.ws;
+              serverConnected = res.serverConnected;
+            }
+          }
           return new Promise((resolve2, reject) => {
             if (ws) {
               const onmsg = (raw) => {
                 if (ws) {
                   ws.off("message", onmsg);
                   const msg = JSON.parse(raw);
-                  if (!msg.error) {
-                    resolve2(msg.result);
-                  } else {
-                    reject(msg.error);
+                  if (msg.type === "action-result") {
+                    if (!msg.error) {
+                      resolve2(msg.result);
+                    } else {
+                      reject(msg.error);
+                    }
                   }
                 }
               };
@@ -27608,15 +27620,22 @@ ${import_chalk2.default.magenta("Installing")} deps:
     });
   });
   var connect = (name) => {
-    return new Promise((resolve2) => {
-      const ws = new import_websocket.default(`ws://localhost:${config.port}/connect/${name}`);
-      ws.on("open", () => {
-        ws.send(JSON.stringify({ type: "identify", name }));
-        resolve2(ws);
-      });
-      ws.on("close", () => resolve2(false));
-      ws.on("error", () => resolve2(false));
-    });
+    return new Promise(
+      (resolve2) => {
+        const ws = new import_websocket.default(`ws://localhost:${config.port}/connect/${name}`);
+        ws.on("open", () => {
+          ws.send(JSON.stringify({ type: "identify", name }));
+          ws.on("message", (raw) => {
+            const msg = JSON.parse(raw);
+            if (msg.type === "connected") {
+              resolve2({ ws, serverConnected: msg.serverConnected });
+            }
+          });
+        });
+        ws.on("close", () => resolve2(false));
+        ws.on("error", () => resolve2(false));
+      }
+    );
   };
 
   // pkgs/base/pkgs/rpc/src/server.ts
@@ -27760,17 +27779,25 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var import_cuid22 = __toESM(require_cuid2());
   var import_lodash3 = __toESM(require_lodash2());
   var createRPC = (name, action2) => __async(void 0, null, function* () {
+    let srv = null;
     if (!config.port) {
       config.port = yield getPorts({ port: portNumbers(14e3, 19e3) });
-      yield createServer();
+      srv = yield createServer();
     }
     let ws = yield connect2(name, action2);
     if (!ws) {
-      yield createServer();
+      srv = yield createServer();
       ws = yield connect2(name, action2);
     }
     return new DeepProxy(action2, ({ target, PROXY, key, path: path2, handler }) => {
       if (key) {
+        if (key === "destroy") {
+          return () => {
+            if (srv) {
+              srv.close();
+            }
+          };
+        }
         if (key === "then") {
           return PROXY({}, handler, path2);
         }
@@ -27855,6 +27882,12 @@ ${import_chalk2.default.magenta("Installing")} deps:
           }
           ws.context.clientId = (0, import_cuid22.createId)();
           conns[msg.name].clients.add(ws);
+          ws.send(
+            JSON.stringify({
+              type: "connected",
+              serverConnected: !!conns[msg.name].server
+            })
+          );
         } else if (msg.type === "action") {
           let name = "";
           for (const [k, v] of Object.entries(conns)) {
@@ -27871,6 +27904,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
       });
     });
     yield server.listen(config.port, "localhost");
+    return server;
   });
 
   // pkgs/base/src/builder/app.ts
@@ -28557,10 +28591,10 @@ If somehow upgrade failed you can rollback using
           } else {
             console.log(
               `
-\u{1F44C} Royal is in latest version [ v${(0, import_date_fns.format)(
+\u{1F44C} Royal is in latest version: v${(0, import_date_fns.format)(
                 new Date(remoteVersion.ts),
                 "1.Md.hm"
-              )} ]
+              )}
 `
             );
           }
@@ -28728,6 +28762,7 @@ If somehow upgrade failed you can rollback using
 
   // pkgs/base/src/main.ts
   var import_fs_jetpack11 = __toESM(require_main());
+  var RUNNING_MARKER = "WARNING: SERVER ALREADY RUNNING";
   var baseMain = () => __async(void 0, null, function* () {
     process.removeAllListeners("warning");
     vscodeSettings();
@@ -28760,7 +28795,7 @@ If somehow upgrade failed you can rollback using
           path: app.path,
           cwd: app.cwd,
           runningMarker(e) {
-            if (e.trim() === "::RUNNING::")
+            if (e.trim() === RUNNING_MARKER)
               return true;
             process.stdout.write(e);
             return false;
@@ -28774,9 +28809,7 @@ If somehow upgrade failed you can rollback using
           console.log();
           console.log(
             `\u2500\u2500 ${(0, import_lodash4.default)(
-              import_chalk6.default.magenta(
-                arg.isRebuild ? `REBUILD` : `BUILD`
-              ) + " ",
+              import_chalk6.default.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
               47,
               "\u2500"
             )}`
@@ -28798,7 +28831,7 @@ If somehow upgrade failed you can rollback using
           path: app.path,
           cwd: app.cwd,
           runningMarker(e) {
-            if (e.trim() === "::RUNNING::")
+            if (e.trim() === RUNNING_MARKER)
               return true;
             process.stdout.write(e);
             return false;

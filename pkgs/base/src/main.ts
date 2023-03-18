@@ -15,6 +15,8 @@ import { setupWatchers } from "./watcher/all";
 import { existsAsync } from "fs-jetpack";
 import { action, baseGlobal } from "./action";
 
+const RUNNING_MARKER = "WARNING: SERVER ALREADY RUNNING";
+
 export const baseMain = async () => {
   process.removeAllListeners("warning");
   vscodeSettings();
@@ -55,7 +57,7 @@ export const baseMain = async () => {
         path: app.path,
         cwd: app.cwd,
         runningMarker(e) {
-          if (e.trim() === "::RUNNING::") return true;
+          if (e.trim() === RUNNING_MARKER) return true;
           process.stdout.write(e);
           return false;
         },
@@ -70,15 +72,13 @@ export const baseMain = async () => {
             console.log();
             console.log(
               `── ${padEnd(
-                chalk.magenta(
-                  arg.isRebuild ? `REBUILD` : `BUILD`
-                ) + " ",
+                chalk.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
                 47,
                 "─"
               )}`
             );
             bannerPrinted = true;
-          }
+          } 
         }
       : undefined;
 
@@ -96,7 +96,7 @@ export const baseMain = async () => {
         path: app.path,
         cwd: app.cwd,
         runningMarker(e) {
-          if (e.trim() === "::RUNNING::") return true;
+          if (e.trim() === RUNNING_MARKER) return true;
           process.stdout.write(e);
           return false;
         },

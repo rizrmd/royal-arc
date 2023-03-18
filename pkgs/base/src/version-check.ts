@@ -31,10 +31,10 @@ If somehow upgrade failed you can rollback using
 `);
           } else {
             console.log(
-              `\n👌 Royal is in latest version [ v${format(
+              `\n👌 Royal is in latest version: v${format(
                 new Date(remoteVersion.ts),
                 "1.Md.hm"
-              )} ]\n`
+              )}\n`
             );
           }
         } catch (e) {}

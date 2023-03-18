@@ -1,4 +1,4 @@
-import { RPCAction, RPCActionResult } from "./types";
+import { RPCAction, RPCServerAction } from "./types";
 import { Server, Websocket as WSServer } from "hyper-express";
 import { config } from "./config";
 import { WebSocket as WSClient } from "ws";
@@ -27,19 +27,27 @@ export const createRPC = async <T extends RPCAction>(
   name: string,
   action: T
 ) => {
+  let srv: null | Awaited<ReturnType<typeof createServer>> = null;
   if (!config.port) {
     config.port = await getPort({ port: portNumbers(14000, 19000) });
-    await createServer();
+    srv = await createServer();
   }
 
   let ws = await connect(name, action);
   if (!ws) {
-    await createServer();
+    srv = await createServer();
     ws = await connect(name, action);
   }
 
   return new DeepProxy(action, ({ target, PROXY, key, path, handler }) => {
     if (key) {
+      if (key === "destroy") {
+        return () => {
+          if (srv) {
+            srv.close();
+          }
+        };
+      }
       if (key === "then") {
         return PROXY({}, handler, path);
       }
@@ -51,7 +59,7 @@ export const createRPC = async <T extends RPCAction>(
       return PROXY(target[key], handler, path);
     }
     return undefined;
-  }) as RPCActionResult<T>;
+  }) as unknown as RPCServerAction<T>;
 };
 
 const connect = (name: string, action: RPCAction) => {
@@ -139,6 +147,12 @@ const createServer = async () => {
         }
         ws.context.clientId = createId();
         conns[msg.name].clients.add(ws);
+        ws.send(
+          JSON.stringify({
+            type: "connected",
+            serverConnected: !!conns[msg.name].server,
+          })
+        );
       } else if (msg.type === "action") {
         let name = "";
         for (const [k, v] of Object.entries(conns)) {
@@ -155,4 +169,5 @@ const createServer = async () => {
     });
   });
   await server.listen(config.port, "localhost");
+  return server;
 };

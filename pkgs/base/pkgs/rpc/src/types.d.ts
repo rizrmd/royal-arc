@@ -47,3 +47,7 @@ export type RPCActionResult<T extends RPCAction> = {
     ? PromisedRPCActionItemFn<T[K]>
     : Promise<T[K]>;
 };
+
+export type RPCServerAction<T extends RPCAction> = RPCActionResult<T> & {
+  destroy: () => void;
+};

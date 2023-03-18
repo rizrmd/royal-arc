@@ -1,13 +1,21 @@
+import { connectRPC } from "rpc";
 import { svc } from "./src/global";
 import { MODE, SERVICE_NAME } from "./src/types";
-
+import { addExitCallback } from "catch-exit";
 export const initialize = async (fn: () => Promise<void>) => {
   process.removeAllListeners("warning");
 
   await svc.init();
 
   await fn();
-  console.log("::RUNNING::");
+
+  if ((await connectRPC("base")).connected) {
+    console.log("WARNING: SERVER ALREADY RUNNING");
+  } else {
+    addExitCallback(() => {
+      svc.rpc.destroy();
+    });
+  }
 };
 
 export const createService = async (

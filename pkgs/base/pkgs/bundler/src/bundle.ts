@@ -1,7 +1,6 @@
 import chalk from "chalk";
 import { ascendFile, dir } from "dir";
-import { context } from "esbuild";
-import { readAsync, removeAsync, writeAsync } from "fs-jetpack";
+import { readAsync, writeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { dirname } from "path";
 import { pkg } from "pkg";
@@ -16,9 +15,11 @@ export const bundle = async (arg: {
   onBeforeDone?: (arg: { isRebuild: boolean }) => any;
   watch?: (arg: { isRebuild: boolean; installDeps: boolean }) => Promise<void>;
 }): Promise<boolean> => {
-  const { input, output, printTimer, watch } = arg;
-
   try {
+    const { context } = await import("esbuild");
+
+    const { input, output, printTimer, watch } = arg;
+
     const printableName = chalk.green(
       dirname(input.substring(dir.root("").length + 1))
     );
