@@ -1,5 +1,7 @@
 import { watcher } from "bundler/src/watch";
 import { dir } from "dir";
+import { removeAsync } from "fs-jetpack";
+import { baseGlobal } from "../action";
 import { scaffoldServiceOnNewDir } from "./service";
 
 export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
@@ -10,10 +12,11 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
         ignore: ["pkgs/*/node_modules", "node_modules"],
         event: async (err, ev) => {
           if (!err) {
+            await removeAsync(baseGlobal.app.path)
             await onExit();
             process.exit();
           }
-        },
+        }, 
       });
     });
   }

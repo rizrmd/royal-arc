@@ -55,14 +55,14 @@ export const baseMain = async () => {
         path: app.path,
         cwd: app.cwd,
         runningMarker(e) {
-          if (e === "::RUNNING::") return true;
+          if (e.trim() === "::RUNNING::") return true;
           process.stdout.write(e);
           return false;
         },
       });
       cacheFound = true;
     }
- 
+
     let bannerPrinted = false;
     const onDone = cacheFound
       ? (arg: { isRebuild: boolean }) => {
@@ -86,11 +86,19 @@ export const baseMain = async () => {
         async (e) =>
           await buildService(e, { watch: true, app, rpc: rootRPC, onDone })
       ),
-    ]);
+    ]); 
     versionCheck({ timeout: 3000 });
 
     if (!cacheFound) {
-      await runner.run({ path: app.path, cwd: app.cwd });
+      await runner.run({
+        path: app.path,
+        cwd: app.cwd,
+        runningMarker(e) {
+          if (e.trim() === "::RUNNING::") return true;
+          process.stdout.write(e);
+          return false;
+        },
+      });
     } else {
       console.log(`\n🌟 Running ${chalk.cyan(`latest`)} app`);
       await runner.restart(app.path);

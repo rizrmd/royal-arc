@@ -1829,7 +1829,7 @@
           maxRetries: 3
         });
       };
-      var removeAsync4 = (path2) => {
+      var removeAsync5 = (path2) => {
         return fs.rm(path2, {
           recursive: true,
           force: true,
@@ -1838,7 +1838,7 @@
       };
       exports.validateInput = validateInput;
       exports.sync = removeSync;
-      exports.async = removeAsync4;
+      exports.async = removeAsync5;
     }
   });
 
@@ -27335,8 +27335,11 @@ ${import_chalk2.default.magenta("Installing")} deps:
     },
     stop(path2) {
       return __async(this, null, function* () {
-        g2.runs[path2].kill();
-        delete g2.runs[path2];
+        return new Promise((resolve2) => {
+          g2.runs[path2].onExit(() => resolve2(true));
+          g2.runs[path2].kill();
+          delete g2.runs[path2];
+        });
       });
     },
     run(arg) {
@@ -27355,20 +27358,22 @@ ${import_chalk2.default.magenta("Installing")} deps:
             g2.runs[path2].onExit(onStop);
           return new Promise((resolve2) => {
             g2.runs[path2].onData((e) => {
-              if (arg.runningMarker) {
+              if (arg.runningMarker && !g2.runs[path2].markedRunning) {
                 if (arg.runningMarker(e)) {
+                  g2.runs[path2].markedRunning = true;
                   resolve2(true);
-                } else {
-                  return;
                 }
+                return;
               }
               if (arg.onData)
                 arg.onData(e);
               else
                 process.stdout.write(e);
             });
-            if (!arg.runningMarker)
+            if (!arg.runningMarker) {
+              g2.runs[path2].markedRunning = true;
               resolve2(true);
+            }
           });
         } catch (e) {
           return false;
@@ -28601,6 +28606,21 @@ If somehow upgrade failed you can rollback using
     "hide-files.files": []
   };
 
+  // pkgs/base/src/watcher/all.ts
+  var import_fs_jetpack10 = __toESM(require_main());
+
+  // pkgs/base/src/action.ts
+  var baseGlobal = global;
+  var action = {
+    rebuildService: (name) => __async(void 0, null, function* () {
+      return yield buildService(name, {
+        watch: true,
+        app: baseGlobal.app,
+        rpc: baseGlobal.rootRPC
+      });
+    })
+  };
+
   // pkgs/base/src/watcher/service.ts
   var import_chalk5 = __toESM(require_source());
   var import_fs_jetpack9 = __toESM(require_main());
@@ -28676,6 +28696,7 @@ If somehow upgrade failed you can rollback using
           ignore: ["pkgs/*/node_modules", "node_modules"],
           event: (err2, ev) => __async(void 0, null, function* () {
             if (!err2) {
+              yield (0, import_fs_jetpack10.removeAsync)(baseGlobal.app.path);
               yield onExit();
               process.exit();
             }
@@ -28687,21 +28708,7 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/main.ts
-  var import_fs_jetpack10 = __toESM(require_main());
-
-  // pkgs/base/src/action.ts
-  var baseGlobal = global;
-  var action = {
-    rebuildService: (name) => __async(void 0, null, function* () {
-      return yield buildService(name, {
-        watch: true,
-        app: baseGlobal.app,
-        rpc: baseGlobal.rootRPC
-      });
-    })
-  };
-
-  // pkgs/base/src/main.ts
+  var import_fs_jetpack11 = __toESM(require_main());
   var baseMain = () => __async(void 0, null, function* () {
     process.removeAllListeners("warning");
     vscodeSettings();
@@ -28727,14 +28734,14 @@ If somehow upgrade failed you can rollback using
       const app = yield buildApp({ watch: true });
       baseGlobal.app = app;
       let cacheFound = false;
-      if (yield (0, import_fs_jetpack10.existsAsync)(app.path)) {
+      if (yield (0, import_fs_jetpack11.existsAsync)(app.path)) {
         console.log(`
 \u{1F31F} Running ${import_chalk6.default.cyan(`cached`)} app`);
         yield runner.run({
           path: app.path,
           cwd: app.cwd,
           runningMarker(e) {
-            if (e === "::RUNNING::")
+            if (e.trim() === "::RUNNING::")
               return true;
             process.stdout.write(e);
             return false;
@@ -28766,7 +28773,16 @@ If somehow upgrade failed you can rollback using
       ]);
       versionCheck({ timeout: 3e3 });
       if (!cacheFound) {
-        yield runner.run({ path: app.path, cwd: app.cwd });
+        yield runner.run({
+          path: app.path,
+          cwd: app.cwd,
+          runningMarker(e) {
+            if (e.trim() === "::RUNNING::")
+              return true;
+            process.stdout.write(e);
+            return false;
+          }
+        });
       } else {
         console.log(`
 \u{1F31F} Running ${import_chalk6.default.cyan(`latest`)} app`);

@@ -3,7 +3,7 @@ import { existsSync } from "fs";
 import { IPty, spawn } from "node-pty";
 
 const g = globalThis as unknown as {
-  runs: Record<string, IPty & { arg: any }>;
+  runs: Record<string, IPty & { arg: any; markedRunning: boolean }>;
 };
 
 if (!g.runs) g.runs = {};
@@ -24,8 +24,11 @@ export const runner = {
     }
   },
   async stop(path: keyof typeof g.runs) {
-    g.runs[path].kill();
-    delete g.runs[path];
+    return new Promise<boolean>((resolve) => {
+      g.runs[path].onExit(() => resolve(true));
+      g.runs[path].kill();
+      delete g.runs[path];
+    });
   },
   async run(arg: {
     path: string;
@@ -52,18 +55,21 @@ export const runner = {
 
       return new Promise<boolean>((resolve) => {
         g.runs[path].onData((e) => {
-          if (arg.runningMarker) {
+          if (arg.runningMarker && !g.runs[path].markedRunning) {
             if (arg.runningMarker(e)) {
+              g.runs[path].markedRunning = true;
               resolve(true);
-            } else {
-              return;
             }
+            return;
           }
 
           if (arg.onData) arg.onData(e);
           else process.stdout.write(e);
         });
-        if (!arg.runningMarker) resolve(true);
+        if (!arg.runningMarker) {
+          g.runs[path].markedRunning = true;
+          resolve(true);
+        }
       });
     } catch (e) {
       return false;

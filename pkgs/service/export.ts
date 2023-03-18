@@ -12,9 +12,14 @@ export const initialize = async (fn: () => Promise<void>) => {
 
 export const createService = async (
   serviceName: SERVICE_NAME,
-  fn: (mode: MODE) => Promise<void>
+  fn: (arg: { mode: MODE; ready: () => void }) => Promise<void>
 ) => {
-  fn("dev");
+  await fn({
+    mode: "dev",
+    ready() {
+      console.log(`::RUNNING|${serviceName}::`);
+    },
+  });
 };
 
 export const root = {
