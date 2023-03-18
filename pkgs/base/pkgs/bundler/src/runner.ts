@@ -1,7 +1,7 @@
 import { dir } from "dir";
 import { existsSync } from "fs";
 import { IDisposable, IPty, spawn } from "node-pty";
-
+import commandExists from "command-exists";
 const g = globalThis as unknown as {
   runs: Record<
     string,
@@ -56,15 +56,27 @@ export const runner = {
     try {
       const { path, onData, args, cwd, onStop } = arg;
 
-      if (!existsSync(path)) return false;
+      let isCommand = false;
+
+      if (!existsSync(path)) {
+        if (await commandExists(path)) {
+          isCommand = true;
+        } else {
+          return false;
+        }
+      }
 
       if (g.runs[path] && !g.runs[path].stopped) return false;
 
-      g.runs[path] = spawn(
-        process.execPath,
-        ["--enable-source-maps", path, ...(args || [])],
-        { cwd: cwd }
-      ) as any;
+      if (isCommand) {
+        g.runs[path] = spawn(path, args || [], { cwd }) as any;
+      } else {
+        g.runs[path] = spawn(
+          process.execPath,
+          ["--enable-source-maps", path, ...(args || [])],
+          { cwd: cwd }
+        ) as any;
+      }
 
       g.runs[path].arg = arg;
 

@@ -17,16 +17,12 @@ importers:
     dependencies:
       service: link:../pkgs/service
 
-  app/mokaju:
+  app/db:
     specifiers:
+      prisma: 4.11.0
       service: workspace:*
     dependencies:
-      service: link:../../pkgs/service
-
-  app/muju:
-    specifiers:
-      service: workspace:*
-    dependencies:
+      prisma: 4.11.0
       service: link:../../pkgs/service
 
   pkgs/base:
@@ -72,9 +68,13 @@ importers:
 
   pkgs/base/pkgs/bundler:
     specifiers:
+      '@types/command-exists': ^1.2.0
+      command-exists: '*'
       dir: workspace:*
       pkg: workspace:*
     dependencies:
+      '@types/command-exists': 1.2.0
+      command-exists: 1.2.9
       dir: link:../dir
       pkg: link:../pkg
 
@@ -153,6 +153,14 @@ importers:
     devDependencies:
       '@types/lodash.get': 4.4.7
       '@types/lodash.padend': 4.6.7
+
+  pkgs/template/pkgs/db:
+    specifiers:
+      prisma: '*'
+      service: workspace:*
+    dependencies:
+      prisma: 4.11.0
+      service: link:../../../service
 
   pkgs/template/pkgs/service:
     specifiers:
@@ -429,6 +437,11 @@ packages:
       node-gyp-build: 4.6.0
     dev: false
 
+  /@prisma/engines/4.11.0:
+    resolution: {integrity: sha512-0AEBi2HXGV02cf6ASsBPhfsVIbVSDC9nbQed4iiY5eHttW9ZtMxHThuKZE1pnESbr8HRdgmFSa/Kn4OSNYuibg==}
+    requiresBuild: true
+    dev: false
+
   /@qiwi/deep-proxy/2.0.3:
     resolution: {integrity: sha512-PHePQH7+rGIIHqmXSAYr5hCFDfeIlPheb/60hAH8RuOGoNbODhnuYedR4b2HleDmgqBegMlnpp8EqQyZM9Cl7w==}
     dependencies:
@@ -446,6 +459,10 @@ packages:
     resolution: {integrity: sha512-iEvdm9Z9KdSs/ozuh1Z7ZsXrOl8F4M/CLMXPZHr3QuJ4d6Bjn+HBMC5EMKpwpAo8oi8iK9GZfFoHaIMrrZgwVw==}
     dependencies:
       '@types/node': 18.15.3
+    dev: false
+
+  /@types/command-exists/1.2.0:
+    resolution: {integrity: sha512-ugsxEJfsCuqMLSuCD4PIJkp5Uk2z6TCMRCgYVuhRo5cYQY3+1xXTQkSlPtkpGHuvWMjS2KTeVQXxkXRACMbM6A==}
     dev: false
 
   /@types/connect/3.4.35:
@@ -595,6 +612,10 @@ packages:
 
   /color-name/1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+    dev: false
+
+  /command-exists/1.2.9:
+    resolution: {integrity: sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==}
     dev: false
 
   /cookie-signature/1.2.1:
@@ -963,6 +984,15 @@ packages:
     dependencies:
       lodash: 4.17.21
       renderkid: 3.0.0
+    dev: false
+
+  /prisma/4.11.0:
+    resolution: {integrity: sha512-4zZmBXssPUEiX+GeL0MUq/Yyie4ltiKmGu7jCJFnYMamNrrulTBc+D+QwAQSJ01tyzeGHlD13kOnqPwRipnlNw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 4.11.0
     dev: false
 
   /range-parser/1.2.1:

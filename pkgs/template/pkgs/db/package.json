@@ -1,0 +1,13 @@
+{
+  "name": "template_service",
+  "version": "0.0.1",
+  "dependencies": {
+    "service": "workspace:*",
+    "prisma": "*"
+  },
+  "external": [
+    "hyper-express",
+    "node-pty",
+    "prisma"
+  ]
+}

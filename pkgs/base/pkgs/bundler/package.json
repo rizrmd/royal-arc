@@ -2,6 +2,8 @@
   "name": "bundler",
   "main": "export.ts",
   "dependencies": {
+    "@types/command-exists": "^1.2.0",
+    "command-exists": "*",
     "dir": "workspace:*",
     "pkg": "workspace:*"
   }

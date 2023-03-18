@@ -1,1 +1,1 @@
-export type SERVICE_NAME = "";
+export type SERVICE_NAME = "db";

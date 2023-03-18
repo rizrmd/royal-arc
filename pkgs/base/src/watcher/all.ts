@@ -2,7 +2,7 @@ import { watcher } from "bundler/src/watch";
 import { dir } from "dir";
 import { removeAsync } from "fs-jetpack";
 import { baseGlobal } from "../action";
-import { scaffoldServiceOnNewDir } from "./service";
+import { watchNewService } from "./new-service";
 
 export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
   if (args.includes("devbase")) {
@@ -21,5 +21,5 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
     });
   }
 
-  scaffoldServiceOnNewDir();
+  watchNewService();
 };

@@ -52,7 +52,7 @@ export const baseMain = async () => {
 
     let cacheFound = false;
     if (await existsAsync(app.path)) {
-      console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app`);
+      console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
       await runner.run({
         path: app.path,
         cwd: app.cwd,
@@ -69,7 +69,7 @@ export const baseMain = async () => {
     const onDone = cacheFound
       ? (arg: { isRebuild: boolean }) => {
           if (!bannerPrinted) {
-            console.log();
+            if (cacheFound) console.log(`\n\n`);
             console.log(
               `── ${padEnd(
                 chalk.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
@@ -78,10 +78,10 @@ export const baseMain = async () => {
               )}`
             );
             bannerPrinted = true;
-          } 
+          }
         }
       : undefined;
-
+ 
     await Promise.all([
       app.build(onDone),
       ...app.serviceNames.map(
@@ -92,6 +92,7 @@ export const baseMain = async () => {
     versionCheck({ timeout: 3000 });
 
     if (!cacheFound) {
+      console.log('')
       await runner.run({
         path: app.path,
         cwd: app.cwd,
@@ -100,9 +101,9 @@ export const baseMain = async () => {
           process.stdout.write(e);
           return false;
         },
-      });
+      }); 
     } else {
-      console.log(`\n🌟 Running ${chalk.cyan(`latest`)} app`);
+      console.log(`\n🌟 Running ${chalk.cyan(`latest`)} app\n`);
       await runner.restart(app.path);
     }
   }

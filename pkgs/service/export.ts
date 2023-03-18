@@ -1,7 +1,10 @@
+import { addExitCallback } from "catch-exit";
 import { connectRPC } from "rpc";
 import { svc } from "./src/global";
-import { MODE, SERVICE_NAME } from "./src/types";
-import { addExitCallback } from "catch-exit";
+
+export * from "./src/create-service";
+export * from "./src/create-db";
+
 export const initialize = async (fn: () => Promise<void>) => {
   process.removeAllListeners("warning");
 
@@ -16,18 +19,6 @@ export const initialize = async (fn: () => Promise<void>) => {
       svc.rpc.destroy();
     });
   }
-};
-
-export const createService = async (
-  serviceName: SERVICE_NAME,
-  fn: (arg: { mode: MODE; ready: () => void }) => Promise<void>
-) => {
-  await fn({
-    mode: "dev",
-    ready() {
-      console.log(`::RUNNING|${serviceName}::`);
-    },
-  });
 };
 
 export const root = {

@@ -3938,7 +3938,7 @@
         }
         return false;
       };
-      var existsAsync7 = (path2) => {
+      var existsAsync8 = (path2) => {
         return new Promise((resolve2, reject) => {
           fs.stat(path2).then((stat3) => {
             if (stat3.isDirectory()) {
@@ -3959,7 +3959,7 @@
       };
       exports.validateInput = validateInput;
       exports.sync = existsSync5;
-      exports.async = existsAsync7;
+      exports.async = existsAsync8;
     }
   });
 
@@ -5018,6 +5018,161 @@
         return length && strLength < length ? string + createPadding(length - strLength, chars) : string;
       }
       module.exports = padEnd3;
+    }
+  });
+
+  // node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/lib/command-exists.js
+  var require_command_exists = __commonJS({
+    "node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/lib/command-exists.js"(exports, module) {
+      "use strict";
+      var exec = __require("child_process").exec;
+      var execSync = __require("child_process").execSync;
+      var fs = __require("fs");
+      var path2 = __require("path");
+      var access = fs.access;
+      var accessSync = fs.accessSync;
+      var constants = fs.constants || fs;
+      var isUsingWindows = process.platform == "win32";
+      var fileNotExists = function(commandName, callback) {
+        access(
+          commandName,
+          constants.F_OK,
+          function(err2) {
+            callback(!err2);
+          }
+        );
+      };
+      var fileNotExistsSync = function(commandName) {
+        try {
+          accessSync(commandName, constants.F_OK);
+          return false;
+        } catch (e) {
+          return true;
+        }
+      };
+      var localExecutable = function(commandName, callback) {
+        access(
+          commandName,
+          constants.F_OK | constants.X_OK,
+          function(err2) {
+            callback(null, !err2);
+          }
+        );
+      };
+      var localExecutableSync = function(commandName) {
+        try {
+          accessSync(commandName, constants.F_OK | constants.X_OK);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      };
+      var commandExistsUnix = function(commandName, cleanedCommandName, callback) {
+        fileNotExists(commandName, function(isFile) {
+          if (!isFile) {
+            var child = exec(
+              "command -v " + cleanedCommandName + " 2>/dev/null && { echo >&1 " + cleanedCommandName + "; exit 0; }",
+              function(error, stdout, stderr) {
+                callback(null, !!stdout);
+              }
+            );
+            return;
+          }
+          localExecutable(commandName, callback);
+        });
+      };
+      var commandExistsWindows = function(commandName, cleanedCommandName, callback) {
+        if (!/^(?!(?:.*\s|.*\.|\W+)$)(?:[a-zA-Z]:)?(?:(?:[^<>:"\|\?\*\n])+(?:\/\/|\/|\\\\|\\)?)+$/m.test(commandName)) {
+          callback(null, false);
+          return;
+        }
+        var child = exec(
+          "where " + cleanedCommandName,
+          function(error) {
+            if (error !== null) {
+              callback(null, false);
+            } else {
+              callback(null, true);
+            }
+          }
+        );
+      };
+      var commandExistsUnixSync = function(commandName, cleanedCommandName) {
+        if (fileNotExistsSync(commandName)) {
+          try {
+            var stdout = execSync(
+              "command -v " + cleanedCommandName + " 2>/dev/null && { echo >&1 " + cleanedCommandName + "; exit 0; }"
+            );
+            return !!stdout;
+          } catch (error) {
+            return false;
+          }
+        }
+        return localExecutableSync(commandName);
+      };
+      var commandExistsWindowsSync = function(commandName, cleanedCommandName, callback) {
+        if (!/^(?!(?:.*\s|.*\.|\W+)$)(?:[a-zA-Z]:)?(?:(?:[^<>:"\|\?\*\n])+(?:\/\/|\/|\\\\|\\)?)+$/m.test(commandName)) {
+          return false;
+        }
+        try {
+          var stdout = execSync("where " + cleanedCommandName, { stdio: [] });
+          return !!stdout;
+        } catch (error) {
+          return false;
+        }
+      };
+      var cleanInput = function(s) {
+        if (/[^A-Za-z0-9_\/:=-]/.test(s)) {
+          s = "'" + s.replace(/'/g, "'\\''") + "'";
+          s = s.replace(/^(?:'')+/g, "").replace(/\\'''/g, "\\'");
+        }
+        return s;
+      };
+      if (isUsingWindows) {
+        cleanInput = function(s) {
+          var isPathName = /[\\]/.test(s);
+          if (isPathName) {
+            var dirname7 = '"' + path2.dirname(s) + '"';
+            var basename2 = '"' + path2.basename(s) + '"';
+            return dirname7 + ":" + basename2;
+          }
+          return '"' + s + '"';
+        };
+      }
+      module.exports = function commandExists2(commandName, callback) {
+        var cleanedCommandName = cleanInput(commandName);
+        if (!callback && typeof Promise !== "undefined") {
+          return new Promise(function(resolve2, reject) {
+            commandExists2(commandName, function(error, output) {
+              if (output) {
+                resolve2(commandName);
+              } else {
+                reject(error);
+              }
+            });
+          });
+        }
+        if (isUsingWindows) {
+          commandExistsWindows(commandName, cleanedCommandName, callback);
+        } else {
+          commandExistsUnix(commandName, cleanedCommandName, callback);
+        }
+      };
+      module.exports.sync = function(commandName) {
+        var cleanedCommandName = cleanInput(commandName);
+        if (isUsingWindows) {
+          return commandExistsWindowsSync(commandName, cleanedCommandName);
+        } else {
+          return commandExistsUnixSync(commandName, cleanedCommandName);
+        }
+      };
+    }
+  });
+
+  // node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/index.js
+  var require_command_exists2 = __commonJS({
+    "node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/index.js"(exports, module) {
+      module.exports = require_command_exists();
     }
   });
 
@@ -27317,6 +27472,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   // pkgs/base/pkgs/bundler/src/runner.ts
   var import_fs3 = __require("fs");
   var import_node_pty = __require("node-pty");
+  var import_command_exists = __toESM(require_command_exists2());
   var g2 = globalThis;
   if (!g2.runs)
     g2.runs = {};
@@ -27357,15 +27513,25 @@ ${import_chalk2.default.magenta("Installing")} deps:
       return __async(this, null, function* () {
         try {
           const { path: path2, onData, args, cwd: cwd2, onStop } = arg;
-          if (!(0, import_fs3.existsSync)(path2))
-            return false;
+          let isCommand = false;
+          if (!(0, import_fs3.existsSync)(path2)) {
+            if (yield (0, import_command_exists.default)(path2)) {
+              isCommand = true;
+            } else {
+              return false;
+            }
+          }
           if (g2.runs[path2] && !g2.runs[path2].stopped)
             return false;
-          g2.runs[path2] = (0, import_node_pty.spawn)(
-            process.execPath,
-            ["--enable-source-maps", path2, ...args || []],
-            { cwd: cwd2 }
-          );
+          if (isCommand) {
+            g2.runs[path2] = (0, import_node_pty.spawn)(path2, args || [], { cwd: cwd2 });
+          } else {
+            g2.runs[path2] = (0, import_node_pty.spawn)(
+              process.execPath,
+              ["--enable-source-maps", path2, ...args || []],
+              { cwd: cwd2 }
+            );
+          }
           g2.runs[path2].arg = arg;
           g2.runs[path2].clearOnExit = g2.runs[path2].onExit(() => __async(this, null, function* () {
             g2.runs[path2].stopped = true;
@@ -27402,6 +27568,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var import_watcher = __require("@parcel/watcher");
   var watcher = {
     _watches: /* @__PURE__ */ new Set(),
+    marker: {},
     async dispose() {
       await Promise.all(
         [...this._watches.values()].map(async (e) => {
@@ -27409,15 +27576,37 @@ ${import_chalk2.default.magenta("Installing")} deps:
         })
       );
     },
-    watch(dirs) {
-      const _dirs = Array.isArray(dirs) ? dirs : [dirs];
-      for (const item of _dirs) {
-        this._watches.add(
-          (0, import_watcher.subscribe)(item.dir, item.event, {
+    watch(item) {
+      this._watches.add(
+        (0, import_watcher.subscribe)(
+          item.dir,
+          async (err2, changes) => {
+            if (item.markAs) {
+              if (!err2) {
+                for (const c of changes) {
+                  if (c.type === "update") {
+                    if (!watcher.marker[item.markAs])
+                      watcher.marker[item.markAs] = /* @__PURE__ */ new Set();
+                    const marker = watcher.marker[item.markAs];
+                    if (marker) {
+                      if (marker instanceof Set) {
+                        marker.add(c.path);
+                      } else if (marker === true) {
+                        delete watcher.marker[item.markAs];
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            if (item.event)
+              return await item.event(err2, changes);
+          },
+          {
             ignore: item.ignore ? item.ignore : ["node_modules", "*/**"]
-          })
-        );
-      }
+          }
+        )
+      );
     }
   };
 
@@ -27950,6 +28139,36 @@ ${import_chalk2.default.magenta("Installing")} deps:
     };
   });
 
+  // pkgs/base/src/builder/service/db.ts
+  var import_fs_jetpack4 = __toESM(require_main());
+  var prepareDB = (name, changes) => __async(void 0, null, function* () {
+    if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
+      yield prepareSchema(name);
+    }
+  });
+  var prepareSchema = (name) => __async(void 0, null, function* () {
+    console.log("prepare schema");
+    if (!(yield (0, import_fs_jetpack4.existsAsync)(dir.root(`app/${name}/prisma/schema.prisma`)))) {
+      console.log(`\u{1F5C4}\uFE0F Generating schema.prisma`);
+      const res = yield runner.run({
+        cwd: dir.root(`app/${name}`),
+        path: "pnpm",
+        args: ["prisma", "init"],
+        onData(e) {
+        }
+      });
+    }
+  });
+
+  // pkgs/base/src/watcher/db-service.ts
+  var watchDBService = (name) => {
+    watcher.watch({
+      dir: dir.root(`app/${name}`),
+      ignore: ["node_modules"],
+      markAs: name
+    });
+  };
+
   // pkgs/base/src/builder/service.ts
   var buildService = (name, arg) => __async(void 0, null, function* () {
     const app = arg.app;
@@ -27966,6 +28185,16 @@ ${import_chalk2.default.magenta("Installing")} deps:
         if (installDeps)
           return;
         if (isRebuild && runner.list[app.path]) {
+          const marker = watcher.marker[name];
+          if (marker) {
+            if (marker instanceof Set) {
+              if (name.startsWith("db"))
+                yield prepareDB(name, marker);
+              delete watcher.marker[name];
+            }
+          } else {
+            watcher.marker[name] = true;
+          }
           yield rpc.restart({ name });
         }
       }) : void 0
@@ -27973,16 +28202,20 @@ ${import_chalk2.default.magenta("Installing")} deps:
       console.log(`build service ${name} failed`);
       return false;
     }
+    if (name.startsWith("db")) {
+      yield prepareDB(name);
+      watchDBService(name);
+    }
     return true;
   });
 
   // pkgs/base/src/commit-hook.ts
   var import_child_process2 = __require("child_process");
-  var import_fs_jetpack4 = __toESM(require_main());
+  var import_fs_jetpack5 = __toESM(require_main());
   var import_node_pty2 = __require("node-pty");
   var commitHook = (args) => __async(void 0, null, function* () {
     const isMainRepo = () => __async(void 0, null, function* () {
-      const conf = yield (0, import_fs_jetpack4.readAsync)(dir.root(".git/config"), "utf8");
+      const conf = yield (0, import_fs_jetpack5.readAsync)(dir.root(".git/config"), "utf8");
       if (conf == null ? void 0 : conf.includes("url = https://github.com/avolut/royal")) {
         return true;
       }
@@ -27990,10 +28223,10 @@ ${import_chalk2.default.magenta("Installing")} deps:
     });
     if (args.includes("pre-commit")) {
       if (yield isMainRepo()) {
-        if (!(yield (0, import_fs_jetpack4.existsAsync)(dir.root(".husky/_/husky.sh")))) {
+        if (!(yield (0, import_fs_jetpack5.existsAsync)(dir.root(".husky/_/husky.sh")))) {
           (0, import_child_process2.spawnSync)("pnpm husky install", { cwd: dir.root("") });
         }
-        yield (0, import_fs_jetpack4.writeAsync)(dir.root(".output/.commit"), "");
+        yield (0, import_fs_jetpack5.writeAsync)(dir.root(".output/.commit"), "");
       }
       if (process.send) {
         process.send("exit");
@@ -28004,9 +28237,9 @@ ${import_chalk2.default.magenta("Installing")} deps:
     }
     if (args.includes("post-commit")) {
       if (yield isMainRepo()) {
-        if (yield (0, import_fs_jetpack4.existsAsync)(dir.root(".output/.commit"))) {
-          yield (0, import_fs_jetpack4.removeAsync)(dir.root(".output/.commit"));
-          yield (0, import_fs_jetpack4.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
+        if (yield (0, import_fs_jetpack5.existsAsync)(dir.root(".output/.commit"))) {
+          yield (0, import_fs_jetpack5.removeAsync)(dir.root(".output/.commit"));
+          yield (0, import_fs_jetpack5.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
           yield new Promise((resolve2) => {
             (0, import_node_pty2.spawn)("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
@@ -28500,13 +28733,13 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/src/upgrade.ts
   var import_fs6 = __require("fs");
-  var import_fs_jetpack5 = __toESM(require_main());
+  var import_fs_jetpack6 = __toESM(require_main());
   var import_path7 = __require("path");
   var upgradeHook = (args) => __async(void 0, null, function* () {
     if (args.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
-      yield (0, import_fs_jetpack5.removeAsync)(dir.root(".output/upgrade"));
-      yield (0, import_fs_jetpack5.dirAsync)(backupDir);
+      yield (0, import_fs_jetpack6.removeAsync)(dir.root(".output/upgrade"));
+      yield (0, import_fs_jetpack6.dirAsync)(backupDir);
       console.log(`Upgrading Base Framework`);
       console.log(` > Downloading upgrade zip`);
       const downloadURI = `https://github.com/avolut/royal/archive/refs/heads/main.zip`;
@@ -28514,13 +28747,13 @@ ${import_chalk2.default.magenta("Installing")} deps:
       const ab = yield res.arrayBuffer();
       console.log(` > Extracting: .output/upgrade/royal`);
       const uzi = unzipSync(new Uint8Array(ab));
-      yield (0, import_fs_jetpack5.dirAsync)(dir.root(".output/upgrade/royal-main"));
+      yield (0, import_fs_jetpack6.dirAsync)(dir.root(".output/upgrade/royal-main"));
       yield Promise.all(
         Object.entries(uzi).map((_0) => __async(void 0, [_0], function* ([filename, buf]) {
           if (buf.length === 0) {
-            yield (0, import_fs_jetpack5.dirAsync)(dir.root(`.output/upgrade/${filename}`));
+            yield (0, import_fs_jetpack6.dirAsync)(dir.root(`.output/upgrade/${filename}`));
           } else {
-            yield (0, import_fs_jetpack5.writeAsync)(
+            yield (0, import_fs_jetpack6.writeAsync)(
               dir.root(`.output/upgrade/${filename}`),
               Buffer.from(buf)
             );
@@ -28531,8 +28764,8 @@ ${import_chalk2.default.magenta("Installing")} deps:
       const root = dir.root("");
       for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack5.existsAsync)((0, import_path7.join)(root, `.output/upgrade/backup/${f}`))) {
-            yield (0, import_fs_jetpack5.moveAsync)(
+          if (yield (0, import_fs_jetpack6.existsAsync)((0, import_path7.join)(root, `.output/upgrade/backup/${f}`))) {
+            yield (0, import_fs_jetpack6.moveAsync)(
               (0, import_path7.join)(root, f),
               (0, import_path7.join)(root, `.output/upgrade/backup/${f}`)
             );
@@ -28542,7 +28775,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
       console.log(` > Applying upgrade`);
       for (const f of (0, import_fs6.readdirSync)((0, import_path7.join)(root, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
-          yield (0, import_fs_jetpack5.copyAsync)(
+          yield (0, import_fs_jetpack6.copyAsync)(
             (0, import_path7.join)(root, `.output/upgrade/royal-main/${f}`),
             (0, import_path7.join)(root, f),
             {
@@ -28564,9 +28797,9 @@ ${import_chalk2.default.magenta("Installing")} deps:
   // pkgs/base/src/version-check.ts
   var import_chalk4 = __toESM(require_source());
   var import_date_fns = __toESM(require_date_fns());
-  var import_fs_jetpack6 = __toESM(require_main());
+  var import_fs_jetpack7 = __toESM(require_main());
   var versionCheck = (opt) => __async(void 0, null, function* () {
-    const version = yield (0, import_fs_jetpack6.readAsync)(dir.root("pkgs/version.json"), "json");
+    const version = yield (0, import_fs_jetpack7.readAsync)(dir.root("pkgs/version.json"), "json");
     let timeout = {
       timer: null
     };
@@ -28606,18 +28839,18 @@ If somehow upgrade failed you can rollback using
   });
 
   // pkgs/base/src/vscode.ts
-  var import_fs_jetpack7 = __toESM(require_main());
+  var import_fs_jetpack8 = __toESM(require_main());
   var import_path8 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
-    if (yield (0, import_fs_jetpack7.existsAsync)(vscodeFile)) {
-      if ((yield (0, import_fs_jetpack7.readAsync)(vscodeFile, "utf8")) === source) {
+    if (yield (0, import_fs_jetpack8.existsAsync)(vscodeFile)) {
+      if ((yield (0, import_fs_jetpack8.readAsync)(vscodeFile, "utf8")) === source) {
         return;
       }
     }
-    yield (0, import_fs_jetpack7.dirAsync)((0, import_path8.dirname)(vscodeFile));
-    yield (0, import_fs_jetpack7.writeAsync)(vscodeFile, source);
+    yield (0, import_fs_jetpack8.dirAsync)((0, import_path8.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack8.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
     "typescript.preferences.importModuleSpecifier": "relative",
@@ -28657,7 +28890,7 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/watcher/all.ts
-  var import_fs_jetpack10 = __toESM(require_main());
+  var import_fs_jetpack11 = __toESM(require_main());
 
   // pkgs/base/src/action.ts
   var baseGlobal = global;
@@ -28671,73 +28904,67 @@ If somehow upgrade failed you can rollback using
     })
   };
 
-  // pkgs/base/src/watcher/service.ts
+  // pkgs/base/src/watcher/new-service.ts
   var import_chalk5 = __toESM(require_source());
-  var import_fs_jetpack9 = __toESM(require_main());
+  var import_fs_jetpack10 = __toESM(require_main());
   var import_promises2 = __require("fs/promises");
   var import_path9 = __require("path");
 
   // pkgs/base/src/appgen/service.ts
-  var import_fs_jetpack8 = __toESM(require_main());
+  var import_fs_jetpack9 = __toESM(require_main());
   var import_promises = __require("fs/promises");
   var serviceGen = () => __async(void 0, null, function* () {
     const names = [];
     for (const f of yield (0, import_promises.readdir)(dir.root("app"))) {
       const s = yield (0, import_promises.stat)(dir.root(`app/${f}`));
-      if (s.isDirectory() && (yield (0, import_fs_jetpack8.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
+      if (s.isDirectory() && (yield (0, import_fs_jetpack9.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
         names.push(f);
       }
-      yield (0, import_fs_jetpack8.writeAsync)(
+      yield (0, import_fs_jetpack9.writeAsync)(
         dir.root(`app/gen/service/name.ts`),
         `export type SERVICE_NAME = "${names.join(`" | "`)}";`
       );
     }
   });
 
-  // pkgs/base/src/watcher/service.ts
-  var scaffoldServiceOnNewDir = () => {
-    watcher.watch([
-      {
-        dir: dir.root("app"),
-        event: (err2, changes) => __async(void 0, null, function* () {
-          if (!err2) {
-            for (const c of changes) {
-              if (c.type === "delete") {
-                console.log(`Removing service: ${import_chalk5.default.red((0, import_path9.basename)(c.path))}`);
-                yield serviceGen();
-                yield pkg.install(dir.root("package.json"));
-              } else if (c.type === "create") {
-                const s = yield (0, import_promises2.stat)(c.path);
-                if (s.isDirectory() && (yield (0, import_promises2.readdir)(c.path)).length === 0) {
-                  console.log(
-                    `Scaffolding new service: ${import_chalk5.default.blue((0, import_path9.basename)(c.path))}`
-                  );
-                  const files = yield (0, import_promises2.readdir)(
-                    dir.root("pkgs/template/pkgs/service")
-                  );
-                  for (const f of files) {
-                    if (f !== "node_modules") {
-                      const src = yield (0, import_fs_jetpack9.readAsync)(
-                        dir.root(`pkgs/template/pkgs/service/${f}`),
-                        "utf8"
-                      );
-                      yield (0, import_fs_jetpack9.writeAsync)(
-                        (0, import_path9.join)(c.path, f),
-                        (src || "").replace(/template_service/g, (0, import_path9.basename)(c.path))
-                      );
-                    }
-                  }
-                  yield serviceGen();
-                  yield pkg.install(
-                    dir.root(`app/${(0, import_path9.basename)(c.path)}/package.json`)
-                  ), { cwd: process.cwd() };
+  // pkgs/base/src/watcher/new-service.ts
+  var watchNewService = () => {
+    watcher.watch({
+      dir: dir.root("app"),
+      event: (err2, changes) => __async(void 0, null, function* () {
+        if (!err2) {
+          for (const c of changes) {
+            if (c.type === "delete") {
+              console.log(`Removing service: ${import_chalk5.default.red((0, import_path9.basename)(c.path))}`);
+              yield serviceGen();
+              yield pkg.install(dir.root("package.json"));
+            } else if (c.type === "create") {
+              const s = yield (0, import_promises2.stat)(c.path);
+              if (s.isDirectory() && (yield (0, import_promises2.readdir)(c.path)).length === 0) {
+                const name = (0, import_path9.basename)(c.path);
+                console.log(`Scaffolding new service: ${import_chalk5.default.blue(name)}`);
+                let root = "pkgs/template/pkgs/service";
+                if (name.startsWith("db")) {
+                  root = "pkgs/template/pkgs/db";
                 }
+                const files = yield (0, import_promises2.readdir)(dir.root(root));
+                for (const f of files) {
+                  if (f !== "node_modules") {
+                    const src = yield (0, import_fs_jetpack10.readAsync)(dir.root(`${root}/${f}`), "utf8");
+                    yield (0, import_fs_jetpack10.writeAsync)(
+                      (0, import_path9.join)(c.path, f),
+                      (src || "").replace(/template_service/g, name)
+                    );
+                  }
+                }
+                yield serviceGen();
+                yield pkg.install(dir.root(`app/${name}/package.json`)), { cwd: process.cwd() };
               }
             }
           }
-        })
-      }
-    ]);
+        }
+      })
+    });
   };
 
   // pkgs/base/src/watcher/all.ts
@@ -28749,7 +28976,7 @@ If somehow upgrade failed you can rollback using
           ignore: ["pkgs/*/node_modules", "node_modules"],
           event: (err2, ev) => __async(void 0, null, function* () {
             if (!err2) {
-              yield (0, import_fs_jetpack10.removeAsync)(baseGlobal.app.path);
+              yield (0, import_fs_jetpack11.removeAsync)(baseGlobal.app.path);
               yield onExit();
               process.exit();
             }
@@ -28757,11 +28984,11 @@ If somehow upgrade failed you can rollback using
         });
       });
     }
-    scaffoldServiceOnNewDir();
+    watchNewService();
   };
 
   // pkgs/base/src/main.ts
-  var import_fs_jetpack11 = __toESM(require_main());
+  var import_fs_jetpack12 = __toESM(require_main());
   var RUNNING_MARKER = "WARNING: SERVER ALREADY RUNNING";
   var baseMain = () => __async(void 0, null, function* () {
     process.removeAllListeners("warning");
@@ -28788,9 +29015,10 @@ If somehow upgrade failed you can rollback using
       const app = yield buildApp({ watch: true });
       baseGlobal.app = app;
       let cacheFound = false;
-      if (yield (0, import_fs_jetpack11.existsAsync)(app.path)) {
+      if (yield (0, import_fs_jetpack12.existsAsync)(app.path)) {
         console.log(`
-\u{1F31F} Running ${import_chalk6.default.cyan(`cached`)} app`);
+\u{1F31F} Running ${import_chalk6.default.cyan(`cached`)} app
+`);
         yield runner.run({
           path: app.path,
           cwd: app.cwd,
@@ -28806,7 +29034,10 @@ If somehow upgrade failed you can rollback using
       let bannerPrinted = false;
       const onDone = cacheFound ? (arg) => {
         if (!bannerPrinted) {
-          console.log();
+          if (cacheFound)
+            console.log(`
+
+`);
           console.log(
             `\u2500\u2500 ${(0, import_lodash4.default)(
               import_chalk6.default.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
@@ -28827,6 +29058,7 @@ If somehow upgrade failed you can rollback using
       ]);
       versionCheck({ timeout: 3e3 });
       if (!cacheFound) {
+        console.log("");
         yield runner.run({
           path: app.path,
           cwd: app.cwd,
@@ -28839,7 +29071,8 @@ If somehow upgrade failed you can rollback using
         });
       } else {
         console.log(`
-\u{1F31F} Running ${import_chalk6.default.cyan(`latest`)} app`);
+\u{1F31F} Running ${import_chalk6.default.cyan(`latest`)} app
+`);
         yield runner.restart(app.path);
       }
     }
