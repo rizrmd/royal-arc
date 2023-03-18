@@ -53,25 +53,35 @@ export const bundle = async (arg: {
       }
     };
 
-    if (watch) {
-      const watcher = await bundler.watch(async (err, event) => {
-        if (event) {
-          if (event.type === "buildSuccess") {
-            await genPkgJson();
-            await watch(watcher, err, event);
-          } else if (event.type === "buildFailure") {
-            console.log(
-              `Error: ${event.diagnostics.map((e) => e.message).join("\n")}`
-            );
-            await watcher.unsubscribe();
+    let returned = false;
+    return new Promise<boolean>(async (resolve) => {
+      if (watch) {
+        const watcher = await bundler.watch(async (err, event) => {
+          if (event) {
+            if (event.type === "buildSuccess") {
+              await genPkgJson();
+              await watch(watcher, err, event);
+              if (!returned) {
+                resolve(true);
+                returned = true;
+              }
+            } else if (event.type === "buildFailure") {
+              console.log(
+                `Error: ${event.diagnostics.map((e) => e.message).join("\n")}`
+              );
+              await watcher.unsubscribe();
+            }
           }
+        });
+      } else {
+        await bundler.run();
+        await genPkgJson();
+        if (!returned) {
+          resolve(true);
+          returned = true;
         }
-      });
-    } else {
-      await bundler.run();
-      await genPkgJson();
-    }
-    return true;
+      }
+    });
   } catch (e: any) {
     await removeAsync(cacheDir);
     console.error(e);

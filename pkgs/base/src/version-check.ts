@@ -6,17 +6,11 @@ import { readAsync } from "fs-jetpack";
 export const versionCheck = async (opt: { timeout: number }) => {
   //check version on dev
   const version = await readAsync(dir.root("pkgs/version.json"), "json");
-  const abortctrl = new AbortController();
   let timeout = {
     timer: null as any,
   };
 
-  fetch(
-    `https://raw.githubusercontent.com/avolut/royal/main/pkgs/version.json`,
-    {
-      signal: abortctrl.signal,
-    }
-  )
+  fetch(`https://raw.githubusercontent.com/avolut/royal/main/pkgs/version.json`)
     .then(async (res) => {
       const remoteVersion = await res.json();
       timeout.timer = setTimeout(async () => {

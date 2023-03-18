@@ -2,8 +2,9 @@ import { runner } from "bundler";
 import { watcher } from "bundler/src/watch";
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
-import { dir } from "dir";
 import padEnd from "lodash.padend";
+import { action } from "../../service/src/action";
+import { connectRPC } from "rpc";
 import { buildApp } from "./builder/app";
 import { buildService } from "./builder/service";
 import { commitHook } from "./commit-hook";
@@ -11,7 +12,6 @@ import { upgradeHook } from "./upgrade";
 import { versionCheck } from "./version-check";
 import { vscodeSettings } from "./vscode";
 import { setupWatchers } from "./watcher/all";
-import { scaffoldServiceOnNewDir } from "./watcher/service";
 
 export const baseMain = async () => {
   process.removeAllListeners("warning");
@@ -39,9 +39,15 @@ export const baseMain = async () => {
     addExitCallback(() => {});
     setupWatchers(args, onExit);
 
+    const rpc = await connectRPC<typeof action>("root");
+
     const app = await buildApp({ watch: true });
-    await Promise.all(app.serviceNames.map(buildService));
- 
+    await Promise.all(
+      app.serviceNames.map(
+        async (e) => await buildService(e, { watch: true, app, rpc })
+      )
+    );
+
     await runner.run({ path: app.path, cwd: app.cwd });
   }
 };

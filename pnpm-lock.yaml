@@ -43,6 +43,7 @@ importers:
       lodash.padend: ^4.6.1
       node-pty: ^0.10.1
       pkg: workspace:*
+      rpc: workspace:*
       typescript: ^5
     dependencies:
       '@parcel/core': 2.8.3
@@ -61,6 +62,7 @@ importers:
       lodash.padend: 4.6.1
       node-pty: 0.10.1
       pkg: link:pkgs/pkg
+      rpc: link:pkgs/rpc
       typescript: 5.0.2
     devDependencies:
       '@types/lodash.padend': 4.6.7

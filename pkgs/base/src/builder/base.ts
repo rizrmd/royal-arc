@@ -1,7 +1,5 @@
 import { bundle } from "bundler";
 import { dir } from "dir";
-import { writeAsync } from "fs-jetpack";
-import { dirname, join } from "path";
 
 (async () => {
   const basePath = dir.root("pkgs/base/main.js");

@@ -28,19 +28,6 @@ export const createRPC = async <T extends RPCAction>(
       }
 
       if (typeof target[key] === "function") {
-        // return (...args: any[]) => {
-        //   if (ws) {
-        //     const onmsg = (raw: string) => {
-        //       console.log(raw);
-
-        //       if (ws) ws.off("message", onmsg);
-        //     };
-        //     ws.on("message", onmsg);
-        //     ws.send(
-        //       JSON.stringify({ type: "action", path: [...path, key], args })
-        //     );
-        //   }
-        // };
         return target[key];
       }
 

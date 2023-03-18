@@ -8,4 +8,7 @@ export const action = {
       cwd: process.cwd(),
     });
   },
+  async restart(arg: { name: SERVICE_NAME; pid?: string }) {
+    console.log('kau kan mencintai ku')
+  },
 };
