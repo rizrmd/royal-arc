@@ -4186,7 +4186,7 @@
         }
         return Promise.resolve();
       };
-      var copyAsync2 = (from, to, options) => {
+      var copyAsync3 = (from, to, options) => {
         return new Promise((resolve2, reject) => {
           const opts = parseOptions(options, from);
           checksBeforeCopyingAsync(from, to, opts).then(() => {
@@ -4226,7 +4226,7 @@
       };
       exports.validateInput = validateInput;
       exports.sync = copySync;
-      exports.async = copyAsync2;
+      exports.async = copyAsync3;
     }
   });
 
@@ -28147,16 +28147,26 @@ ${import_chalk2.default.magenta("Installing")} deps:
     }
   });
   var prepareSchema = (name) => __async(void 0, null, function* () {
-    console.log("prepare schema");
-    if (!(yield (0, import_fs_jetpack4.existsAsync)(dir.root(`app/${name}/prisma/schema.prisma`)))) {
-      console.log(`\u{1F5C4}\uFE0F Generating schema.prisma`);
-      const res = yield runner.run({
-        cwd: dir.root(`app/${name}`),
+    if (yield (0, import_fs_jetpack4.existsAsync)(dir.root(`app/${name}/prisma/schema.prisma`))) {
+      yield runner.run({
         path: "pnpm",
-        args: ["prisma", "init"],
+        args: ["prisma", "generate"],
+        cwd: dir.root(`app/${name}`),
         onData(e) {
         }
       });
+      yield (0, import_fs_jetpack4.copyAsync)(
+        dir.root(`app/${name}/prisma`),
+        dir.root(`.output/app/${name}/prisma`),
+        { overwrite: true }
+      );
+      if (yield (0, import_fs_jetpack4.existsAsync)(dir.root(`app/${name}/.env`))) {
+        yield (0, import_fs_jetpack4.copyAsync)(
+          dir.root(`.env`),
+          dir.root(`.output/app/${name}/.env`),
+          { overwrite: true }
+        );
+      }
     }
   });
 

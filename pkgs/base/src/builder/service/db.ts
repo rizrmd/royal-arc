@@ -1,6 +1,6 @@
 import { runner } from "bundler";
 import { dir } from "dir";
-import { existsAsync } from "fs-jetpack";
+import { copyAsync, existsAsync } from "fs-jetpack";
 
 export const prepareDB = async (name: string, changes?: Set<string>) => {
   if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
@@ -9,14 +9,26 @@ export const prepareDB = async (name: string, changes?: Set<string>) => {
 };
 
 const prepareSchema = async (name: string) => {
-  console.log("prepare schema");
-  if (!(await existsAsync(dir.root(`app/${name}/prisma/schema.prisma`)))) {
-    console.log(`🗄️ Generating schema.prisma`);
-    const res = await runner.run({
-      cwd: dir.root(`app/${name}`),
+  if (await existsAsync(dir.root(`app/${name}/prisma/schema.prisma`))) {
+    await runner.run({
       path: "pnpm",
-      args: ["prisma", "init"],
+      args: ["prisma", "generate"],
+      cwd: dir.root(`app/${name}`),
       onData(e) {},
     });
+
+    await copyAsync(
+      dir.root(`app/${name}/prisma`),
+      dir.root(`.output/app/${name}/prisma`),
+      { overwrite: true }
+    );
+
+    if (await existsAsync(dir.root(`app/${name}/.env`))) {
+      await copyAsync(
+        dir.root(`app/${name}/.env`),
+        dir.root(`.output/app/${name}/.env`),
+        { overwrite: true }
+      );
+    }
   }
 };
