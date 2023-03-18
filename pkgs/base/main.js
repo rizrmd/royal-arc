@@ -28774,7 +28774,9 @@ If somehow upgrade failed you can rollback using
           console.log();
           console.log(
             `\u2500\u2500 ${(0, import_lodash4.default)(
-              import_chalk6.default.yellow(arg.isRebuild ? `REBUILD` : `DELAYED BUILD`) + " ",
+              import_chalk6.default.magenta(
+                arg.isRebuild ? `REBUILD` : `BUILD`
+              ) + " ",
               47,
               "\u2500"
             )}`

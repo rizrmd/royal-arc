@@ -70,7 +70,9 @@ export const baseMain = async () => {
             console.log();
             console.log(
               `── ${padEnd(
-                chalk.yellow(arg.isRebuild ? `REBUILD` : `DELAYED BUILD`) + " ",
+                chalk.magenta(
+                  arg.isRebuild ? `REBUILD` : `BUILD`
+                ) + " ",
                 47,
                 "─"
               )}`
@@ -86,7 +88,7 @@ export const baseMain = async () => {
         async (e) =>
           await buildService(e, { watch: true, app, rpc: rootRPC, onDone })
       ),
-    ]); 
+    ]);
     versionCheck({ timeout: 3000 });
 
     if (!cacheFound) {
