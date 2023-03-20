@@ -7,7 +7,7 @@ import ParcelWatcher, {
 type SingleWatch = {
   dir: string;
   event?: SubscribeCallback;
-  markAs?: string;
+  markChangesAs?: string;
   ignore?: ParcelWatcher.Options["ignore"];
 };
 
@@ -26,19 +26,19 @@ export const watcher = {
       subscribe(
         item.dir,
         async (err, changes) => {
-          if (item.markAs) {
+          if (item.markChangesAs) {
             if (!err) {
               for (const c of changes) {
                 if (c.type === "update") {
-                  if (!watcher.marker[item.markAs])
-                    watcher.marker[item.markAs] = new Set();
+                  if (!watcher.marker[item.markChangesAs])
+                    watcher.marker[item.markChangesAs] = new Set();
 
-                  const marker = watcher.marker[item.markAs];
+                  const marker = watcher.marker[item.markChangesAs];
                   if (marker) {
                     if (marker instanceof Set) {
                       marker.add(c.path);
                     } else if (marker === true) {
-                      delete watcher.marker[item.markAs];
+                      delete watcher.marker[item.markChangesAs];
                     }
                   }
                 }

@@ -5,6 +5,6 @@ export const watchDBService = (name: string) => {
   watcher.watch({
     dir: dir.root(`app/${name}`),
     ignore: ["node_modules"],
-    markAs: name,
+    markChangesAs: name,
   });
 };

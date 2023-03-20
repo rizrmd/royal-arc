@@ -42244,18 +42244,18 @@ ${import_chalk2.default.magenta("Installing")} deps:
         (0, import_watcher.subscribe)(
           item.dir,
           async (err2, changes) => {
-            if (item.markAs) {
+            if (item.markChangesAs) {
               if (!err2) {
                 for (const c of changes) {
                   if (c.type === "update") {
-                    if (!watcher.marker[item.markAs])
-                      watcher.marker[item.markAs] = /* @__PURE__ */ new Set();
-                    const marker = watcher.marker[item.markAs];
+                    if (!watcher.marker[item.markChangesAs])
+                      watcher.marker[item.markChangesAs] = /* @__PURE__ */ new Set();
+                    const marker = watcher.marker[item.markChangesAs];
                     if (marker) {
                       if (marker instanceof Set) {
                         marker.add(c.path);
                       } else if (marker === true) {
-                        delete watcher.marker[item.markAs];
+                        delete watcher.marker[item.markChangesAs];
                       }
                     }
                   }
@@ -43433,7 +43433,7 @@ datasource db {
     watcher.watch({
       dir: dir.root(`app/${name}`),
       ignore: ["node_modules"],
-      markAs: name
+      markChangesAs: name
     });
   };
 
