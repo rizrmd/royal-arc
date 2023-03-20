@@ -14,9 +14,9 @@
     "fs-jetpack": "^5.1.0",
     "hyper-express": "^6.5.8",
     "lodash.padend": "^4.6.1",
-    "node-pty": "^0.10.1",
     "pkg": "workspace:*",
     "rpc": "workspace:*",
+    "utility": "workspace:*",
     "typescript": "^5"
   },
   "devDependencies": {
@@ -25,7 +25,6 @@
   },
   "external": [
     "@parcel/watcher",
-    "node-pty",
     "hyper-express",
     "typescript"
   ]

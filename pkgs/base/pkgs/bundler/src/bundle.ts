@@ -43,10 +43,7 @@ export const bundle = async (arg: {
     let isRebuild = false;
     const external = [
       "esbuild",
-      "node-pty",
-      ...Object.keys(json.dependencies).filter(
-        (e) => !["esbuild", "node-pty"].includes(e)
-      ),
+      ...Object.keys(json.dependencies).filter((e) => !["esbuild"].includes(e)),
     ];
 
     return new Promise<boolean>(async (resolve) => {

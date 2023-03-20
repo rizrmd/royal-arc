@@ -8,7 +8,7 @@ export const action = {
     const running = await runner.run({
       path: dir.path(`${arg.name}/index.js`),
       cwd: process.cwd(),
-      runningMarker(stdout) {
+      onMessage(stdout) {
         if (stdout.trim() === `::RUNNING|${arg.name}::`) return true;
         return false;
       },

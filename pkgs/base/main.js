@@ -42055,10 +42055,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
       let isRebuild = false;
       const external = [
         "esbuild",
-        "node-pty",
-        ...Object.keys(json.dependencies).filter(
-          (e) => !["esbuild", "node-pty"].includes(e)
-        )
+        ...Object.keys(json.dependencies).filter((e) => !["esbuild"].includes(e))
       ];
       return new Promise((resolve2) => __async(void 0, null, function* () {
         const ctx = yield context({
@@ -42133,9 +42130,58 @@ ${import_chalk2.default.magenta("Installing")} deps:
   });
 
   // pkgs/base/pkgs/bundler/src/runner.ts
-  var import_fs3 = __require("fs");
-  var import_node_pty = __require("node-pty");
   var import_command_exists = __toESM(require_command_exists2());
+  var import_fs3 = __require("fs");
+
+  // pkgs/base/pkgs/utility/spawn.ts
+  var import_child_process2 = __require("child_process");
+  var import_stream = __require("stream");
+  var spawn2 = (file, args, opt) => {
+    let proc = opt?.ipc ? (0, import_child_process2.fork)(file, args, {
+      cwd: opt?.cwd,
+      stdio: "pipe",
+      execArgv: ["--enable-source-maps"]
+    }) : (0, import_child_process2.spawn)(file, args, {
+      cwd: opt?.cwd,
+      stdio: "pipe"
+    });
+    const callback = {
+      onData: (e) => {
+      },
+      onExit: (e) => {
+      }
+    };
+    const tfm = new import_stream.Transform({
+      transform: (chunk, encoding, done) => {
+        const str = chunk.toString();
+        callback.onData(str);
+      }
+    });
+    proc.stdout?.pipe(tfm);
+    proc.stderr?.pipe(tfm);
+    proc.on("exit", (code, signal) => {
+      callback.onExit({
+        exitCode: code || 0,
+        signal
+      });
+    });
+    return {
+      onData: (fn) => {
+        callback.onData = fn;
+      },
+      onExit: (fn) => {
+        callback.onExit = fn;
+        return {
+          dispose: () => {
+          }
+        };
+      },
+      kill: () => {
+      }
+    };
+  };
+
+  // pkgs/base/pkgs/bundler/src/runner.ts
   var g2 = globalThis;
   if (!g2.runs)
     g2.runs = {};
@@ -42187,24 +42233,20 @@ ${import_chalk2.default.magenta("Installing")} deps:
           if (g2.runs[path2] && !g2.runs[path2].stopped)
             return false;
           if (isCommand) {
-            g2.runs[path2] = (0, import_node_pty.spawn)(path2, args || [], { cwd: cwd2 });
+            g2.runs[path2] = spawn2(path2, args || [], { cwd: cwd2, ipc: false });
           } else {
-            g2.runs[path2] = (0, import_node_pty.spawn)(
-              process.execPath,
-              ["--enable-source-maps", path2, ...args || []],
-              { cwd: cwd2 }
-            );
+            g2.runs[path2] = spawn2(path2, args || [], { cwd: cwd2, ipc: true });
           }
           g2.runs[path2].arg = arg;
-          g2.runs[path2].clearOnExit = g2.runs[path2].onExit(() => __async(this, null, function* () {
+          g2.runs[path2].onExit(() => __async(this, null, function* () {
             g2.runs[path2].stopped = true;
             if (onStop)
               g2.runs[path2].onExit(onStop);
           }));
           return new Promise((resolve2) => {
             g2.runs[path2].onData((e) => {
-              if (arg.runningMarker && !g2.runs[path2].markedRunning) {
-                if (arg.runningMarker(e)) {
+              if (arg.onMessage && !g2.runs[path2].markedRunning) {
+                if (arg.onMessage(e)) {
                   g2.runs[path2].markedRunning = true;
                   resolve2(true);
                 }
@@ -42215,7 +42257,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
               else
                 process.stdout.write(e);
             });
-            if (!arg.runningMarker) {
+            if (!arg.onMessage) {
               g2.runs[path2].markedRunning = true;
               resolve2(true);
             }
@@ -42364,7 +42406,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var import_lodash2 = __toESM(require_lodash2());
 
   // node_modules/.pnpm/ws@8.12.1/node_modules/ws/wrapper.mjs
-  var import_stream = __toESM(require_stream(), 1);
+  var import_stream2 = __toESM(require_stream(), 1);
   var import_receiver = __toESM(require_receiver(), 1);
   var import_sender = __toESM(require_sender(), 1);
   var import_websocket = __toESM(require_websocket(), 1);
@@ -42759,52 +42801,9 @@ ${import_chalk2.default.magenta("Installing")} deps:
     return server;
   });
 
-  // pkgs/base/src/builder/app.ts
-  var import_fs5 = __require("fs");
-  var import_fs_jetpack3 = __toESM(require_main());
-  var buildApp = (opt) => __async(void 0, null, function* () {
-    yield (0, import_fs_jetpack3.writeAsync)(
-      dir.path(".output/app/pnpm-workspace.yaml"),
-      `packages:
-  - ./*`
-    );
-    const dirs = (0, import_fs5.readdirSync)(dir.path("app")).filter(
-      (e) => !["node_modules", "app.ts", "package.json", "gen"].includes(e)
-    ).map((e) => ({ name: e, stat: (0, import_fs5.statSync)(dir.path(`app/${e}`)) })).filter(
-      ({ stat: stat3, name }) => stat3.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
-    );
-    return {
-      path: dir.root(".output/app/app.js"),
-      cwd: dir.root(".output/app"),
-      serviceNames: dirs.map((e) => e.name),
-      build(onDone) {
-        return __async(this, null, function* () {
-          const result = yield bundle({
-            incremental: true,
-            input: dir.root("app/app.ts"),
-            output: dir.root(".output/app/app.js"),
-            pkgjson: dir.root(".output/app/package.json"),
-            pkgcwd: dir.root(".outpu/app"),
-            printTimer: true,
-            onBeforeDone: onDone,
-            watch(_0) {
-              return __async(this, arguments, function* ({ isRebuild }) {
-                if (isRebuild)
-                  yield runner.restart(dir.root(".output/app/app.js"));
-              });
-            }
-          });
-          if (!result) {
-            console.log("build app failed");
-          }
-        });
-      }
-    };
-  });
-
   // pkgs/base/src/builder/service/db.ts
   var import_chalk6 = __toESM(require_source());
-  var import_fs_jetpack7 = __toESM(require_main());
+  var import_fs_jetpack6 = __toESM(require_main());
 
   // node_modules/.pnpm/chalk@5.2.0/node_modules/chalk/source/vendor/ansi-styles/index.js
   var ANSI_BACKGROUND_OFFSET = 10;
@@ -43296,7 +43295,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var source_default = chalk4;
 
   // pkgs/service/pkgs/service-db/src/create-db.ts
-  var import_fs_jetpack5 = __toESM(require_main());
+  var import_fs_jetpack4 = __toESM(require_main());
 
   // pkgs/service/export.ts
   var import_catch_exit = __toESM(require_dist());
@@ -43307,7 +43306,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
       const running = await runner.run({
         path: dir.path(`${arg.name}/index.js`),
         cwd: process.cwd(),
-        runningMarker(stdout) {
+        onMessage(stdout) {
           if (stdout.trim() === `::RUNNING|${arg.name}::`)
             return true;
           return false;
@@ -43340,21 +43339,21 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/service/pkgs/service-db/src/parse-prisma.ts
   var import_prisma_ast = __toESM(require_dist2());
-  var import_fs_jetpack4 = __toESM(require_main());
+  var import_fs_jetpack3 = __toESM(require_main());
 
   // pkgs/service/pkgs/service-db/src/create-db.ts
   var import_lodash4 = __toESM(require_lodash());
 
   // pkgs/service/pkgs/service-db/src/ensure-prisma.ts
   var import_prisma_ast2 = __toESM(require_dist2());
-  var import_fs_jetpack6 = __toESM(require_main());
+  var import_fs_jetpack5 = __toESM(require_main());
   var import_path7 = __require("path");
   var ensurePrisma = async (name) => {
     const prismaPath = dir.root(`app/${name}/prisma/schema.prisma`);
     let dburl = "";
-    if (!await (0, import_fs_jetpack6.existsAsync)(prismaPath)) {
-      await (0, import_fs_jetpack6.dirAsync)((0, import_path7.dirname)(prismaPath));
-      await (0, import_fs_jetpack6.writeAsync)(
+    if (!await (0, import_fs_jetpack5.existsAsync)(prismaPath)) {
+      await (0, import_fs_jetpack5.dirAsync)((0, import_path7.dirname)(prismaPath));
+      await (0, import_fs_jetpack5.writeAsync)(
         prismaPath,
         `generator client {
   provider = "prisma-client-js"
@@ -43367,7 +43366,7 @@ datasource db {
 }`
       );
     }
-    const schemaRaw = await (0, import_fs_jetpack6.readAsync)(prismaPath, "utf8");
+    const schemaRaw = await (0, import_fs_jetpack5.readAsync)(prismaPath, "utf8");
     if (schemaRaw) {
       const schema = (0, import_prisma_ast2.getSchema)(schemaRaw);
       let hasModel = false;
@@ -43397,28 +43396,28 @@ datasource db {
         }
       }
       const newSchemaRaw = (0, import_prisma_ast2.printSchema)(schema).trim();
-      await (0, import_fs_jetpack6.writeAsync)(prismaPath, newSchemaRaw);
+      await (0, import_fs_jetpack5.writeAsync)(prismaPath, newSchemaRaw);
       if (newSchemaRaw !== schemaRaw.trim() || !hasModel) {
         return { generated: false, pulled: false, dburl };
       }
       let prismaOutputSame = false;
-      if (await (0, import_fs_jetpack6.existsAsync)(dir.root(`.output/app/${name}/prisma/schema.prisma`))) {
+      if (await (0, import_fs_jetpack5.existsAsync)(dir.root(`.output/app/${name}/prisma/schema.prisma`))) {
         prismaOutputSame = true;
-        const outputSchema = await (0, import_fs_jetpack6.readAsync)(
+        const outputSchema = await (0, import_fs_jetpack5.readAsync)(
           dir.root(`.output/app/${name}/prisma/schema.prisma`)
         );
         if (newSchemaRaw.trim() !== outputSchema?.trim()) {
           prismaOutputSame = false;
         }
       }
-      await (0, import_fs_jetpack6.copyAsync)(
+      await (0, import_fs_jetpack5.copyAsync)(
         dir.root(`app/${name}/prisma`),
         dir.root(`.output/app/${name}/prisma`),
         {
           overwrite: true
         }
       );
-      if (!prismaOutputSame || !await (0, import_fs_jetpack6.existsAsync)(dir.root(`.output/app/${name}/node_modules/.gen`)) || !await (0, import_fs_jetpack6.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
+      if (!prismaOutputSame || !await (0, import_fs_jetpack5.existsAsync)(dir.root(`.output/app/${name}/node_modules/.gen`)) || !await (0, import_fs_jetpack5.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
         return { generated: false, pulled: true, dburl };
       }
     }
@@ -43438,7 +43437,7 @@ datasource db {
           onData(e) {
           }
         });
-        yield (0, import_fs_jetpack7.removeAsync)(`.output/app/${name}/node_modules/.gen`);
+        yield (0, import_fs_jetpack6.removeAsync)(`.output/app/${name}/node_modules/.gen`);
       }
     }
   });
@@ -43492,10 +43491,64 @@ datasource db {
     return true;
   });
 
+  // pkgs/base/src/action.ts
+  var baseGlobal = global;
+  var action2 = {
+    rebuildService: (name) => __async(void 0, null, function* () {
+      return yield buildService(name, {
+        watch: true,
+        app: baseGlobal.app,
+        rpc: baseGlobal.rootRPC
+      });
+    })
+  };
+
+  // pkgs/base/src/builder/app.ts
+  var import_fs5 = __require("fs");
+  var import_fs_jetpack7 = __toESM(require_main());
+  var buildApp = (opt) => __async(void 0, null, function* () {
+    yield (0, import_fs_jetpack7.writeAsync)(
+      dir.path(".output/app/pnpm-workspace.yaml"),
+      `packages:
+  - ./*`
+    );
+    const dirs = (0, import_fs5.readdirSync)(dir.path("app")).filter(
+      (e) => !["node_modules", "app.ts", "package.json", "gen"].includes(e)
+    ).map((e) => ({ name: e, stat: (0, import_fs5.statSync)(dir.path(`app/${e}`)) })).filter(
+      ({ stat: stat3, name }) => stat3.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
+    );
+    return {
+      path: dir.root(".output/app/app.js"),
+      cwd: dir.root(".output/app"),
+      serviceNames: dirs.map((e) => e.name),
+      build(onDone) {
+        return __async(this, null, function* () {
+          const result = yield bundle({
+            incremental: true,
+            input: dir.root("app/app.ts"),
+            output: dir.root(".output/app/app.js"),
+            pkgjson: dir.root(".output/app/package.json"),
+            pkgcwd: dir.root(".outpu/app"),
+            printTimer: true,
+            onBeforeDone: onDone,
+            watch(_0) {
+              return __async(this, arguments, function* ({ isRebuild }) {
+                if (isRebuild)
+                  yield runner.restart(dir.root(".output/app/app.js"));
+              });
+            }
+          });
+          if (!result) {
+            console.log("build app failed");
+          }
+        });
+      }
+    };
+  });
+
   // pkgs/base/src/commit-hook.ts
-  var import_child_process2 = __require("child_process");
+  var import_child_process3 = __require("child_process");
   var import_fs_jetpack8 = __toESM(require_main());
-  var import_node_pty2 = __require("node-pty");
   var commitHook = (args) => __async(void 0, null, function* () {
     const isMainRepo = () => __async(void 0, null, function* () {
       const conf = yield (0, import_fs_jetpack8.readAsync)(dir.root(".git/config"), "utf8");
@@ -43507,7 +43560,7 @@ datasource db {
     if (args.includes("pre-commit")) {
       if (yield isMainRepo()) {
         if (!(yield (0, import_fs_jetpack8.existsAsync)(dir.root(".husky/_/husky.sh")))) {
-          (0, import_child_process2.spawnSync)("pnpm husky install", { cwd: dir.root("") });
+          (0, import_child_process3.spawnSync)("pnpm husky install", { cwd: dir.root("") });
         }
         yield (0, import_fs_jetpack8.writeAsync)(dir.root(".output/.commit"), "");
       }
@@ -43524,12 +43577,12 @@ datasource db {
           yield (0, import_fs_jetpack8.removeAsync)(dir.root(".output/.commit"));
           yield (0, import_fs_jetpack8.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
           yield new Promise((resolve2) => {
-            (0, import_node_pty2.spawn)("git", ["add", "./pkgs/version.json"], {
+            spawn2("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
             }).onExit(resolve2);
           });
           yield new Promise((resolve2) => {
-            (0, import_node_pty2.spawn)("git", ["commit", "--amend", "-C", "HEAD", "--no-verify"], {
+            spawn2("git", ["commit", "--amend", "-C", "HEAD", "--no-verify"], {
               cwd: dir.root("")
             }).onExit(resolve2);
           });
@@ -43545,7 +43598,7 @@ datasource db {
   });
 
   // pkgs/base/src/upgrade.ts
-  var import_child_process3 = __require("child_process");
+  var import_child_process4 = __require("child_process");
 
   // node_modules/.pnpm/fflate@0.7.4/node_modules/fflate/esm/index.mjs
   var import_module = __require("module");
@@ -44067,7 +44120,7 @@ datasource db {
           );
         }
       }
-      (0, import_child_process3.spawnSync)("pnpm", ["i"], { cwd: dir.root(""), stdio: "inherit" });
+      (0, import_child_process4.spawnSync)("pnpm", ["i"], { cwd: dir.root(""), stdio: "inherit" });
       if (process.send) {
         process.send("exit");
       } else {
@@ -44175,18 +44228,6 @@ If somehow upgrade failed you can rollback using
   // pkgs/base/src/watcher/all.ts
   var import_fs_jetpack14 = __toESM(require_main());
 
-  // pkgs/base/src/action.ts
-  var baseGlobal = global;
-  var action2 = {
-    rebuildService: (name) => __async(void 0, null, function* () {
-      return yield buildService(name, {
-        watch: true,
-        app: baseGlobal.app,
-        rpc: baseGlobal.rootRPC
-      });
-    })
-  };
-
   // pkgs/base/src/watcher/new-service.ts
   var import_chalk8 = __toESM(require_source());
   var import_fs_jetpack13 = __toESM(require_main());
@@ -44272,7 +44313,6 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/main.ts
-  var RUNNING_MARKER = "WARNING: SERVER ALREADY RUNNING";
   var baseMain = () => __async(void 0, null, function* () {
     process.removeAllListeners("warning");
     vscodeSettings();
@@ -44328,13 +44368,7 @@ If somehow upgrade failed you can rollback using
         console.log("");
         yield runner.run({
           path: app.path,
-          cwd: app.cwd,
-          runningMarker(e) {
-            if (e.trim() === RUNNING_MARKER)
-              return true;
-            process.stdout.write(e);
-            return false;
-          }
+          cwd: app.cwd
         });
       } else {
         console.log(`

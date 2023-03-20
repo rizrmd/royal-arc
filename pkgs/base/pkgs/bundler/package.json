@@ -4,6 +4,7 @@
   "dependencies": {
     "@types/command-exists": "^1.2.0",
     "command-exists": "*",
+    "utility": "workspace:*",
     "dir": "workspace:*",
     "pkg": "workspace:*"
   }

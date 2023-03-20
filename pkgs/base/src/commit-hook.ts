@@ -1,7 +1,7 @@
 import { spawnSync } from "child_process";
 import { dir } from "dir";
 import { existsAsync, readAsync, removeAsync, writeAsync } from "fs-jetpack";
-import { spawn } from "node-pty";
+import { spawn } from "utility/spawn";
 
 export const commitHook = async (args: string[]) => {
   const isMainRepo = async () => {

@@ -1,5 +1,5 @@
+import { waitUntil } from "utility/wait-until";
 import { DBArg, DbDefCols, DbDefRels } from "../glbdb";
-import { waitUntil } from "../util";
 import { inspectSchema } from "./inspect";
 
 export const execQuery = async (args: DBArg, obj: any, key: string) => {

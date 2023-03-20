@@ -1,7 +1,6 @@
-import { dir } from "dir";
-import { existsSync } from "fs";
-import { IDisposable, IPty, spawn } from "node-pty";
 import commandExists from "command-exists";
+import { existsSync } from "fs";
+import { IPty, IDisposable, spawn } from "utility/spawn";
 const g = globalThis as unknown as {
   runs: Record<
     string,
@@ -49,8 +48,11 @@ export const runner = {
     path: string;
     args?: string[];
     onData?: (e: string) => unknown;
-    onStop?: (e: { exitCode: number; signal?: number | undefined }) => unknown;
-    runningMarker?: (stdout: string) => boolean;
+    onStop?: (e: {
+      exitCode: number;
+      signal: NodeJS.Signals | null;
+    }) => unknown;
+    onMessage?: (stdout: string) => any;
     cwd: string;
   }) {
     try {
@@ -69,26 +71,22 @@ export const runner = {
       if (g.runs[path] && !g.runs[path].stopped) return false;
 
       if (isCommand) {
-        g.runs[path] = spawn(path, args || [], { cwd }) as any;
+        g.runs[path] = spawn(path, args || [], { cwd, ipc: false }) as any;
       } else {
-        g.runs[path] = spawn(
-          process.execPath,
-          ["--enable-source-maps", path, ...(args || [])],
-          { cwd: cwd }
-        ) as any;
+        g.runs[path] = spawn(path, args || [], { cwd, ipc: true }) as any;
       }
 
       g.runs[path].arg = arg;
 
-      g.runs[path].clearOnExit = g.runs[path].onExit(async () => {
+      g.runs[path].onExit(async () => {
         g.runs[path].stopped = true;
         if (onStop) g.runs[path].onExit(onStop);
       });
 
       return new Promise<boolean>((resolve) => {
         g.runs[path].onData((e) => {
-          if (arg.runningMarker && !g.runs[path].markedRunning) {
-            if (arg.runningMarker(e)) {
+          if (arg.onMessage && !g.runs[path].markedRunning) {
+            if (arg.onMessage(e)) {
               g.runs[path].markedRunning = true;
               resolve(true);
             }
@@ -98,7 +96,7 @@ export const runner = {
           if (arg.onData) arg.onData(e);
           else process.stdout.write(e);
         });
-        if (!arg.runningMarker) {
+        if (!arg.onMessage) {
           g.runs[path].markedRunning = true;
           resolve(true);
         }

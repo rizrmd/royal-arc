@@ -3,8 +3,9 @@ import { watcher } from "bundler/src/watch";
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
 import padEnd from "lodash.padend";
-import { action as RootAction } from "../../service/src/action";
 import { connectRPC, createRPC } from "rpc";
+import { action as RootAction } from "../../service/src/action";
+import { action, baseGlobal } from "./action";
 import { buildApp } from "./builder/app";
 import { buildService } from "./builder/service";
 import { commitHook } from "./commit-hook";
@@ -12,10 +13,6 @@ import { upgradeHook } from "./upgrade";
 import { versionCheck } from "./version-check";
 import { vscodeSettings } from "./vscode";
 import { setupWatchers } from "./watcher/all";
-import { existsAsync } from "fs-jetpack";
-import { action, baseGlobal } from "./action";
-
-const RUNNING_MARKER = "WARNING: SERVER ALREADY RUNNING";
 
 export const baseMain = async () => {
   process.removeAllListeners("warning");
@@ -56,11 +53,6 @@ export const baseMain = async () => {
     //   await runner.run({
     //     path: app.path,
     //     cwd: app.cwd,
-    //     runningMarker(e) {
-    //       if (e.trim() === RUNNING_MARKER) return true;
-    //       process.stdout.write(e);
-    //       return false;
-    //     },
     //   });
     //   cacheFound = true;
     // }
@@ -81,7 +73,7 @@ export const baseMain = async () => {
           }
         }
       : undefined;
- 
+
     await Promise.all([
       app.build(onDone),
       ...app.serviceNames.map(
@@ -92,16 +84,11 @@ export const baseMain = async () => {
     versionCheck({ timeout: 3000 });
 
     if (!cacheFound) {
-      console.log('')
+      console.log("");
       await runner.run({
         path: app.path,
         cwd: app.cwd,
-        runningMarker(e) {
-          if (e.trim() === RUNNING_MARKER) return true;
-          process.stdout.write(e);
-          return false;
-        },
-      }); 
+      });
     } else {
       console.log(`\n🌟 Running ${chalk.cyan(`latest`)} app\n`);
       await runner.restart(app.path);

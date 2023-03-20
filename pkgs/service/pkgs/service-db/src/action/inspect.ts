@@ -1,5 +1,5 @@
 import { glbdb } from "../glbdb";
-import { waitUntil } from "../util";
+import { waitUntil } from "utility/wait-until";
 
 export const inspectSchema = async (
   table: string,

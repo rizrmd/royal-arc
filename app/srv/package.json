@@ -5,7 +5,6 @@
     "service-srv": "workspace:*"
   },
   "external": [
-    "hyper-express",
-    "node-pty"
+    "hyper-express"
   ]
 }

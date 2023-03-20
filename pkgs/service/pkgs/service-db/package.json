@@ -3,6 +3,7 @@
   "dependencies": {
     "dir": "workspace:^",
     "pkg": "workspace:^",
+    "utility": "workspace:^",
     "service": "workspace:^",
     "lodash.padend": "4.6.1",
     "fs-jetpack": "5.1.0",

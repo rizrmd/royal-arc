@@ -49,10 +49,10 @@ importers:
       fs-jetpack: ^5.1.0
       hyper-express: ^6.5.8
       lodash.padend: ^4.6.1
-      node-pty: ^0.10.1
       pkg: workspace:*
       rpc: workspace:*
       typescript: ^5
+      utility: workspace:*
     dependencies:
       '@parcel/watcher': 2.1.0
       bundler: link:pkgs/bundler
@@ -66,10 +66,10 @@ importers:
       fs-jetpack: 5.1.0
       hyper-express: 6.5.8
       lodash.padend: 4.6.1
-      node-pty: 0.10.1
       pkg: link:pkgs/pkg
       rpc: link:pkgs/rpc
       typescript: 5.0.2
+      utility: link:pkgs/utility
     devDependencies:
       '@types/lodash.padend': 4.6.7
       '@types/node': 18.15.3
@@ -80,11 +80,13 @@ importers:
       command-exists: '*'
       dir: workspace:*
       pkg: workspace:*
+      utility: workspace:*
     dependencies:
       '@types/command-exists': 1.2.0
       command-exists: 1.2.9
       dir: link:../dir
       pkg: link:../pkg
+      utility: link:../utility
 
   pkgs/base/pkgs/dir:
     specifiers: {}
@@ -133,6 +135,9 @@ importers:
       '@types/node': 18.15.3
       '@types/ws': 8.5.4
 
+  pkgs/base/pkgs/utility:
+    specifiers: {}
+
   pkgs/service:
     specifiers:
       '@qiwi/deep-proxy': 2.0.3
@@ -172,6 +177,7 @@ importers:
       lodash.padend: 4.6.1
       pkg: workspace:^
       service: workspace:^
+      utility: workspace:^
     dependencies:
       '@mrleebo/prisma-ast': 0.5.1
       chalk: 5.2.0
@@ -180,6 +186,7 @@ importers:
       lodash.padend: 4.6.1
       pkg: link:../../../base/pkgs/pkg
       service: link:../..
+      utility: link:../../../base/pkgs/utility
     devDependencies:
       '@types/lodash.padend': 4.6.7
 
@@ -1131,10 +1138,6 @@ packages:
       msgpackr-extract: 3.0.2
     dev: false
 
-  /nan/2.17.0:
-    resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
-    dev: false
-
   /negotiator/0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
@@ -1162,13 +1165,6 @@ packages:
   /node-gyp-build/4.6.0:
     resolution: {integrity: sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==}
     hasBin: true
-    dev: false
-
-  /node-pty/0.10.1:
-    resolution: {integrity: sha512-JTdtUS0Im/yRsWJSx7yiW9rtpfmxqxolrtnyKwPLI+6XqTAPW/O2MjS8FYL4I5TsMbH2lVgDb2VMjp+9LoQGNg==}
-    requiresBuild: true
-    dependencies:
-      nan: 2.17.0
     dev: false
 
   /npm-run-path/5.1.0:

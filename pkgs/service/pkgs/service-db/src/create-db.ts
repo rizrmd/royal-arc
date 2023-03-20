@@ -13,7 +13,7 @@ import padEnd from "lodash.padend";
 export const createDB = (arg: { name: SERVICE_NAME }) => {
   const { name } = arg;
 
-  createService(name, async ({ enableStdout }) => {
+  createService(name, async ({ markAsRunning }) => {
     const prisma = (await import(
       dir.path(`${name}/node_modules/.gen/index.js`)
     )) as typeof PRISMA;
@@ -23,7 +23,7 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
 
     await createRPC(`svc.${name}`, dbAction);
 
-    enableStdout();
+    markAsRunning();
 
     const schemaPath = dir.path(`${name}/prisma/schema.prisma`);
     if (!(await existsAsync(schemaPath))) {

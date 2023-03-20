@@ -16,8 +16,8 @@ export const createAPIServer = ({
   serverURL?: string;
   cookieKey: string;
 }) => {
-  createService(name, async ({ enableStdout, mode }) => {
-    enableStdout();
+  createService(name, async ({ markAsRunning, mode }) => {
+    markAsRunning();
 
     srv.name = name;
     srv.port = port;
@@ -33,7 +33,6 @@ export const createAPIServer = ({
       cookieKey: srv.cookieKey,
     });
 
-    
     console.log(
       `${chalk.magenta("Started")} ${chalk.green(
         `${padEnd(srv.name, 10, " ")}`
