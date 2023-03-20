@@ -31,9 +31,11 @@ importers:
     specifiers:
       '@types/react': 18.0.28
       react: 18.2.0
+      react-dom: 18.2.0
       service-srv: workspace:*
     dependencies:
       react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       service-srv: link:../../pkgs/service/pkgs/service-srv
     devDependencies:
       '@types/react': 18.0.28
@@ -239,20 +241,6 @@ importers:
     devDependencies:
       '@types/lodash.get': 4.4.7
       '@types/lodash.padend': 4.6.7
-
-  pkgs/template/pkgs/db:
-    specifiers:
-      prisma: 4.11.0
-      service-db: ../../pkgs/service/pkgs/service-db
-    dependencies:
-      prisma: 4.11.0
-      service-db: link:../service/pkgs/service-db
-
-  pkgs/template/pkgs/service:
-    specifiers:
-      service: workspace:*
-    dependencies:
-      service: link:../../../service
 
 packages:
 
@@ -1378,6 +1366,16 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
+  /react-dom/18.2.0_react@18.2.0:
+    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
+    peerDependencies:
+      react: ^18.2.0
+    dependencies:
+      loose-envify: 1.4.0
+      react: 18.2.0
+      scheduler: 0.23.0
+    dev: false
+
   /react/18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
     engines: {node: '>=0.10.0'}
@@ -1397,6 +1395,12 @@ packages:
       htmlparser2: 6.1.0
       lodash: 4.17.21
       strip-ansi: 6.0.1
+    dev: false
+
+  /scheduler/0.23.0:
+    resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
+    dependencies:
+      loose-envify: 1.4.0
     dev: false
 
   /shebang-command/2.0.0:

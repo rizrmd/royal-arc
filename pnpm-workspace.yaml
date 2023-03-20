@@ -5,3 +5,4 @@ packages:
   - 'pkgs/*'
   - 'pkgs/*/pkgs/*'
   - 'pkgs/*/pkgs/*/pkgs/*'
+  - '!pkgs/template/**'
