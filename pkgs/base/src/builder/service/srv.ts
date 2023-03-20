@@ -37,4 +37,6 @@ export const _ = {
       } catch (e) {}
     }
   });
+
+  return { shouldRestart: true };
 };

@@ -17,8 +17,6 @@ export const createAPIServer = ({
   cookieKey: string;
 }) => {
   createService(name, async ({ markAsRunning, mode }) => {
-    markAsRunning();
-
     srv.name = name;
     srv.port = port;
     srv.cookieKey = cookieKey;
@@ -46,5 +44,6 @@ export const createAPIServer = ({
         )} http://localhost:${srv.port}`
       );
     }
+    markAsRunning();
   });
 };

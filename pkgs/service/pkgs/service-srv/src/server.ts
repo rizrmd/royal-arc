@@ -71,17 +71,17 @@ export const server = async ({
           const handler = (await item.handler)._.api;
           server.any(url, async (req, res) => {
             let found = router.lookup(req.path);
-  
+
             const nreq = new DeepProxy(req, ({ target, path, key, value }) => {
               if (typeof value === "function") {
                 return async (...args: any[]) => {
                   const result = (req as any)[key](...args);
- 
+
                   if (result instanceof Promise) {
                     const awaited = await result;
                     return awaited;
                   }
-                  return result; 
+                  return result;
                 };
               }
 
@@ -95,7 +95,7 @@ export const server = async ({
                 } else {
                   return {};
                 }
-              } 
+              }
 
               return value;
             });
@@ -137,16 +137,16 @@ export const server = async ({
                   passedParams[parseInt(k)] = params[paramName];
                 }
               }
-
+ 
               result = await im(...passedParams);
-            }
+            } 
 
             if (!res.headersSent && !res.aborted) {
               if (typeof result === "object") {
                 res.header("content-type", "application/json");
                 res.send(JSON.stringify(result));
               } else {
-                res.send(result);
+                res.send(result); 
               }
             }
           });

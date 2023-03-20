@@ -9,6 +9,7 @@
     "fs-jetpack": "5.1.0",
     "rpc": "workspace:*",
     "dir": "workspace:*",
+    "utility": "workspace:*",
     "pkg": "workspace:*",
     "bundler": "workspace:^",
     "catch-exit": "1.2.2",

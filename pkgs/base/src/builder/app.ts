@@ -3,6 +3,7 @@ import { runner } from "bundler/runner";
 import { dir } from "dir";
 import { existsSync, readdirSync, statSync } from "fs";
 import { writeAsync } from "fs-jetpack";
+import { marker } from "./service";
 
 export const buildApp = async (opt: { watch: boolean }) => {
   await writeAsync(
@@ -35,8 +36,9 @@ packages:
         pkgcwd: dir.root(".outpu/app"),
         printTimer: true,
         onBeforeDone: onDone,
-        async watch({ isRebuild }) {
-          if (isRebuild) await runner.restart(dir.root(".output/app/app.js"));
+        async watch({ isRebuild }) { 
+          if (isRebuild && !marker["*"]) 
+            await runner.restart(dir.root(".output/app/app.js"));
         },
       });
 

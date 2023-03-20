@@ -12,13 +12,13 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
         dir: dir.root(e),
         ignore: ["pkgs/*/node_modules", "node_modules"],
         event: async (err, ev) => {
-          if (!err) { 
+          if (!err) {
             // mark all file as changed, so it does not restarted.
             marker["*"] = new Set();
- 
-            // if (baseGlobal.app) await removeAsync(baseGlobal.app.path);
-            // await onExit();
-            // process.exit(99);
+
+            if (baseGlobal.app) await removeAsync(baseGlobal.app.path);
+            await onExit();
+            process.exit(99);
           }
         },
       });

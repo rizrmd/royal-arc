@@ -7,13 +7,16 @@ export const runner = {
   get list() {
     return runnerGlb.runs;
   },
-  dispose() {
-    return Promise.all(Object.values(runnerGlb.runs).map((pty) => pty.kill));
+  async dispose() {
+    const all = Object.values(runnerGlb.runs).map(async (pty) => {
+      await pty.kill();
+    });
+    return await Promise.all(all);
   },
   async restart(path: keyof typeof runnerGlb.runs) {
     if (runnerGlb.runs[path]) {
       const data = runnerGlb.runs[path].data;
-      await runnerGlb.runs[path].kill();
+      await this.stop(path);
       await runner.run(data.arg);
     } else {
       return false;
@@ -21,9 +24,13 @@ export const runner = {
   },
   async stop(path: keyof typeof runnerGlb.runs) {
     return new Promise<boolean>((resolve) => {
-      runnerGlb.runs[path].onExit(() => resolve(true));
-      runnerGlb.runs[path].kill();
-      delete runnerGlb.runs[path];
+      if (!runnerGlb.runs[path]) {
+        resolve(true);
+      } else {
+        runnerGlb.runs[path].onExit(() => resolve(true));
+        runnerGlb.runs[path].kill();
+        delete runnerGlb.runs[path];
+      }
     });
   },
   async run(arg: {
@@ -61,9 +68,13 @@ export const runner = {
       });
 
       return await new Promise<boolean>((resolve) => {
-        runnerGlb.runs[path].onMessage((e) => {
+        if (!isCommand) {
+          runnerGlb.runs[path].onMessage((e) => {
+            resolve(true);
+          });
+        } else {
           resolve(true);
-        });
+        }
       });
     } catch (e) {
       return false;

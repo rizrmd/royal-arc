@@ -154,6 +154,7 @@ importers:
       lodash.padend: 4.6.1
       pkg: workspace:*
       rpc: workspace:*
+      utility: workspace:*
     dependencies:
       '@qiwi/deep-proxy': 2.0.3
       bundler: link:../base/pkgs/bundler
@@ -165,6 +166,7 @@ importers:
       lodash.padend: 4.6.1
       pkg: link:../base/pkgs/pkg
       rpc: link:../base/pkgs/rpc
+      utility: link:../base/pkgs/utility
     devDependencies:
       '@types/lodash.get': 4.4.7
       '@types/lodash.padend': 4.6.7

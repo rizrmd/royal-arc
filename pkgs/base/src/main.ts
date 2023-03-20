@@ -25,7 +25,7 @@ export const baseMain = async () => {
 
   if (await commitHook(args)) return;
   if (await upgradeHook(args)) return;
- 
+
   console.log(`── ${padEnd(chalk.yellow(`BASE`) + " ", 47, "─")}`);
 
   if (
@@ -33,15 +33,15 @@ export const baseMain = async () => {
     args.includes("deploy") ||
     args.includes("prod") ||
     args.includes("staging")
-  ) { 
+  ) {
   } else {
     const onExit = async () => {
       await watcher.dispose();
-      await runner.dispose();
+      await runner.stop(app.path);
     };
-    addExitCallback(() => {}); 
-    setupWatchers(args, onExit); 
- 
+    addExitCallback(() => {});
+    setupWatchers(args, onExit);
+
     await createRPC("base", action, { isMain: true });
 
     const rootRPC = await connectRPC<typeof RootAction>("root", {
@@ -53,24 +53,27 @@ export const baseMain = async () => {
       await pkg.install(dir.root("pkgs"), { cwd: dir.root(), deep: true });
     }
 
-    const app = await buildApp({ watch: true }); 
-    baseGlobal.app = app; 
+    const app = await buildApp({ watch: true });
+    baseGlobal.app = app;
 
     let cacheFound = false;
 
-    // if (await existsAsync(app.path)) {
-    //   console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
-    //   await runner.run({
-    //     path: app.path,
-    //     cwd: app.cwd,
-    //   });
-    //   cacheFound = true;
-    // }
+    if (await existsAsync(app.path)) {
+      console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
+      await runner.run({
+        path: app.path,
+        cwd: app.cwd,
+      });
+      cacheFound = true;
+    } 
 
     let bannerPrinted = false;
     const onDone = cacheFound
       ? (arg: { isRebuild: boolean }) => {
           if (!bannerPrinted) {
+            if (cacheFound) { 
+              console.clear();
+            }
             console.log(
               `── ${padEnd(
                 chalk.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",

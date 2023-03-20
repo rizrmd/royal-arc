@@ -26,8 +26,6 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
 
     await createRPC(`svc.${name}`, dbAction);
 
-    markAsRunning();
-
     const schemaPath = dir.path(`${name}/prisma/schema.prisma`);
     if (!(await existsAsync(schemaPath))) {
       console.log(
@@ -67,11 +65,10 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
           path: "pnpm",
           args: ["prisma", "generate"],
           cwd: dir.path(name),
-          onMessage(e) {
-            process.stdout.write(e);
-          },
         });
       }
     }
+
+    markAsRunning();
   });
 };

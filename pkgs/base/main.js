@@ -2318,189 +2318,6 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     }
   });
 
-  // node_modules/.pnpm/lodash.padend@4.6.1/node_modules/lodash.padend/index.js
-  var require_lodash = __commonJS({
-    "node_modules/.pnpm/lodash.padend@4.6.1/node_modules/lodash.padend/index.js"(exports2, module2) {
-      var INFINITY = 1 / 0;
-      var MAX_SAFE_INTEGER = 9007199254740991;
-      var MAX_INTEGER = 17976931348623157e292;
-      var NAN = 0 / 0;
-      var symbolTag = "[object Symbol]";
-      var reTrim = /^\s+|\s+$/g;
-      var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
-      var reIsBinary = /^0b[01]+$/i;
-      var reIsOctal = /^0o[0-7]+$/i;
-      var rsAstralRange = "\\ud800-\\udfff";
-      var rsComboMarksRange = "\\u0300-\\u036f\\ufe20-\\ufe23";
-      var rsComboSymbolsRange = "\\u20d0-\\u20f0";
-      var rsVarRange = "\\ufe0e\\ufe0f";
-      var rsAstral = "[" + rsAstralRange + "]";
-      var rsCombo = "[" + rsComboMarksRange + rsComboSymbolsRange + "]";
-      var rsFitz = "\\ud83c[\\udffb-\\udfff]";
-      var rsModifier = "(?:" + rsCombo + "|" + rsFitz + ")";
-      var rsNonAstral = "[^" + rsAstralRange + "]";
-      var rsRegional = "(?:\\ud83c[\\udde6-\\uddff]){2}";
-      var rsSurrPair = "[\\ud800-\\udbff][\\udc00-\\udfff]";
-      var rsZWJ = "\\u200d";
-      var reOptMod = rsModifier + "?";
-      var rsOptVar = "[" + rsVarRange + "]?";
-      var rsOptJoin = "(?:" + rsZWJ + "(?:" + [rsNonAstral, rsRegional, rsSurrPair].join("|") + ")" + rsOptVar + reOptMod + ")*";
-      var rsSeq = rsOptVar + reOptMod + rsOptJoin;
-      var rsSymbol = "(?:" + [rsNonAstral + rsCombo + "?", rsCombo, rsRegional, rsSurrPair, rsAstral].join("|") + ")";
-      var reUnicode = RegExp(rsFitz + "(?=" + rsFitz + ")|" + rsSymbol + rsSeq, "g");
-      var reHasUnicode = RegExp("[" + rsZWJ + rsAstralRange + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + "]");
-      var freeParseInt = parseInt;
-      var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
-      var freeSelf = typeof self == "object" && self && self.Object === Object && self;
-      var root2 = freeGlobal || freeSelf || Function("return this")();
-      var asciiSize = baseProperty("length");
-      function asciiToArray(string) {
-        return string.split("");
-      }
-      function baseProperty(key) {
-        return function(object) {
-          return object == null ? void 0 : object[key];
-        };
-      }
-      function hasUnicode(string) {
-        return reHasUnicode.test(string);
-      }
-      function stringSize(string) {
-        return hasUnicode(string) ? unicodeSize(string) : asciiSize(string);
-      }
-      function stringToArray(string) {
-        return hasUnicode(string) ? unicodeToArray(string) : asciiToArray(string);
-      }
-      function unicodeSize(string) {
-        var result = reUnicode.lastIndex = 0;
-        while (reUnicode.test(string)) {
-          result++;
-        }
-        return result;
-      }
-      function unicodeToArray(string) {
-        return string.match(reUnicode) || [];
-      }
-      var objectProto = Object.prototype;
-      var objectToString = objectProto.toString;
-      var Symbol2 = root2.Symbol;
-      var nativeCeil = Math.ceil;
-      var nativeFloor = Math.floor;
-      var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
-      var symbolToString = symbolProto ? symbolProto.toString : void 0;
-      function baseRepeat(string, n) {
-        var result = "";
-        if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
-          return result;
-        }
-        do {
-          if (n % 2) {
-            result += string;
-          }
-          n = nativeFloor(n / 2);
-          if (n) {
-            string += string;
-          }
-        } while (n);
-        return result;
-      }
-      function baseSlice(array, start, end) {
-        var index = -1, length = array.length;
-        if (start < 0) {
-          start = -start > length ? 0 : length + start;
-        }
-        end = end > length ? length : end;
-        if (end < 0) {
-          end += length;
-        }
-        length = start > end ? 0 : end - start >>> 0;
-        start >>>= 0;
-        var result = Array(length);
-        while (++index < length) {
-          result[index] = array[index + start];
-        }
-        return result;
-      }
-      function baseToString(value) {
-        if (typeof value == "string") {
-          return value;
-        }
-        if (isSymbol(value)) {
-          return symbolToString ? symbolToString.call(value) : "";
-        }
-        var result = value + "";
-        return result == "0" && 1 / value == -INFINITY ? "-0" : result;
-      }
-      function castSlice(array, start, end) {
-        var length = array.length;
-        end = end === void 0 ? length : end;
-        return !start && end >= length ? array : baseSlice(array, start, end);
-      }
-      function createPadding(length, chars) {
-        chars = chars === void 0 ? " " : baseToString(chars);
-        var charsLength = chars.length;
-        if (charsLength < 2) {
-          return charsLength ? baseRepeat(chars, length) : chars;
-        }
-        var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
-        return hasUnicode(chars) ? castSlice(stringToArray(result), 0, length).join("") : result.slice(0, length);
-      }
-      function isObject(value) {
-        var type = typeof value;
-        return !!value && (type == "object" || type == "function");
-      }
-      function isObjectLike(value) {
-        return !!value && typeof value == "object";
-      }
-      function isSymbol(value) {
-        return typeof value == "symbol" || isObjectLike(value) && objectToString.call(value) == symbolTag;
-      }
-      function toFinite(value) {
-        if (!value) {
-          return value === 0 ? value : 0;
-        }
-        value = toNumber(value);
-        if (value === INFINITY || value === -INFINITY) {
-          var sign = value < 0 ? -1 : 1;
-          return sign * MAX_INTEGER;
-        }
-        return value === value ? value : 0;
-      }
-      function toInteger(value) {
-        var result = toFinite(value), remainder = result % 1;
-        return result === result ? remainder ? result - remainder : result : 0;
-      }
-      function toNumber(value) {
-        if (typeof value == "number") {
-          return value;
-        }
-        if (isSymbol(value)) {
-          return NAN;
-        }
-        if (isObject(value)) {
-          var other = typeof value.valueOf == "function" ? value.valueOf() : value;
-          value = isObject(other) ? other + "" : other;
-        }
-        if (typeof value != "string") {
-          return value === 0 ? value : +value;
-        }
-        value = value.replace(reTrim, "");
-        var isBinary = reIsBinary.test(value);
-        return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
-      }
-      function toString(value) {
-        return value == null ? "" : baseToString(value);
-      }
-      function padEnd4(string, length, chars) {
-        string = toString(string);
-        length = toInteger(length);
-        var strLength = length ? stringSize(string) : 0;
-        return length && strLength < length ? string + createPadding(length - strLength, chars) : string;
-      }
-      module2.exports = padEnd4;
-    }
-  });
-
   // node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/utils/promisify.js
   var require_promisify = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/utils/promisify.js"(exports2, module2) {
@@ -2713,7 +2530,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           maxRetries: 3
         });
       };
-      var removeAsync6 = (path2) => {
+      var removeAsync7 = (path2) => {
         return fs2.rm(path2, {
           recursive: true,
           force: true,
@@ -2722,7 +2539,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync6;
+      exports2.async = removeAsync7;
     }
   });
 
@@ -4822,7 +4639,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         return false;
       };
-      var existsAsync9 = (path2) => {
+      var existsAsync10 = (path2) => {
         return new Promise((resolve2, reject) => {
           fs2.stat(path2).then((stat5) => {
             if (stat5.isDirectory()) {
@@ -4843,7 +4660,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = existsSync5;
-      exports2.async = existsAsync9;
+      exports2.async = existsAsync10;
     }
   });
 
@@ -5719,6 +5536,189 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       "use strict";
       var jetpack = require_jetpack();
       module2.exports = jetpack();
+    }
+  });
+
+  // node_modules/.pnpm/lodash.padend@4.6.1/node_modules/lodash.padend/index.js
+  var require_lodash = __commonJS({
+    "node_modules/.pnpm/lodash.padend@4.6.1/node_modules/lodash.padend/index.js"(exports2, module2) {
+      var INFINITY = 1 / 0;
+      var MAX_SAFE_INTEGER = 9007199254740991;
+      var MAX_INTEGER = 17976931348623157e292;
+      var NAN = 0 / 0;
+      var symbolTag = "[object Symbol]";
+      var reTrim = /^\s+|\s+$/g;
+      var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+      var reIsBinary = /^0b[01]+$/i;
+      var reIsOctal = /^0o[0-7]+$/i;
+      var rsAstralRange = "\\ud800-\\udfff";
+      var rsComboMarksRange = "\\u0300-\\u036f\\ufe20-\\ufe23";
+      var rsComboSymbolsRange = "\\u20d0-\\u20f0";
+      var rsVarRange = "\\ufe0e\\ufe0f";
+      var rsAstral = "[" + rsAstralRange + "]";
+      var rsCombo = "[" + rsComboMarksRange + rsComboSymbolsRange + "]";
+      var rsFitz = "\\ud83c[\\udffb-\\udfff]";
+      var rsModifier = "(?:" + rsCombo + "|" + rsFitz + ")";
+      var rsNonAstral = "[^" + rsAstralRange + "]";
+      var rsRegional = "(?:\\ud83c[\\udde6-\\uddff]){2}";
+      var rsSurrPair = "[\\ud800-\\udbff][\\udc00-\\udfff]";
+      var rsZWJ = "\\u200d";
+      var reOptMod = rsModifier + "?";
+      var rsOptVar = "[" + rsVarRange + "]?";
+      var rsOptJoin = "(?:" + rsZWJ + "(?:" + [rsNonAstral, rsRegional, rsSurrPair].join("|") + ")" + rsOptVar + reOptMod + ")*";
+      var rsSeq = rsOptVar + reOptMod + rsOptJoin;
+      var rsSymbol = "(?:" + [rsNonAstral + rsCombo + "?", rsCombo, rsRegional, rsSurrPair, rsAstral].join("|") + ")";
+      var reUnicode = RegExp(rsFitz + "(?=" + rsFitz + ")|" + rsSymbol + rsSeq, "g");
+      var reHasUnicode = RegExp("[" + rsZWJ + rsAstralRange + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + "]");
+      var freeParseInt = parseInt;
+      var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
+      var freeSelf = typeof self == "object" && self && self.Object === Object && self;
+      var root2 = freeGlobal || freeSelf || Function("return this")();
+      var asciiSize = baseProperty("length");
+      function asciiToArray(string) {
+        return string.split("");
+      }
+      function baseProperty(key) {
+        return function(object) {
+          return object == null ? void 0 : object[key];
+        };
+      }
+      function hasUnicode(string) {
+        return reHasUnicode.test(string);
+      }
+      function stringSize(string) {
+        return hasUnicode(string) ? unicodeSize(string) : asciiSize(string);
+      }
+      function stringToArray(string) {
+        return hasUnicode(string) ? unicodeToArray(string) : asciiToArray(string);
+      }
+      function unicodeSize(string) {
+        var result = reUnicode.lastIndex = 0;
+        while (reUnicode.test(string)) {
+          result++;
+        }
+        return result;
+      }
+      function unicodeToArray(string) {
+        return string.match(reUnicode) || [];
+      }
+      var objectProto = Object.prototype;
+      var objectToString = objectProto.toString;
+      var Symbol2 = root2.Symbol;
+      var nativeCeil = Math.ceil;
+      var nativeFloor = Math.floor;
+      var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
+      var symbolToString = symbolProto ? symbolProto.toString : void 0;
+      function baseRepeat(string, n) {
+        var result = "";
+        if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
+          return result;
+        }
+        do {
+          if (n % 2) {
+            result += string;
+          }
+          n = nativeFloor(n / 2);
+          if (n) {
+            string += string;
+          }
+        } while (n);
+        return result;
+      }
+      function baseSlice(array, start, end) {
+        var index = -1, length = array.length;
+        if (start < 0) {
+          start = -start > length ? 0 : length + start;
+        }
+        end = end > length ? length : end;
+        if (end < 0) {
+          end += length;
+        }
+        length = start > end ? 0 : end - start >>> 0;
+        start >>>= 0;
+        var result = Array(length);
+        while (++index < length) {
+          result[index] = array[index + start];
+        }
+        return result;
+      }
+      function baseToString(value) {
+        if (typeof value == "string") {
+          return value;
+        }
+        if (isSymbol(value)) {
+          return symbolToString ? symbolToString.call(value) : "";
+        }
+        var result = value + "";
+        return result == "0" && 1 / value == -INFINITY ? "-0" : result;
+      }
+      function castSlice(array, start, end) {
+        var length = array.length;
+        end = end === void 0 ? length : end;
+        return !start && end >= length ? array : baseSlice(array, start, end);
+      }
+      function createPadding(length, chars) {
+        chars = chars === void 0 ? " " : baseToString(chars);
+        var charsLength = chars.length;
+        if (charsLength < 2) {
+          return charsLength ? baseRepeat(chars, length) : chars;
+        }
+        var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
+        return hasUnicode(chars) ? castSlice(stringToArray(result), 0, length).join("") : result.slice(0, length);
+      }
+      function isObject(value) {
+        var type = typeof value;
+        return !!value && (type == "object" || type == "function");
+      }
+      function isObjectLike(value) {
+        return !!value && typeof value == "object";
+      }
+      function isSymbol(value) {
+        return typeof value == "symbol" || isObjectLike(value) && objectToString.call(value) == symbolTag;
+      }
+      function toFinite(value) {
+        if (!value) {
+          return value === 0 ? value : 0;
+        }
+        value = toNumber(value);
+        if (value === INFINITY || value === -INFINITY) {
+          var sign = value < 0 ? -1 : 1;
+          return sign * MAX_INTEGER;
+        }
+        return value === value ? value : 0;
+      }
+      function toInteger(value) {
+        var result = toFinite(value), remainder = result % 1;
+        return result === result ? remainder ? result - remainder : result : 0;
+      }
+      function toNumber(value) {
+        if (typeof value == "number") {
+          return value;
+        }
+        if (isSymbol(value)) {
+          return NAN;
+        }
+        if (isObject(value)) {
+          var other = typeof value.valueOf == "function" ? value.valueOf() : value;
+          value = isObject(other) ? other + "" : other;
+        }
+        if (typeof value != "string") {
+          return value === 0 ? value : +value;
+        }
+        value = value.replace(reTrim, "");
+        var isBinary = reIsBinary.test(value);
+        return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
+      }
+      function toString(value) {
+        return value == null ? "" : baseToString(value);
+      }
+      function padEnd4(string, length, chars) {
+        string = toString(string);
+        length = toInteger(length);
+        var strLength = length ? stringSize(string) : 0;
+        return length && strLength < length ? string + createPadding(length - strLength, chars) : string;
+      }
+      module2.exports = padEnd4;
     }
   });
 
@@ -54046,6 +54046,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var import_command_exists = __toESM(require_command_exists2());
   var import_fs = __require("fs");
 
+  // pkgs/base/pkgs/bundler/runner-glb.ts
+  var runnerGlb = globalThis;
+  if (!runnerGlb.runs)
+    runnerGlb.runs = {};
+
   // pkgs/base/pkgs/utility/spawn.ts
   var import_child_process = __require("child_process");
   var spawn = (file, args, opt) => {
@@ -54060,8 +54065,6 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       onMessage: (e) => {
       },
       onExit: (e) => {
-      },
-      killResolve: (value) => {
       }
     };
     if (opt?.ipc) {
@@ -54069,8 +54072,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         callback.onMessage(e);
       });
     }
-    proc.on("exit", (code, signal) => {
-      callback.killResolve();
+    proc.on("exit", async (code, signal) => {
       callback.onExit({
         exitCode: code || 0,
         signal
@@ -54082,35 +54084,43 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       onMessage: (fn) => {
         callback.onMessage = fn;
       },
+      proc,
       onExit: (fn) => {
         callback.onExit = fn;
       },
-      kill: () => {
-        return new Promise(async (resolve2) => {
-          callback.killResolve = resolve2;
-          proc.kill();
+      killing: null,
+      async kill() {
+        await new Promise((resolve2) => {
+          if (opt?.ipc) {
+            proc.on("message", (e) => {
+              if (e === "::SPAWN_DISPOSED::") {
+                resolve2();
+              }
+            });
+            proc.send("::SPAWN_DISPOSE::");
+          } else {
+            resolve2();
+          }
         });
       }
     };
   };
-
-  // pkgs/base/pkgs/bundler/runner-glb.ts
-  var runnerGlb = globalThis;
-  if (!runnerGlb.runs)
-    runnerGlb.runs = {};
 
   // pkgs/base/pkgs/bundler/runner.ts
   var runner = {
     get list() {
       return runnerGlb.runs;
     },
-    dispose() {
-      return Promise.all(Object.values(runnerGlb.runs).map((pty) => pty.kill));
+    async dispose() {
+      const all = Object.values(runnerGlb.runs).map(async (pty) => {
+        await pty.kill();
+      });
+      return await Promise.all(all);
     },
     async restart(path2) {
       if (runnerGlb.runs[path2]) {
         const data = runnerGlb.runs[path2].data;
-        await runnerGlb.runs[path2].kill();
+        await this.stop(path2);
         await runner.run(data.arg);
       } else {
         return false;
@@ -54118,9 +54128,13 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     },
     async stop(path2) {
       return new Promise((resolve2) => {
-        runnerGlb.runs[path2].onExit(() => resolve2(true));
-        runnerGlb.runs[path2].kill();
-        delete runnerGlb.runs[path2];
+        if (!runnerGlb.runs[path2]) {
+          resolve2(true);
+        } else {
+          runnerGlb.runs[path2].onExit(() => resolve2(true));
+          runnerGlb.runs[path2].kill();
+          delete runnerGlb.runs[path2];
+        }
       });
     },
     async run(arg) {
@@ -54145,9 +54159,13 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           delete runnerGlb.runs[path2];
         });
         return await new Promise((resolve2) => {
-          runnerGlb.runs[path2].onMessage((e) => {
+          if (!isCommand) {
+            runnerGlb.runs[path2].onMessage((e) => {
+              resolve2(true);
+            });
+          } else {
             resolve2(true);
-          });
+          }
         });
       } catch (e) {
         return false;
@@ -54252,6 +54270,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   };
 
   // pkgs/base/src/main.ts
+  var import_fs_jetpack17 = __toESM(require_main2());
   var import_lodash5 = __toESM(require_lodash());
 
   // pkgs/base/pkgs/pkg/export.ts
@@ -55664,13 +55683,12 @@ datasource db {
         yield runner.run({
           path: "pnpm",
           args: ["prisma", "generate"],
-          cwd: dir.root(`app/${name}`),
-          onMessage(e) {
-          }
+          cwd: dir.root(`app/${name}`)
         });
         yield (0, import_fs_jetpack6.removeAsync)(`.output/app/${name}/node_modules/.gen`);
       }
     }
+    return { shouldRestart: true };
   });
 
   // pkgs/base/src/builder/service/srv.ts
@@ -57153,6 +57171,7 @@ export const _ = {
         }
       }
     }));
+    return { shouldRestart: true };
   });
 
   // pkgs/base/src/builder/service.ts
@@ -57169,13 +57188,30 @@ export const _ = {
       printTimer: true,
       onBeforeDone: arg.onDone,
       watch: arg.watch ? (_0) => __async(void 0, [_0], function* ({ isRebuild, installDeps }) {
+        if (installDeps || marker["*"])
+          return;
+        if (isRebuild && runner.list[app.path]) {
+          const mark = marker[name];
+          if (mark) {
+            let shouldRestart = false;
+            if (mark instanceof Set) {
+              const res = yield afterBuild(name, mark);
+              shouldRestart = res.shouldRestart;
+              delete marker[name];
+            }
+            if (shouldRestart)
+              yield rpc.restart({ name });
+          } else {
+            marker[name] = true;
+          }
+        }
       }) : void 0
     }))) {
       console.log(`build service ${name} failed`);
       return false;
     }
-    yield prepare(name);
-    watchService(name, (err2, changes) => {
+    yield afterBuild(name);
+    watchService(name, (err2, changes) => __async(void 0, null, function* () {
       if (!err2) {
         if (!err2) {
           for (const c of changes) {
@@ -57187,7 +57223,7 @@ export const _ = {
                 if (mark instanceof Set) {
                   mark.add(c.path);
                 } else if (mark === true) {
-                  delete marker[name];
+                  marker[name] = /* @__PURE__ */ new Set([c.path]);
                 }
               }
             } else {
@@ -57195,18 +57231,24 @@ export const _ = {
           }
           const deladd = changes.filter((e) => e.type !== "delete");
           if (deladd.length > 0) {
-            prepare(name, new Set(deladd.map((e) => e.path)));
+            const res = yield afterBuild(
+              name,
+              new Set(deladd.map((e) => e.path))
+            );
+            if (res.shouldRestart)
+              yield rpc.restart({ name });
           }
         }
       }
-    });
+    }));
     return true;
   });
-  var prepare = (name, mark) => __async(void 0, null, function* () {
+  var afterBuild = (name, mark) => __async(void 0, null, function* () {
     if (name.startsWith("db"))
-      yield prepareDB(name, mark);
+      return yield prepareDB(name, mark);
     if (name.startsWith("srv"))
-      yield prepareSrv(name, mark);
+      return yield prepareSrv(name, mark);
+    return { shouldRestart: false };
   });
 
   // pkgs/base/src/action.ts
@@ -57251,7 +57293,7 @@ export const _ = {
             onBeforeDone: onDone,
             watch(_0) {
               return __async(this, arguments, function* ({ isRebuild }) {
-                if (isRebuild)
+                if (isRebuild && !marker["*"])
                   yield runner.restart(dir.root(".output/app/app.js"));
               });
             }
@@ -57943,6 +57985,9 @@ If somehow upgrade failed you can rollback using
     "hide-files.files": []
   };
 
+  // pkgs/base/src/watcher/all.ts
+  var import_fs_jetpack16 = __toESM(require_main2());
+
   // pkgs/base/src/watcher/new-service.ts
   var import_chalk8 = __toESM(require_source());
   var import_fs_jetpack15 = __toESM(require_main2());
@@ -58017,6 +58062,10 @@ If somehow upgrade failed you can rollback using
           event: (err2, ev) => __async(void 0, null, function* () {
             if (!err2) {
               marker["*"] = /* @__PURE__ */ new Set();
+              if (baseGlobal.app)
+                yield (0, import_fs_jetpack16.removeAsync)(baseGlobal.app.path);
+              yield onExit();
+              process.exit(99);
             }
           })
         });
@@ -58039,7 +58088,7 @@ If somehow upgrade failed you can rollback using
     } else {
       const onExit = () => __async(void 0, null, function* () {
         yield watcher.dispose();
-        yield runner.dispose();
+        yield runner.stop(app.path);
       });
       (0, import_catch_exit2.addExitCallback)(() => {
       });
@@ -58055,9 +58104,22 @@ If somehow upgrade failed you can rollback using
       const app = yield buildApp({ watch: true });
       baseGlobal.app = app;
       let cacheFound = false;
+      if (yield (0, import_fs_jetpack17.existsAsync)(app.path)) {
+        console.log(`
+\u{1F31F} Running ${import_chalk9.default.cyan(`cached`)} app
+`);
+        yield runner.run({
+          path: app.path,
+          cwd: app.cwd
+        });
+        cacheFound = true;
+      }
       let bannerPrinted = false;
       const onDone = cacheFound ? (arg) => {
         if (!bannerPrinted) {
+          if (cacheFound) {
+            console.clear();
+          }
           console.log(
             `\u2500\u2500 ${(0, import_lodash5.default)(
               import_chalk9.default.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",

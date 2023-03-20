@@ -31,22 +31,24 @@ export const buildService = async (
       onBeforeDone: arg.onDone,
       watch: arg.watch
         ? async ({ isRebuild, installDeps }) => {
-            // if (installDeps || marker["*"]) return;
+            if (installDeps || marker["*"]) return;
 
-            // if (isRebuild && runner.list[app.path]) {
-            //   const mark = marker[name];
+            if (isRebuild && runner.list[app.path]) {
+              const mark = marker[name];
 
-            //   if (mark) {
-            //     if (mark instanceof Set) {
-            //       await prepare(name, mark);
-            //       delete marker[name];
-            //     } 
+              if (mark) {
+                let shouldRestart = false;
+                if (mark instanceof Set) {
+                  const res = await afterBuild(name, mark);
+                  shouldRestart = res.shouldRestart;
+                  delete marker[name];
+                }
 
-            //     await rpc.restart({ name: name as any });
-            //   } else {
-            //     marker[name] = true;
-            //   }
-            // }
+                if (shouldRestart) await rpc.restart({ name: name as any });
+              } else {
+                marker[name] = true;
+              }
+            }
           }
         : undefined,
     }))
@@ -55,9 +57,9 @@ export const buildService = async (
     return false;
   }
 
-  await prepare(name);
+  await afterBuild(name);
 
-  watchService(name, (err, changes) => {
+  watchService(name, async (err, changes) => {
     if (!err) {
       if (!err) {
         for (const c of changes) {
@@ -69,7 +71,7 @@ export const buildService = async (
               if (mark instanceof Set) {
                 mark.add(c.path);
               } else if (mark === true) {
-                delete marker[name];
+                marker[name] = new Set([c.path]);
               }
             }
           } else {
@@ -78,7 +80,12 @@ export const buildService = async (
 
         const deladd = changes.filter((e) => e.type !== "delete");
         if (deladd.length > 0) {
-          prepare(name, new Set(deladd.map((e) => e.path)));
+          const res = await afterBuild(
+            name,
+            new Set(deladd.map((e) => e.path))
+          );
+
+          if (res.shouldRestart) await rpc.restart({ name: name as any });
         }
       }
     }
@@ -87,7 +94,8 @@ export const buildService = async (
   return true;
 };
 
-const prepare = async (name: string, mark?: Set<string> | undefined) => {
-  if (name.startsWith("db")) await prepareDB(name, mark);
-  if (name.startsWith("srv")) await prepareSrv(name, mark);
+const afterBuild = async (name: string, mark?: Set<string> | undefined) => {
+  if (name.startsWith("db")) return await prepareDB(name, mark);
+  if (name.startsWith("srv")) return await prepareSrv(name, mark);
+  return { shouldRestart: false };
 };
