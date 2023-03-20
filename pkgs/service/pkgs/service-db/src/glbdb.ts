@@ -1,4 +1,4 @@
-import type PRISMA from "../../../app/db/node_modules/.gen/index";
+import type PRISMA from "../../../../../app/db/node_modules/.gen/index";
 
 export const glbdb = globalThis as unknown as {
   serviceAction: any;
