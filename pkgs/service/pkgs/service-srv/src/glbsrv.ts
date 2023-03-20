@@ -1,7 +1,6 @@
 import { globalize } from "dir";
 import { Server } from "hyper-express";
 import { connectRPC } from "rpc";
-import { PrismaClient } from "../../../../../app/db/node_modules/.gen";
 import { SERVICE_NAME } from "../../../src/types";
 import { dbs } from "../../service-db";
 export const srv = globalize({
@@ -13,7 +12,7 @@ export const srv = globalize({
     serverURL: "",
     cookieKey: "",
     rpc: {
-      db: null as unknown as PrismaClient,
+      db: null as unknown as ReturnType<typeof dbs>,
     },
   },
   async init() {

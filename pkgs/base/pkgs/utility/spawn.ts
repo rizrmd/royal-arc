@@ -11,7 +11,7 @@ export const spawn = (
   let proc = opt?.ipc
     ? fork(file, args, {
         cwd: opt?.cwd,
-        stdio: "pipe",
+        stdio: "inherit",
       })
     : nativeSpawn(file, args, {
         cwd: opt?.cwd,
@@ -20,18 +20,8 @@ export const spawn = (
 
   const callback = {
     onMessage: (e: any) => {},
-    onPrint: (e: string) => {},
     onExit: (e: { exitCode: number; signal: NodeJS.Signals | null }) => {},
   };
-
-  const tfm = new Transform({
-    transform: (chunk, encoding, done) => {
-      const str = chunk.toString();
-      callback.onPrint(str);
-    },
-  });
-  proc.stdout?.pipe(tfm);
-  proc.stderr?.pipe(tfm);
 
   if (opt?.ipc) {
     proc.on("message", (e) => {
@@ -49,9 +39,6 @@ export const spawn = (
   return {
     onMessage: (fn: (e: string) => any) => {
       callback.onMessage = fn;
-    },
-    onPrint: (fn: (e: string) => any) => {
-      callback.onPrint = fn;
     },
     onExit: (
       fn: (e: { exitCode: number; signal: NodeJS.Signals | null }) => any

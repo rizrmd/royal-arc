@@ -26,17 +26,25 @@ export const createAPIServer = ({
 
     await srv.init();
 
-    await server({
+    const running = await server({
       mode,
       port: srv.port,
       name: srv.name,
       cookieKey: srv.cookieKey,
     });
 
-    console.log(
-      `${chalk.magenta("Started")} ${chalk.green(
-        `${padEnd(srv.name, 10, " ")}`
-      )} http://localhost:${srv.port}`
-    );
+    if (typeof running === "string") {
+      console.log(
+        `${chalk.red("Skipped")} ${chalk.green(
+          `${padEnd(srv.name, 12, " ")}`
+        )} ${running}`
+      );
+    } else {
+      console.log(
+        `${chalk.magenta("Started")} ${chalk.green(
+          `${padEnd(srv.name, 12, " ")}`
+        )} http://localhost:${srv.port}`
+      );
+    }
   });
 };

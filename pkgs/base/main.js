@@ -42037,7 +42037,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
       const printableName = import_chalk3.default.green(
         (0, import_path5.dirname)(input.substring(dir.root("").length + 1))
       );
-      const tag = `Built ${(0, import_lodash.default)(printableName, 25, " ")}`;
+      const tag = `Built ${(0, import_lodash.default)(printableName, 23, " ")}`;
       if (printTimer)
         console.time(tag);
       const pkgFile = yield ascendFile(input, "package.json");
@@ -42135,11 +42135,10 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/pkgs/utility/spawn.ts
   var import_child_process2 = __require("child_process");
-  var import_stream = __require("stream");
   var spawn2 = (file, args, opt) => {
     let proc = opt?.ipc ? (0, import_child_process2.fork)(file, args, {
       cwd: opt?.cwd,
-      stdio: "pipe"
+      stdio: "inherit"
     }) : (0, import_child_process2.spawn)(file, args, {
       cwd: opt?.cwd,
       stdio: "pipe"
@@ -42147,19 +42146,9 @@ ${import_chalk2.default.magenta("Installing")} deps:
     const callback = {
       onMessage: (e) => {
       },
-      onPrint: (e) => {
-      },
       onExit: (e) => {
       }
     };
-    const tfm = new import_stream.Transform({
-      transform: (chunk, encoding, done) => {
-        const str = chunk.toString();
-        callback.onPrint(str);
-      }
-    });
-    proc.stdout?.pipe(tfm);
-    proc.stderr?.pipe(tfm);
     if (opt?.ipc) {
       proc.on("message", (e) => {
         callback.onMessage(e);
@@ -42174,9 +42163,6 @@ ${import_chalk2.default.magenta("Installing")} deps:
     return {
       onMessage: (fn) => {
         callback.onMessage = fn;
-      },
-      onPrint: (fn) => {
-        callback.onPrint = fn;
       },
       onExit: (fn) => {
         callback.onExit = fn;
@@ -42254,25 +42240,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
             if (onStop)
               g2.runs[path2].onExit(onStop);
           }));
-          return new Promise((resolve2) => {
-            g2.runs[path2].onPrint((e) => {
-              if (arg.onPrint && !g2.runs[path2].markedRunning) {
-                if (arg.onPrint(e)) {
-                  g2.runs[path2].markedRunning = true;
-                  resolve2(true);
-                }
-                return;
-              }
-              if (arg.onPrint)
-                arg.onPrint(e);
-              else
-                process.stdout.write(e);
-            });
-            if (!arg.onPrint) {
-              g2.runs[path2].markedRunning = true;
-              resolve2(true);
-            }
-          });
+          return true;
         } catch (e) {
           return false;
         }
@@ -42417,7 +42385,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var import_lodash2 = __toESM(require_lodash2());
 
   // node_modules/.pnpm/ws@8.12.1/node_modules/ws/wrapper.mjs
-  var import_stream2 = __toESM(require_stream(), 1);
+  var import_stream = __toESM(require_stream(), 1);
   var import_receiver = __toESM(require_receiver(), 1);
   var import_sender = __toESM(require_sender(), 1);
   var import_websocket = __toESM(require_websocket(), 1);

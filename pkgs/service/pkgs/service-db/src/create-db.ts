@@ -4,7 +4,6 @@ import { dir } from "dir";
 import { existsAsync } from "fs-jetpack";
 import { createRPC } from "rpc";
 import { createService } from "service";
-import type PRISMA from "../../../../../app/db/node_modules/.gen/index";
 import { SERVICE_NAME } from "../../../src/types";
 import { dbAction } from "./action";
 import { glbdb } from "./glbdb";
@@ -14,12 +13,16 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
   const { name } = arg;
 
   createService(name, async ({ markAsRunning }) => {
-    const prisma = (await import(
-      dir.path(`${name}/node_modules/.gen/index.js`)
-    )) as typeof PRISMA;
+    try {
+      const PRISMA = await import("../../../../../app/db/node_modules/.gen");
 
-    glbdb.prisma = new prisma.PrismaClient();
-    await glbdb.prisma.$connect();
+      const prisma = (await import(
+        dir.path(`${name}/node_modules/.gen/index.js`)
+      )) as typeof PRISMA;
+
+      glbdb.prisma = new prisma.PrismaClient();
+      await glbdb.prisma.$connect();
+    } catch (e) {}
 
     await createRPC(`svc.${name}`, dbAction);
 
@@ -43,7 +46,7 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
         );
       } else {
         console.log(
-          `${chalk.magenta("Skipped")} ${chalk.green(
+          `${chalk.red("Skipped")} ${chalk.green(
             `${padEnd(name, 12, " ")}`
           )} Database URL is empty`
         );

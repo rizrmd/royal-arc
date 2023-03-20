@@ -84,24 +84,7 @@ export const runner = {
         if (onStop) g.runs[path].onExit(onStop);
       });
 
-      return new Promise<boolean>((resolve) => {
-        g.runs[path].onPrint((e) => {
-          if (arg.onPrint && !g.runs[path].markedRunning) {
-            if (arg.onPrint(e)) {
-              g.runs[path].markedRunning = true;
-              resolve(true);
-            }
-            return;
-          }
-
-          if (arg.onPrint) arg.onPrint(e);
-          else process.stdout.write(e);
-        });
-        if (!arg.onPrint) {
-          g.runs[path].markedRunning = true;
-          resolve(true);
-        }
-      });
+      return true;
     } catch (e) {
       return false;
     }

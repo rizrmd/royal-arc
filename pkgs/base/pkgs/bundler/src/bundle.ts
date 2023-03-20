@@ -23,7 +23,7 @@ export const bundle = async (arg: {
     const printableName = chalk.green(
       dirname(input.substring(dir.root("").length + 1))
     );
-    const tag = `Built ${padEnd(printableName, 25, " ")}`;
+    const tag = `Built ${padEnd(printableName, 23, " ")}`;
     if (printTimer) console.time(tag);
 
     const pkgFile = await ascendFile(input, "package.json");
