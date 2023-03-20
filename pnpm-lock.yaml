@@ -29,13 +29,26 @@ importers:
 
   app/srv:
     specifiers:
+      '@node-rs/argon2': 1.3.0
+      '@types/lodash.set': 4.3.7
+      '@types/mime-types': 2.1.1
+      fs-jetpack: 5.1.0
+      lodash.set: 4.3.2
+      mime-types: 2.1.35
       react: 18.2.0
       react-dom: 18.2.0
       service-srv: workspace:*
     dependencies:
+      '@node-rs/argon2': 1.3.0
+      fs-jetpack: 5.1.0
+      lodash.set: 4.3.2
+      mime-types: 2.1.35
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       service-srv: link:../../pkgs/service/pkgs/service-srv
+    devDependencies:
+      '@types/lodash.set': 4.3.7
+      '@types/mime-types': 2.1.1
 
   pkgs/base:
     specifiers:
@@ -569,6 +582,142 @@ packages:
     resolution: {integrity: sha512-FZfhjEDbT5GRswV3C6uvLPHMiVD6lQBmpoX5+eSiPaMTXte/IKqI5dykDxzZB/WBeK/CDuQRBWarPdi3FNY2zQ==}
     dev: false
 
+  /@node-rs/argon2-android-arm-eabi/1.3.0:
+    resolution: {integrity: sha512-wyKcV5clr8P26Y02S2uGWsW/42XXqqbsj2zkrv4kVr9elZNMV5g2tVSxNHvQQuBISDBDY1F/6K9KDkb4jaAi6g==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [android]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-android-arm64/1.3.0:
+    resolution: {integrity: sha512-gz6WNtPXzxlouScCf7Lkmk8gphpSz3Yv486X6oG7cGNh7gPq9Hnud7tL/MaV1MwWVlbXAfgfwuaTPM97I9CdRA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [android]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-darwin-arm64/1.3.0:
+    resolution: {integrity: sha512-ZD7f0xVtkTz2S5uks8thQkSvmIot/9lXw1bb7HrDXgu+b1JnlxT5Put6AAgTRu8ZHdR28/2fKx7bkLjLQeUICQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-darwin-x64/1.3.0:
+    resolution: {integrity: sha512-HiRCajZsA5lCV1Ivg65ar3/EJph1GFHkRfRENgSA6y0LkE3SjaLDizW2aNXhXuKiCKEBXZbdJ/g6tVrMXpwx0Q==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-freebsd-x64/1.3.0:
+    resolution: {integrity: sha512-c7jvxs8/zwuX1mRyMyTNS5BYXai5JI5vwkXGJfqI6G0xBkxBcCOTt/eW2wLi8+HvyI+OT21yHxfkYpoTOmrvjQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-linux-arm-gnueabihf/1.3.0:
+    resolution: {integrity: sha512-+f6mkIvk+bRjoOwri+4kugSLZm8mWaBV6AnN4OXIioFCVJVBs7vQAdNDsXqVp8n4ICbeJwLvRJZbo95e5LHy7g==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-linux-arm64-gnu/1.3.0:
+    resolution: {integrity: sha512-TFke2MxgGQSTz1uw3NlYpoML2E0QHeMk8GUWYImFeboNDKc2EGKnIw4iy+Nku8dhZYmSncfp10bg386eTCFy4g==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-linux-arm64-musl/1.3.0:
+    resolution: {integrity: sha512-YaTBQtmeaKYFsTdkvX0OP7NJY0icVNMfbvgM8E1lBuXbPxLjNo1LbczS7B+ypZevaeP6LHrRInblP7gOFxieAA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-linux-x64-gnu/1.3.0:
+    resolution: {integrity: sha512-5DmP9U+MlLKbFYt692Lpv9VsCJZNCEK8ox8Glq4krmvniNfbHSvAydTsLp80QxtKK3YkJHEj580txzUT8jB77w==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-linux-x64-musl/1.3.0:
+    resolution: {integrity: sha512-Yd30iBLIqVhmjQPkFQlM1cfG0C5TQa9pMh/qHP8D65TZITffR4eO/sqPu63rRsvTi492KLzIazCdHl/ZePBAFA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-win32-arm64-msvc/1.3.0:
+    resolution: {integrity: sha512-3Et6I29ME53p2KJI1BBkFtYU3U3eZNrSEp5am3amhiDwYnt+dLXavONh3IWOyubdhMNEcUL9LQb/Cgt0iUFv4g==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-win32-ia32-msvc/1.3.0:
+    resolution: {integrity: sha512-hxpP+GNzzzaSe5h4144LnW6vLjTzc8twqmycoeSd5XNFIcafWy0sfxyJBI8oLcuX83dd16AlYUbL9jtOer2v6Q==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2-win32-x64-msvc/1.3.0:
+    resolution: {integrity: sha512-/i6J0qIBqm1L8eqdMCR2L2KJtEtuRRcY33Li4+Vl/WW53xrMzI4WNqTbKvxZAgQU/RUsRfsmu/0AEITB+0hGcg==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@node-rs/argon2/1.3.0:
+    resolution: {integrity: sha512-vryKPptdMCQpxF9/xy/4JkPfUKjz4WIKoufYNzhWykY/Fqf9vyzqn4nlm4FsQ2Z/2AF7ZCep3kXomfFjR+ZnvQ==}
+    engines: {node: '>= 10'}
+    optionalDependencies:
+      '@node-rs/argon2-android-arm-eabi': 1.3.0
+      '@node-rs/argon2-android-arm64': 1.3.0
+      '@node-rs/argon2-darwin-arm64': 1.3.0
+      '@node-rs/argon2-darwin-x64': 1.3.0
+      '@node-rs/argon2-freebsd-x64': 1.3.0
+      '@node-rs/argon2-linux-arm-gnueabihf': 1.3.0
+      '@node-rs/argon2-linux-arm64-gnu': 1.3.0
+      '@node-rs/argon2-linux-arm64-musl': 1.3.0
+      '@node-rs/argon2-linux-x64-gnu': 1.3.0
+      '@node-rs/argon2-linux-x64-musl': 1.3.0
+      '@node-rs/argon2-win32-arm64-msvc': 1.3.0
+      '@node-rs/argon2-win32-ia32-msvc': 1.3.0
+      '@node-rs/argon2-win32-x64-msvc': 1.3.0
+    dev: false
+
   /@paralleldrive/cuid2/2.0.1:
     resolution: {integrity: sha512-fi9nN5kCPGv9pcKQjk9g3riSTVcwR5TCFAGPUStbR61b1nXZ07GvxeoyStELKsJDCji1lwuUiUwLtagNTBllQA==}
     dependencies:
@@ -780,8 +929,18 @@ packages:
       '@types/lodash': 4.14.191
     dev: true
 
+  /@types/lodash.set/4.3.7:
+    resolution: {integrity: sha512-bS5Wkg/nrT82YUfkNYPSccFrNZRL+irl7Yt4iM6OTSQ0VZJED2oUIVm15NkNtUAQ8SRhCe+axqERUV6MJgkeEg==}
+    dependencies:
+      '@types/lodash': 4.14.191
+    dev: true
+
   /@types/lodash/4.14.191:
     resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
+    dev: true
+
+  /@types/mime-types/2.1.1:
+    resolution: {integrity: sha512-vXOTGVSLR2jMw440moWTC7H19iUyLtP3Z1YTj7cSsubOICinjMxFeb/V57v9QdyyPGbbWolUFSSmSiRSn94tFw==}
     dev: true
 
   /@types/mime/3.0.1:
@@ -1174,6 +1333,10 @@ packages:
 
   /lodash.padend/4.6.1:
     resolution: {integrity: sha512-sOQs2aqGpbl27tmCS1QNZA09Uqp01ZzWfDUoD+xzTii0E7dSQfRKcRetFwa+uXaxaqL+TKm7CgD2JdKP7aZBSw==}
+    dev: false
+
+  /lodash.set/4.3.2:
+    resolution: {integrity: sha512-4hNPN5jlm/N/HLMCO43v8BXKq9Z7QdAGc/VGrRD61w8gN9g/6jF9A4L1pbUgBLCffi0w9VsXfTOij5x8iTyFvg==}
     dev: false
 
   /lodash/4.17.21:
