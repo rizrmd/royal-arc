@@ -3,7 +3,6 @@ import { connectRPC } from "rpc";
 import { svc } from "./src/global";
 
 export * from "./src/create-service";
-export * from "./src/create-db";
 
 export const initialize = async (fn: () => Promise<void>) => {
   process.removeAllListeners("warning");

@@ -1,0 +1,12 @@
+{
+  "name": "service-db",
+  "dependencies": {
+    "dir": "workspace:^",
+    "pkg": "workspace:^",
+    "service": "workspace:^",
+    "fs-jetpack": "5.1.0",
+    "chalk": "5.2.0",
+    "@mrleebo/prisma-ast": "0.5.1"
+  },
+  "main": "export.ts"
+}

@@ -2,11 +2,11 @@ import { MODE, SERVICE_NAME } from "./types";
 
 export const createService = async (
   serviceName: SERVICE_NAME,
-  fn: (arg: { mode: MODE; ready: () => void }) => Promise<void>
+  fn: (arg: { mode: MODE; enableStdout: () => void }) => Promise<void>
 ) => {
   await fn({
     mode: "dev",
-    ready() {
+    enableStdout() {
       console.log(`::RUNNING|${serviceName}::`);
     },
   });

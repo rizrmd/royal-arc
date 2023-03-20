@@ -2,12 +2,11 @@
   "name": "template_service",
   "version": "0.0.1",
   "dependencies": {
-    "service": "workspace:*",
+    "service-db": "../../pkgs/service/pkgs/service-db",
     "prisma": "*"
   },
   "external": [
     "hyper-express",
-    "node-pty",
     "prisma"
   ]
 }

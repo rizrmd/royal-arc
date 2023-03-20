@@ -19,11 +19,13 @@ importers:
 
   app/db:
     specifiers:
+      '@prisma/client': ^4.11.0
       prisma: 4.11.0
-      service: workspace:*
+      service-db: ../../pkgs/service/pkgs/service-db
     dependencies:
+      '@prisma/client': 4.11.0_prisma@4.11.0
       prisma: 4.11.0
-      service: link:../../pkgs/service
+      service-db: link:../../pkgs/service/pkgs/service-db
 
   pkgs/base:
     specifiers:
@@ -154,13 +156,29 @@ importers:
       '@types/lodash.get': 4.4.7
       '@types/lodash.padend': 4.6.7
 
+  pkgs/service/pkgs/service-db:
+    specifiers:
+      '@mrleebo/prisma-ast': 0.5.1
+      chalk: 5.2.0
+      dir: workspace:^
+      fs-jetpack: 5.1.0
+      pkg: workspace:^
+      service: workspace:^
+    dependencies:
+      '@mrleebo/prisma-ast': 0.5.1
+      chalk: 5.2.0
+      dir: link:../../../base/pkgs/dir
+      fs-jetpack: 5.1.0
+      pkg: link:../../../base/pkgs/pkg
+      service: link:../..
+
   pkgs/template/pkgs/db:
     specifiers:
       prisma: '*'
-      service: workspace:*
+      service-db: ../../pkgs/service/pkgs/service-db
     dependencies:
       prisma: 4.11.0
-      service: link:../../../service
+      service-db: link:../service/pkgs/service-db
 
   pkgs/template/pkgs/service:
     specifiers:
@@ -169,6 +187,29 @@ importers:
       service: link:../../../service
 
 packages:
+
+  /@chevrotain/cst-dts-gen/10.5.0:
+    resolution: {integrity: sha512-lhmC/FyqQ2o7pGK4Om+hzuDrm9rhFYIJ/AXoQBeongmn870Xeb0L6oGEiuR8nohFNL5sMaQEJWCxr1oIVIVXrw==}
+    dependencies:
+      '@chevrotain/gast': 10.5.0
+      '@chevrotain/types': 10.5.0
+      lodash: 4.17.21
+    dev: false
+
+  /@chevrotain/gast/10.5.0:
+    resolution: {integrity: sha512-pXdMJ9XeDAbgOWKuD1Fldz4ieCs6+nLNmyVhe2gZVqoO7v8HXuHYs5OV2EzUtbuai37TlOAQHrTDvxMnvMJz3A==}
+    dependencies:
+      '@chevrotain/types': 10.5.0
+      lodash: 4.17.21
+    dev: false
+
+  /@chevrotain/types/10.5.0:
+    resolution: {integrity: sha512-f1MAia0x/pAVPWH/T73BJVyO2XU5tI4/iE7cnxb7tqdNTNhQI3Uq3XkqcoteTmD4t1aM0LbHCJOhgIDn07kl2A==}
+    dev: false
+
+  /@chevrotain/utils/10.5.0:
+    resolution: {integrity: sha512-hBzuU5+JjB2cqNZyszkDHZgOSrUUT8V3dhgRl8Q9Gp6dAj/H5+KILGjbhDpc3Iy9qmqlm/akuOI2ut9VUtzJxQ==}
+    dev: false
 
   /@esbuild/android-arm/0.17.12:
     resolution: {integrity: sha512-E/sgkvwoIfj4aMAPL2e35VnUJspzVYl7+M1B2cqeubdBhADV4uPon0KCc8p2G+LqSJ6i8ocYPCqY3A4GGq0zkQ==}
@@ -368,6 +409,13 @@ packages:
     dev: false
     optional: true
 
+  /@mrleebo/prisma-ast/0.5.1:
+    resolution: {integrity: sha512-9RPCwTZ2YUzgzkKcSk2LOd6KnkBokVPXU3y0B1GHXqjGEWCtE5ky/BUk3sJqfoeVTXTfXfhzk5Bg+KgFRRWosQ==}
+    engines: {node: '>=12'}
+    dependencies:
+      chevrotain: 10.5.0
+    dev: false
+
   /@msgpackr-extract/msgpackr-extract-darwin-arm64/3.0.2:
     resolution: {integrity: sha512-9bfjwDxIDWmmOKusUcqdS4Rw+SETlp9Dy39Xui9BEGEk19dDwH0jhipwFzEff/pFg95NKymc6TOTbRKcWeRqyQ==}
     cpu: [arm64]
@@ -435,6 +483,24 @@ packages:
       micromatch: 4.0.5
       node-addon-api: 3.2.1
       node-gyp-build: 4.6.0
+    dev: false
+
+  /@prisma/client/4.11.0_prisma@4.11.0:
+    resolution: {integrity: sha512-0INHYkQIqgAjrt7NzhYpeDQi8x3Nvylc2uDngKyFDDj1tTRQ4uV1HnVmd1sQEraeVAN63SOK0dgCKQHlvjL0KA==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.11.0-57.8fde8fef4033376662cad983758335009d522acb
+      prisma: 4.11.0
+    dev: false
+
+  /@prisma/engines-version/4.11.0-57.8fde8fef4033376662cad983758335009d522acb:
+    resolution: {integrity: sha512-3Vd8Qq06d5xD8Ch5WauWcUUrsVPdMC6Ge8ILji8RFfyhUpqon6qSyGM0apvr1O8n8qH8cKkEFqRPsYjuz5r83g==}
     dev: false
 
   /@prisma/engines/4.11.0:
@@ -601,6 +667,17 @@ packages:
   /chalk/5.2.0:
     resolution: {integrity: sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+    dev: false
+
+  /chevrotain/10.5.0:
+    resolution: {integrity: sha512-Pkv5rBY3+CsHOYfV5g/Vs5JY9WTHHDEKOlohI2XeygaZhUeqhAlldZ8Hz9cRmxu709bvS08YzxHdTPHhffc13A==}
+    dependencies:
+      '@chevrotain/cst-dts-gen': 10.5.0
+      '@chevrotain/gast': 10.5.0
+      '@chevrotain/types': 10.5.0
+      '@chevrotain/utils': 10.5.0
+      lodash: 4.17.21
+      regexp-to-ast: 0.5.0
     dev: false
 
   /color-convert/2.0.1:
@@ -998,6 +1075,10 @@ packages:
   /range-parser/1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
+    dev: false
+
+  /regexp-to-ast/0.5.0:
+    resolution: {integrity: sha512-tlbJqcMHnPKI9zSrystikWKwHkBqu2a/Sgw01h3zFjvYrMxEDYHzzoMZnUrbIfpTFEsoRnnviOXNCzFiSc54Qw==}
     dev: false
 
   /renderkid/3.0.0:
