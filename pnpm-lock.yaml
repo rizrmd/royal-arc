@@ -27,6 +27,12 @@ importers:
       prisma: 4.11.0
       service-db: link:../../pkgs/service/pkgs/service-db
 
+  app/srv:
+    specifiers:
+      service: workspace:*
+    dependencies:
+      service: link:../../pkgs/service
+
   pkgs/base:
     specifiers:
       '@parcel/watcher': ^2.1.0

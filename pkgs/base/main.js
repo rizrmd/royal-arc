@@ -1829,7 +1829,7 @@
           maxRetries: 3
         });
       };
-      var removeAsync5 = (path2) => {
+      var removeAsync6 = (path2) => {
         return fs.rm(path2, {
           recursive: true,
           force: true,
@@ -1838,7 +1838,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync5;
+      exports2.async = removeAsync6;
     }
   });
 
@@ -42275,7 +42275,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/src/main.ts
   var import_catch_exit2 = __toESM(require_dist());
-  var import_chalk8 = __toESM(require_source());
+  var import_chalk9 = __toESM(require_source());
   var import_lodash5 = __toESM(require_lodash());
 
   // pkgs/base/pkgs/rpc/src/connect.ts
@@ -42803,7 +42803,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   });
 
   // pkgs/base/src/builder/service/db.ts
-  var import_chalk5 = __toESM(require_source());
+  var import_chalk6 = __toESM(require_source());
   var import_fs_jetpack7 = __toESM(require_main());
 
   // node_modules/.pnpm/chalk@5.2.0/node_modules/chalk/source/vendor/ansi-styles/index.js
@@ -43293,6 +43293,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   Object.defineProperties(createChalk.prototype, styles2);
   var chalk4 = createChalk();
   var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
+  var source_default = chalk4;
 
   // pkgs/service/pkgs/service-db/create-db.ts
   var import_fs_jetpack5 = __toESM(require_main());
@@ -43312,6 +43313,13 @@ ${import_chalk2.default.magenta("Installing")} deps:
           return false;
         }
       });
+      if (!running) {
+        console.log(
+          `${source_default.red(`Failed`)} to start ${source_default.cyan(
+            arg.name
+          )}: Service not found`
+        );
+      }
       return running;
     },
     async restart(arg) {
@@ -43422,7 +43430,7 @@ datasource db {
     if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
       const prisma = yield ensurePrisma(name);
       if (!prisma.generated && !!prisma.dburl) {
-        console.log(`Generating prisma: ${import_chalk5.default.cyan(`app/${name}`)}`);
+        console.log(`Generating prisma: ${import_chalk6.default.cyan(`app/${name}`)}`);
         yield runner.run({
           path: "pnpm",
           args: ["prisma", "generate"],
@@ -44070,7 +44078,7 @@ datasource db {
   });
 
   // pkgs/base/src/version-check.ts
-  var import_chalk6 = __toESM(require_source());
+  var import_chalk7 = __toESM(require_source());
   var import_date_fns = __toESM(require_date_fns());
   var import_fs_jetpack10 = __toESM(require_main());
   var versionCheck = (opt) => __async(void 0, null, function* () {
@@ -44084,15 +44092,15 @@ datasource db {
         try {
           if (remoteVersion.ts > version.ts) {
             console.log(`
-\u{1F4E3} New version available: ${import_chalk6.default.cyan(
+\u{1F4E3} New version available: ${import_chalk7.default.cyan(
               `v${(0, import_date_fns.format)(new Date(remoteVersion.ts), "1.Md.hm")}`
             )} 
-${import_chalk6.default.reset(`
+${import_chalk7.default.reset(`
 To upgrade, please run: 
-  > ${import_chalk6.default.underline(import_chalk6.default.green(`node base upgrade`))}
+  > ${import_chalk7.default.underline(import_chalk7.default.green(`node base upgrade`))}
 
 If somehow upgrade failed you can rollback using
-  > ${import_chalk6.default.red(`node base rollback`)}
+  > ${import_chalk7.default.red(`node base rollback`)}
 `)}
 \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 `);
@@ -44180,7 +44188,7 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/watcher/new-service.ts
-  var import_chalk7 = __toESM(require_source());
+  var import_chalk8 = __toESM(require_source());
   var import_fs_jetpack13 = __toESM(require_main());
   var import_promises2 = __require("fs/promises");
   var import_path10 = __require("path");
@@ -44209,15 +44217,16 @@ If somehow upgrade failed you can rollback using
       event: (err2, changes) => __async(void 0, null, function* () {
         if (!err2) {
           for (const c of changes) {
+            const name = (0, import_path10.basename)(c.path);
             if (c.type === "delete") {
-              console.log(`Removing service: ${import_chalk7.default.red((0, import_path10.basename)(c.path))}`);
+              console.log(`Removing service: ${import_chalk8.default.red(name)}`);
+              yield (0, import_fs_jetpack13.removeAsync)(dir.root(`.output/app/${name}`));
               yield serviceGen();
-              yield pkg.install(dir.root("package.json"));
+              process.exit(99);
             } else if (c.type === "create") {
               const s = yield (0, import_promises2.stat)(c.path);
               if (s.isDirectory() && (yield (0, import_promises2.readdir)(c.path)).length === 0) {
-                const name = (0, import_path10.basename)(c.path);
-                console.log(`Scaffolding new service: ${import_chalk7.default.blue(name)}`);
+                console.log(`Scaffolding new service: ${import_chalk8.default.blue(name)}`);
                 let root = "pkgs/template/pkgs/service";
                 if (name.startsWith("db")) {
                   root = "pkgs/template/pkgs/db";
@@ -44233,7 +44242,7 @@ If somehow upgrade failed you can rollback using
                   }
                 }
                 yield serviceGen();
-                yield pkg.install(dir.root(`app/${name}/package.json`)), { cwd: process.cwd() };
+                process.exit(99);
               }
             }
           }
@@ -44273,7 +44282,7 @@ If somehow upgrade failed you can rollback using
       return;
     if (yield upgradeHook(args))
       return;
-    console.log(`\u2500\u2500 ${(0, import_lodash5.default)(import_chalk8.default.yellow(`BASE`) + " ", 47, "\u2500")}`);
+    console.log(`\u2500\u2500 ${(0, import_lodash5.default)(import_chalk9.default.yellow(`BASE`) + " ", 47, "\u2500")}`);
     if (args.includes("build") || args.includes("deploy") || args.includes("prod") || args.includes("staging")) {
     } else {
       const onExit = () => __async(void 0, null, function* () {
@@ -44292,7 +44301,7 @@ If somehow upgrade failed you can rollback using
       let cacheFound = false;
       if (yield (0, import_fs_jetpack15.existsAsync)(app.path)) {
         console.log(`
-\u{1F31F} Running ${import_chalk8.default.cyan(`cached`)} app
+\u{1F31F} Running ${import_chalk9.default.cyan(`cached`)} app
 `);
         yield runner.run({
           path: app.path,
@@ -44315,7 +44324,7 @@ If somehow upgrade failed you can rollback using
 `);
           console.log(
             `\u2500\u2500 ${(0, import_lodash5.default)(
-              import_chalk8.default.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
+              import_chalk9.default.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
               47,
               "\u2500"
             )}`
@@ -44346,7 +44355,7 @@ If somehow upgrade failed you can rollback using
         });
       } else {
         console.log(`
-\u{1F31F} Running ${import_chalk8.default.cyan(`latest`)} app
+\u{1F31F} Running ${import_chalk9.default.cyan(`latest`)} app
 `);
         yield runner.restart(app.path);
       }

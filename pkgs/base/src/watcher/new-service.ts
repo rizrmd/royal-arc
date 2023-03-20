@@ -1,7 +1,7 @@
 import { watcher } from "bundler/src/watch";
 import chalk from "chalk";
 import { dir } from "dir";
-import { readAsync, writeAsync } from "fs-jetpack";
+import { readAsync, removeAsync, writeAsync } from "fs-jetpack";
 import { readdir, stat } from "fs/promises";
 import { basename, join } from "path";
 import { pkg } from "pkg";
@@ -13,16 +13,17 @@ export const watchNewService = () => {
     event: async (err, changes) => {
       if (!err) {
         for (const c of changes) {
+          const name = basename(c.path);
+
           if (c.type === "delete") {
-            console.log(`Removing service: ${chalk.red(basename(c.path))}`);
+            console.log(`Removing service: ${chalk.red(name)}`);
+            await removeAsync(dir.root(`.output/app/${name}`));
             await serviceGen();
-            await pkg.install(dir.root("package.json"));
+            process.exit(99);
           } else if (c.type === "create") {
             const s = await stat(c.path);
 
             if (s.isDirectory() && (await readdir(c.path)).length === 0) {
-              const name = basename(c.path);
-
               console.log(`Scaffolding new service: ${chalk.blue(name)}`);
 
               let root = "pkgs/template/pkgs/service";
@@ -43,8 +44,8 @@ export const watchNewService = () => {
               }
 
               await serviceGen();
-              await pkg.install(dir.root(`app/${name}/package.json`)),
-                { cwd: process.cwd() };
+
+              process.exit(99);
             }
           }
         }

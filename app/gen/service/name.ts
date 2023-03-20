@@ -1,1 +1,1 @@
-export type SERVICE_NAME = "db";
+export type SERVICE_NAME = "db" | "srv";

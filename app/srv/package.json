@@ -1,0 +1,11 @@
+{
+  "name": "srv",
+  "version": "0.0.1",
+  "dependencies": {
+    "service": "workspace:*"
+  },
+  "external": [
+    "hyper-express",
+    "node-pty"
+  ]
+}
