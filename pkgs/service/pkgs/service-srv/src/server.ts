@@ -40,6 +40,7 @@ export const server = async ({
   if (api) {
     const router = createRouter({});
     const pushed = new Set<string>();
+
     await Promise.all(
       Object.values(api).map(async (v) => {
         const item = v as {
@@ -51,6 +52,8 @@ export const server = async ({
         };
 
         const itemHandler = (await item.handler)._;
+        if (!itemHandler) return;
+
         const handler = itemHandler.api;
         item.url = itemHandler.url;
 

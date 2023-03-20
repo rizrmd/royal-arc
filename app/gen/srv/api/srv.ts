@@ -1,7 +1,7 @@
-export const jarie = {
-  name: "jarie",
-  url: "/fakfa",
-  path: "app/srv/api/jarie.ts",
+export const home = {
+  name: "home",
+  url: "/home",
+  path: "app/srv/api/home.ts",
   args: [],
-  handler: import("../../../srv/api/jarie")
+  handler: import("../../../srv/api/home")
 }

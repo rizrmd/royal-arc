@@ -1,4 +1,4 @@
-export const jarie = {
-  url: "/fakfa",
+export const home = {
+  url: "/home",
   args: [],
 }

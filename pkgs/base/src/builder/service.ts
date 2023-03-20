@@ -15,6 +15,7 @@ export const buildService = async (
   name: string,
   arg: {
     onDone?: (arg: { isRebuild: boolean }) => void;
+    restart: () => Promise<void>;
     watch: boolean;
     app: { path: string; cwd: string };
     rpc: RPCActionResult<typeof action>;
@@ -88,10 +89,12 @@ export const buildService = async (
       const deladd = changes.filter((e) => e.type !== "update");
       if (deladd.length > 0) {
         marker[name] = "skip";
-        const res = await afterBuild(name, new Set(deladd.map((e) => e.path)));
-        console.log("auo");
+        await afterBuild(name, new Set(deladd.map((e) => e.path)));
+        await rpc.restart({ name: name as any });
 
-        if (res.shouldRestart) await rpc.restart({ name: name as any });
+        setTimeout(() => {
+          rpc.restart({ name: name as any });
+        }, 500);
       }
     }
   });

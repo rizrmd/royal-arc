@@ -4639,7 +4639,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         return false;
       };
-      var existsAsync10 = (path2) => {
+      var existsAsync9 = (path2) => {
         return new Promise((resolve2, reject) => {
           fs2.stat(path2).then((stat5) => {
             if (stat5.isDirectory()) {
@@ -4660,7 +4660,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = existsSync5;
-      exports2.async = existsAsync10;
+      exports2.async = existsAsync9;
     }
   });
 
@@ -57147,41 +57147,32 @@ datasource db {
       yield generateAPI(name, dir.root(`app/${name}/api`));
       return { shouldRestart: false };
     }
-    const promises = [];
-    changes == null ? void 0 : changes.forEach((e) => __async(void 0, null, function* () {
-      if (e.startsWith(dir.root(`app/${name}/api`))) {
-        try {
+    try {
+      for (const e of changes.values()) {
+        if (e.startsWith(dir.root(`app/${name}/api`))) {
           const s = yield (0, import_promises2.stat)(e);
           if (s.size === 0) {
             const routeName = (0, import_path10.basename)(
               e.substring(0, e.length - (0, import_path10.extname)(e).length)
             );
-            promises.push(
-              (0, import_fs_jetpack8.writeAsync)(
-                e,
-                `import { apiContext } from "service-srv";
+            yield (0, import_fs_jetpack8.writeAsync)(
+              e,
+              `import { apiContext } from "service-srv";
 export const _ = {
   url: "/${routeName}",
   async api() {
     const { req, res } = apiContext(this);
     return "hello world";
   },
-};
-            `
-              )
+};`
             );
-          } else {
-            promises.push(generateAPI(name, dir.root(`app/${name}/api`)));
           }
-        } catch (e2) {
         }
       }
-    }));
-    try {
-      yield Promise.all(promises);
     } catch (e) {
-      console.error(e);
     }
+    yield generateAPIEntry([name]);
+    yield generateAPI(name, dir.root(`app/${name}/api`));
     return { shouldRestart: true };
   });
 
@@ -57246,10 +57237,11 @@ export const _ = {
         const deladd = changes.filter((e) => e.type !== "update");
         if (deladd.length > 0) {
           marker[name] = "skip";
-          const res = yield afterBuild(name, new Set(deladd.map((e) => e.path)));
-          console.log("auo");
-          if (res.shouldRestart)
-            yield rpc.restart({ name });
+          yield afterBuild(name, new Set(deladd.map((e) => e.path)));
+          yield rpc.restart({ name });
+          setTimeout(() => {
+            rpc.restart({ name });
+          }, 500);
         }
       }
     }));
@@ -58147,7 +58139,13 @@ If somehow upgrade failed you can rollback using
         app.build(onDone),
         ...app.serviceNames.map(
           (e) => __async(void 0, null, function* () {
-            return yield buildService(e, { watch: true, app, rpc: rootRPC, onDone });
+            return yield buildService(e, {
+              watch: true,
+              app,
+              rpc: rootRPC,
+              onDone,
+              restart: onExit
+            });
           })
         )
       ]);

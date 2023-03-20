@@ -91,7 +91,13 @@ export const baseMain = async () => {
       app.build(onDone),
       ...app.serviceNames.map(
         async (e) =>
-          await buildService(e, { watch: true, app, rpc: rootRPC, onDone })
+          await buildService(e, {
+            watch: true,
+            app,
+            rpc: rootRPC,
+            onDone,
+            restart: onExit,
+          })
       ),
     ]);
     versionCheck({ timeout: 3000 });
