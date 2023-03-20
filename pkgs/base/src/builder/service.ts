@@ -64,37 +64,32 @@ export const buildService = async (
 
   watchService(name, async (err, changes) => {
     if (!err) {
-      if (!err) {
-        for (const c of changes) {
-          if (c.type === "update") {
-            if (basename(c.path) === "package.json") {
-              marker[name] = "skip";
+      for (const c of changes) {
+        if (c.type === "update") {
+          if (basename(c.path) === "package.json") {
+            marker[name] = "skip";
 
-              await pkg.install(c.path);
-              await rpc.restart({ name: name as any });
-              return;
-            }
+            await pkg.install(c.path);
+            await rpc.restart({ name: name as any });
+            return;
+          }
 
-            if (!marker[name]) marker[name] = new Set();
+          if (!marker[name]) marker[name] = new Set();
 
-            const mark = marker[name];
-            if (mark) {
-              if (mark instanceof Set) {
-                mark.add(c.path);
-              }
+          const mark = marker[name];
+          if (mark) {
+            if (mark instanceof Set) {
+              mark.add(c.path);
             }
           }
         }
+      }
 
-        const deladd = changes.filter((e) => e.type !== "delete");
-        if (deladd.length > 0) {
-          const res = await afterBuild(
-            name,
-            new Set(deladd.map((e) => e.path))
-          );
+      const deladd = changes.filter((e) => e.type !== "update");
+      if (deladd.length > 0) {
+        const res = await afterBuild(name, new Set(deladd.map((e) => e.path)));
 
-          if (res.shouldRestart) await rpc.restart({ name: name as any });
-        }
+        if (res.shouldRestart) await rpc.restart({ name: name as any });
       }
     }
   });

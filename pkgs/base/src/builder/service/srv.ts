@@ -8,6 +8,8 @@ export const prepareSrv = async (name: string, changes?: Set<string>) => {
   if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
     await generateAPIEntry([name]);
     await generateAPI(name, dir.root(`app/${name}/api`));
+
+    return { shouldRestart: false };
   }
 
   changes?.forEach(async (e) => {

@@ -57145,6 +57145,7 @@ datasource db {
     if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
       yield generateAPIEntry([name]);
       yield generateAPI(name, dir.root(`app/${name}/api`));
+      return { shouldRestart: false };
     }
     changes == null ? void 0 : changes.forEach((e) => __async(void 0, null, function* () {
       if (e.startsWith(dir.root(`app/${name}/api`))) {
@@ -57216,34 +57217,29 @@ export const _ = {
     yield afterBuild(name);
     watchService(name, (err2, changes) => __async(void 0, null, function* () {
       if (!err2) {
-        if (!err2) {
-          for (const c of changes) {
-            if (c.type === "update") {
-              if ((0, import_path11.basename)(c.path) === "package.json") {
-                marker[name] = "skip";
-                yield pkg.install(c.path);
-                yield rpc.restart({ name });
-                return;
-              }
-              if (!marker[name])
-                marker[name] = /* @__PURE__ */ new Set();
-              const mark = marker[name];
-              if (mark) {
-                if (mark instanceof Set) {
-                  mark.add(c.path);
-                }
+        for (const c of changes) {
+          if (c.type === "update") {
+            if ((0, import_path11.basename)(c.path) === "package.json") {
+              marker[name] = "skip";
+              yield pkg.install(c.path);
+              yield rpc.restart({ name });
+              return;
+            }
+            if (!marker[name])
+              marker[name] = /* @__PURE__ */ new Set();
+            const mark = marker[name];
+            if (mark) {
+              if (mark instanceof Set) {
+                mark.add(c.path);
               }
             }
           }
-          const deladd = changes.filter((e) => e.type !== "delete");
-          if (deladd.length > 0) {
-            const res = yield afterBuild(
-              name,
-              new Set(deladd.map((e) => e.path))
-            );
-            if (res.shouldRestart)
-              yield rpc.restart({ name });
-          }
+        }
+        const deladd = changes.filter((e) => e.type !== "update");
+        if (deladd.length > 0) {
+          const res = yield afterBuild(name, new Set(deladd.map((e) => e.path)));
+          if (res.shouldRestart)
+            yield rpc.restart({ name });
         }
       }
     }));
