@@ -1,4 +1,4 @@
-export const mokja = {
-  url: "/mokja",
+export const jarie = {
+  url: "/fakfa",
   args: [],
 }

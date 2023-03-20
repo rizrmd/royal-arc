@@ -12,7 +12,6 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
         dir: dir.root(e),
         ignore: ["**/node_modules/**"],
         event: async (err, ev) => {
-          console.log(ev);
           if (!err) {
             // mark all file as changed, so it does not restarted.
             marker["*"] = new Set();

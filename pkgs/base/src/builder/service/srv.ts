@@ -12,16 +12,17 @@ export const prepareSrv = async (name: string, changes?: Set<string>) => {
     return { shouldRestart: false };
   }
 
+  const promises: Promise<any>[] = [];
   changes?.forEach(async (e) => {
     if (e.startsWith(dir.root(`app/${name}/api`))) {
       try {
         const s = await stat(e);
         if (s.size === 0) {
-          if (s.size === 0) {
-            const routeName = basename(
-              e.substring(0, e.length - extname(e).length)
-            );
-            await writeAsync(
+          const routeName = basename(
+            e.substring(0, e.length - extname(e).length)
+          );
+          promises.push(
+            writeAsync(
               e,
               `\
 import { apiContext } from "service-srv";
@@ -33,12 +34,19 @@ export const _ = {
   },
 };
             `
-            );
-          }
+            )
+          );
+        } else {
+          promises.push(generateAPI(name, dir.root(`app/${name}/api`)));
         }
       } catch (e) {}
     }
   });
+  try {
+    await Promise.all(promises);
+  } catch (e) {
+    console.error(e);
+  } 
 
   return { shouldRestart: true };
 };

@@ -87,7 +87,9 @@ export const buildService = async (
 
       const deladd = changes.filter((e) => e.type !== "update");
       if (deladd.length > 0) {
+        marker[name] = "skip";
         const res = await afterBuild(name, new Set(deladd.map((e) => e.path)));
+        console.log("auo");
 
         if (res.shouldRestart) await rpc.restart({ name: name as any });
       }

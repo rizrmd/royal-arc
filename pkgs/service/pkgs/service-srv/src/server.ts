@@ -1,9 +1,11 @@
 import { DeepProxy } from "@qiwi/deep-proxy";
+import { readAsync } from "fs-jetpack";
 import { Server } from "hyper-express";
 import { createRouter } from "radix3";
 import { apiFrm } from "./api/api-frm";
 import { session } from "./api/session";
-
+import { resolve } from "path";
+import { dir } from "dir";
 export const server = async ({
   port,
   name,
@@ -21,7 +23,7 @@ export const server = async ({
     fast_buffers: true,
   });
 
-  let apiEntry = null;
+  let apiEntry: any = null;
 
   try {
     //@ts-ignore
@@ -42,11 +44,15 @@ export const server = async ({
       Object.values(api).map(async (v) => {
         const item = v as {
           name: string;
-          url: string;
           path: string;
           args: string[];
-          handler: Promise<{ _: { api: (...arg: any[]) => any } }>;
+          url: string;
+          handler: Promise<{ _: { url: string; api: (...arg: any[]) => any } }>;
         };
+
+        const itemHandler = (await item.handler)._;
+        const handler = itemHandler.api;
+        item.url = itemHandler.url;
 
         if (!item || (!!item && !item.url)) return;
 
@@ -68,7 +74,6 @@ export const server = async ({
           pushed.add(url);
 
           router.insert(url, item);
-          const handler = (await item.handler)._.api;
           server.any(url, async (req, res) => {
             let found = router.lookup(req.path);
 
@@ -137,16 +142,16 @@ export const server = async ({
                   passedParams[parseInt(k)] = params[paramName];
                 }
               }
- 
+
               result = await im(...passedParams);
-            } 
+            }
 
             if (!res.headersSent && !res.aborted) {
               if (typeof result === "object") {
                 res.header("content-type", "application/json");
                 res.send(JSON.stringify(result));
               } else {
-                res.send(result); 
+                res.send(result);
               }
             }
           });

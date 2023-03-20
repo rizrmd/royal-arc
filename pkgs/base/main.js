@@ -57147,16 +57147,17 @@ datasource db {
       yield generateAPI(name, dir.root(`app/${name}/api`));
       return { shouldRestart: false };
     }
+    const promises = [];
     changes == null ? void 0 : changes.forEach((e) => __async(void 0, null, function* () {
       if (e.startsWith(dir.root(`app/${name}/api`))) {
         try {
           const s = yield (0, import_promises2.stat)(e);
           if (s.size === 0) {
-            if (s.size === 0) {
-              const routeName = (0, import_path10.basename)(
-                e.substring(0, e.length - (0, import_path10.extname)(e).length)
-              );
-              yield (0, import_fs_jetpack8.writeAsync)(
+            const routeName = (0, import_path10.basename)(
+              e.substring(0, e.length - (0, import_path10.extname)(e).length)
+            );
+            promises.push(
+              (0, import_fs_jetpack8.writeAsync)(
                 e,
                 `import { apiContext } from "service-srv";
 export const _ = {
@@ -57167,13 +57168,20 @@ export const _ = {
   },
 };
             `
-              );
-            }
+              )
+            );
+          } else {
+            promises.push(generateAPI(name, dir.root(`app/${name}/api`)));
           }
         } catch (e2) {
         }
       }
     }));
+    try {
+      yield Promise.all(promises);
+    } catch (e) {
+      console.error(e);
+    }
     return { shouldRestart: true };
   });
 
@@ -57237,7 +57245,9 @@ export const _ = {
         }
         const deladd = changes.filter((e) => e.type !== "update");
         if (deladd.length > 0) {
+          marker[name] = "skip";
           const res = yield afterBuild(name, new Set(deladd.map((e) => e.path)));
+          console.log("auo");
           if (res.shouldRestart)
             yield rpc.restart({ name });
         }
@@ -58062,7 +58072,6 @@ If somehow upgrade failed you can rollback using
           dir: dir.root(e),
           ignore: ["**/node_modules/**"],
           event: (err2, ev) => __async(void 0, null, function* () {
-            console.log(ev);
             if (!err2) {
               marker["*"] = /* @__PURE__ */ new Set();
               if (baseGlobal.app)

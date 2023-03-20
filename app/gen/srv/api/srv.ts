@@ -1,7 +1,7 @@
-export const mokja = {
-  name: "mokja",
-  url: "/mokja",
-  path: "app/srv/api/mokja.ts",
+export const jarie = {
+  name: "jarie",
+  url: "/fakfa",
+  path: "app/srv/api/jarie.ts",
   args: [],
-  handler: import("../../../srv/api/mokja")
+  handler: import("../../../srv/api/jarie")
 }
