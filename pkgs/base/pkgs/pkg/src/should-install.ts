@@ -35,7 +35,9 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
             const json = await res.json();
             pkg[e][k] = json.version;
             console.log(
-              `found ${k} = "*" in ${path.substring(process.cwd().length + 1)}`
+              `found ${chalk.cyan(`${k} = "*"`)} in ${path.substring(
+                process.cwd().length + 1
+              )}`
             );
 
             shouldInstall = true;

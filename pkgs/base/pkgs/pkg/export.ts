@@ -60,8 +60,13 @@ export const pkg = {
 
       if (arg?.deep) {
         const dirs = await scanDir([path]);
+
+        const templateDir = dir.root("pkgs/template");
+
         const all = await Promise.all(
-          dirs.map((e) => shouldInstall(e, silent))
+          dirs
+            .filter((e) => !e.startsWith(templateDir))
+            .map((e) => shouldInstall(e, silent))
         );
 
         if (all.filter((e) => e).length > 0) {

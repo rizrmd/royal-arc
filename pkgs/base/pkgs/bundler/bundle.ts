@@ -63,18 +63,20 @@ export const bundle = async (arg: {
               build.onEnd(async () => {
                 if (watch) {
                   let installDeps = false;
-                  await pkg.install(pkgFile, {
-                    cwd: arg.pkgcwd || dirname(pkgFile),
-                    silent: true,
-                    onInstall() {
-                      console.log(`Installing ${printableName} deps...`);
-                    },
-                    onInstallDone() {
-                      console.log(`Dependency ${printableName} installed`);
-                      installDeps = true;
-                    },
-                  });
-
+                  if (isRebuild) {
+                    await pkg.install(pkgFile, {
+                      cwd: arg.pkgcwd || dirname(pkgFile),
+                      silent: true,
+                      onInstall() {
+                        console.log(`Installing ${printableName} deps...`);
+                      },
+                      onInstallDone() {
+                        console.log(`Dependency ${printableName} installed`);
+                        installDeps = true;
+                      },
+                    });
+                  }
+                  
                   if (installDeps) {
                     const pkgFile = await ascendFile(input, "package.json");
                     json = pkg.produce(await readAsync(pkgFile, "json"));

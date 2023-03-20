@@ -35,13 +35,6 @@ export const baseMain = async () => {
     args.includes("staging")
   ) {
   } else {
-    const onExit = async () => {
-      await watcher.dispose();
-      await runner.stop(app.path);
-    };
-    addExitCallback(() => {});
-    setupWatchers(args, onExit);
-
     await createRPC("base", action, { isMain: true });
 
     const rootRPC = await connectRPC<typeof RootAction>("root", {
@@ -54,6 +47,14 @@ export const baseMain = async () => {
     }
 
     const app = await buildApp({ watch: true });
+
+    const onExit = async () => {
+      await watcher.dispose();
+      if (app) await runner.stop(app.path);
+    };
+    addExitCallback(() => {});
+    setupWatchers(args, onExit);
+
     baseGlobal.app = app;
 
     let cacheFound = false;
@@ -65,13 +66,13 @@ export const baseMain = async () => {
         cwd: app.cwd,
       });
       cacheFound = true;
-    } 
+    }
 
     let bannerPrinted = false;
     const onDone = cacheFound
       ? (arg: { isRebuild: boolean }) => {
           if (!bannerPrinted) {
-            if (cacheFound) { 
+            if (cacheFound) {
               console.clear();
             }
             console.log(

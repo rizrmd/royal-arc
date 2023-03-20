@@ -10,8 +10,9 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
     ["pkgs/base", "pkgs/service"].map((e) => {
       watcher.watch({
         dir: dir.root(e),
-        ignore: ["pkgs/*/node_modules", "node_modules"],
+        ignore: ["**/node_modules/**"],
         event: async (err, ev) => {
+          console.log(ev);
           if (!err) {
             // mark all file as changed, so it does not restarted.
             marker["*"] = new Set();

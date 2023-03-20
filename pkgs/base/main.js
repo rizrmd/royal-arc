@@ -54317,7 +54317,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
               const json = yield res.json();
               pkg2[e][k] = json.version;
               console.log(
-                `found ${k} = "*" in ${path2.substring(process.cwd().length + 1)}`
+                `found ${import_chalk.default.cyan(`${k} = "*"`)} in ${path2.substring(
+                  process.cwd().length + 1
+                )}`
               );
               shouldInstall2 = true;
             } catch (e2) {
@@ -54369,8 +54371,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         let install = false;
         if (arg?.deep) {
           const dirs = await scanDir([path2]);
+          const templateDir = dir.root("pkgs/template");
           const all = await Promise.all(
-            dirs.map((e) => shouldInstall(e, silent))
+            dirs.filter((e) => !e.startsWith(templateDir)).map((e) => shouldInstall(e, silent))
           );
           if (all.filter((e) => e).length > 0) {
             install = true;
@@ -54985,17 +54988,19 @@ Make sure to kill running instance before starting.
                 build.onEnd(async () => {
                   if (watch) {
                     let installDeps = false;
-                    await pkg.install(pkgFile, {
-                      cwd: arg.pkgcwd || (0, import_path6.dirname)(pkgFile),
-                      silent: true,
-                      onInstall() {
-                        console.log(`Installing ${printableName} deps...`);
-                      },
-                      onInstallDone() {
-                        console.log(`Dependency ${printableName} installed`);
-                        installDeps = true;
-                      }
-                    });
+                    if (isRebuild) {
+                      await pkg.install(pkgFile, {
+                        cwd: arg.pkgcwd || (0, import_path6.dirname)(pkgFile),
+                        silent: true,
+                        onInstall() {
+                          console.log(`Installing ${printableName} deps...`);
+                        },
+                        onInstallDone() {
+                          console.log(`Dependency ${printableName} installed`);
+                          installDeps = true;
+                        }
+                      });
+                    }
                     if (installDeps) {
                       const pkgFile2 = await ascendFile(input, "package.json");
                       json = pkg.produce(await (0, import_fs_jetpack2.readAsync)(pkgFile2, "json"));
@@ -57195,6 +57200,9 @@ export const _ = {
               const res = yield afterBuild(name, mark);
               shouldRestart = res.shouldRestart;
               delete marker[name];
+            } else if (mark === "skip") {
+              delete marker[name];
+              shouldRestart = false;
             }
             if (shouldRestart)
               yield rpc.restart({ name });
@@ -57211,8 +57219,12 @@ export const _ = {
         if (!err2) {
           for (const c of changes) {
             if (c.type === "update") {
-              if ((0, import_path11.basename)(c.path) === "package.json")
+              if ((0, import_path11.basename)(c.path) === "package.json") {
+                marker[name] = "skip";
+                yield pkg.install(c.path);
+                yield rpc.restart({ name });
                 return;
+              }
               if (!marker[name])
                 marker[name] = /* @__PURE__ */ new Set();
               const mark = marker[name];
@@ -58052,8 +58064,9 @@ If somehow upgrade failed you can rollback using
       ["pkgs/base", "pkgs/service"].map((e) => {
         watcher.watch({
           dir: dir.root(e),
-          ignore: ["pkgs/*/node_modules", "node_modules"],
+          ignore: ["**/node_modules/**"],
           event: (err2, ev) => __async(void 0, null, function* () {
+            console.log(ev);
             if (!err2) {
               marker["*"] = /* @__PURE__ */ new Set();
               if (baseGlobal.app)
@@ -58080,13 +58093,6 @@ If somehow upgrade failed you can rollback using
     console.log(`\u2500\u2500 ${(0, import_lodash5.default)(import_chalk9.default.yellow(`BASE`) + " ", 47, "\u2500")}`);
     if (args.includes("build") || args.includes("deploy") || args.includes("prod") || args.includes("staging")) {
     } else {
-      const onExit = () => __async(void 0, null, function* () {
-        yield watcher.dispose();
-        yield runner.stop(app.path);
-      });
-      (0, import_catch_exit2.addExitCallback)(() => {
-      });
-      setupWatchers(args, onExit);
       yield createRPC("base", action2, { isMain: true });
       const rootRPC = yield connectRPC("root", {
         waitConnection: false
@@ -58096,6 +58102,14 @@ If somehow upgrade failed you can rollback using
         yield pkg.install(dir.root("pkgs"), { cwd: dir.root(), deep: true });
       }
       const app = yield buildApp({ watch: true });
+      const onExit = () => __async(void 0, null, function* () {
+        yield watcher.dispose();
+        if (app)
+          yield runner.stop(app.path);
+      });
+      (0, import_catch_exit2.addExitCallback)(() => {
+      });
+      setupWatchers(args, onExit);
       baseGlobal.app = app;
       let cacheFound = false;
       if (yield (0, import_fs_jetpack17.existsAsync)(app.path)) {

@@ -2,6 +2,7 @@ import { bundle } from "bundler";
 import { runner } from "bundler/runner";
 import { dir } from "dir";
 import { basename } from "path";
+import { pkg } from "pkg";
 import { RPCActionResult } from "rpc/src/types";
 import { action } from "../../../service/src/action";
 import { watchService } from "../watcher/watch-service";
@@ -43,6 +44,9 @@ export const buildService = async (
                   const res = await afterBuild(name, mark);
                   shouldRestart = res.shouldRestart;
                   delete marker[name];
+                } else if (mark === "skip") {
+                  delete marker[name];
+                  shouldRestart = false;
                 }
 
                 if (shouldRestart) await rpc.restart({ name: name as any });
@@ -63,7 +67,13 @@ export const buildService = async (
       if (!err) {
         for (const c of changes) {
           if (c.type === "update") {
-            if (basename(c.path) === "package.json") return;
+            if (basename(c.path) === "package.json") {
+              marker[name] = "skip";
+
+              await pkg.install(c.path);
+              await rpc.restart({ name: name as any });
+              return;
+            }
 
             if (!marker[name]) marker[name] = new Set();
 
