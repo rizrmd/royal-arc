@@ -1,10 +1,11 @@
+import { SubscribeCallback } from "@parcel/watcher";
 import { watcher } from "bundler/src/watch";
 import { dir } from "dir";
 
-export const watchDBService = (name: string) => {
+export const watchService = (name: string, event: SubscribeCallback) => {
   watcher.watch({
     dir: dir.root(`app/${name}`),
     ignore: ["node_modules"],
-    markChangesAs: name,
+    event,
   });
 };

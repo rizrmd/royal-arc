@@ -3,8 +3,10 @@ import { dir } from "dir";
 import { action } from "../../../service/src/action";
 import { RPCActionResult } from "rpc/src/types";
 import { prepareDB } from "./service/db";
-import { watchDBService } from "../watcher/db-service";
+import { watchService } from "../watcher/watch-service";
 import { watcher } from "bundler/src/watch";
+
+const marker = {} as Record<string, true | Set<string>>;
 
 export const buildService = async (
   name: string,
@@ -31,15 +33,18 @@ export const buildService = async (
             if (installDeps) return;
 
             if (isRebuild && runner.list[app.path]) {
-              const marker = watcher.marker[name];
+              const mark = marker[name];
 
-              if (marker) {
-                if (marker instanceof Set) {
-                  if (name.startsWith("db")) await prepareDB(name, marker);
-                  delete watcher.marker[name];
+              if (mark) {
+                if (mark instanceof Set) {
+                  if (name.startsWith("db")) await prepareDB(name, mark);
+                  else {
+                    console.log(name);
+                  }
+                  delete marker[name];
                 }
               } else {
-                watcher.marker[name] = true;
+                marker[name] = true;
               }
 
               await rpc.restart({ name: name as any });
@@ -54,8 +59,27 @@ export const buildService = async (
 
   if (name.startsWith("db")) {
     await prepareDB(name);
-    watchDBService(name);
   }
+  watchService(name, (err, changes) => {
+    if (!err) {
+      if (!err) {
+        for (const c of changes) {
+          if (c.type === "update") {
+            if (!marker[name]) marker[name] = new Set();
+
+            const mark = marker[name]; 
+            if (mark) {
+              if (mark instanceof Set) {
+                mark.add(c.path);
+              } else if (mark === true) {
+                delete marker[name];
+              }
+            }
+          }
+        }
+      }
+    }
+  });
 
   return true;
 };

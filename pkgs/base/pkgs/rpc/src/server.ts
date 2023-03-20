@@ -82,6 +82,12 @@ Make sure to kill running instance before starting.
 const connect = (name: string, action: RPCAction) => {
   return new Promise<false | WSClient>((resolve) => {
     const ws = new WSClient(`ws://localhost:${config.port}/create/${name}`);
+    setTimeout(() => {
+      if (ws.readyState !== ws.OPEN) {
+        ws.close();
+        resolve(false);
+      }
+    }, 500);
     ws.on("open", () => {
       ws.send(JSON.stringify({ type: "identify", name }));
       ws.on("message", async (raw: string) => {
@@ -112,8 +118,12 @@ const connect = (name: string, action: RPCAction) => {
 
       resolve(ws);
     });
-    ws.on("close", () => resolve(false));
-    ws.on("error", () => resolve(false));
+    ws.on("close", () => {
+      resolve(false);
+    });
+    ws.on("error", () => {
+      resolve(false);
+    });
   });
 };
 

@@ -54463,7 +54463,6 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var import_watcher = __require("@parcel/watcher");
   var watcher = {
     _watches: /* @__PURE__ */ new Set(),
-    marker: {},
     async dispose() {
       await Promise.all(
         [...this._watches.values()].map(async (e) => {
@@ -54476,24 +54475,6 @@ ${import_chalk2.default.magenta("Installing")} deps:
         (0, import_watcher.subscribe)(
           item.dir,
           async (err2, changes) => {
-            if (item.markChangesAs) {
-              if (!err2) {
-                for (const c of changes) {
-                  if (c.type === "update") {
-                    if (!watcher.marker[item.markChangesAs])
-                      watcher.marker[item.markChangesAs] = /* @__PURE__ */ new Set();
-                    const marker = watcher.marker[item.markChangesAs];
-                    if (marker) {
-                      if (marker instanceof Set) {
-                        marker.add(c.path);
-                      } else if (marker === true) {
-                        delete watcher.marker[item.markChangesAs];
-                      }
-                    }
-                  }
-                }
-              }
-            }
             if (item.event)
               return await item.event(err2, changes);
           },
@@ -54909,6 +54890,12 @@ Make sure to kill running instance before starting.
   var connect2 = (name, action3) => {
     return new Promise((resolve2) => {
       const ws = new import_websocket.default(`ws://localhost:${config.port}/create/${name}`);
+      setTimeout(() => {
+        if (ws.readyState !== ws.OPEN) {
+          ws.close();
+          resolve2(false);
+        }
+      }, 500);
       ws.on("open", () => {
         ws.send(JSON.stringify({ type: "identify", name }));
         ws.on("message", (raw) => __async(void 0, null, function* () {
@@ -54937,8 +54924,12 @@ Make sure to kill running instance before starting.
         }));
         resolve2(ws);
       });
-      ws.on("close", () => resolve2(false));
-      ws.on("error", () => resolve2(false));
+      ws.on("close", () => {
+        resolve2(false);
+      });
+      ws.on("error", () => {
+        resolve2(false);
+      });
     });
   };
   var createServer = () => __async(void 0, null, function* () {
@@ -55646,16 +55637,17 @@ datasource db {
     }
   });
 
-  // pkgs/base/src/watcher/db-service.ts
-  var watchDBService = (name) => {
+  // pkgs/base/src/watcher/watch-service.ts
+  var watchService = (name, event) => {
     watcher.watch({
       dir: dir.root(`app/${name}`),
       ignore: ["node_modules"],
-      markChangesAs: name
+      event
     });
   };
 
   // pkgs/base/src/builder/service.ts
+  var marker = {};
   var buildService = (name, arg) => __async(void 0, null, function* () {
     const app = arg.app;
     const rpc = arg.rpc;
@@ -55671,15 +55663,18 @@ datasource db {
         if (installDeps)
           return;
         if (isRebuild && runner.list[app.path]) {
-          const marker = watcher.marker[name];
-          if (marker) {
-            if (marker instanceof Set) {
+          const mark = marker[name];
+          if (mark) {
+            if (mark instanceof Set) {
               if (name.startsWith("db"))
-                yield prepareDB(name, marker);
-              delete watcher.marker[name];
+                yield prepareDB(name, mark);
+              else {
+                console.log(name);
+              }
+              delete marker[name];
             }
           } else {
-            watcher.marker[name] = true;
+            marker[name] = true;
           }
           yield rpc.restart({ name });
         }
@@ -55690,8 +55685,27 @@ datasource db {
     }
     if (name.startsWith("db")) {
       yield prepareDB(name);
-      watchDBService(name);
     }
+    watchService(name, (err2, changes) => {
+      if (!err2) {
+        if (!err2) {
+          for (const c of changes) {
+            if (c.type === "update") {
+              if (!marker[name])
+                marker[name] = /* @__PURE__ */ new Set();
+              const mark = marker[name];
+              if (mark) {
+                if (mark instanceof Set) {
+                  mark.add(c.path);
+                } else if (mark === true) {
+                  delete marker[name];
+                }
+              }
+            }
+          }
+        }
+      }
+    });
     return true;
   });
 
