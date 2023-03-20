@@ -4872,7 +4872,7 @@
       var freeParseInt = parseInt;
       var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
       var freeSelf = typeof self == "object" && self && self.Object === Object && self;
-      var root = freeGlobal || freeSelf || Function("return this")();
+      var root2 = freeGlobal || freeSelf || Function("return this")();
       var asciiSize = baseProperty("length");
       function asciiToArray(string) {
         return string.split("");
@@ -4903,7 +4903,7 @@
       }
       var objectProto = Object.prototype;
       var objectToString = objectProto.toString;
-      var Symbol2 = root.Symbol;
+      var Symbol2 = root2.Symbol;
       var nativeCeil = Math.ceil;
       var nativeFloor = Math.floor;
       var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
@@ -6302,7 +6302,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var reIsHostCtor = /^\[object .+?Constructor\]$/;
       var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
       var freeSelf = typeof self == "object" && self && self.Object === Object && self;
-      var root = freeGlobal || freeSelf || Function("return this")();
+      var root2 = freeGlobal || freeSelf || Function("return this")();
       function getValue(object, key) {
         return object == null ? void 0 : object[key];
       }
@@ -6319,7 +6319,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var arrayProto = Array.prototype;
       var funcProto = Function.prototype;
       var objectProto = Object.prototype;
-      var coreJsData = root["__core-js_shared__"];
+      var coreJsData = root2["__core-js_shared__"];
       var maskSrcKey = function() {
         var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
         return uid ? "Symbol(src)_1." + uid : "";
@@ -6330,9 +6330,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var reIsNative = RegExp(
         "^" + funcToString.call(hasOwnProperty).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
       );
-      var Symbol2 = root.Symbol;
+      var Symbol2 = root2.Symbol;
       var splice = arrayProto.splice;
-      var Map2 = getNative(root, "Map");
+      var Map2 = getNative(root2, "Map");
       var nativeCreate = getNative(Object, "create");
       var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
       var symbolToString = symbolProto ? symbolProto.toString : void 0;
@@ -10150,16 +10150,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_root.js"(exports2, module2) {
       var freeGlobal = require_freeGlobal();
       var freeSelf = typeof self == "object" && self && self.Object === Object && self;
-      var root = freeGlobal || freeSelf || Function("return this")();
-      module2.exports = root;
+      var root2 = freeGlobal || freeSelf || Function("return this")();
+      module2.exports = root2;
     }
   });
 
   // node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_Symbol.js
   var require_Symbol = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_Symbol.js"(exports2, module2) {
-      var root = require_root();
-      var Symbol2 = root.Symbol;
+      var root2 = require_root();
+      var Symbol2 = root2.Symbol;
       module2.exports = Symbol2;
     }
   });
@@ -10258,8 +10258,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_coreJsData.js
   var require_coreJsData = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_coreJsData.js"(exports2, module2) {
-      var root = require_root();
-      var coreJsData = root["__core-js_shared__"];
+      var root2 = require_root();
+      var coreJsData = root2["__core-js_shared__"];
       module2.exports = coreJsData;
     }
   });
@@ -10355,8 +10355,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var require_DataView = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_DataView.js"(exports2, module2) {
       var getNative = require_getNative();
-      var root = require_root();
-      var DataView2 = getNative(root, "DataView");
+      var root2 = require_root();
+      var DataView2 = getNative(root2, "DataView");
       module2.exports = DataView2;
     }
   });
@@ -10365,8 +10365,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var require_Map = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_Map.js"(exports2, module2) {
       var getNative = require_getNative();
-      var root = require_root();
-      var Map2 = getNative(root, "Map");
+      var root2 = require_root();
+      var Map2 = getNative(root2, "Map");
       module2.exports = Map2;
     }
   });
@@ -10375,8 +10375,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var require_Promise = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_Promise.js"(exports2, module2) {
       var getNative = require_getNative();
-      var root = require_root();
-      var Promise2 = getNative(root, "Promise");
+      var root2 = require_root();
+      var Promise2 = getNative(root2, "Promise");
       module2.exports = Promise2;
     }
   });
@@ -10385,8 +10385,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var require_Set = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_Set.js"(exports2, module2) {
       var getNative = require_getNative();
-      var root = require_root();
-      var Set2 = getNative(root, "Set");
+      var root2 = require_root();
+      var Set2 = getNative(root2, "Set");
       module2.exports = Set2;
     }
   });
@@ -10395,8 +10395,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var require_WeakMap = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_WeakMap.js"(exports2, module2) {
       var getNative = require_getNative();
-      var root = require_root();
-      var WeakMap2 = getNative(root, "WeakMap");
+      var root2 = require_root();
+      var WeakMap2 = getNative(root2, "WeakMap");
       module2.exports = WeakMap2;
     }
   });
@@ -10531,12 +10531,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/isBuffer.js
   var require_isBuffer = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/isBuffer.js"(exports2, module2) {
-      var root = require_root();
+      var root2 = require_root();
       var stubFalse = require_stubFalse();
       var freeExports = typeof exports2 == "object" && exports2 && !exports2.nodeType && exports2;
       var freeModule = freeExports && typeof module2 == "object" && module2 && !module2.nodeType && module2;
       var moduleExports = freeModule && freeModule.exports === freeExports;
-      var Buffer2 = moduleExports ? root.Buffer : void 0;
+      var Buffer2 = moduleExports ? root2.Buffer : void 0;
       var nativeIsBuffer = Buffer2 ? Buffer2.isBuffer : void 0;
       var isBuffer = nativeIsBuffer || stubFalse;
       module2.exports = isBuffer;
@@ -11249,8 +11249,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_Uint8Array.js
   var require_Uint8Array = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_Uint8Array.js"(exports2, module2) {
-      var root = require_root();
-      var Uint8Array2 = root.Uint8Array;
+      var root2 = require_root();
+      var Uint8Array2 = root2.Uint8Array;
       module2.exports = Uint8Array2;
     }
   });
@@ -12446,11 +12446,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_cloneBuffer.js
   var require_cloneBuffer = __commonJS({
     "node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/_cloneBuffer.js"(exports2, module2) {
-      var root = require_root();
+      var root2 = require_root();
       var freeExports = typeof exports2 == "object" && exports2 && !exports2.nodeType && exports2;
       var freeModule = freeExports && typeof module2 == "object" && module2 && !module2.nodeType && module2;
       var moduleExports = freeModule && freeModule.exports === freeExports;
-      var Buffer2 = moduleExports ? root.Buffer : void 0;
+      var Buffer2 = moduleExports ? root2.Buffer : void 0;
       var allocUnsafe = Buffer2 ? Buffer2.allocUnsafe : void 0;
       function cloneBuffer(buffer, isDeep) {
         if (isDeep) {
@@ -14597,13 +14597,13 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // node_modules/.pnpm/regexp-to-ast@0.5.0/node_modules/regexp-to-ast/lib/regexp-to-ast.js
   var require_regexp_to_ast = __commonJS({
     "node_modules/.pnpm/regexp-to-ast@0.5.0/node_modules/regexp-to-ast/lib/regexp-to-ast.js"(exports2, module2) {
-      (function(root, factory) {
+      (function(root2, factory) {
         if (typeof define === "function" && define.amd) {
           define([], factory);
         } else if (typeof module2 === "object" && module2.exports) {
           module2.exports = factory();
         } else {
-          root.regexpToAst = factory();
+          root2.regexpToAst = factory();
         }
       })(
         typeof self !== "undefined" ? (
@@ -43295,7 +43295,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
   var source_default = chalk4;
 
-  // pkgs/service/pkgs/service-db/create-db.ts
+  // pkgs/service/pkgs/service-db/src/create-db.ts
   var import_fs_jetpack5 = __toESM(require_main());
 
   // pkgs/service/export.ts
@@ -43338,14 +43338,14 @@ ${import_chalk2.default.magenta("Installing")} deps:
     }
   });
 
-  // pkgs/service/pkgs/service-db/parse-prisma.ts
+  // pkgs/service/pkgs/service-db/src/parse-prisma.ts
   var import_prisma_ast = __toESM(require_dist2());
   var import_fs_jetpack4 = __toESM(require_main());
 
-  // pkgs/service/pkgs/service-db/create-db.ts
+  // pkgs/service/pkgs/service-db/src/create-db.ts
   var import_lodash4 = __toESM(require_lodash());
 
-  // pkgs/service/pkgs/service-db/ensure-prisma.ts
+  // pkgs/service/pkgs/service-db/src/ensure-prisma.ts
   var import_prisma_ast2 = __toESM(require_dist2());
   var import_fs_jetpack6 = __toESM(require_main());
   var import_path7 = __require("path");
@@ -44044,23 +44044,23 @@ datasource db {
         }))
       );
       console.log(` > Backing up existing pkgs to: .output/upgrade/backup`);
-      const root = dir.root("");
+      const root2 = dir.root("");
       for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack9.existsAsync)((0, import_path8.join)(root, `.output/upgrade/backup/${f}`))) {
+          if (yield (0, import_fs_jetpack9.existsAsync)((0, import_path8.join)(root2, `.output/upgrade/backup/${f}`))) {
             yield (0, import_fs_jetpack9.moveAsync)(
-              (0, import_path8.join)(root, f),
-              (0, import_path8.join)(root, `.output/upgrade/backup/${f}`)
+              (0, import_path8.join)(root2, f),
+              (0, import_path8.join)(root2, `.output/upgrade/backup/${f}`)
             );
           }
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs6.readdirSync)((0, import_path8.join)(root, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs6.readdirSync)((0, import_path8.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
           yield (0, import_fs_jetpack9.copyAsync)(
-            (0, import_path8.join)(root, `.output/upgrade/royal-main/${f}`),
-            (0, import_path8.join)(root, f),
+            (0, import_path8.join)(root2, `.output/upgrade/royal-main/${f}`),
+            (0, import_path8.join)(root2, f),
             {
               overwrite: true
             }
@@ -44227,14 +44227,14 @@ If somehow upgrade failed you can rollback using
               const s = yield (0, import_promises2.stat)(c.path);
               if (s.isDirectory() && (yield (0, import_promises2.readdir)(c.path)).length === 0) {
                 console.log(`Scaffolding new service: ${import_chalk8.default.blue(name)}`);
-                let root = "pkgs/template/pkgs/service";
+                let root2 = "pkgs/template/pkgs/service";
                 if (name.startsWith("db")) {
-                  root = "pkgs/template/pkgs/db";
+                  root2 = "pkgs/template/pkgs/db";
                 }
-                const files = yield (0, import_promises2.readdir)(dir.root(root));
+                const files = yield (0, import_promises2.readdir)(dir.root(root2));
                 for (const f of files) {
                   if (f !== "node_modules") {
-                    const src = yield (0, import_fs_jetpack13.readAsync)(dir.root(`${root}/${f}`), "utf8");
+                    const src = yield (0, import_fs_jetpack13.readAsync)(dir.root(`${root2}/${f}`), "utf8");
                     yield (0, import_fs_jetpack13.writeAsync)(
                       (0, import_path10.join)(c.path, f),
                       (src || "").replace(/template_service/g, name)

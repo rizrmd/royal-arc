@@ -1,5 +1,7 @@
+import { connectRPC } from "rpc";
 import { root } from "service";
 import { glbdb } from "./glbdb";
+import { dbAction } from "./action";
 
 export type DBName = "db";
 
@@ -28,9 +30,11 @@ export type ExtendPrisma<T extends DBName> = {
   };
 };
 
-type DBProxy = () => typeof glbdb.prisma;
+type DBProxy = (
+  rpc: Awaited<ReturnType<typeof connectRPC<typeof dbAction>>>
+) => typeof glbdb.prisma;
 
-export const dbs: DBProxy = () => {
+export const dbs: DBProxy = (rpc) => {
   return new Proxy(
     { schema: {} as Record<string, { pk: string[] }> },
     {
@@ -44,7 +48,7 @@ export const dbs: DBProxy = () => {
           {
             async get(__, table: string) {
               if (!_.schema[table]) {
-                _.schema[table] = await root.action("db").schema(table);
+                _.schema[table] = await rpc.schema(table);
               }
               return _.schema[table];
             },

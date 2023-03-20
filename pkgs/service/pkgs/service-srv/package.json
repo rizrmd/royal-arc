@@ -9,9 +9,15 @@
     "fs-jetpack": "5.1.0",
     "rpc": "workspace:*",
     "dir": "workspace:*",
+    "service": "workspace:*",
     "pkg": "workspace:*",
     "bundler": "workspace:^",
     "catch-exit": "1.2.2",
+    "hyper-express": "6.5.7",
+    "radix3": "1.0.0",
+    "@paralleldrive/cuid2": "2.2.0",
+    "lmdb": "2.7.9",
+    "date-fns": "2.29.3",
     "@qiwi/deep-proxy": "2.0.3"
   },
   "devDependencies": {

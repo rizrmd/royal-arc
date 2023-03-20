@@ -2,7 +2,7 @@
   "name": "srv",
   "version": "0.0.1",
   "dependencies": {
-    "service": "workspace:*"
+    "service-srv": "workspace:*"
   },
   "external": [
     "hyper-express",

@@ -1,9 +1,10 @@
 import { createService } from "service";
+import { createAPIServer } from "service-srv";
 
-export const main = createService(
-  "srv",
-  async ({ enableStdout }) => {
-    enableStdout();
-    console.log("hello srv");
-  }
-);
+export const main = createAPIServer({
+  name: "srv",
+  port: 12300,
+  // make sure cookieKey is different for each app
+  // changing cookie key, will force all user to log out
+  cookieKey: `ryl-sid-JgvCz3F4K6pfPNwM`,
+});
