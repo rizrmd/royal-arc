@@ -3938,7 +3938,7 @@
         }
         return false;
       };
-      var existsAsync9 = (path2) => {
+      var existsAsync8 = (path2) => {
         return new Promise((resolve2, reject) => {
           fs.stat(path2).then((stat3) => {
             if (stat3.isDirectory()) {
@@ -3959,7 +3959,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = existsSync5;
-      exports2.async = existsAsync9;
+      exports2.async = existsAsync8;
     }
   });
 
@@ -44272,7 +44272,6 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/main.ts
-  var import_fs_jetpack15 = __toESM(require_main());
   var RUNNING_MARKER = "WARNING: SERVER ALREADY RUNNING";
   var baseMain = () => __async(void 0, null, function* () {
     process.removeAllListeners("warning");
@@ -44299,22 +44298,6 @@ If somehow upgrade failed you can rollback using
       const app = yield buildApp({ watch: true });
       baseGlobal.app = app;
       let cacheFound = false;
-      if (yield (0, import_fs_jetpack15.existsAsync)(app.path)) {
-        console.log(`
-\u{1F31F} Running ${import_chalk9.default.cyan(`cached`)} app
-`);
-        yield runner.run({
-          path: app.path,
-          cwd: app.cwd,
-          runningMarker(e) {
-            if (e.trim() === RUNNING_MARKER)
-              return true;
-            process.stdout.write(e);
-            return false;
-          }
-        });
-        cacheFound = true;
-      }
       let bannerPrinted = false;
       const onDone = cacheFound ? (arg) => {
         if (!bannerPrinted) {

@@ -51,19 +51,19 @@ export const baseMain = async () => {
     baseGlobal.app = app;
 
     let cacheFound = false;
-    if (await existsAsync(app.path)) {
-      console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
-      await runner.run({
-        path: app.path,
-        cwd: app.cwd,
-        runningMarker(e) {
-          if (e.trim() === RUNNING_MARKER) return true;
-          process.stdout.write(e);
-          return false;
-        },
-      });
-      cacheFound = true;
-    }
+    // if (await existsAsync(app.path)) {
+    //   console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
+    //   await runner.run({
+    //     path: app.path,
+    //     cwd: app.cwd,
+    //     runningMarker(e) {
+    //       if (e.trim() === RUNNING_MARKER) return true;
+    //       process.stdout.write(e);
+    //       return false;
+    //     },
+    //   });
+    //   cacheFound = true;
+    // }
 
     let bannerPrinted = false;
     const onDone = cacheFound

@@ -20,7 +20,13 @@ export const server = async ({
     trust_proxy: true,
     fast_buffers: true,
   });
-  const apiEntry = await import("../../../../../app/gen/srv/api/entry");
+
+  let apiEntry = null;
+
+  try {
+    //@ts-ignore
+    apiEntry = await import("../../../../../app/gen/srv/api/entry");
+  } catch (e) {}
 
   server.any("/_api_frm", apiFrm);
 
