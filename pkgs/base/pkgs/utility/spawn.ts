@@ -1,5 +1,4 @@
-import { spawn as nativeSpawn, fork } from "child_process";
-import { Transform } from "stream";
+import { fork, spawn as nativeSpawn } from "child_process";
 
 export type IPty = ReturnType<typeof spawn>;
 
@@ -25,7 +24,7 @@ export const spawn = (
   };
 
   if (opt?.ipc) {
-    proc.on("message", (e) => {
+    proc.on("message", async (e) => {
       callback.onMessage(e);
     });
   }
@@ -39,6 +38,8 @@ export const spawn = (
   });
 
   return {
+    data: {} as any,
+    markedRunning: false,
     onMessage: (fn: (e: string) => any) => {
       callback.onMessage = fn;
     },
@@ -48,13 +49,9 @@ export const spawn = (
       callback.onExit = fn;
     },
     kill: () => {
-      return new Promise<void>((resolve) => {
+      return new Promise<void>(async (resolve) => {
         callback.killResolve = resolve;
-        if (opt?.ipc) {
-          proc.send("::KILL::");
-        } else {
-          proc.kill();
-        }
+        proc.kill();
       });
     },
   };

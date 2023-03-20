@@ -7,7 +7,7 @@ import { watchService } from "../watcher/watch-service";
 import { prepareDB } from "./service/db";
 import { prepareSrv } from "./service/srv";
 
-const marker = {} as Record<string, true | Set<string>>;
+export const marker = {} as Record<string, true | Set<string>>;
 
 export const buildService = async (
   name: string,
@@ -31,22 +31,22 @@ export const buildService = async (
       onBeforeDone: arg.onDone,
       watch: arg.watch
         ? async ({ isRebuild, installDeps }) => {
-            if (installDeps) return;
+            // if (installDeps || marker["*"]) return;
 
-            if (isRebuild && runner.list[app.path]) {
-              const mark = marker[name];
+            // if (isRebuild && runner.list[app.path]) {
+            //   const mark = marker[name];
 
-              if (mark) {
-                if (mark instanceof Set) {
-                  await prepare(name, mark);
-                  delete marker[name];
-                }
+            //   if (mark) {
+            //     if (mark instanceof Set) {
+            //       await prepare(name, mark);
+            //       delete marker[name];
+            //     } 
 
-                await rpc.restart({ name: name as any });
-              } else {
-                marker[name] = true;
-              }
-            }
+            //     await rpc.restart({ name: name as any });
+            //   } else {
+            //     marker[name] = true;
+            //   }
+            // }
           }
         : undefined,
     }))

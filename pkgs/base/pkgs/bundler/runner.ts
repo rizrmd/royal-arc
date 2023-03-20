@@ -1,54 +1,34 @@
 import commandExists from "command-exists";
 import { existsSync } from "fs";
-import { IPty, IDisposable, spawn } from "utility/spawn";
-const g = globalThis as unknown as {
-  runs: Record<
-    string,
-    IPty & {
-      arg: any;
-      markedRunning: boolean;
-      stopped: boolean;
-    }
-  >;
-};
-
-if (!g.runs) g.runs = {};
+import { spawn } from "utility/spawn";
+import { runnerGlb } from "./runner-glb";
 
 export const runner = {
   get list() {
-    return g.runs;
+    return runnerGlb.runs;
   },
   dispose() {
-    return Promise.all(Object.values(g.runs).map((pty) => pty.kill));
+    return Promise.all(Object.values(runnerGlb.runs).map((pty) => pty.kill));
   },
-  async restart(path: keyof typeof g.runs) {
-    if (g.runs[path]) {
-      if (!g.runs[path].stopped) {
-        return new Promise<boolean>((resolve) => {
-          g.runs[path].onExit(async () => {
-            g.runs[path].stopped = true;
-            resolve(await runner.run(g.runs[path].arg));
-          });
-          g.runs[path].kill();
-        });
-      } else {
-        return await runner.run(g.runs[path].arg);
-      }
+  async restart(path: keyof typeof runnerGlb.runs) {
+    if (runnerGlb.runs[path]) {
+      const data = runnerGlb.runs[path].data;
+      await runnerGlb.runs[path].kill();
+      await runner.run(data.arg);
     } else {
       return false;
     }
   },
-  async stop(path: keyof typeof g.runs) {
+  async stop(path: keyof typeof runnerGlb.runs) {
     return new Promise<boolean>((resolve) => {
-      g.runs[path].onExit(() => resolve(true));
-      g.runs[path].kill();
-      delete g.runs[path];
+      runnerGlb.runs[path].onExit(() => resolve(true));
+      runnerGlb.runs[path].kill();
+      delete runnerGlb.runs[path];
     });
   },
   async run(arg: {
     path: string;
     args?: string[];
-    onMessage?: (e: any) => unknown;
     onStop?: (e: {
       exitCode: number;
       signal: NodeJS.Signals | null;
@@ -57,35 +37,34 @@ export const runner = {
     cwd: string;
   }) {
     try {
-      const { path, onMessage: onData, args, cwd, onStop } = arg;
+      const { path, args, cwd, onStop } = arg;
 
       let isCommand = false;
 
       if (!existsSync(path)) {
         if (await commandExists(path)) {
           isCommand = true;
-        } else {
-          return false;
         }
       }
 
-      if (g.runs[path] && !g.runs[path].stopped) return false;
+      runnerGlb.runs[path] = spawn(path, args || [], {
+        cwd,
+        ipc: isCommand ? false : true,
+      });
+      runnerGlb.runs[path].data = {
+        arg,
+      };
 
-      if (isCommand) {
-        g.runs[path] = spawn(path, args || [], { cwd, ipc: false }) as any;
-      } else {
-        g.runs[path] = spawn(path, args || [], { cwd, ipc: true }) as any;
-        if (arg.onMessage) g.runs[path].onMessage(arg.onMessage);
-      }
-
-      g.runs[path].arg = arg;
-
-      g.runs[path].onExit(async () => {
-        g.runs[path].stopped = true;
-        if (onStop) g.runs[path].onExit(onStop);
+      runnerGlb.runs[path].onExit(async (e) => {
+        if (onStop) await onStop(e);
+        delete runnerGlb.runs[path];
       });
 
-      return true;
+      return await new Promise<boolean>((resolve) => {
+        runnerGlb.runs[path].onMessage((e) => {
+          resolve(true);
+        });
+      });
     } catch (e) {
       return false;
     }

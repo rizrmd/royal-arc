@@ -972,21 +972,21 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       }
       convert.rgb.hsl = function(rgb) {
         const r = rgb[0] / 255;
-        const g3 = rgb[1] / 255;
+        const g2 = rgb[1] / 255;
         const b = rgb[2] / 255;
-        const min = Math.min(r, g3, b);
-        const max2 = Math.max(r, g3, b);
+        const min = Math.min(r, g2, b);
+        const max2 = Math.max(r, g2, b);
         const delta = max2 - min;
         let h;
         let s;
         if (max2 === min) {
           h = 0;
         } else if (r === max2) {
-          h = (g3 - b) / delta;
-        } else if (g3 === max2) {
+          h = (g2 - b) / delta;
+        } else if (g2 === max2) {
           h = 2 + (b - r) / delta;
         } else if (b === max2) {
-          h = 4 + (r - g3) / delta;
+          h = 4 + (r - g2) / delta;
         }
         h = Math.min(h * 60, 360);
         if (h < 0) {
@@ -1009,10 +1009,10 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         let h;
         let s;
         const r = rgb[0] / 255;
-        const g3 = rgb[1] / 255;
+        const g2 = rgb[1] / 255;
         const b = rgb[2] / 255;
-        const v = Math.max(r, g3, b);
-        const diff = v - Math.min(r, g3, b);
+        const v = Math.max(r, g2, b);
+        const diff = v - Math.min(r, g2, b);
         const diffc = function(c) {
           return (v - c) / 6 / diff + 1 / 2;
         };
@@ -1022,11 +1022,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         } else {
           s = diff / v;
           rdif = diffc(r);
-          gdif = diffc(g3);
+          gdif = diffc(g2);
           bdif = diffc(b);
           if (r === v) {
             h = bdif - gdif;
-          } else if (g3 === v) {
+          } else if (g2 === v) {
             h = 1 / 3 + rdif - bdif;
           } else if (b === v) {
             h = 2 / 3 + gdif - rdif;
@@ -1045,20 +1045,20 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       convert.rgb.hwb = function(rgb) {
         const r = rgb[0];
-        const g3 = rgb[1];
+        const g2 = rgb[1];
         let b = rgb[2];
         const h = convert.rgb.hsl(rgb)[0];
-        const w = 1 / 255 * Math.min(r, Math.min(g3, b));
-        b = 1 - 1 / 255 * Math.max(r, Math.max(g3, b));
+        const w = 1 / 255 * Math.min(r, Math.min(g2, b));
+        b = 1 - 1 / 255 * Math.max(r, Math.max(g2, b));
         return [h, w * 100, b * 100];
       };
       convert.rgb.cmyk = function(rgb) {
         const r = rgb[0] / 255;
-        const g3 = rgb[1] / 255;
+        const g2 = rgb[1] / 255;
         const b = rgb[2] / 255;
-        const k = Math.min(1 - r, 1 - g3, 1 - b);
+        const k = Math.min(1 - r, 1 - g2, 1 - b);
         const c = (1 - r - k) / (1 - k) || 0;
-        const m = (1 - g3 - k) / (1 - k) || 0;
+        const m = (1 - g2 - k) / (1 - k) || 0;
         const y = (1 - b - k) / (1 - k) || 0;
         return [c * 100, m * 100, y * 100, k * 100];
       };
@@ -1087,14 +1087,14 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       convert.rgb.xyz = function(rgb) {
         let r = rgb[0] / 255;
-        let g3 = rgb[1] / 255;
+        let g2 = rgb[1] / 255;
         let b = rgb[2] / 255;
         r = r > 0.04045 ? ((r + 0.055) / 1.055) ** 2.4 : r / 12.92;
-        g3 = g3 > 0.04045 ? ((g3 + 0.055) / 1.055) ** 2.4 : g3 / 12.92;
+        g2 = g2 > 0.04045 ? ((g2 + 0.055) / 1.055) ** 2.4 : g2 / 12.92;
         b = b > 0.04045 ? ((b + 0.055) / 1.055) ** 2.4 : b / 12.92;
-        const x = r * 0.4124 + g3 * 0.3576 + b * 0.1805;
-        const y = r * 0.2126 + g3 * 0.7152 + b * 0.0722;
-        const z = r * 0.0193 + g3 * 0.1192 + b * 0.9505;
+        const x = r * 0.4124 + g2 * 0.3576 + b * 0.1805;
+        const y = r * 0.2126 + g2 * 0.7152 + b * 0.0722;
+        const z = r * 0.0193 + g2 * 0.1192 + b * 0.9505;
         return [x * 100, y * 100, z * 100];
       };
       convert.rgb.lab = function(rgb) {
@@ -1223,43 +1223,43 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         const n = wh + f * (v - wh);
         let r;
-        let g3;
+        let g2;
         let b;
         switch (i) {
           default:
           case 6:
           case 0:
             r = v;
-            g3 = n;
+            g2 = n;
             b = wh;
             break;
           case 1:
             r = n;
-            g3 = v;
+            g2 = v;
             b = wh;
             break;
           case 2:
             r = wh;
-            g3 = v;
+            g2 = v;
             b = n;
             break;
           case 3:
             r = wh;
-            g3 = n;
+            g2 = n;
             b = v;
             break;
           case 4:
             r = n;
-            g3 = wh;
+            g2 = wh;
             b = v;
             break;
           case 5:
             r = v;
-            g3 = wh;
+            g2 = wh;
             b = n;
             break;
         }
-        return [r * 255, g3 * 255, b * 255];
+        return [r * 255, g2 * 255, b * 255];
       };
       convert.cmyk.rgb = function(cmyk) {
         const c = cmyk[0] / 100;
@@ -1267,27 +1267,27 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         const y = cmyk[2] / 100;
         const k = cmyk[3] / 100;
         const r = 1 - Math.min(1, c * (1 - k) + k);
-        const g3 = 1 - Math.min(1, m * (1 - k) + k);
+        const g2 = 1 - Math.min(1, m * (1 - k) + k);
         const b = 1 - Math.min(1, y * (1 - k) + k);
-        return [r * 255, g3 * 255, b * 255];
+        return [r * 255, g2 * 255, b * 255];
       };
       convert.xyz.rgb = function(xyz) {
         const x = xyz[0] / 100;
         const y = xyz[1] / 100;
         const z = xyz[2] / 100;
         let r;
-        let g3;
+        let g2;
         let b;
         r = x * 3.2406 + y * -1.5372 + z * -0.4986;
-        g3 = x * -0.9689 + y * 1.8758 + z * 0.0415;
+        g2 = x * -0.9689 + y * 1.8758 + z * 0.0415;
         b = x * 0.0557 + y * -0.204 + z * 1.057;
         r = r > 31308e-7 ? 1.055 * r ** (1 / 2.4) - 0.055 : r * 12.92;
-        g3 = g3 > 31308e-7 ? 1.055 * g3 ** (1 / 2.4) - 0.055 : g3 * 12.92;
+        g2 = g2 > 31308e-7 ? 1.055 * g2 ** (1 / 2.4) - 0.055 : g2 * 12.92;
         b = b > 31308e-7 ? 1.055 * b ** (1 / 2.4) - 0.055 : b * 12.92;
         r = Math.min(Math.max(0, r), 1);
-        g3 = Math.min(Math.max(0, g3), 1);
+        g2 = Math.min(Math.max(0, g2), 1);
         b = Math.min(Math.max(0, b), 1);
-        return [r * 255, g3 * 255, b * 255];
+        return [r * 255, g2 * 255, b * 255];
       };
       convert.xyz.lab = function(xyz) {
         let x = xyz[0];
@@ -1348,13 +1348,13 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         return [l, a, b];
       };
       convert.rgb.ansi16 = function(args, saturation = null) {
-        const [r, g3, b] = args;
+        const [r, g2, b] = args;
         let value = saturation === null ? convert.rgb.hsv(args)[2] : saturation;
         value = Math.round(value / 50);
         if (value === 0) {
           return 30;
         }
-        let ansi = 30 + (Math.round(b / 255) << 2 | Math.round(g3 / 255) << 1 | Math.round(r / 255));
+        let ansi = 30 + (Math.round(b / 255) << 2 | Math.round(g2 / 255) << 1 | Math.round(r / 255));
         if (value === 2) {
           ansi += 60;
         }
@@ -1365,9 +1365,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       convert.rgb.ansi256 = function(args) {
         const r = args[0];
-        const g3 = args[1];
+        const g2 = args[1];
         const b = args[2];
-        if (r === g3 && g3 === b) {
+        if (r === g2 && g2 === b) {
           if (r < 8) {
             return 16;
           }
@@ -1376,7 +1376,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return Math.round((r - 8) / 247 * 24) + 232;
         }
-        const ansi = 16 + 36 * Math.round(r / 255 * 5) + 6 * Math.round(g3 / 255 * 5) + Math.round(b / 255 * 5);
+        const ansi = 16 + 36 * Math.round(r / 255 * 5) + 6 * Math.round(g2 / 255 * 5) + Math.round(b / 255 * 5);
         return ansi;
       };
       convert.ansi16.rgb = function(args) {
@@ -1390,9 +1390,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         const mult = (~~(args > 50) + 1) * 0.5;
         const r = (color & 1) * mult * 255;
-        const g3 = (color >> 1 & 1) * mult * 255;
+        const g2 = (color >> 1 & 1) * mult * 255;
         const b = (color >> 2 & 1) * mult * 255;
-        return [r, g3, b];
+        return [r, g2, b];
       };
       convert.ansi256.rgb = function(args) {
         if (args >= 232) {
@@ -1402,9 +1402,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         args -= 16;
         let rem;
         const r = Math.floor(args / 36) / 5 * 255;
-        const g3 = Math.floor((rem = args % 36) / 6) / 5 * 255;
+        const g2 = Math.floor((rem = args % 36) / 6) / 5 * 255;
         const b = rem % 6 / 5 * 255;
-        return [r, g3, b];
+        return [r, g2, b];
       };
       convert.rgb.hex = function(args) {
         const integer = ((Math.round(args[0]) & 255) << 16) + ((Math.round(args[1]) & 255) << 8) + (Math.round(args[2]) & 255);
@@ -1424,16 +1424,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         const integer = parseInt(colorString, 16);
         const r = integer >> 16 & 255;
-        const g3 = integer >> 8 & 255;
+        const g2 = integer >> 8 & 255;
         const b = integer & 255;
-        return [r, g3, b];
+        return [r, g2, b];
       };
       convert.rgb.hcg = function(rgb) {
         const r = rgb[0] / 255;
-        const g3 = rgb[1] / 255;
+        const g2 = rgb[1] / 255;
         const b = rgb[2] / 255;
-        const max2 = Math.max(Math.max(r, g3), b);
-        const min = Math.min(Math.min(r, g3), b);
+        const max2 = Math.max(Math.max(r, g2), b);
+        const min = Math.min(Math.min(r, g2), b);
         const chroma = max2 - min;
         let grayscale;
         let hue;
@@ -1445,11 +1445,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         if (chroma <= 0) {
           hue = 0;
         } else if (max2 === r) {
-          hue = (g3 - b) / chroma % 6;
-        } else if (max2 === g3) {
+          hue = (g2 - b) / chroma % 6;
+        } else if (max2 === g2) {
           hue = 2 + (b - r) / chroma;
         } else {
-          hue = 4 + (r - g3) / chroma;
+          hue = 4 + (r - g2) / chroma;
         }
         hue /= 6;
         hue %= 1;
@@ -1478,9 +1478,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       convert.hcg.rgb = function(hcg) {
         const h = hcg[0] / 360;
         const c = hcg[1] / 100;
-        const g3 = hcg[2] / 100;
+        const g2 = hcg[2] / 100;
         if (c === 0) {
-          return [g3 * 255, g3 * 255, g3 * 255];
+          return [g2 * 255, g2 * 255, g2 * 255];
         }
         const pure = [0, 0, 0];
         const hi = h % 1 * 6;
@@ -1518,7 +1518,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             pure[1] = 0;
             pure[2] = w;
         }
-        mg = (1 - c) * g3;
+        mg = (1 - c) * g2;
         return [
           (c * pure[0] + mg) * 255,
           (c * pure[1] + mg) * 255,
@@ -1527,8 +1527,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       convert.hcg.hsv = function(hcg) {
         const c = hcg[1] / 100;
-        const g3 = hcg[2] / 100;
-        const v = c + g3 * (1 - c);
+        const g2 = hcg[2] / 100;
+        const v = c + g2 * (1 - c);
         let f = 0;
         if (v > 0) {
           f = c / v;
@@ -1537,8 +1537,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       convert.hcg.hsl = function(hcg) {
         const c = hcg[1] / 100;
-        const g3 = hcg[2] / 100;
-        const l = g3 * (1 - c) + 0.5 * c;
+        const g2 = hcg[2] / 100;
+        const l = g2 * (1 - c) + 0.5 * c;
         let s = 0;
         if (l > 0 && l < 0.5) {
           s = c / (2 * l);
@@ -1549,8 +1549,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       convert.hcg.hwb = function(hcg) {
         const c = hcg[1] / 100;
-        const g3 = hcg[2] / 100;
-        const v = c + g3 * (1 - c);
+        const g2 = hcg[2] / 100;
+        const v = c + g2 * (1 - c);
         return [hcg[0], (v - c) * 100, (1 - v) * 100];
       };
       convert.hwb.hcg = function(hwb) {
@@ -1558,11 +1558,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         const b = hwb[2] / 100;
         const v = 1 - b;
         const c = v - w;
-        let g3 = 0;
+        let g2 = 0;
         if (c < 1) {
-          g3 = (v - c) / (1 - c);
+          g2 = (v - c) / (1 - c);
         }
-        return [hwb[0], c * 100, g3 * 100];
+        return [hwb[0], c * 100, g2 * 100];
       };
       convert.apple.rgb = function(apple) {
         return [apple[0] / 65535 * 255, apple[1] / 65535 * 255, apple[2] / 65535 * 255];
@@ -1747,7 +1747,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         return `\x1B[${38 + offset};2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
       };
       var ansi2ansi = (n) => n;
-      var rgb2rgb = (r, g3, b) => [r, g3, b];
+      var rgb2rgb = (r, g2, b) => [r, g2, b];
       var setLazyProperty = (object, property, get3) => {
         Object.defineProperty(object, property, {
           get: () => {
@@ -2713,7 +2713,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           maxRetries: 3
         });
       };
-      var removeAsync7 = (path2) => {
+      var removeAsync6 = (path2) => {
         return fs2.rm(path2, {
           recursive: true,
           force: true,
@@ -2722,7 +2722,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync7;
+      exports2.async = removeAsync6;
     }
   });
 
@@ -34505,8 +34505,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
               });
               var propertyType = group[0].type;
               if (group.length > 1) {
-                propertyType = (0, map_1.default)(group, function(g3) {
-                  return g3.type;
+                propertyType = (0, map_1.default)(group, function(g2) {
+                  return g2.type;
                 });
               }
               return {
@@ -35019,7 +35019,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var h = e.createToken({ name: "LCurly", pattern: /{/, label: "'{'" });
       var b = e.createToken({ name: "RCurly", pattern: /}/, label: "'}'", pop_mode: true });
       var v = e.createToken({ name: "LRound", pattern: /\(/, label: "'('" });
-      var g3 = e.createToken({ name: "RRound", pattern: /\)/, label: "')'" });
+      var g2 = e.createToken({ name: "RRound", pattern: /\)/, label: "')'" });
       var A = e.createToken({ name: "LSquare", pattern: /\[/, label: "'['" });
       var U = e.createToken({ name: "RSquare", pattern: /\]/, label: "']'" });
       var S = e.createToken({ name: "Comma", pattern: /,/, label: "','" });
@@ -35030,7 +35030,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var N = e.createToken({ name: "WhiteSpace", pattern: /\s+/, group: e.Lexer.SKIPPED });
       var M = e.createToken({ name: "LineBreak", pattern: /\n|\r\n/, line_breaks: true, label: "LineBreak" });
       var C = [m, l, p, M, N];
-      var R = { modes: { global: [].concat(C, [r, a, i, u]), block: [].concat(C, [f, L, d, y, E, h, b, A, U, v, g3, S, k, O, o, s, c, B, T, n]) }, defaultMode: "global" };
+      var R = { modes: { global: [].concat(C, [r, a, i, u]), block: [].concat(C, [f, L, d, y, E, h, b, A, U, v, g2, S, k, O, o, s, c, B, T, n]) }, defaultMode: "global" };
       var w = new e.Lexer(R);
       function j(e2, t2) {
         e2.prototype = Object.create(t2.prototype), e2.prototype.constructor = e2, (Object.setPrototypeOf || function(e3, t3) {
@@ -35055,7 +35055,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
               } }, { ALT: function() {
                 return t3.SUBRULE(t3.value);
               } }]);
-            } }), t3.CONSUME(g3);
+            } }), t3.CONSUME(g2);
           }), t3.value = t3.RULE("value", function() {
             t3.OR([{ ALT: function() {
               return t3.CONSUME(B, { LABEL: "value" });
@@ -35136,7 +35136,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             } }]), t3.OPTION(function() {
               t3.CONSUME(v), t3.MANY_SEP({ SEP: S, DEF: function() {
                 t3.SUBRULE(t3.attributeArg);
-              } }), t3.CONSUME(g3);
+              } }), t3.CONSUME(g2);
             });
           }), t3.attributeArg = t3.RULE("attributeArg", function() {
             t3.OR([{ ALT: function() {
@@ -54065,7 +54065,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       }
     };
     if (opt?.ipc) {
-      proc.on("message", (e) => {
+      proc.on("message", async (e) => {
         callback.onMessage(e);
       });
     }
@@ -54077,6 +54077,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       });
     });
     return {
+      data: {},
+      markedRunning: false,
       onMessage: (fn) => {
         callback.onMessage = fn;
       },
@@ -54084,80 +54086,69 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         callback.onExit = fn;
       },
       kill: () => {
-        return new Promise((resolve2) => {
+        return new Promise(async (resolve2) => {
           callback.killResolve = resolve2;
-          if (opt?.ipc) {
-            proc.send("::KILL::");
-          } else {
-            proc.kill();
-          }
+          proc.kill();
         });
       }
     };
   };
 
+  // pkgs/base/pkgs/bundler/runner-glb.ts
+  var runnerGlb = globalThis;
+  if (!runnerGlb.runs)
+    runnerGlb.runs = {};
+
   // pkgs/base/pkgs/bundler/runner.ts
-  var g = globalThis;
-  if (!g.runs)
-    g.runs = {};
   var runner = {
     get list() {
-      return g.runs;
+      return runnerGlb.runs;
     },
     dispose() {
-      return Promise.all(Object.values(g.runs).map((pty) => pty.kill));
+      return Promise.all(Object.values(runnerGlb.runs).map((pty) => pty.kill));
     },
     async restart(path2) {
-      if (g.runs[path2]) {
-        if (!g.runs[path2].stopped) {
-          return new Promise((resolve2) => {
-            g.runs[path2].onExit(async () => {
-              g.runs[path2].stopped = true;
-              resolve2(await runner.run(g.runs[path2].arg));
-            });
-            g.runs[path2].kill();
-          });
-        } else {
-          return await runner.run(g.runs[path2].arg);
-        }
+      if (runnerGlb.runs[path2]) {
+        const data = runnerGlb.runs[path2].data;
+        await runnerGlb.runs[path2].kill();
+        await runner.run(data.arg);
       } else {
         return false;
       }
     },
     async stop(path2) {
       return new Promise((resolve2) => {
-        g.runs[path2].onExit(() => resolve2(true));
-        g.runs[path2].kill();
-        delete g.runs[path2];
+        runnerGlb.runs[path2].onExit(() => resolve2(true));
+        runnerGlb.runs[path2].kill();
+        delete runnerGlb.runs[path2];
       });
     },
     async run(arg) {
       try {
-        const { path: path2, onMessage: onData, args, cwd: cwd2, onStop } = arg;
+        const { path: path2, args, cwd: cwd2, onStop } = arg;
         let isCommand = false;
         if (!(0, import_fs.existsSync)(path2)) {
           if (await (0, import_command_exists.default)(path2)) {
             isCommand = true;
-          } else {
-            return false;
           }
         }
-        if (g.runs[path2] && !g.runs[path2].stopped)
-          return false;
-        if (isCommand) {
-          g.runs[path2] = spawn(path2, args || [], { cwd: cwd2, ipc: false });
-        } else {
-          g.runs[path2] = spawn(path2, args || [], { cwd: cwd2, ipc: true });
-          if (arg.onMessage)
-            g.runs[path2].onMessage(arg.onMessage);
-        }
-        g.runs[path2].arg = arg;
-        g.runs[path2].onExit(async () => {
-          g.runs[path2].stopped = true;
-          if (onStop)
-            g.runs[path2].onExit(onStop);
+        runnerGlb.runs[path2] = spawn(path2, args || [], {
+          cwd: cwd2,
+          ipc: isCommand ? false : true
         });
-        return true;
+        runnerGlb.runs[path2].data = {
+          arg
+        };
+        runnerGlb.runs[path2].onExit(async (e) => {
+          if (onStop)
+            await onStop(e);
+          delete runnerGlb.runs[path2];
+        });
+        return await new Promise((resolve2) => {
+          runnerGlb.runs[path2].onMessage((e) => {
+            resolve2(true);
+          });
+        });
       } catch (e) {
         return false;
       }
@@ -54203,16 +54194,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var import_path2 = __require("path");
   var globalize = (arg) => {
     const { name, init } = arg;
-    const g3 = global;
-    if (typeof g3[name] === "undefined") {
-      g3[name] = arg.value;
+    const g2 = global;
+    if (typeof g2[name] === "undefined") {
+      g2[name] = arg.value;
     }
-    g3[name].init = async () => {
+    g2[name].init = async () => {
       if (init) {
-        await init(g3[name]);
+        await init(g2[name]);
       }
     };
-    return g3[name];
+    return g2[name];
   };
   var dir = new Proxy(
     {},
@@ -54329,9 +54320,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   });
 
   // pkgs/base/pkgs/pkg/export.ts
-  var g2 = globalThis;
-  if (!g2.pkgRunning) {
-    g2.pkgRunning = /* @__PURE__ */ new Set();
+  var g = globalThis;
+  if (!g.pkgRunning) {
+    g.pkgRunning = /* @__PURE__ */ new Set();
   }
   var getModuleVersion = (name) => {
     const res = (0, import_child_process2.spawnSync)("pnpm", ["why", "-r", name], {
@@ -54358,8 +54349,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     async install(path2, arg) {
       const _arg = arg ? arg : { cwd: void 0, silent: false };
       const silent = _arg.silent === true ? true : false;
-      if (g2.pkgRunning.size > 0) {
-        await Promise.all([...g2.pkgRunning.values()]);
+      if (g.pkgRunning.size > 0) {
+        await Promise.all([...g.pkgRunning.values()]);
       }
       const prom = new Promise(async (resolve2) => {
         let install = false;
@@ -54391,7 +54382,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
             cwd: _arg.cwd || process.cwd()
           });
           child.on("exit", () => {
-            g2.pkgRunning.delete(prom);
+            g.pkgRunning.delete(prom);
             if (arg?.onInstallDone)
               arg.onInstallDone();
             resolve2();
@@ -54400,7 +54391,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
           resolve2();
         }
       });
-      g2.pkgRunning.add(prom);
+      g.pkgRunning.add(prom);
       return await prom;
     }
   };
@@ -54480,12 +54471,12 @@ ${import_chalk2.default.magenta("Installing")} deps:
     return { target: t, name: a, receiver: s, val: o, args: c, descriptor: p, thisValue: n, prototype: l };
   };
   var createHandlerContext = (e, r) => {
-    const { trapName: t, handler: a, traps: o, root: s, path: c } = e, { target: p, name: n, val: l, receiver: d, args: i, descriptor: h, thisValue: y, prototype: u } = parseParameters(t, r), g3 = trapsWithKey.includes(t) ? n : void 0;
-    return { parameters: r, target: p, name: n, val: l, args: i, descriptor: h, receiver: d, thisValue: y, prototype: u, trapName: t, traps: o, path: c, handler: a, key: g3, newValue: "set" === t ? l : void 0, root: s, get proxy() {
+    const { trapName: t, handler: a, traps: o, root: s, path: c } = e, { target: p, name: n, val: l, receiver: d, args: i, descriptor: h, thisValue: y, prototype: u } = parseParameters(t, r), g2 = trapsWithKey.includes(t) ? n : void 0;
+    return { parameters: r, target: p, name: n, val: l, args: i, descriptor: h, receiver: d, thisValue: y, prototype: u, trapName: t, traps: o, path: c, handler: a, key: g2, newValue: "set" === t ? l : void 0, root: s, get proxy() {
       return getFromCache(s, p, c);
     }, get value() {
-      return g3 && p[g3];
-    }, DEFAULT, PROXY: createDeepProxy.bind({ root: s, handler: a, path: [...c, g3] }) };
+      return g2 && p[g2];
+    }, DEFAULT, PROXY: createDeepProxy.bind({ root: s, handler: a, path: [...c, g2] }) };
   };
   var trap = function(...e) {
     const { trapName: r, handler: t } = this, a = createHandlerContext(this, e), { PROXY: o, DEFAULT: s } = a, c = t(a);
@@ -55547,25 +55538,19 @@ Make sure to kill running instance before starting.
 
   // pkgs/service/src/action.ts
   var action = {
-    start(arg) {
-      return new Promise(async (resolve2) => {
-        const running = await runner.run({
-          path: dir.path(`${arg.name}/index.js`),
-          cwd: process.cwd(),
-          onMessage(e) {
-            if (e === `::RUNNING|${arg.name}::`) {
-              resolve2(running);
-            }
-          }
-        });
-        if (!running) {
-          console.log(
-            `${source_default.red(`Failed`)} to start ${source_default.cyan(
-              arg.name
-            )}: Service not found`
-          );
-        }
+    async start(arg) {
+      const running = await runner.run({
+        path: dir.path(`${arg.name}/index.js`),
+        cwd: dir.path()
       });
+      if (!running) {
+        console.log(
+          `${source_default.red(`Failed`)} to start ${source_default.cyan(
+            arg.name
+          )}: Service not found`
+        );
+      }
+      return running;
     },
     async restart(arg) {
       return await runner.restart(dir.path(`${arg.name}/index.js`));
@@ -55578,8 +55563,8 @@ Make sure to kill running instance before starting.
     value: {
       rpc: null
     },
-    init: async (g3) => {
-      g3.rpc = await createRPC("root", action);
+    init: async (g2) => {
+      g2.rpc = await createRPC("root", action);
     }
   });
 
@@ -57184,20 +57169,6 @@ export const _ = {
       printTimer: true,
       onBeforeDone: arg.onDone,
       watch: arg.watch ? (_0) => __async(void 0, [_0], function* ({ isRebuild, installDeps }) {
-        if (installDeps)
-          return;
-        if (isRebuild && runner.list[app.path]) {
-          const mark = marker[name];
-          if (mark) {
-            if (mark instanceof Set) {
-              yield prepare(name, mark);
-              delete marker[name];
-            }
-            yield rpc.restart({ name });
-          } else {
-            marker[name] = true;
-          }
-        }
       }) : void 0
     }))) {
       console.log(`build service ${name} failed`);
@@ -57972,9 +57943,6 @@ If somehow upgrade failed you can rollback using
     "hide-files.files": []
   };
 
-  // pkgs/base/src/watcher/all.ts
-  var import_fs_jetpack16 = __toESM(require_main2());
-
   // pkgs/base/src/watcher/new-service.ts
   var import_chalk8 = __toESM(require_source());
   var import_fs_jetpack15 = __toESM(require_main2());
@@ -58048,10 +58016,7 @@ If somehow upgrade failed you can rollback using
           ignore: ["pkgs/*/node_modules", "node_modules"],
           event: (err2, ev) => __async(void 0, null, function* () {
             if (!err2) {
-              if (baseGlobal.app)
-                yield (0, import_fs_jetpack16.removeAsync)(baseGlobal.app.path);
-              yield onExit();
-              process.exit(99);
+              marker["*"] = /* @__PURE__ */ new Set();
             }
           })
         });
@@ -58093,10 +58058,6 @@ If somehow upgrade failed you can rollback using
       let bannerPrinted = false;
       const onDone = cacheFound ? (arg) => {
         if (!bannerPrinted) {
-          if (cacheFound)
-            console.log(`
-
-`);
           console.log(
             `\u2500\u2500 ${(0, import_lodash5.default)(
               import_chalk9.default.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",

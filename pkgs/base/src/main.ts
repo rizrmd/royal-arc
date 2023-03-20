@@ -3,7 +3,7 @@ import { watcher } from "bundler/watch";
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
 import { dir } from "dir";
-import { appendFile } from "fs";
+import { existsAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { pkg } from "pkg";
 import { connectRPC, createRPC } from "rpc";
@@ -25,7 +25,7 @@ export const baseMain = async () => {
 
   if (await commitHook(args)) return;
   if (await upgradeHook(args)) return;
-
+ 
   console.log(`── ${padEnd(chalk.yellow(`BASE`) + " ", 47, "─")}`);
 
   if (
@@ -33,15 +33,15 @@ export const baseMain = async () => {
     args.includes("deploy") ||
     args.includes("prod") ||
     args.includes("staging")
-  ) {
+  ) { 
   } else {
     const onExit = async () => {
       await watcher.dispose();
       await runner.dispose();
     };
-    addExitCallback(() => {});
-    setupWatchers(args, onExit);
-
+    addExitCallback(() => {}); 
+    setupWatchers(args, onExit); 
+ 
     await createRPC("base", action, { isMain: true });
 
     const rootRPC = await connectRPC<typeof RootAction>("root", {
@@ -53,8 +53,8 @@ export const baseMain = async () => {
       await pkg.install(dir.root("pkgs"), { cwd: dir.root(), deep: true });
     }
 
-    const app = await buildApp({ watch: true });
-    baseGlobal.app = app;
+    const app = await buildApp({ watch: true }); 
+    baseGlobal.app = app; 
 
     let cacheFound = false;
 
@@ -71,7 +71,6 @@ export const baseMain = async () => {
     const onDone = cacheFound
       ? (arg: { isRebuild: boolean }) => {
           if (!bannerPrinted) {
-            if (cacheFound) console.log(`\n\n`);
             console.log(
               `── ${padEnd(
                 chalk.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
