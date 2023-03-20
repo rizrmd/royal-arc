@@ -1,10 +1,10 @@
-import { bundle, runner } from "bundler";
+import { bundle } from "bundler";
+import { runner } from "bundler/runner";
 import { dir } from "dir";
-import { action } from "../../../service/src/action";
 import { RPCActionResult } from "rpc/src/types";
-import { prepareDB } from "./service/db";
+import { action } from "../../../service/src/action";
 import { watchService } from "../watcher/watch-service";
-import { watcher } from "bundler/src/watch";
+import { prepareDB } from "./service/db";
 import { prepareSrv } from "./service/srv";
 
 const marker = {} as Record<string, true | Set<string>>;
@@ -62,7 +62,6 @@ export const buildService = async (
       if (!err) {
         for (const c of changes) {
           if (c.type === "update") {
-            console.log(c)
             if (!marker[name]) marker[name] = new Set();
 
             const mark = marker[name];

@@ -79,7 +79,7 @@ importers:
   pkgs/base/pkgs/bundler:
     specifiers:
       '@types/command-exists': ^1.2.0
-      command-exists: '*'
+      command-exists: 1.2.9
       dir: workspace:*
       pkg: workspace:*
       utility: workspace:*
@@ -235,7 +235,7 @@ importers:
 
   pkgs/template/pkgs/db:
     specifiers:
-      prisma: '*'
+      prisma: 4.11.0
       service-db: ../../pkgs/service/pkgs/service-db
     dependencies:
       prisma: 4.11.0

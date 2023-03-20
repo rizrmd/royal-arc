@@ -13,7 +13,11 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
   await Promise.all(
     ["dependencies", "devDependencies"].map(async (e) => {
       if (!pkg || (pkg && !pkg[e])) return;
-      for (const [k, v] of Object.entries(pkg[e])) {
+      const entries = Object.entries(pkg[e] as Record<string, string>);
+      for (const [k, v] of entries) {
+        if (v.startsWith(".") || v.startsWith("/")) {
+          continue;
+        }
         if (!(await existsAsync(join(dir, "node_modules", k)))) {
           if (silent === false) {
             console.log(
@@ -50,5 +54,6 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
   if (shouldInstall) {
     await writeAsync(path, pkg, { jsonIndent: 2 });
   }
+
   return shouldInstall;
 };

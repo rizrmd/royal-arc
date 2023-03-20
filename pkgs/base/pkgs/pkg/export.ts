@@ -43,8 +43,9 @@ export const pkg = {
     arg?: {
       cwd?: undefined | string;
       silent?: boolean;
-      onInstall?: () => void;
-      onInstallDone?: () => void;
+      onInstall?: () => any;
+      onInstallDone?: () => any;
+      deep?: boolean;
     }
   ) {
     const _arg = arg ? arg : { cwd: undefined, silent: false };
@@ -55,7 +56,21 @@ export const pkg = {
     }
 
     const prom = new Promise<void>(async (resolve) => {
-      const install = await shouldInstall(path, silent);
+      let install = false;
+
+      if (arg?.deep) {
+        const dirs = await scanDir([path]);
+        const all = await Promise.all(
+          dirs.map((e) => shouldInstall(e, silent))
+        );
+
+        if (all.filter((e) => e).length > 0) {
+          install = true;
+        }
+      } else {
+        install = await shouldInstall(path, silent);
+      }
+
       if (install) {
         if (arg?.onInstall) await arg.onInstall();
         if (!silent)

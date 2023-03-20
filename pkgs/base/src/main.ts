@@ -1,9 +1,11 @@
-import { runner } from "bundler";
-import { watcher } from "bundler/src/watch";
+import { runner } from "bundler/runner";
+import { watcher } from "bundler/watch";
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
+import { dir } from "dir";
 import { appendFile } from "fs";
 import padEnd from "lodash.padend";
+import { pkg } from "pkg";
 import { connectRPC, createRPC } from "rpc";
 import { action as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
@@ -35,7 +37,7 @@ export const baseMain = async () => {
   } else {
     const onExit = async () => {
       await watcher.dispose();
-      await runner.dispose()
+      await runner.dispose();
     };
     addExitCallback(() => {});
     setupWatchers(args, onExit);
@@ -47,10 +49,15 @@ export const baseMain = async () => {
     });
     baseGlobal.rootRPC = rootRPC;
 
+    if (args.includes("devbase")) {
+      await pkg.install(dir.root("pkgs"), { cwd: dir.root(), deep: true });
+    }
+
     const app = await buildApp({ watch: true });
     baseGlobal.app = app;
 
     let cacheFound = false;
+
     // if (await existsAsync(app.path)) {
     //   console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
     //   await runner.run({

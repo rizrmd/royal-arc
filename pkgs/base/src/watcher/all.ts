@@ -1,4 +1,4 @@
-import { watcher } from "bundler/src/watch";
+import { watcher } from "bundler/watch";
 import { dir } from "dir";
 import { removeAsync } from "fs-jetpack";
 import { baseGlobal } from "../action";
@@ -14,8 +14,8 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
           if (!err) {
             if (baseGlobal.app) await removeAsync(baseGlobal.app.path);
             await onExit();
-            // process.exit(99);
-          }
+            process.exit(99); 
+          } 
         },
       });
     });

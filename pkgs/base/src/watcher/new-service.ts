@@ -1,4 +1,4 @@
-import { watcher } from "bundler/src/watch";
+import { watcher } from "bundler/watch";
 import chalk from "chalk";
 import { dir } from "dir";
 import { readAsync, removeAsync, writeAsync } from "fs-jetpack";

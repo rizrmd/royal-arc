@@ -70,6 +70,707 @@
     });
   };
 
+  // node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/lib/command-exists.js
+  var require_command_exists = __commonJS({
+    "node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/lib/command-exists.js"(exports2, module2) {
+      "use strict";
+      var exec = __require("child_process").exec;
+      var execSync = __require("child_process").execSync;
+      var fs2 = __require("fs");
+      var path2 = __require("path");
+      var access = fs2.access;
+      var accessSync = fs2.accessSync;
+      var constants = fs2.constants || fs2;
+      var isUsingWindows = process.platform == "win32";
+      var fileNotExists = function(commandName, callback) {
+        access(
+          commandName,
+          constants.F_OK,
+          function(err2) {
+            callback(!err2);
+          }
+        );
+      };
+      var fileNotExistsSync = function(commandName) {
+        try {
+          accessSync(commandName, constants.F_OK);
+          return false;
+        } catch (e) {
+          return true;
+        }
+      };
+      var localExecutable = function(commandName, callback) {
+        access(
+          commandName,
+          constants.F_OK | constants.X_OK,
+          function(err2) {
+            callback(null, !err2);
+          }
+        );
+      };
+      var localExecutableSync = function(commandName) {
+        try {
+          accessSync(commandName, constants.F_OK | constants.X_OK);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      };
+      var commandExistsUnix = function(commandName, cleanedCommandName, callback) {
+        fileNotExists(commandName, function(isFile) {
+          if (!isFile) {
+            var child = exec(
+              "command -v " + cleanedCommandName + " 2>/dev/null && { echo >&1 " + cleanedCommandName + "; exit 0; }",
+              function(error, stdout, stderr) {
+                callback(null, !!stdout);
+              }
+            );
+            return;
+          }
+          localExecutable(commandName, callback);
+        });
+      };
+      var commandExistsWindows = function(commandName, cleanedCommandName, callback) {
+        if (!/^(?!(?:.*\s|.*\.|\W+)$)(?:[a-zA-Z]:)?(?:(?:[^<>:"\|\?\*\n])+(?:\/\/|\/|\\\\|\\)?)+$/m.test(commandName)) {
+          callback(null, false);
+          return;
+        }
+        var child = exec(
+          "where " + cleanedCommandName,
+          function(error) {
+            if (error !== null) {
+              callback(null, false);
+            } else {
+              callback(null, true);
+            }
+          }
+        );
+      };
+      var commandExistsUnixSync = function(commandName, cleanedCommandName) {
+        if (fileNotExistsSync(commandName)) {
+          try {
+            var stdout = execSync(
+              "command -v " + cleanedCommandName + " 2>/dev/null && { echo >&1 " + cleanedCommandName + "; exit 0; }"
+            );
+            return !!stdout;
+          } catch (error) {
+            return false;
+          }
+        }
+        return localExecutableSync(commandName);
+      };
+      var commandExistsWindowsSync = function(commandName, cleanedCommandName, callback) {
+        if (!/^(?!(?:.*\s|.*\.|\W+)$)(?:[a-zA-Z]:)?(?:(?:[^<>:"\|\?\*\n])+(?:\/\/|\/|\\\\|\\)?)+$/m.test(commandName)) {
+          return false;
+        }
+        try {
+          var stdout = execSync("where " + cleanedCommandName, { stdio: [] });
+          return !!stdout;
+        } catch (error) {
+          return false;
+        }
+      };
+      var cleanInput = function(s) {
+        if (/[^A-Za-z0-9_\/:=-]/.test(s)) {
+          s = "'" + s.replace(/'/g, "'\\''") + "'";
+          s = s.replace(/^(?:'')+/g, "").replace(/\\'''/g, "\\'");
+        }
+        return s;
+      };
+      if (isUsingWindows) {
+        cleanInput = function(s) {
+          var isPathName = /[\\]/.test(s);
+          if (isPathName) {
+            var dirname8 = '"' + path2.dirname(s) + '"';
+            var basename4 = '"' + path2.basename(s) + '"';
+            return dirname8 + ":" + basename4;
+          }
+          return '"' + s + '"';
+        };
+      }
+      module2.exports = function commandExists2(commandName, callback) {
+        var cleanedCommandName = cleanInput(commandName);
+        if (!callback && typeof Promise !== "undefined") {
+          return new Promise(function(resolve2, reject) {
+            commandExists2(commandName, function(error, output) {
+              if (output) {
+                resolve2(commandName);
+              } else {
+                reject(error);
+              }
+            });
+          });
+        }
+        if (isUsingWindows) {
+          commandExistsWindows(commandName, cleanedCommandName, callback);
+        } else {
+          commandExistsUnix(commandName, cleanedCommandName, callback);
+        }
+      };
+      module2.exports.sync = function(commandName) {
+        var cleanedCommandName = cleanInput(commandName);
+        if (isUsingWindows) {
+          return commandExistsWindowsSync(commandName, cleanedCommandName);
+        } else {
+          return commandExistsUnixSync(commandName, cleanedCommandName);
+        }
+      };
+    }
+  });
+
+  // node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/index.js
+  var require_command_exists2 = __commonJS({
+    "node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/index.js"(exports2, module2) {
+      module2.exports = require_command_exists();
+    }
+  });
+
+  // node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/core.js
+  var require_core = __commonJS({
+    "node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/core.js"(exports2) {
+      "use strict";
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.SIGNALS = void 0;
+      var SIGNALS = [
+        {
+          name: "SIGHUP",
+          number: 1,
+          action: "terminate",
+          description: "Terminal closed",
+          standard: "posix"
+        },
+        {
+          name: "SIGINT",
+          number: 2,
+          action: "terminate",
+          description: "User interruption with CTRL-C",
+          standard: "ansi"
+        },
+        {
+          name: "SIGQUIT",
+          number: 3,
+          action: "core",
+          description: "User interruption with CTRL-\\",
+          standard: "posix"
+        },
+        {
+          name: "SIGILL",
+          number: 4,
+          action: "core",
+          description: "Invalid machine instruction",
+          standard: "ansi"
+        },
+        {
+          name: "SIGTRAP",
+          number: 5,
+          action: "core",
+          description: "Debugger breakpoint",
+          standard: "posix"
+        },
+        {
+          name: "SIGABRT",
+          number: 6,
+          action: "core",
+          description: "Aborted",
+          standard: "ansi"
+        },
+        {
+          name: "SIGIOT",
+          number: 6,
+          action: "core",
+          description: "Aborted",
+          standard: "bsd"
+        },
+        {
+          name: "SIGBUS",
+          number: 7,
+          action: "core",
+          description: "Bus error due to misaligned, non-existing address or paging error",
+          standard: "bsd"
+        },
+        {
+          name: "SIGEMT",
+          number: 7,
+          action: "terminate",
+          description: "Command should be emulated but is not implemented",
+          standard: "other"
+        },
+        {
+          name: "SIGFPE",
+          number: 8,
+          action: "core",
+          description: "Floating point arithmetic error",
+          standard: "ansi"
+        },
+        {
+          name: "SIGKILL",
+          number: 9,
+          action: "terminate",
+          description: "Forced termination",
+          standard: "posix",
+          forced: true
+        },
+        {
+          name: "SIGUSR1",
+          number: 10,
+          action: "terminate",
+          description: "Application-specific signal",
+          standard: "posix"
+        },
+        {
+          name: "SIGSEGV",
+          number: 11,
+          action: "core",
+          description: "Segmentation fault",
+          standard: "ansi"
+        },
+        {
+          name: "SIGUSR2",
+          number: 12,
+          action: "terminate",
+          description: "Application-specific signal",
+          standard: "posix"
+        },
+        {
+          name: "SIGPIPE",
+          number: 13,
+          action: "terminate",
+          description: "Broken pipe or socket",
+          standard: "posix"
+        },
+        {
+          name: "SIGALRM",
+          number: 14,
+          action: "terminate",
+          description: "Timeout or timer",
+          standard: "posix"
+        },
+        {
+          name: "SIGTERM",
+          number: 15,
+          action: "terminate",
+          description: "Termination",
+          standard: "ansi"
+        },
+        {
+          name: "SIGSTKFLT",
+          number: 16,
+          action: "terminate",
+          description: "Stack is empty or overflowed",
+          standard: "other"
+        },
+        {
+          name: "SIGCHLD",
+          number: 17,
+          action: "ignore",
+          description: "Child process terminated, paused or unpaused",
+          standard: "posix"
+        },
+        {
+          name: "SIGCLD",
+          number: 17,
+          action: "ignore",
+          description: "Child process terminated, paused or unpaused",
+          standard: "other"
+        },
+        {
+          name: "SIGCONT",
+          number: 18,
+          action: "unpause",
+          description: "Unpaused",
+          standard: "posix",
+          forced: true
+        },
+        {
+          name: "SIGSTOP",
+          number: 19,
+          action: "pause",
+          description: "Paused",
+          standard: "posix",
+          forced: true
+        },
+        {
+          name: "SIGTSTP",
+          number: 20,
+          action: "pause",
+          description: 'Paused using CTRL-Z or "suspend"',
+          standard: "posix"
+        },
+        {
+          name: "SIGTTIN",
+          number: 21,
+          action: "pause",
+          description: "Background process cannot read terminal input",
+          standard: "posix"
+        },
+        {
+          name: "SIGBREAK",
+          number: 21,
+          action: "terminate",
+          description: "User interruption with CTRL-BREAK",
+          standard: "other"
+        },
+        {
+          name: "SIGTTOU",
+          number: 22,
+          action: "pause",
+          description: "Background process cannot write to terminal output",
+          standard: "posix"
+        },
+        {
+          name: "SIGURG",
+          number: 23,
+          action: "ignore",
+          description: "Socket received out-of-band data",
+          standard: "bsd"
+        },
+        {
+          name: "SIGXCPU",
+          number: 24,
+          action: "core",
+          description: "Process timed out",
+          standard: "bsd"
+        },
+        {
+          name: "SIGXFSZ",
+          number: 25,
+          action: "core",
+          description: "File too big",
+          standard: "bsd"
+        },
+        {
+          name: "SIGVTALRM",
+          number: 26,
+          action: "terminate",
+          description: "Timeout or timer",
+          standard: "bsd"
+        },
+        {
+          name: "SIGPROF",
+          number: 27,
+          action: "terminate",
+          description: "Timeout or timer",
+          standard: "bsd"
+        },
+        {
+          name: "SIGWINCH",
+          number: 28,
+          action: "ignore",
+          description: "Terminal window size changed",
+          standard: "bsd"
+        },
+        {
+          name: "SIGIO",
+          number: 29,
+          action: "terminate",
+          description: "I/O is available",
+          standard: "other"
+        },
+        {
+          name: "SIGPOLL",
+          number: 29,
+          action: "terminate",
+          description: "Watched event",
+          standard: "other"
+        },
+        {
+          name: "SIGINFO",
+          number: 29,
+          action: "ignore",
+          description: "Request for process information",
+          standard: "other"
+        },
+        {
+          name: "SIGPWR",
+          number: 30,
+          action: "terminate",
+          description: "Device running out of power",
+          standard: "systemv"
+        },
+        {
+          name: "SIGSYS",
+          number: 31,
+          action: "core",
+          description: "Invalid system call",
+          standard: "other"
+        },
+        {
+          name: "SIGUNUSED",
+          number: 31,
+          action: "terminate",
+          description: "Invalid system call",
+          standard: "other"
+        }
+      ];
+      exports2.SIGNALS = SIGNALS;
+    }
+  });
+
+  // node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/realtime.js
+  var require_realtime = __commonJS({
+    "node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/realtime.js"(exports2) {
+      "use strict";
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.SIGRTMAX = exports2.getRealtimeSignals = void 0;
+      var getRealtimeSignals = function() {
+        const length = SIGRTMAX - SIGRTMIN + 1;
+        return Array.from({ length }, getRealtimeSignal);
+      };
+      exports2.getRealtimeSignals = getRealtimeSignals;
+      var getRealtimeSignal = function(value, index) {
+        return {
+          name: `SIGRT${index + 1}`,
+          number: SIGRTMIN + index,
+          action: "terminate",
+          description: "Application-specific signal (realtime)",
+          standard: "posix"
+        };
+      };
+      var SIGRTMIN = 34;
+      var SIGRTMAX = 64;
+      exports2.SIGRTMAX = SIGRTMAX;
+    }
+  });
+
+  // node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/signals.js
+  var require_signals = __commonJS({
+    "node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/signals.js"(exports2) {
+      "use strict";
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.getSignals = void 0;
+      var _os = __require("os");
+      var _core = require_core();
+      var _realtime = require_realtime();
+      var getSignals = function() {
+        const realtimeSignals = (0, _realtime.getRealtimeSignals)();
+        const signals = [..._core.SIGNALS, ...realtimeSignals].map(normalizeSignal);
+        return signals;
+      };
+      exports2.getSignals = getSignals;
+      var normalizeSignal = function({
+        name,
+        number: defaultNumber,
+        description,
+        action: action3,
+        forced = false,
+        standard
+      }) {
+        const {
+          signals: { [name]: constantSignal }
+        } = _os.constants;
+        const supported = constantSignal !== void 0;
+        const number = supported ? constantSignal : defaultNumber;
+        return { name, number, description, supported, action: action3, forced, standard };
+      };
+    }
+  });
+
+  // node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/main.js
+  var require_main = __commonJS({
+    "node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/main.js"(exports2) {
+      "use strict";
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.signalsByNumber = exports2.signalsByName = void 0;
+      var _os = __require("os");
+      var _signals = require_signals();
+      var _realtime = require_realtime();
+      var getSignalsByName = function() {
+        const signals = (0, _signals.getSignals)();
+        return signals.reduce(getSignalByName, {});
+      };
+      var getSignalByName = function(signalByNameMemo, { name, number, description, supported, action: action3, forced, standard }) {
+        return {
+          ...signalByNameMemo,
+          [name]: { name, number, description, supported, action: action3, forced, standard }
+        };
+      };
+      var signalsByName = getSignalsByName();
+      exports2.signalsByName = signalsByName;
+      var getSignalsByNumber = function() {
+        const signals = (0, _signals.getSignals)();
+        const length = _realtime.SIGRTMAX + 1;
+        const signalsA = Array.from({ length }, (value, number) => getSignalByNumber(number, signals));
+        return Object.assign({}, ...signalsA);
+      };
+      var getSignalByNumber = function(number, signals) {
+        const signal = findSignalByNumber(number, signals);
+        if (signal === void 0) {
+          return {};
+        }
+        const { name, description, supported, action: action3, forced, standard } = signal;
+        return {
+          [number]: {
+            name,
+            number,
+            description,
+            supported,
+            action: action3,
+            forced,
+            standard
+          }
+        };
+      };
+      var findSignalByNumber = function(number, signals) {
+        const signal = signals.find(({ name }) => _os.constants.signals[name] === number);
+        if (signal !== void 0) {
+          return signal;
+        }
+        return signals.find((signalA) => signalA.number === number);
+      };
+      var signalsByNumber = getSignalsByNumber();
+      exports2.signalsByNumber = signalsByNumber;
+    }
+  });
+
+  // node_modules/.pnpm/catch-exit@1.2.2/node_modules/catch-exit/dist/index.js
+  var require_dist = __commonJS({
+    "node_modules/.pnpm/catch-exit@1.2.2/node_modules/catch-exit/dist/index.js"(exports2) {
+      "use strict";
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.enableLogging = exports2.setupCatchExit = exports2.registerStringifyError = exports2.catchSignalStrings = exports2.removeExitCallback = exports2.addExitCallback = void 0;
+      var async_hooks_1 = __require("async_hooks");
+      var fs_1 = __require("fs");
+      var human_signals_1 = require_main();
+      function addExitCallback3(callback) {
+        setupProcessExitHandling();
+        callbacks.push(callback);
+        return callback;
+      }
+      exports2.addExitCallback = addExitCallback3;
+      function removeExitCallback(callback) {
+        setupProcessExitHandling();
+        const index = callbacks.indexOf(callback);
+        return index > -1 ? callbacks.splice(index, 1)[0] : void 0;
+      }
+      exports2.removeExitCallback = removeExitCallback;
+      var signals = [
+        "SIGHUP",
+        // catches ctrl+c event
+        "SIGINT",
+        // catches "kill pid"
+        "SIGTERM",
+        "SIGQUIT"
+      ];
+      exports2.catchSignalStrings = [...signals, "exit", "uncaughtException"];
+      function stringifyError(error) {
+        if (customStringifyError) {
+          return customStringifyError(error);
+        }
+        if (error instanceof Error) {
+          return (error.stack || error.toString()) + "\n";
+        } else {
+          return String(error);
+        }
+      }
+      function registerStringifyError(errorStringifyFunction) {
+        setupProcessExitHandling();
+        customStringifyError = errorStringifyFunction;
+      }
+      exports2.registerStringifyError = registerStringifyError;
+      var customStringifyError;
+      function setupCatchExit(options) {
+        setupProcessExitHandling();
+        if (options) {
+          const { loggingEnabled: loggingEnabled2, customErrorStringify } = options;
+          if (customErrorStringify) {
+            registerStringifyError(customErrorStringify);
+          }
+          if (loggingEnabled2) {
+            enableLogging();
+          }
+        }
+      }
+      exports2.setupCatchExit = setupCatchExit;
+      var loggingEnabled = false;
+      function enableLogging(enable = true) {
+        setupProcessExitHandling();
+        loggingEnabled = enable;
+        return enable;
+      }
+      exports2.enableLogging = enableLogging;
+      function log(value) {
+        if (loggingEnabled) {
+          (0, fs_1.writeSync)(1, value + "\n");
+        }
+      }
+      function logError(value) {
+        (0, fs_1.writeSync)(2, value);
+      }
+      var callbacks = [];
+      var ignoredAsyncTypes = ["TTYWRAP", "SIGNALWRAP", "PIPEWRAP"];
+      var asyncHook = (0, async_hooks_1.createHook)({
+        init(id, type) {
+          if (!ignoredAsyncTypes.includes(type)) {
+            (0, fs_1.writeSync)(2, `
+ERROR: Async operation of type "${type}" was created in "process.exit" callback. This will not run to completion as "process.exit" will not complete async tasks.
+`);
+          }
+        }
+      });
+      var alreadySetup = false;
+      var alreadyExiting = false;
+      function setupProcessExitHandling() {
+        if (alreadySetup) {
+          return;
+        }
+        function exitHandler(signal, exitCode, inputError) {
+          log(`handling signal: ${signal} with code ${exitCode}`);
+          if (!alreadyExiting) {
+            log("setting alreadyExiting");
+            alreadyExiting = true;
+            try {
+              log(`Firing ${callbacks.length} callbacks`);
+              if (signal === "exit") {
+                asyncHook.enable();
+              }
+              callbacks.forEach((callback) => callback(signal, exitCode, inputError));
+              asyncHook.disable();
+            } catch (callbackError) {
+              log("Error in callback");
+              exitWithError(callbackError, 7);
+            }
+            if (inputError instanceof Error) {
+              exitWithError(inputError, exitCode);
+            } else {
+              process.exit(exitCode);
+            }
+          } else {
+            log("Already exiting, not doing anything");
+            return;
+          }
+        }
+        function exitWithError(error, code) {
+          log(`Exiting with error and code ${code}`);
+          logError(stringifyError(error));
+          process.exit(code);
+        }
+        signals.forEach((signal) => process.on(signal, () => {
+          var _a2;
+          const signalNumber = (_a2 = human_signals_1.signalsByName[signal]) === null || _a2 === void 0 ? void 0 : _a2.number;
+          if (signalNumber == void 0) {
+            throw new Error(`Failed to find number for signal "${signal}"`);
+          }
+          exitHandler(signal, 128 + signalNumber);
+        }));
+        process.on("exit", (code) => {
+          log(`exit listener with code ${code}`);
+          exitHandler("exit", code);
+        });
+        process.on("unhandledRejection", (reason) => {
+          log("unhandledRejection listener");
+          const error = reason instanceof Error ? reason : new Error(reason ? `${reason}` : "");
+          error.name = "UnhandledRejection";
+          throw error;
+        });
+        process.on("uncaughtException", (error) => {
+          log("uncaughtException listener");
+          exitHandler("uncaughtException", 1, error);
+        });
+        alreadySetup = true;
+      }
+    }
+  });
+
   // node_modules/.pnpm/color-name@1.1.4/node_modules/color-name/index.js
   var require_color_name = __commonJS({
     "node_modules/.pnpm/color-name@1.1.4/node_modules/color-name/index.js"(exports2, module2) {
@@ -1617,6 +2318,189 @@
     }
   });
 
+  // node_modules/.pnpm/lodash.padend@4.6.1/node_modules/lodash.padend/index.js
+  var require_lodash = __commonJS({
+    "node_modules/.pnpm/lodash.padend@4.6.1/node_modules/lodash.padend/index.js"(exports2, module2) {
+      var INFINITY = 1 / 0;
+      var MAX_SAFE_INTEGER = 9007199254740991;
+      var MAX_INTEGER = 17976931348623157e292;
+      var NAN = 0 / 0;
+      var symbolTag = "[object Symbol]";
+      var reTrim = /^\s+|\s+$/g;
+      var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+      var reIsBinary = /^0b[01]+$/i;
+      var reIsOctal = /^0o[0-7]+$/i;
+      var rsAstralRange = "\\ud800-\\udfff";
+      var rsComboMarksRange = "\\u0300-\\u036f\\ufe20-\\ufe23";
+      var rsComboSymbolsRange = "\\u20d0-\\u20f0";
+      var rsVarRange = "\\ufe0e\\ufe0f";
+      var rsAstral = "[" + rsAstralRange + "]";
+      var rsCombo = "[" + rsComboMarksRange + rsComboSymbolsRange + "]";
+      var rsFitz = "\\ud83c[\\udffb-\\udfff]";
+      var rsModifier = "(?:" + rsCombo + "|" + rsFitz + ")";
+      var rsNonAstral = "[^" + rsAstralRange + "]";
+      var rsRegional = "(?:\\ud83c[\\udde6-\\uddff]){2}";
+      var rsSurrPair = "[\\ud800-\\udbff][\\udc00-\\udfff]";
+      var rsZWJ = "\\u200d";
+      var reOptMod = rsModifier + "?";
+      var rsOptVar = "[" + rsVarRange + "]?";
+      var rsOptJoin = "(?:" + rsZWJ + "(?:" + [rsNonAstral, rsRegional, rsSurrPair].join("|") + ")" + rsOptVar + reOptMod + ")*";
+      var rsSeq = rsOptVar + reOptMod + rsOptJoin;
+      var rsSymbol = "(?:" + [rsNonAstral + rsCombo + "?", rsCombo, rsRegional, rsSurrPair, rsAstral].join("|") + ")";
+      var reUnicode = RegExp(rsFitz + "(?=" + rsFitz + ")|" + rsSymbol + rsSeq, "g");
+      var reHasUnicode = RegExp("[" + rsZWJ + rsAstralRange + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + "]");
+      var freeParseInt = parseInt;
+      var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
+      var freeSelf = typeof self == "object" && self && self.Object === Object && self;
+      var root2 = freeGlobal || freeSelf || Function("return this")();
+      var asciiSize = baseProperty("length");
+      function asciiToArray(string) {
+        return string.split("");
+      }
+      function baseProperty(key) {
+        return function(object) {
+          return object == null ? void 0 : object[key];
+        };
+      }
+      function hasUnicode(string) {
+        return reHasUnicode.test(string);
+      }
+      function stringSize(string) {
+        return hasUnicode(string) ? unicodeSize(string) : asciiSize(string);
+      }
+      function stringToArray(string) {
+        return hasUnicode(string) ? unicodeToArray(string) : asciiToArray(string);
+      }
+      function unicodeSize(string) {
+        var result = reUnicode.lastIndex = 0;
+        while (reUnicode.test(string)) {
+          result++;
+        }
+        return result;
+      }
+      function unicodeToArray(string) {
+        return string.match(reUnicode) || [];
+      }
+      var objectProto = Object.prototype;
+      var objectToString = objectProto.toString;
+      var Symbol2 = root2.Symbol;
+      var nativeCeil = Math.ceil;
+      var nativeFloor = Math.floor;
+      var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
+      var symbolToString = symbolProto ? symbolProto.toString : void 0;
+      function baseRepeat(string, n) {
+        var result = "";
+        if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
+          return result;
+        }
+        do {
+          if (n % 2) {
+            result += string;
+          }
+          n = nativeFloor(n / 2);
+          if (n) {
+            string += string;
+          }
+        } while (n);
+        return result;
+      }
+      function baseSlice(array, start, end) {
+        var index = -1, length = array.length;
+        if (start < 0) {
+          start = -start > length ? 0 : length + start;
+        }
+        end = end > length ? length : end;
+        if (end < 0) {
+          end += length;
+        }
+        length = start > end ? 0 : end - start >>> 0;
+        start >>>= 0;
+        var result = Array(length);
+        while (++index < length) {
+          result[index] = array[index + start];
+        }
+        return result;
+      }
+      function baseToString(value) {
+        if (typeof value == "string") {
+          return value;
+        }
+        if (isSymbol(value)) {
+          return symbolToString ? symbolToString.call(value) : "";
+        }
+        var result = value + "";
+        return result == "0" && 1 / value == -INFINITY ? "-0" : result;
+      }
+      function castSlice(array, start, end) {
+        var length = array.length;
+        end = end === void 0 ? length : end;
+        return !start && end >= length ? array : baseSlice(array, start, end);
+      }
+      function createPadding(length, chars) {
+        chars = chars === void 0 ? " " : baseToString(chars);
+        var charsLength = chars.length;
+        if (charsLength < 2) {
+          return charsLength ? baseRepeat(chars, length) : chars;
+        }
+        var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
+        return hasUnicode(chars) ? castSlice(stringToArray(result), 0, length).join("") : result.slice(0, length);
+      }
+      function isObject(value) {
+        var type = typeof value;
+        return !!value && (type == "object" || type == "function");
+      }
+      function isObjectLike(value) {
+        return !!value && typeof value == "object";
+      }
+      function isSymbol(value) {
+        return typeof value == "symbol" || isObjectLike(value) && objectToString.call(value) == symbolTag;
+      }
+      function toFinite(value) {
+        if (!value) {
+          return value === 0 ? value : 0;
+        }
+        value = toNumber(value);
+        if (value === INFINITY || value === -INFINITY) {
+          var sign = value < 0 ? -1 : 1;
+          return sign * MAX_INTEGER;
+        }
+        return value === value ? value : 0;
+      }
+      function toInteger(value) {
+        var result = toFinite(value), remainder = result % 1;
+        return result === result ? remainder ? result - remainder : result : 0;
+      }
+      function toNumber(value) {
+        if (typeof value == "number") {
+          return value;
+        }
+        if (isSymbol(value)) {
+          return NAN;
+        }
+        if (isObject(value)) {
+          var other = typeof value.valueOf == "function" ? value.valueOf() : value;
+          value = isObject(other) ? other + "" : other;
+        }
+        if (typeof value != "string") {
+          return value === 0 ? value : +value;
+        }
+        value = value.replace(reTrim, "");
+        var isBinary = reIsBinary.test(value);
+        return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
+      }
+      function toString(value) {
+        return value == null ? "" : baseToString(value);
+      }
+      function padEnd4(string, length, chars) {
+        string = toString(string);
+        length = toInteger(length);
+        var strLength = length ? stringSize(string) : 0;
+        return length && strLength < length ? string + createPadding(length - strLength, chars) : string;
+      }
+      module2.exports = padEnd4;
+    }
+  });
+
   // node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/utils/promisify.js
   var require_promisify = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/utils/promisify.js"(exports2, module2) {
@@ -1647,11 +2531,11 @@
   var require_fs = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/utils/fs.js"(exports2, module2) {
       "use strict";
-      var fs = __require("fs");
+      var fs2 = __require("fs");
       var promisify = require_promisify();
       var isCallbackMethod = (key) => {
         return [
-          typeof fs[key] === "function",
+          typeof fs2[key] === "function",
           !key.match(/Sync$/),
           !key.match(/^[A-Z]/),
           !key.match(/^create/),
@@ -1659,12 +2543,12 @@
         ].every(Boolean);
       };
       var adaptMethod = (name) => {
-        const original = fs[name];
+        const original = fs2[name];
         return promisify(original);
       };
       var adaptAllMethods = () => {
         const adapted = {};
-        Object.keys(fs).forEach((key) => {
+        Object.keys(fs2).forEach((key) => {
           if (isCallbackMethod(key)) {
             if (key === "exists") {
               adapted.exists = () => {
@@ -1674,7 +2558,7 @@
               adapted[key] = adaptMethod(key);
             }
           } else {
-            adapted[key] = fs[key];
+            adapted[key] = fs2[key];
           }
         });
         return adapted;
@@ -1816,21 +2700,21 @@
   var require_remove = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/remove.js"(exports2) {
       "use strict";
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var validateInput = (methodName, path2) => {
         const methodSignature = `${methodName}([path])`;
         validate.argument(methodSignature, "path", path2, ["string", "undefined"]);
       };
       var removeSync = (path2) => {
-        fs.rmSync(path2, {
+        fs2.rmSync(path2, {
           recursive: true,
           force: true,
           maxRetries: 3
         });
       };
       var removeAsync7 = (path2) => {
-        return fs.rm(path2, {
+        return fs2.rm(path2, {
           recursive: true,
           force: true,
           maxRetries: 3
@@ -1847,7 +2731,7 @@
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/dir.js"(exports2) {
       "use strict";
       var pathUtil = __require("path");
-      var fs = require_fs();
+      var fs2 = require_fs();
       var modeUtil = require_mode();
       var validate = require_validate();
       var remove = require_remove();
@@ -1877,7 +2761,7 @@
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
         let stat5;
         try {
-          stat5 = fs.statSync(path2);
+          stat5 = fs2.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
@@ -1891,11 +2775,11 @@
       var createBrandNewDirectorySync = (path2, opts) => {
         const options = opts || {};
         try {
-          fs.mkdirSync(path2, options.mode);
+          fs2.mkdirSync(path2, options.mode);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             createBrandNewDirectorySync(pathUtil.dirname(path2), options);
-            fs.mkdirSync(path2, options.mode);
+            fs2.mkdirSync(path2, options.mode);
           } else if (err2.code === "EEXIST") {
           } else {
             throw err2;
@@ -1906,12 +2790,12 @@
         const checkMode = () => {
           const mode = modeUtil.normalizeFileMode(stat5.mode);
           if (criteria.mode !== void 0 && criteria.mode !== mode) {
-            fs.chmodSync(path2, criteria.mode);
+            fs2.chmodSync(path2, criteria.mode);
           }
         };
         const checkEmptiness = () => {
           if (criteria.empty) {
-            const list = fs.readdirSync(path2);
+            const list = fs2.readdirSync(path2);
             list.forEach((filename) => {
               remove.sync(pathUtil.resolve(path2, filename));
             });
@@ -1931,7 +2815,7 @@
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve2, reject) => {
-          fs.stat(path2).then((stat5) => {
+          fs2.stat(path2).then((stat5) => {
             if (stat5.isDirectory()) {
               resolve2(stat5);
             } else {
@@ -1948,7 +2832,7 @@
       };
       var emptyAsync = (path2) => {
         return new Promise((resolve2, reject) => {
-          fs.readdir(path2).then((list) => {
+          fs2.readdir(path2).then((list) => {
             const doOne = (index) => {
               if (index === list.length) {
                 resolve2();
@@ -1968,7 +2852,7 @@
           const checkMode = () => {
             const mode = modeUtil.normalizeFileMode(stat5.mode);
             if (criteria.mode !== void 0 && criteria.mode !== mode) {
-              return fs.chmod(path2, criteria.mode);
+              return fs2.chmod(path2, criteria.mode);
             }
             return Promise.resolve();
           };
@@ -1984,10 +2868,10 @@
       var createBrandNewDirectoryAsync = (path2, opts) => {
         const options = opts || {};
         return new Promise((resolve2, reject) => {
-          fs.mkdir(path2, options.mode).then(resolve2).catch((err2) => {
+          fs2.mkdir(path2, options.mode).then(resolve2).catch((err2) => {
             if (err2.code === "ENOENT") {
               createBrandNewDirectoryAsync(pathUtil.dirname(path2), options).then(() => {
-                return fs.mkdir(path2, options.mode);
+                return fs2.mkdir(path2, options.mode);
               }).then(resolve2).catch((err22) => {
                 if (err22.code === "EEXIST") {
                   resolve2();
@@ -2031,7 +2915,7 @@
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/write.js"(exports2) {
       "use strict";
       var pathUtil = __require("path");
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var dir2 = require_dir();
       var validateInput = (methodName, path2, data, options) => {
@@ -2062,11 +2946,11 @@
       };
       var writeFileSync2 = (path2, data, options) => {
         try {
-          fs.writeFileSync(path2, data, options);
+          fs2.writeFileSync(path2, data, options);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             dir2.createSync(pathUtil.dirname(path2));
-            fs.writeFileSync(path2, data, options);
+            fs2.writeFileSync(path2, data, options);
           } else {
             throw err2;
           }
@@ -2074,7 +2958,7 @@
       };
       var writeAtomicSync = (path2, data, options) => {
         writeFileSync2(path2 + newExt, data, options);
-        fs.renameSync(path2 + newExt, path2);
+        fs2.renameSync(path2 + newExt, path2);
       };
       var writeSync = (path2, data, options) => {
         const opts = options || {};
@@ -2087,10 +2971,10 @@
       };
       var writeFileAsync = (path2, data, options) => {
         return new Promise((resolve2, reject) => {
-          fs.writeFile(path2, data, options).then(resolve2).catch((err2) => {
+          fs2.writeFile(path2, data, options).then(resolve2).catch((err2) => {
             if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(path2)).then(() => {
-                return fs.writeFile(path2, data, options);
+                return fs2.writeFile(path2, data, options);
               }).then(resolve2, reject);
             } else {
               reject(err2);
@@ -2101,7 +2985,7 @@
       var writeAtomicAsync = (path2, data, options) => {
         return new Promise((resolve2, reject) => {
           writeFileAsync(path2 + newExt, data, options).then(() => {
-            return fs.rename(path2 + newExt, path2);
+            return fs2.rename(path2 + newExt, path2);
           }).then(resolve2, reject);
         });
       };
@@ -2124,7 +3008,7 @@
   var require_append = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/append.js"(exports2) {
       "use strict";
-      var fs = require_fs();
+      var fs2 = require_fs();
       var write = require_write();
       var validate = require_validate();
       var validateInput = (methodName, path2, data, options) => {
@@ -2137,7 +3021,7 @@
       };
       var appendSync = (path2, data, options) => {
         try {
-          fs.appendFileSync(path2, data, options);
+          fs2.appendFileSync(path2, data, options);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             write.sync(path2, data, options);
@@ -2148,7 +3032,7 @@
       };
       var appendAsync = (path2, data, options) => {
         return new Promise((resolve2, reject) => {
-          fs.appendFile(path2, data, options).then(resolve2).catch((err2) => {
+          fs2.appendFile(path2, data, options).then(resolve2).catch((err2) => {
             if (err2.code === "ENOENT") {
               write.async(path2, data, options).then(resolve2, reject);
             } else {
@@ -2167,7 +3051,7 @@
   var require_file = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/file.js"(exports2) {
       "use strict";
-      var fs = require_fs();
+      var fs2 = require_fs();
       var modeUtil = require_mode();
       var validate = require_validate();
       var write = require_write();
@@ -2195,7 +3079,7 @@
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
         let stat5;
         try {
-          stat5 = fs.statSync(path2);
+          stat5 = fs2.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
@@ -2220,7 +3104,7 @@
         };
         const checkMode = () => {
           if (criteria.mode !== void 0 && criteria.mode !== mode) {
-            fs.chmodSync(path2, criteria.mode);
+            fs2.chmodSync(path2, criteria.mode);
           }
         };
         const contentReplaced = checkContent();
@@ -2249,7 +3133,7 @@
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve2, reject) => {
-          fs.stat(path2).then((stat5) => {
+          fs2.stat(path2).then((stat5) => {
             if (stat5.isFile()) {
               resolve2(stat5);
             } else {
@@ -2282,7 +3166,7 @@
         };
         const checkMode = () => {
           if (criteria.mode !== void 0 && criteria.mode !== mode) {
-            return fs.chmod(path2, criteria.mode);
+            return fs2.chmod(path2, criteria.mode);
           }
           return void 0;
         };
@@ -2326,7 +3210,7 @@
       "use strict";
       var crypto = __require("crypto");
       var pathUtil = __require("path");
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var supportedChecksumAlgorithms = ["md5", "sha1", "sha256", "sha512"];
       var symlinkOptions = ["report", "follow"];
@@ -2384,7 +3268,7 @@
       };
       var fileChecksum = (path2, algo) => {
         const hash = crypto.createHash(algo);
-        const data = fs.readFileSync(path2);
+        const data = fs2.readFileSync(path2);
         hash.update(data);
         return hash.digest("hex");
       };
@@ -2392,15 +3276,15 @@
         if (inspectObj.type === "file" && options.checksum) {
           inspectObj[options.checksum] = fileChecksum(path2, options.checksum);
         } else if (inspectObj.type === "symlink") {
-          inspectObj.pointsAt = fs.readlinkSync(path2);
+          inspectObj.pointsAt = fs2.readlinkSync(path2);
         }
       };
       var inspectSync = (path2, options) => {
-        let statOperation = fs.lstatSync;
+        let statOperation = fs2.lstatSync;
         let stat5;
         const opts = options || {};
         if (opts.symlinks === "follow") {
-          statOperation = fs.statSync;
+          statOperation = fs2.statSync;
         }
         try {
           stat5 = statOperation(path2);
@@ -2417,7 +3301,7 @@
       var fileChecksumAsync = (path2, algo) => {
         return new Promise((resolve2, reject) => {
           const hash = crypto.createHash(algo);
-          const s = fs.createReadStream(path2);
+          const s = fs2.createReadStream(path2);
           s.on("data", (data) => {
             hash.update(data);
           });
@@ -2434,7 +3318,7 @@
             return inspectObj;
           });
         } else if (inspectObj.type === "symlink") {
-          return fs.readlink(path2).then((linkPath) => {
+          return fs2.readlink(path2).then((linkPath) => {
             inspectObj.pointsAt = linkPath;
             return inspectObj;
           });
@@ -2443,10 +3327,10 @@
       };
       var inspectAsync = (path2, options) => {
         return new Promise((resolve2, reject) => {
-          let statOperation = fs.lstat;
+          let statOperation = fs2.lstat;
           const opts = options || {};
           if (opts.symlinks === "follow") {
-            statOperation = fs.stat;
+            statOperation = fs2.stat;
           }
           statOperation(path2).then((stat5) => {
             const inspectObj = createInspectObj(path2, opts, stat5);
@@ -2472,7 +3356,7 @@
   var require_list = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/list.js"(exports2) {
       "use strict";
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var validateInput = (methodName, path2) => {
         const methodSignature = `${methodName}(path)`;
@@ -2480,7 +3364,7 @@
       };
       var listSync = (path2) => {
         try {
-          return fs.readdirSync(path2);
+          return fs2.readdirSync(path2);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             return void 0;
@@ -2490,7 +3374,7 @@
       };
       var listAsync = (path2) => {
         return new Promise((resolve2, reject) => {
-          fs.readdir(path2).then((list) => {
+          fs2.readdir(path2).then((list) => {
             resolve2(list);
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
@@ -2511,7 +3395,7 @@
   var require_tree_walker = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/utils/tree_walker.js"(exports2) {
       "use strict";
-      var fs = __require("fs");
+      var fs2 = __require("fs");
       var pathUtil = __require("path");
       var inspect2 = require_inspect();
       var list = require_list();
@@ -2540,7 +3424,7 @@
           }
         }
         const walkSync = (path3, currentLevel) => {
-          fs.readdirSync(path3, { withFileTypes: true }).forEach((direntItem) => {
+          fs2.readdirSync(path3, { withFileTypes: true }).forEach((direntItem) => {
             const withFileTypesNotSupported = typeof direntItem === "string";
             let fileItemPath;
             if (withFileTypesNotSupported) {
@@ -2560,7 +3444,7 @@
             } else {
               const type = fileType(direntItem);
               if (type === "symlink" && options.symlinks === "follow") {
-                const symlinkPointsTo = fs.statSync(fileItemPath);
+                const symlinkPointsTo = fs2.statSync(fileItemPath);
                 fileItem = { name: direntItem.name, type: fileType(symlinkPointsTo) };
               } else {
                 fileItem = { name: direntItem.name, type };
@@ -2627,7 +3511,7 @@
             }
           };
           whenConcurrencySlotAvailable(() => {
-            fs.readdir(path3, { withFileTypes: true }, (err2, files) => {
+            fs2.readdir(path3, { withFileTypes: true }, (err2, files) => {
               if (err2) {
                 doneCallback(err2);
               } else {
@@ -2662,7 +3546,7 @@
                     const type = fileType(direntItem);
                     if (type === "symlink" && options.symlinks === "follow") {
                       whenConcurrencySlotAvailable(() => {
-                        fs.stat(fileItemPath, (err3, symlinkPointsTo) => {
+                        fs2.stat(fileItemPath, (err3, symlinkPointsTo) => {
                           if (err3) {
                             doneCallback(err3);
                           } else {
@@ -3916,7 +4800,7 @@
   var require_exists = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/exists.js"(exports2) {
       "use strict";
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var validateInput = (methodName, path2) => {
         const methodSignature = `${methodName}(path)`;
@@ -3924,7 +4808,7 @@
       };
       var existsSync5 = (path2) => {
         try {
-          const stat5 = fs.statSync(path2);
+          const stat5 = fs2.statSync(path2);
           if (stat5.isDirectory()) {
             return "dir";
           } else if (stat5.isFile()) {
@@ -3940,7 +4824,7 @@
       };
       var existsAsync9 = (path2) => {
         return new Promise((resolve2, reject) => {
-          fs.stat(path2).then((stat5) => {
+          fs2.stat(path2).then((stat5) => {
             if (stat5.isDirectory()) {
               resolve2("dir");
             } else if (stat5.isFile()) {
@@ -3968,7 +4852,7 @@
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/copy.js"(exports2) {
       "use strict";
       var pathUtil = __require("path");
-      var fs = require_fs();
+      var fs2 = require_fs();
       var dir2 = require_dir();
       var exists = require_exists();
       var inspect2 = require_inspect();
@@ -4042,15 +4926,15 @@
         return context.opts.overwrite === true;
       };
       var copyFileSync = (srcPath, destPath, mode, context) => {
-        const data = fs.readFileSync(srcPath);
+        const data = fs2.readFileSync(srcPath);
         try {
-          fs.writeFileSync(destPath, data, { mode, flag: "wx" });
+          fs2.writeFileSync(destPath, data, { mode, flag: "wx" });
         } catch (err2) {
           if (err2.code === "ENOENT") {
             write.sync(destPath, data, { mode });
           } else if (err2.code === "EEXIST") {
             if (canOverwriteItSync(context)) {
-              fs.writeFileSync(destPath, data, { mode });
+              fs2.writeFileSync(destPath, data, { mode });
             } else if (shouldThrowDestinationExistsError(context)) {
               throw generateDestinationExistsError(context.destPath);
             }
@@ -4060,13 +4944,13 @@
         }
       };
       var copySymlinkSync = (from, to) => {
-        const symlinkPointsAt = fs.readlinkSync(from);
+        const symlinkPointsAt = fs2.readlinkSync(from);
         try {
-          fs.symlinkSync(symlinkPointsAt, to);
+          fs2.symlinkSync(symlinkPointsAt, to);
         } catch (err2) {
           if (err2.code === "EEXIST") {
-            fs.unlinkSync(to);
-            fs.symlinkSync(symlinkPointsAt, to);
+            fs2.unlinkSync(to);
+            fs2.symlinkSync(symlinkPointsAt, to);
           } else {
             throw err2;
           }
@@ -4127,8 +5011,8 @@
           if (runOpts.overwrite) {
             flags = "w";
           }
-          const readStream = fs.createReadStream(srcPath);
-          const writeStream = fs.createWriteStream(destPath, { mode, flags });
+          const readStream = fs2.createReadStream(srcPath);
+          const writeStream = fs2.createWriteStream(destPath, { mode, flags });
           readStream.on("error", reject);
           writeStream.on("error", (err2) => {
             readStream.resume();
@@ -4160,12 +5044,12 @@
         });
       };
       var copySymlinkAsync = (from, to) => {
-        return fs.readlink(from).then((symlinkPointsAt) => {
+        return fs2.readlink(from).then((symlinkPointsAt) => {
           return new Promise((resolve2, reject) => {
-            fs.symlink(symlinkPointsAt, to).then(resolve2).catch((err2) => {
+            fs2.symlink(symlinkPointsAt, to).then(resolve2).catch((err2) => {
               if (err2.code === "EEXIST") {
-                fs.unlink(to).then(() => {
-                  return fs.symlink(symlinkPointsAt, to);
+                fs2.unlink(to).then(() => {
+                  return fs2.symlink(symlinkPointsAt, to);
                 }).then(resolve2, reject);
               } else {
                 reject(err2);
@@ -4235,7 +5119,7 @@
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/move.js"(exports2) {
       "use strict";
       var pathUtil = __require("path");
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var copy = require_copy();
       var dir2 = require_dir();
@@ -4269,11 +5153,11 @@
           throw generateDestinationExistsError(to);
         }
         try {
-          fs.renameSync(from, to);
+          fs2.renameSync(from, to);
         } catch (err2) {
           if (err2.code === "EISDIR" || err2.code === "EPERM") {
             remove.sync(to);
-            fs.renameSync(from, to);
+            fs2.renameSync(from, to);
           } else if (err2.code === "EXDEV") {
             copy.sync(from, to, { overwrite: true });
             remove.sync(from);
@@ -4282,7 +5166,7 @@
               throw generateSourceDoesntExistError(from);
             }
             dir2.createSync(pathUtil.dirname(to));
-            fs.renameSync(from, to);
+            fs2.renameSync(from, to);
           } else {
             throw err2;
           }
@@ -4307,9 +5191,9 @@
             if (destinationExists !== false && opts.overwrite !== true) {
               reject(generateDestinationExistsError(to));
             } else {
-              fs.rename(from, to).then(resolve2).catch((err2) => {
+              fs2.rename(from, to).then(resolve2).catch((err2) => {
                 if (err2.code === "EISDIR" || err2.code === "EPERM") {
-                  remove.async(to).then(() => fs.rename(from, to)).then(resolve2, reject);
+                  remove.async(to).then(() => fs2.rename(from, to)).then(resolve2, reject);
                 } else if (err2.code === "EXDEV") {
                   copy.async(from, to, { overwrite: true }).then(() => remove.async(from)).then(resolve2, reject);
                 } else if (err2.code === "ENOENT") {
@@ -4318,7 +5202,7 @@
                       reject(generateSourceDoesntExistError(from));
                     } else {
                       ensureDestinationPathExistsAsync(to).then(() => {
-                        return fs.rename(from, to);
+                        return fs2.rename(from, to);
                       }).then(resolve2, reject);
                     }
                   }).catch(reject);
@@ -4340,7 +5224,7 @@
   var require_read = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/read.js"(exports2) {
       "use strict";
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var supportedReturnAs = ["utf8", "buffer", "json", "jsonWithDates"];
       var validateInput = (methodName, path2, returnAs) => {
@@ -4382,7 +5266,7 @@
           encoding = null;
         }
         try {
-          data = fs.readFileSync(path2, { encoding });
+          data = fs2.readFileSync(path2, { encoding });
         } catch (err2) {
           if (err2.code === "ENOENT") {
             return void 0;
@@ -4407,7 +5291,7 @@
           if (retAs === "buffer") {
             encoding = null;
           }
-          fs.readFile(path2, { encoding }).then((data) => {
+          fs2.readFile(path2, { encoding }).then((data) => {
             try {
               if (retAs === "json") {
                 resolve2(JSON.parse(data));
@@ -4473,7 +5357,7 @@
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/symlink.js"(exports2) {
       "use strict";
       var pathUtil = __require("path");
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var dir2 = require_dir();
       var validateInput = (methodName, symlinkValue, path2) => {
@@ -4483,11 +5367,11 @@
       };
       var symlinkSync = (symlinkValue, path2) => {
         try {
-          fs.symlinkSync(symlinkValue, path2);
+          fs2.symlinkSync(symlinkValue, path2);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             dir2.createSync(pathUtil.dirname(path2));
-            fs.symlinkSync(symlinkValue, path2);
+            fs2.symlinkSync(symlinkValue, path2);
           } else {
             throw err2;
           }
@@ -4495,10 +5379,10 @@
       };
       var symlinkAsync = (symlinkValue, path2) => {
         return new Promise((resolve2, reject) => {
-          fs.symlink(symlinkValue, path2).then(resolve2).catch((err2) => {
+          fs2.symlink(symlinkValue, path2).then(resolve2).catch((err2) => {
             if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(path2)).then(() => {
-                return fs.symlink(symlinkValue, path2);
+                return fs2.symlink(symlinkValue, path2);
               }).then(resolve2, reject);
             } else {
               reject(err2);
@@ -4516,9 +5400,9 @@
   var require_streams = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/lib/streams.js"(exports2) {
       "use strict";
-      var fs = __require("fs");
-      exports2.createWriteStream = fs.createWriteStream;
-      exports2.createReadStream = fs.createReadStream;
+      var fs2 = __require("fs");
+      exports2.createWriteStream = fs2.createWriteStream;
+      exports2.createReadStream = fs2.createReadStream;
     }
   });
 
@@ -4530,7 +5414,7 @@
       var os3 = __require("os");
       var crypto = __require("crypto");
       var dir2 = require_dir();
-      var fs = require_fs();
+      var fs2 = require_fs();
       var validate = require_validate();
       var validateInput = (methodName, options) => {
         const methodSignature = `${methodName}([options])`;
@@ -4563,7 +5447,7 @@
           options.prefix + randomString
         );
         try {
-          fs.mkdirSync(dirPath);
+          fs2.mkdirSync(dirPath);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             dir2.sync(dirPath);
@@ -4585,7 +5469,7 @@
                 options.basePath,
                 options.prefix + randomString
               );
-              fs.mkdir(dirPath, (err3) => {
+              fs2.mkdir(dirPath, (err3) => {
                 if (err3) {
                   if (err3.code === "ENOENT") {
                     dir2.async(dirPath).then(() => {
@@ -4830,895 +5714,11 @@
   });
 
   // node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/main.js
-  var require_main = __commonJS({
+  var require_main2 = __commonJS({
     "node_modules/.pnpm/fs-jetpack@5.1.0/node_modules/fs-jetpack/main.js"(exports2, module2) {
       "use strict";
       var jetpack = require_jetpack();
       module2.exports = jetpack();
-    }
-  });
-
-  // node_modules/.pnpm/lodash.padend@4.6.1/node_modules/lodash.padend/index.js
-  var require_lodash = __commonJS({
-    "node_modules/.pnpm/lodash.padend@4.6.1/node_modules/lodash.padend/index.js"(exports2, module2) {
-      var INFINITY = 1 / 0;
-      var MAX_SAFE_INTEGER = 9007199254740991;
-      var MAX_INTEGER = 17976931348623157e292;
-      var NAN = 0 / 0;
-      var symbolTag = "[object Symbol]";
-      var reTrim = /^\s+|\s+$/g;
-      var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
-      var reIsBinary = /^0b[01]+$/i;
-      var reIsOctal = /^0o[0-7]+$/i;
-      var rsAstralRange = "\\ud800-\\udfff";
-      var rsComboMarksRange = "\\u0300-\\u036f\\ufe20-\\ufe23";
-      var rsComboSymbolsRange = "\\u20d0-\\u20f0";
-      var rsVarRange = "\\ufe0e\\ufe0f";
-      var rsAstral = "[" + rsAstralRange + "]";
-      var rsCombo = "[" + rsComboMarksRange + rsComboSymbolsRange + "]";
-      var rsFitz = "\\ud83c[\\udffb-\\udfff]";
-      var rsModifier = "(?:" + rsCombo + "|" + rsFitz + ")";
-      var rsNonAstral = "[^" + rsAstralRange + "]";
-      var rsRegional = "(?:\\ud83c[\\udde6-\\uddff]){2}";
-      var rsSurrPair = "[\\ud800-\\udbff][\\udc00-\\udfff]";
-      var rsZWJ = "\\u200d";
-      var reOptMod = rsModifier + "?";
-      var rsOptVar = "[" + rsVarRange + "]?";
-      var rsOptJoin = "(?:" + rsZWJ + "(?:" + [rsNonAstral, rsRegional, rsSurrPair].join("|") + ")" + rsOptVar + reOptMod + ")*";
-      var rsSeq = rsOptVar + reOptMod + rsOptJoin;
-      var rsSymbol = "(?:" + [rsNonAstral + rsCombo + "?", rsCombo, rsRegional, rsSurrPair, rsAstral].join("|") + ")";
-      var reUnicode = RegExp(rsFitz + "(?=" + rsFitz + ")|" + rsSymbol + rsSeq, "g");
-      var reHasUnicode = RegExp("[" + rsZWJ + rsAstralRange + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + "]");
-      var freeParseInt = parseInt;
-      var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
-      var freeSelf = typeof self == "object" && self && self.Object === Object && self;
-      var root2 = freeGlobal || freeSelf || Function("return this")();
-      var asciiSize = baseProperty("length");
-      function asciiToArray(string) {
-        return string.split("");
-      }
-      function baseProperty(key) {
-        return function(object) {
-          return object == null ? void 0 : object[key];
-        };
-      }
-      function hasUnicode(string) {
-        return reHasUnicode.test(string);
-      }
-      function stringSize(string) {
-        return hasUnicode(string) ? unicodeSize(string) : asciiSize(string);
-      }
-      function stringToArray(string) {
-        return hasUnicode(string) ? unicodeToArray(string) : asciiToArray(string);
-      }
-      function unicodeSize(string) {
-        var result = reUnicode.lastIndex = 0;
-        while (reUnicode.test(string)) {
-          result++;
-        }
-        return result;
-      }
-      function unicodeToArray(string) {
-        return string.match(reUnicode) || [];
-      }
-      var objectProto = Object.prototype;
-      var objectToString = objectProto.toString;
-      var Symbol2 = root2.Symbol;
-      var nativeCeil = Math.ceil;
-      var nativeFloor = Math.floor;
-      var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
-      var symbolToString = symbolProto ? symbolProto.toString : void 0;
-      function baseRepeat(string, n) {
-        var result = "";
-        if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
-          return result;
-        }
-        do {
-          if (n % 2) {
-            result += string;
-          }
-          n = nativeFloor(n / 2);
-          if (n) {
-            string += string;
-          }
-        } while (n);
-        return result;
-      }
-      function baseSlice(array, start, end) {
-        var index = -1, length = array.length;
-        if (start < 0) {
-          start = -start > length ? 0 : length + start;
-        }
-        end = end > length ? length : end;
-        if (end < 0) {
-          end += length;
-        }
-        length = start > end ? 0 : end - start >>> 0;
-        start >>>= 0;
-        var result = Array(length);
-        while (++index < length) {
-          result[index] = array[index + start];
-        }
-        return result;
-      }
-      function baseToString(value) {
-        if (typeof value == "string") {
-          return value;
-        }
-        if (isSymbol(value)) {
-          return symbolToString ? symbolToString.call(value) : "";
-        }
-        var result = value + "";
-        return result == "0" && 1 / value == -INFINITY ? "-0" : result;
-      }
-      function castSlice(array, start, end) {
-        var length = array.length;
-        end = end === void 0 ? length : end;
-        return !start && end >= length ? array : baseSlice(array, start, end);
-      }
-      function createPadding(length, chars) {
-        chars = chars === void 0 ? " " : baseToString(chars);
-        var charsLength = chars.length;
-        if (charsLength < 2) {
-          return charsLength ? baseRepeat(chars, length) : chars;
-        }
-        var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
-        return hasUnicode(chars) ? castSlice(stringToArray(result), 0, length).join("") : result.slice(0, length);
-      }
-      function isObject(value) {
-        var type = typeof value;
-        return !!value && (type == "object" || type == "function");
-      }
-      function isObjectLike(value) {
-        return !!value && typeof value == "object";
-      }
-      function isSymbol(value) {
-        return typeof value == "symbol" || isObjectLike(value) && objectToString.call(value) == symbolTag;
-      }
-      function toFinite(value) {
-        if (!value) {
-          return value === 0 ? value : 0;
-        }
-        value = toNumber(value);
-        if (value === INFINITY || value === -INFINITY) {
-          var sign = value < 0 ? -1 : 1;
-          return sign * MAX_INTEGER;
-        }
-        return value === value ? value : 0;
-      }
-      function toInteger(value) {
-        var result = toFinite(value), remainder = result % 1;
-        return result === result ? remainder ? result - remainder : result : 0;
-      }
-      function toNumber(value) {
-        if (typeof value == "number") {
-          return value;
-        }
-        if (isSymbol(value)) {
-          return NAN;
-        }
-        if (isObject(value)) {
-          var other = typeof value.valueOf == "function" ? value.valueOf() : value;
-          value = isObject(other) ? other + "" : other;
-        }
-        if (typeof value != "string") {
-          return value === 0 ? value : +value;
-        }
-        value = value.replace(reTrim, "");
-        var isBinary = reIsBinary.test(value);
-        return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
-      }
-      function toString(value) {
-        return value == null ? "" : baseToString(value);
-      }
-      function padEnd4(string, length, chars) {
-        string = toString(string);
-        length = toInteger(length);
-        var strLength = length ? stringSize(string) : 0;
-        return length && strLength < length ? string + createPadding(length - strLength, chars) : string;
-      }
-      module2.exports = padEnd4;
-    }
-  });
-
-  // node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/lib/command-exists.js
-  var require_command_exists = __commonJS({
-    "node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/lib/command-exists.js"(exports2, module2) {
-      "use strict";
-      var exec = __require("child_process").exec;
-      var execSync = __require("child_process").execSync;
-      var fs = __require("fs");
-      var path2 = __require("path");
-      var access = fs.access;
-      var accessSync = fs.accessSync;
-      var constants = fs.constants || fs;
-      var isUsingWindows = process.platform == "win32";
-      var fileNotExists = function(commandName, callback) {
-        access(
-          commandName,
-          constants.F_OK,
-          function(err2) {
-            callback(!err2);
-          }
-        );
-      };
-      var fileNotExistsSync = function(commandName) {
-        try {
-          accessSync(commandName, constants.F_OK);
-          return false;
-        } catch (e) {
-          return true;
-        }
-      };
-      var localExecutable = function(commandName, callback) {
-        access(
-          commandName,
-          constants.F_OK | constants.X_OK,
-          function(err2) {
-            callback(null, !err2);
-          }
-        );
-      };
-      var localExecutableSync = function(commandName) {
-        try {
-          accessSync(commandName, constants.F_OK | constants.X_OK);
-          return true;
-        } catch (e) {
-          return false;
-        }
-      };
-      var commandExistsUnix = function(commandName, cleanedCommandName, callback) {
-        fileNotExists(commandName, function(isFile) {
-          if (!isFile) {
-            var child = exec(
-              "command -v " + cleanedCommandName + " 2>/dev/null && { echo >&1 " + cleanedCommandName + "; exit 0; }",
-              function(error, stdout, stderr) {
-                callback(null, !!stdout);
-              }
-            );
-            return;
-          }
-          localExecutable(commandName, callback);
-        });
-      };
-      var commandExistsWindows = function(commandName, cleanedCommandName, callback) {
-        if (!/^(?!(?:.*\s|.*\.|\W+)$)(?:[a-zA-Z]:)?(?:(?:[^<>:"\|\?\*\n])+(?:\/\/|\/|\\\\|\\)?)+$/m.test(commandName)) {
-          callback(null, false);
-          return;
-        }
-        var child = exec(
-          "where " + cleanedCommandName,
-          function(error) {
-            if (error !== null) {
-              callback(null, false);
-            } else {
-              callback(null, true);
-            }
-          }
-        );
-      };
-      var commandExistsUnixSync = function(commandName, cleanedCommandName) {
-        if (fileNotExistsSync(commandName)) {
-          try {
-            var stdout = execSync(
-              "command -v " + cleanedCommandName + " 2>/dev/null && { echo >&1 " + cleanedCommandName + "; exit 0; }"
-            );
-            return !!stdout;
-          } catch (error) {
-            return false;
-          }
-        }
-        return localExecutableSync(commandName);
-      };
-      var commandExistsWindowsSync = function(commandName, cleanedCommandName, callback) {
-        if (!/^(?!(?:.*\s|.*\.|\W+)$)(?:[a-zA-Z]:)?(?:(?:[^<>:"\|\?\*\n])+(?:\/\/|\/|\\\\|\\)?)+$/m.test(commandName)) {
-          return false;
-        }
-        try {
-          var stdout = execSync("where " + cleanedCommandName, { stdio: [] });
-          return !!stdout;
-        } catch (error) {
-          return false;
-        }
-      };
-      var cleanInput = function(s) {
-        if (/[^A-Za-z0-9_\/:=-]/.test(s)) {
-          s = "'" + s.replace(/'/g, "'\\''") + "'";
-          s = s.replace(/^(?:'')+/g, "").replace(/\\'''/g, "\\'");
-        }
-        return s;
-      };
-      if (isUsingWindows) {
-        cleanInput = function(s) {
-          var isPathName = /[\\]/.test(s);
-          if (isPathName) {
-            var dirname8 = '"' + path2.dirname(s) + '"';
-            var basename4 = '"' + path2.basename(s) + '"';
-            return dirname8 + ":" + basename4;
-          }
-          return '"' + s + '"';
-        };
-      }
-      module2.exports = function commandExists2(commandName, callback) {
-        var cleanedCommandName = cleanInput(commandName);
-        if (!callback && typeof Promise !== "undefined") {
-          return new Promise(function(resolve2, reject) {
-            commandExists2(commandName, function(error, output) {
-              if (output) {
-                resolve2(commandName);
-              } else {
-                reject(error);
-              }
-            });
-          });
-        }
-        if (isUsingWindows) {
-          commandExistsWindows(commandName, cleanedCommandName, callback);
-        } else {
-          commandExistsUnix(commandName, cleanedCommandName, callback);
-        }
-      };
-      module2.exports.sync = function(commandName) {
-        var cleanedCommandName = cleanInput(commandName);
-        if (isUsingWindows) {
-          return commandExistsWindowsSync(commandName, cleanedCommandName);
-        } else {
-          return commandExistsUnixSync(commandName, cleanedCommandName);
-        }
-      };
-    }
-  });
-
-  // node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/index.js
-  var require_command_exists2 = __commonJS({
-    "node_modules/.pnpm/command-exists@1.2.9/node_modules/command-exists/index.js"(exports2, module2) {
-      module2.exports = require_command_exists();
-    }
-  });
-
-  // node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/core.js
-  var require_core = __commonJS({
-    "node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/core.js"(exports2) {
-      "use strict";
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.SIGNALS = void 0;
-      var SIGNALS = [
-        {
-          name: "SIGHUP",
-          number: 1,
-          action: "terminate",
-          description: "Terminal closed",
-          standard: "posix"
-        },
-        {
-          name: "SIGINT",
-          number: 2,
-          action: "terminate",
-          description: "User interruption with CTRL-C",
-          standard: "ansi"
-        },
-        {
-          name: "SIGQUIT",
-          number: 3,
-          action: "core",
-          description: "User interruption with CTRL-\\",
-          standard: "posix"
-        },
-        {
-          name: "SIGILL",
-          number: 4,
-          action: "core",
-          description: "Invalid machine instruction",
-          standard: "ansi"
-        },
-        {
-          name: "SIGTRAP",
-          number: 5,
-          action: "core",
-          description: "Debugger breakpoint",
-          standard: "posix"
-        },
-        {
-          name: "SIGABRT",
-          number: 6,
-          action: "core",
-          description: "Aborted",
-          standard: "ansi"
-        },
-        {
-          name: "SIGIOT",
-          number: 6,
-          action: "core",
-          description: "Aborted",
-          standard: "bsd"
-        },
-        {
-          name: "SIGBUS",
-          number: 7,
-          action: "core",
-          description: "Bus error due to misaligned, non-existing address or paging error",
-          standard: "bsd"
-        },
-        {
-          name: "SIGEMT",
-          number: 7,
-          action: "terminate",
-          description: "Command should be emulated but is not implemented",
-          standard: "other"
-        },
-        {
-          name: "SIGFPE",
-          number: 8,
-          action: "core",
-          description: "Floating point arithmetic error",
-          standard: "ansi"
-        },
-        {
-          name: "SIGKILL",
-          number: 9,
-          action: "terminate",
-          description: "Forced termination",
-          standard: "posix",
-          forced: true
-        },
-        {
-          name: "SIGUSR1",
-          number: 10,
-          action: "terminate",
-          description: "Application-specific signal",
-          standard: "posix"
-        },
-        {
-          name: "SIGSEGV",
-          number: 11,
-          action: "core",
-          description: "Segmentation fault",
-          standard: "ansi"
-        },
-        {
-          name: "SIGUSR2",
-          number: 12,
-          action: "terminate",
-          description: "Application-specific signal",
-          standard: "posix"
-        },
-        {
-          name: "SIGPIPE",
-          number: 13,
-          action: "terminate",
-          description: "Broken pipe or socket",
-          standard: "posix"
-        },
-        {
-          name: "SIGALRM",
-          number: 14,
-          action: "terminate",
-          description: "Timeout or timer",
-          standard: "posix"
-        },
-        {
-          name: "SIGTERM",
-          number: 15,
-          action: "terminate",
-          description: "Termination",
-          standard: "ansi"
-        },
-        {
-          name: "SIGSTKFLT",
-          number: 16,
-          action: "terminate",
-          description: "Stack is empty or overflowed",
-          standard: "other"
-        },
-        {
-          name: "SIGCHLD",
-          number: 17,
-          action: "ignore",
-          description: "Child process terminated, paused or unpaused",
-          standard: "posix"
-        },
-        {
-          name: "SIGCLD",
-          number: 17,
-          action: "ignore",
-          description: "Child process terminated, paused or unpaused",
-          standard: "other"
-        },
-        {
-          name: "SIGCONT",
-          number: 18,
-          action: "unpause",
-          description: "Unpaused",
-          standard: "posix",
-          forced: true
-        },
-        {
-          name: "SIGSTOP",
-          number: 19,
-          action: "pause",
-          description: "Paused",
-          standard: "posix",
-          forced: true
-        },
-        {
-          name: "SIGTSTP",
-          number: 20,
-          action: "pause",
-          description: 'Paused using CTRL-Z or "suspend"',
-          standard: "posix"
-        },
-        {
-          name: "SIGTTIN",
-          number: 21,
-          action: "pause",
-          description: "Background process cannot read terminal input",
-          standard: "posix"
-        },
-        {
-          name: "SIGBREAK",
-          number: 21,
-          action: "terminate",
-          description: "User interruption with CTRL-BREAK",
-          standard: "other"
-        },
-        {
-          name: "SIGTTOU",
-          number: 22,
-          action: "pause",
-          description: "Background process cannot write to terminal output",
-          standard: "posix"
-        },
-        {
-          name: "SIGURG",
-          number: 23,
-          action: "ignore",
-          description: "Socket received out-of-band data",
-          standard: "bsd"
-        },
-        {
-          name: "SIGXCPU",
-          number: 24,
-          action: "core",
-          description: "Process timed out",
-          standard: "bsd"
-        },
-        {
-          name: "SIGXFSZ",
-          number: 25,
-          action: "core",
-          description: "File too big",
-          standard: "bsd"
-        },
-        {
-          name: "SIGVTALRM",
-          number: 26,
-          action: "terminate",
-          description: "Timeout or timer",
-          standard: "bsd"
-        },
-        {
-          name: "SIGPROF",
-          number: 27,
-          action: "terminate",
-          description: "Timeout or timer",
-          standard: "bsd"
-        },
-        {
-          name: "SIGWINCH",
-          number: 28,
-          action: "ignore",
-          description: "Terminal window size changed",
-          standard: "bsd"
-        },
-        {
-          name: "SIGIO",
-          number: 29,
-          action: "terminate",
-          description: "I/O is available",
-          standard: "other"
-        },
-        {
-          name: "SIGPOLL",
-          number: 29,
-          action: "terminate",
-          description: "Watched event",
-          standard: "other"
-        },
-        {
-          name: "SIGINFO",
-          number: 29,
-          action: "ignore",
-          description: "Request for process information",
-          standard: "other"
-        },
-        {
-          name: "SIGPWR",
-          number: 30,
-          action: "terminate",
-          description: "Device running out of power",
-          standard: "systemv"
-        },
-        {
-          name: "SIGSYS",
-          number: 31,
-          action: "core",
-          description: "Invalid system call",
-          standard: "other"
-        },
-        {
-          name: "SIGUNUSED",
-          number: 31,
-          action: "terminate",
-          description: "Invalid system call",
-          standard: "other"
-        }
-      ];
-      exports2.SIGNALS = SIGNALS;
-    }
-  });
-
-  // node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/realtime.js
-  var require_realtime = __commonJS({
-    "node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/realtime.js"(exports2) {
-      "use strict";
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.SIGRTMAX = exports2.getRealtimeSignals = void 0;
-      var getRealtimeSignals = function() {
-        const length = SIGRTMAX - SIGRTMIN + 1;
-        return Array.from({ length }, getRealtimeSignal);
-      };
-      exports2.getRealtimeSignals = getRealtimeSignals;
-      var getRealtimeSignal = function(value, index) {
-        return {
-          name: `SIGRT${index + 1}`,
-          number: SIGRTMIN + index,
-          action: "terminate",
-          description: "Application-specific signal (realtime)",
-          standard: "posix"
-        };
-      };
-      var SIGRTMIN = 34;
-      var SIGRTMAX = 64;
-      exports2.SIGRTMAX = SIGRTMAX;
-    }
-  });
-
-  // node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/signals.js
-  var require_signals = __commonJS({
-    "node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/signals.js"(exports2) {
-      "use strict";
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.getSignals = void 0;
-      var _os = __require("os");
-      var _core = require_core();
-      var _realtime = require_realtime();
-      var getSignals = function() {
-        const realtimeSignals = (0, _realtime.getRealtimeSignals)();
-        const signals = [..._core.SIGNALS, ...realtimeSignals].map(normalizeSignal);
-        return signals;
-      };
-      exports2.getSignals = getSignals;
-      var normalizeSignal = function({
-        name,
-        number: defaultNumber,
-        description,
-        action: action3,
-        forced = false,
-        standard
-      }) {
-        const {
-          signals: { [name]: constantSignal }
-        } = _os.constants;
-        const supported = constantSignal !== void 0;
-        const number = supported ? constantSignal : defaultNumber;
-        return { name, number, description, supported, action: action3, forced, standard };
-      };
-    }
-  });
-
-  // node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/main.js
-  var require_main2 = __commonJS({
-    "node_modules/.pnpm/human-signals@2.1.0/node_modules/human-signals/build/src/main.js"(exports2) {
-      "use strict";
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.signalsByNumber = exports2.signalsByName = void 0;
-      var _os = __require("os");
-      var _signals = require_signals();
-      var _realtime = require_realtime();
-      var getSignalsByName = function() {
-        const signals = (0, _signals.getSignals)();
-        return signals.reduce(getSignalByName, {});
-      };
-      var getSignalByName = function(signalByNameMemo, { name, number, description, supported, action: action3, forced, standard }) {
-        return {
-          ...signalByNameMemo,
-          [name]: { name, number, description, supported, action: action3, forced, standard }
-        };
-      };
-      var signalsByName = getSignalsByName();
-      exports2.signalsByName = signalsByName;
-      var getSignalsByNumber = function() {
-        const signals = (0, _signals.getSignals)();
-        const length = _realtime.SIGRTMAX + 1;
-        const signalsA = Array.from({ length }, (value, number) => getSignalByNumber(number, signals));
-        return Object.assign({}, ...signalsA);
-      };
-      var getSignalByNumber = function(number, signals) {
-        const signal = findSignalByNumber(number, signals);
-        if (signal === void 0) {
-          return {};
-        }
-        const { name, description, supported, action: action3, forced, standard } = signal;
-        return {
-          [number]: {
-            name,
-            number,
-            description,
-            supported,
-            action: action3,
-            forced,
-            standard
-          }
-        };
-      };
-      var findSignalByNumber = function(number, signals) {
-        const signal = signals.find(({ name }) => _os.constants.signals[name] === number);
-        if (signal !== void 0) {
-          return signal;
-        }
-        return signals.find((signalA) => signalA.number === number);
-      };
-      var signalsByNumber = getSignalsByNumber();
-      exports2.signalsByNumber = signalsByNumber;
-    }
-  });
-
-  // node_modules/.pnpm/catch-exit@1.2.2/node_modules/catch-exit/dist/index.js
-  var require_dist = __commonJS({
-    "node_modules/.pnpm/catch-exit@1.2.2/node_modules/catch-exit/dist/index.js"(exports2) {
-      "use strict";
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.enableLogging = exports2.setupCatchExit = exports2.registerStringifyError = exports2.catchSignalStrings = exports2.removeExitCallback = exports2.addExitCallback = void 0;
-      var async_hooks_1 = __require("async_hooks");
-      var fs_1 = __require("fs");
-      var human_signals_1 = require_main2();
-      function addExitCallback3(callback) {
-        setupProcessExitHandling();
-        callbacks.push(callback);
-        return callback;
-      }
-      exports2.addExitCallback = addExitCallback3;
-      function removeExitCallback(callback) {
-        setupProcessExitHandling();
-        const index = callbacks.indexOf(callback);
-        return index > -1 ? callbacks.splice(index, 1)[0] : void 0;
-      }
-      exports2.removeExitCallback = removeExitCallback;
-      var signals = [
-        "SIGHUP",
-        // catches ctrl+c event
-        "SIGINT",
-        // catches "kill pid"
-        "SIGTERM",
-        "SIGQUIT"
-      ];
-      exports2.catchSignalStrings = [...signals, "exit", "uncaughtException"];
-      function stringifyError(error) {
-        if (customStringifyError) {
-          return customStringifyError(error);
-        }
-        if (error instanceof Error) {
-          return (error.stack || error.toString()) + "\n";
-        } else {
-          return String(error);
-        }
-      }
-      function registerStringifyError(errorStringifyFunction) {
-        setupProcessExitHandling();
-        customStringifyError = errorStringifyFunction;
-      }
-      exports2.registerStringifyError = registerStringifyError;
-      var customStringifyError;
-      function setupCatchExit(options) {
-        setupProcessExitHandling();
-        if (options) {
-          const { loggingEnabled: loggingEnabled2, customErrorStringify } = options;
-          if (customErrorStringify) {
-            registerStringifyError(customErrorStringify);
-          }
-          if (loggingEnabled2) {
-            enableLogging();
-          }
-        }
-      }
-      exports2.setupCatchExit = setupCatchExit;
-      var loggingEnabled = false;
-      function enableLogging(enable = true) {
-        setupProcessExitHandling();
-        loggingEnabled = enable;
-        return enable;
-      }
-      exports2.enableLogging = enableLogging;
-      function log(value) {
-        if (loggingEnabled) {
-          (0, fs_1.writeSync)(1, value + "\n");
-        }
-      }
-      function logError(value) {
-        (0, fs_1.writeSync)(2, value);
-      }
-      var callbacks = [];
-      var ignoredAsyncTypes = ["TTYWRAP", "SIGNALWRAP", "PIPEWRAP"];
-      var asyncHook = (0, async_hooks_1.createHook)({
-        init(id, type) {
-          if (!ignoredAsyncTypes.includes(type)) {
-            (0, fs_1.writeSync)(2, `
-ERROR: Async operation of type "${type}" was created in "process.exit" callback. This will not run to completion as "process.exit" will not complete async tasks.
-`);
-          }
-        }
-      });
-      var alreadySetup = false;
-      var alreadyExiting = false;
-      function setupProcessExitHandling() {
-        if (alreadySetup) {
-          return;
-        }
-        function exitHandler(signal, exitCode, inputError) {
-          log(`handling signal: ${signal} with code ${exitCode}`);
-          if (!alreadyExiting) {
-            log("setting alreadyExiting");
-            alreadyExiting = true;
-            try {
-              log(`Firing ${callbacks.length} callbacks`);
-              if (signal === "exit") {
-                asyncHook.enable();
-              }
-              callbacks.forEach((callback) => callback(signal, exitCode, inputError));
-              asyncHook.disable();
-            } catch (callbackError) {
-              log("Error in callback");
-              exitWithError(callbackError, 7);
-            }
-            if (inputError instanceof Error) {
-              exitWithError(inputError, exitCode);
-            } else {
-              process.exit(exitCode);
-            }
-          } else {
-            log("Already exiting, not doing anything");
-            return;
-          }
-        }
-        function exitWithError(error, code) {
-          log(`Exiting with error and code ${code}`);
-          logError(stringifyError(error));
-          process.exit(code);
-        }
-        signals.forEach((signal) => process.on(signal, () => {
-          var _a2;
-          const signalNumber = (_a2 = human_signals_1.signalsByName[signal]) === null || _a2 === void 0 ? void 0 : _a2.number;
-          if (signalNumber == void 0) {
-            throw new Error(`Failed to find number for signal "${signal}"`);
-          }
-          exitHandler(signal, 128 + signalNumber);
-        }));
-        process.on("exit", (code) => {
-          log(`exit listener with code ${code}`);
-          exitHandler("exit", code);
-        });
-        process.on("unhandledRejection", (reason) => {
-          log("unhandledRejection listener");
-          const error = reason instanceof Error ? reason : new Error(reason ? `${reason}` : "");
-          error.name = "UnhandledRejection";
-          throw error;
-        });
-        process.on("uncaughtException", (error) => {
-          log("uncaughtException listener");
-          exitHandler("uncaughtException", 1, error);
-        });
-        alreadySetup = true;
-      }
     }
   });
 
@@ -54042,316 +54042,17 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     }
   });
 
-  // pkgs/base/pkgs/bundler/src/bundle.ts
-  var import_chalk3 = __toESM(require_source());
-
-  // pkgs/base/pkgs/dir/export.ts
-  var import_fs = __require("fs");
-  var import_path = __require("path");
-  var import_process = __require("process");
-  var import_fs2 = __require("fs");
-  var import_path2 = __require("path");
-  var globalize = (arg) => {
-    const { name, init } = arg;
-    const g3 = global;
-    if (typeof g3[name] === "undefined") {
-      g3[name] = arg.value;
-    }
-    g3[name].init = async () => {
-      if (init) {
-        await init(g3[name]);
-      }
-    };
-    return g3[name];
-  };
-  var dir = new Proxy(
-    {},
-    {
-      get(_target, p) {
-        if (p === "path") {
-          return (arg = "") => {
-            return (0, import_path.join)(process.cwd(), ...(arg || "").split("/"));
-          };
-        }
-        if (p === "root") {
-          return (arg = "") => {
-            if ((0, import_fs.existsSync)((0, import_path.join)((0, import_process.cwd)(), "base"))) {
-              return (0, import_path.join)(process.cwd(), ...arg.split("/"));
-            }
-            return (0, import_path.join)(process.cwd(), "..", "..", ...arg.split("/"));
-          };
-        }
-      }
-    }
-  );
-  var ascend = function(start, callback) {
-    let dir2 = (0, import_path2.resolve)(".", start);
-    let tmp, stats = (0, import_fs2.statSync)(dir2);
-    if (!stats.isDirectory()) {
-      dir2 = (0, import_path2.dirname)(dir2);
-    }
-    while (true) {
-      tmp = callback(dir2, (0, import_fs2.readdirSync)(dir2));
-      if (tmp)
-        return (0, import_path2.resolve)(dir2, tmp);
-      dir2 = (0, import_path2.dirname)(tmp = dir2);
-      if (tmp === dir2)
-        break;
-    }
-  };
-  var ascendFile = async (dir2, untilFoundFile) => {
-    return new Promise((resolve2) => {
-      ascend(dir2, (dir3, files) => {
-        if (files.includes(untilFoundFile)) {
-          resolve2((0, import_path.join)(dir3, untilFoundFile));
-          return dir3;
-        }
-      });
-    });
-  };
-
-  // pkgs/base/pkgs/bundler/src/bundle.ts
-  var import_fs_jetpack2 = __toESM(require_main());
-  var import_lodash = __toESM(require_lodash());
-  var import_path5 = __require("path");
-
-  // pkgs/base/pkgs/pkg/export.ts
-  var import_child_process = __require("child_process");
-  var import_chalk2 = __toESM(require_source());
-  var import_path4 = __toESM(__require("path"));
-
-  // pkgs/base/pkgs/pkg/src/should-install.ts
-  var import_chalk = __toESM(require_source());
-  var import_fs_jetpack = __toESM(require_main());
-  var import_path3 = __require("path");
-  var shouldInstall = (path2, silent = false) => __async(void 0, null, function* () {
-    const dir2 = (0, import_path3.dirname)(path2);
-    let pkg2 = {};
-    try {
-      pkg2 = yield (0, import_fs_jetpack.readAsync)(path2, "json");
-    } catch (e) {
-    }
-    let shouldInstall2 = false;
-    yield Promise.all(
-      ["dependencies", "devDependencies"].map((e) => __async(void 0, null, function* () {
-        if (!pkg2 || pkg2 && !pkg2[e])
-          return;
-        for (const [k, v] of Object.entries(pkg2[e])) {
-          if (!(yield (0, import_fs_jetpack.existsAsync)((0, import_path3.join)(dir2, "node_modules", k)))) {
-            if (silent === false) {
-              console.log(
-                `module ${import_chalk.default.cyan(k)} not found in ${(0, import_path3.join)(
-                  dir2,
-                  "node_modules"
-                ).substring(process.cwd().length + 1)}`
-              );
-            }
-            shouldInstall2 = true;
-          }
-          if (v === "*") {
-            try {
-              const res = yield fetch(
-                `https://data.jsdelivr.com/v1/packages/npm/${k}/resolved`
-              );
-              const json = yield res.json();
-              pkg2[e][k] = json.version;
-              if (silent === false) {
-                console.log(
-                  `found ${k} = "*" in ${path2.substring(
-                    process.cwd().length + 1
-                  )}`
-                );
-              }
-              shouldInstall2 = true;
-            } catch (e2) {
-            }
-          }
-        }
-      }))
-    );
-    if (shouldInstall2) {
-      yield (0, import_fs_jetpack.writeAsync)(path2, pkg2, { jsonIndent: 2 });
-    }
-    return shouldInstall2;
-  });
-
-  // pkgs/base/pkgs/pkg/export.ts
-  var g = globalThis;
-  if (!g.pkgRunning) {
-    g.pkgRunning = /* @__PURE__ */ new Set();
-  }
-  var getModuleVersion = (name) => {
-    const res = (0, import_child_process.spawnSync)("pnpm", ["why", "-r", name], {
-      cwd: dir.root(""),
-      env: process.env
-    });
-    const out = res.output.filter((e) => !!e);
-    try {
-      return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
-    } catch (e) {
-      return "";
-    }
-  };
-  var pkg = {
-    produce(pkg2) {
-      const dependencies = {};
-      if (pkg2.external) {
-        for (const f of pkg2.external) {
-          dependencies[f] = getModuleVersion(f);
-        }
-      }
-      return { name: pkg2.name, version: pkg2.version, dependencies };
-    },
-    async install(path2, arg) {
-      const _arg = arg ? arg : { cwd: void 0, silent: false };
-      const silent = _arg.silent === true ? true : false;
-      if (g.pkgRunning.size > 0) {
-        await Promise.all([...g.pkgRunning.values()]);
-      }
-      const prom = new Promise(async (resolve2) => {
-        const install = await shouldInstall(path2, silent);
-        if (install) {
-          if (arg?.onInstall)
-            await arg.onInstall();
-          if (!silent)
-            console.log(
-              `
-${import_chalk2.default.magenta("Installing")} deps:
- ${import_chalk2.default.blue("\u27A5")}`,
-              [path2].map(
-                (e) => import_chalk2.default.green((0, import_path4.dirname)(e.substring(process.cwd().length + 1)))
-              ).join(" ")
-            );
-          const child = (0, import_child_process.spawn)("pnpm", ["i"], {
-            stdio: silent ? "ignore" : "inherit",
-            cwd: _arg.cwd || process.cwd()
-          });
-          child.on("exit", () => {
-            g.pkgRunning.delete(prom);
-            if (arg?.onInstallDone)
-              arg.onInstallDone();
-            resolve2();
-          });
-        } else {
-          resolve2();
-        }
-      });
-      g.pkgRunning.add(prom);
-      return await prom;
-    }
-  };
-
-  // pkgs/base/pkgs/bundler/src/bundle.ts
-  var bundle = (arg) => __async(void 0, null, function* () {
-    try {
-      const { context } = yield import("esbuild");
-      const { input, output, printTimer, watch } = arg;
-      const printableName = import_chalk3.default.green(
-        (0, import_path5.dirname)(input.substring(dir.root("").length + 1))
-      );
-      const tag = `Built ${(0, import_lodash.default)(printableName, 23, " ")}`;
-      if (printTimer)
-        console.time(tag);
-      const pkgFile = yield ascendFile(input, "package.json");
-      let json = pkg.produce(yield (0, import_fs_jetpack2.readAsync)(pkgFile, "json"));
-      yield pkg.install(pkgFile, {
-        cwd: arg.pkgcwd || (0, import_path5.dirname)(pkgFile),
-        silent: true,
-        onInstall() {
-          console.log(`Installing ${printableName} deps...`);
-        },
-        onInstallDone() {
-          console.log(`Dependency ${printableName} installed`);
-        }
-      });
-      let isRebuild = false;
-      const external = [
-        "esbuild",
-        ...Object.keys(json.dependencies).filter((e) => !["esbuild"].includes(e))
-      ];
-      return new Promise((resolve2) => __async(void 0, null, function* () {
-        const ctx = yield context({
-          entryPoints: [input],
-          outfile: output,
-          bundle: true,
-          sourcemap: true,
-          format: "cjs",
-          platform: "node",
-          external,
-          plugins: [
-            {
-              name: "bundle",
-              setup(build) {
-                build.onEnd(() => __async(this, null, function* () {
-                  if (watch) {
-                    let installDeps = false;
-                    yield pkg.install(pkgFile, {
-                      cwd: arg.pkgcwd || (0, import_path5.dirname)(pkgFile),
-                      silent: true,
-                      onInstall() {
-                        console.log(`Installing ${printableName} deps...`);
-                      },
-                      onInstallDone() {
-                        console.log(`Dependency ${printableName} installed`);
-                        installDeps = true;
-                      }
-                    });
-                    if (installDeps) {
-                      const pkgFile2 = yield ascendFile(input, "package.json");
-                      json = pkg.produce(yield (0, import_fs_jetpack2.readAsync)(pkgFile2, "json"));
-                    }
-                    yield outputPkgJson(json, arg.pkgjson);
-                    if (arg.onBeforeDone)
-                      yield arg.onBeforeDone({ isRebuild });
-                    if (printTimer)
-                      console.timeEnd(tag);
-                    try {
-                      yield watch({ isRebuild, installDeps });
-                    } catch (e) {
-                      console.error(JSON.stringify(e));
-                    }
-                    if (!isRebuild)
-                      resolve2(true);
-                  } else {
-                    if (!isRebuild)
-                      resolve2(true);
-                  }
-                  isRebuild = true;
-                }));
-              }
-            }
-          ]
-        });
-        if (watch) {
-          yield ctx.watch();
-        } else {
-          resolve2(true);
-        }
-      }));
-    } catch (e) {
-      return false;
-    }
-  });
-  var outputPkgJson = (json, pkgjson) => __async(void 0, null, function* () {
-    if (pkgjson) {
-      yield (0, import_fs_jetpack2.writeAsync)(pkgjson, json);
-      yield pkg.install(pkgjson, {
-        cwd: (0, import_path5.dirname)(pkgjson)
-      });
-    }
-  });
-
-  // pkgs/base/pkgs/bundler/src/runner.ts
+  // pkgs/base/pkgs/bundler/runner.ts
   var import_command_exists = __toESM(require_command_exists2());
-  var import_fs3 = __require("fs");
+  var import_fs = __require("fs");
 
   // pkgs/base/pkgs/utility/spawn.ts
-  var import_child_process2 = __require("child_process");
-  var spawn2 = (file, args, opt) => {
-    let proc = opt?.ipc ? (0, import_child_process2.fork)(file, args, {
+  var import_child_process = __require("child_process");
+  var spawn = (file, args, opt) => {
+    let proc = opt?.ipc ? (0, import_child_process.fork)(file, args, {
       cwd: opt?.cwd,
       stdio: "inherit"
-    }) : (0, import_child_process2.spawn)(file, args, {
+    }) : (0, import_child_process.spawn)(file, args, {
       cwd: opt?.cwd,
       stdio: "pipe"
     });
@@ -54395,81 +54096,75 @@ ${import_chalk2.default.magenta("Installing")} deps:
     };
   };
 
-  // pkgs/base/pkgs/bundler/src/runner.ts
-  var g2 = globalThis;
-  if (!g2.runs)
-    g2.runs = {};
+  // pkgs/base/pkgs/bundler/runner.ts
+  var g = globalThis;
+  if (!g.runs)
+    g.runs = {};
   var runner = {
     get list() {
-      return g2.runs;
+      return g.runs;
     },
     dispose() {
-      return Promise.all(Object.values(g2.runs).map((pty) => pty.kill));
+      return Promise.all(Object.values(g.runs).map((pty) => pty.kill));
     },
-    restart(path2) {
-      return __async(this, null, function* () {
-        if (g2.runs[path2]) {
-          if (!g2.runs[path2].stopped) {
-            return new Promise((resolve2) => {
-              g2.runs[path2].onExit(() => __async(this, null, function* () {
-                g2.runs[path2].stopped = true;
-                resolve2(yield runner.run(g2.runs[path2].arg));
-              }));
-              g2.runs[path2].kill();
+    async restart(path2) {
+      if (g.runs[path2]) {
+        if (!g.runs[path2].stopped) {
+          return new Promise((resolve2) => {
+            g.runs[path2].onExit(async () => {
+              g.runs[path2].stopped = true;
+              resolve2(await runner.run(g.runs[path2].arg));
             });
-          } else {
-            return yield runner.run(g2.runs[path2].arg);
-          }
+            g.runs[path2].kill();
+          });
         } else {
-          return false;
+          return await runner.run(g.runs[path2].arg);
         }
+      } else {
+        return false;
+      }
+    },
+    async stop(path2) {
+      return new Promise((resolve2) => {
+        g.runs[path2].onExit(() => resolve2(true));
+        g.runs[path2].kill();
+        delete g.runs[path2];
       });
     },
-    stop(path2) {
-      return __async(this, null, function* () {
-        return new Promise((resolve2) => {
-          g2.runs[path2].onExit(() => resolve2(true));
-          g2.runs[path2].kill();
-          delete g2.runs[path2];
-        });
-      });
-    },
-    run(arg) {
-      return __async(this, null, function* () {
-        try {
-          const { path: path2, onMessage: onData, args, cwd: cwd2, onStop } = arg;
-          let isCommand = false;
-          if (!(0, import_fs3.existsSync)(path2)) {
-            if (yield (0, import_command_exists.default)(path2)) {
-              isCommand = true;
-            } else {
-              return false;
-            }
-          }
-          if (g2.runs[path2] && !g2.runs[path2].stopped)
-            return false;
-          if (isCommand) {
-            g2.runs[path2] = spawn2(path2, args || [], { cwd: cwd2, ipc: false });
+    async run(arg) {
+      try {
+        const { path: path2, onMessage: onData, args, cwd: cwd2, onStop } = arg;
+        let isCommand = false;
+        if (!(0, import_fs.existsSync)(path2)) {
+          if (await (0, import_command_exists.default)(path2)) {
+            isCommand = true;
           } else {
-            g2.runs[path2] = spawn2(path2, args || [], { cwd: cwd2, ipc: true });
-            if (arg.onMessage)
-              g2.runs[path2].onMessage(arg.onMessage);
+            return false;
           }
-          g2.runs[path2].arg = arg;
-          g2.runs[path2].onExit(() => __async(this, null, function* () {
-            g2.runs[path2].stopped = true;
-            if (onStop)
-              g2.runs[path2].onExit(onStop);
-          }));
-          return true;
-        } catch (e) {
-          return false;
         }
-      });
+        if (g.runs[path2] && !g.runs[path2].stopped)
+          return false;
+        if (isCommand) {
+          g.runs[path2] = spawn(path2, args || [], { cwd: cwd2, ipc: false });
+        } else {
+          g.runs[path2] = spawn(path2, args || [], { cwd: cwd2, ipc: true });
+          if (arg.onMessage)
+            g.runs[path2].onMessage(arg.onMessage);
+        }
+        g.runs[path2].arg = arg;
+        g.runs[path2].onExit(async () => {
+          g.runs[path2].stopped = true;
+          if (onStop)
+            g.runs[path2].onExit(onStop);
+        });
+        return true;
+      } catch (e) {
+        return false;
+      }
     }
   };
 
-  // pkgs/base/pkgs/bundler/src/watch.ts
+  // pkgs/base/pkgs/bundler/watch.ts
   var import_watcher = __require("@parcel/watcher");
   var watcher = {
     _watches: /* @__PURE__ */ new Set(),
@@ -54499,7 +54194,240 @@ ${import_chalk2.default.magenta("Installing")} deps:
   // pkgs/base/src/main.ts
   var import_catch_exit2 = __toESM(require_dist());
   var import_chalk9 = __toESM(require_source());
+
+  // pkgs/base/pkgs/dir/export.ts
+  var import_fs2 = __require("fs");
+  var import_path = __require("path");
+  var import_process = __require("process");
+  var import_fs3 = __require("fs");
+  var import_path2 = __require("path");
+  var globalize = (arg) => {
+    const { name, init } = arg;
+    const g3 = global;
+    if (typeof g3[name] === "undefined") {
+      g3[name] = arg.value;
+    }
+    g3[name].init = async () => {
+      if (init) {
+        await init(g3[name]);
+      }
+    };
+    return g3[name];
+  };
+  var dir = new Proxy(
+    {},
+    {
+      get(_target, p) {
+        if (p === "path") {
+          return (arg = "") => {
+            return (0, import_path.join)(process.cwd(), ...(arg || "").split("/"));
+          };
+        }
+        if (p === "root") {
+          return (arg = "") => {
+            if ((0, import_fs2.existsSync)((0, import_path.join)((0, import_process.cwd)(), "base"))) {
+              return (0, import_path.join)(process.cwd(), ...arg.split("/"));
+            }
+            return (0, import_path.join)(process.cwd(), "..", "..", ...arg.split("/"));
+          };
+        }
+      }
+    }
+  );
+  var ascend = function(start, callback) {
+    let dir2 = (0, import_path2.resolve)(".", start);
+    let tmp, stats = (0, import_fs3.statSync)(dir2);
+    if (!stats.isDirectory()) {
+      dir2 = (0, import_path2.dirname)(dir2);
+    }
+    while (true) {
+      tmp = callback(dir2, (0, import_fs3.readdirSync)(dir2));
+      if (tmp)
+        return (0, import_path2.resolve)(dir2, tmp);
+      dir2 = (0, import_path2.dirname)(tmp = dir2);
+      if (tmp === dir2)
+        break;
+    }
+  };
+  var ascendFile = async (dir2, untilFoundFile) => {
+    return new Promise((resolve2) => {
+      ascend(dir2, (dir3, files) => {
+        if (files.includes(untilFoundFile)) {
+          resolve2((0, import_path.join)(dir3, untilFoundFile));
+          return dir3;
+        }
+      });
+    });
+  };
+
+  // pkgs/base/src/main.ts
   var import_lodash5 = __toESM(require_lodash());
+
+  // pkgs/base/pkgs/pkg/export.ts
+  var import_child_process2 = __require("child_process");
+  var import_chalk2 = __toESM(require_source());
+  var import_fs4 = __toESM(__require("fs"));
+  var import_path4 = __toESM(__require("path"));
+
+  // pkgs/base/pkgs/pkg/src/should-install.ts
+  var import_chalk = __toESM(require_source());
+  var import_fs_jetpack = __toESM(require_main2());
+  var import_path3 = __require("path");
+  var shouldInstall = (path2, silent = false) => __async(void 0, null, function* () {
+    const dir2 = (0, import_path3.dirname)(path2);
+    let pkg2 = {};
+    try {
+      pkg2 = yield (0, import_fs_jetpack.readAsync)(path2, "json");
+    } catch (e) {
+    }
+    let shouldInstall2 = false;
+    yield Promise.all(
+      ["dependencies", "devDependencies"].map((e) => __async(void 0, null, function* () {
+        if (!pkg2 || pkg2 && !pkg2[e])
+          return;
+        const entries = Object.entries(pkg2[e]);
+        for (const [k, v] of entries) {
+          if (v.startsWith(".") || v.startsWith("/")) {
+            continue;
+          }
+          if (!(yield (0, import_fs_jetpack.existsAsync)((0, import_path3.join)(dir2, "node_modules", k)))) {
+            if (silent === false) {
+              console.log(
+                `module ${import_chalk.default.cyan(k)} not found in ${(0, import_path3.join)(
+                  dir2,
+                  "node_modules"
+                ).substring(process.cwd().length + 1)}`
+              );
+            }
+            shouldInstall2 = true;
+          }
+          if (v === "*") {
+            try {
+              const res = yield fetch(
+                `https://data.jsdelivr.com/v1/packages/npm/${k}/resolved`
+              );
+              const json = yield res.json();
+              pkg2[e][k] = json.version;
+              if (silent === false) {
+                console.log(
+                  `found ${k} = "*" in ${path2.substring(
+                    process.cwd().length + 1
+                  )}`
+                );
+              }
+              shouldInstall2 = true;
+            } catch (e2) {
+            }
+          }
+        }
+      }))
+    );
+    if (shouldInstall2) {
+      yield (0, import_fs_jetpack.writeAsync)(path2, pkg2, { jsonIndent: 2 });
+    }
+    return shouldInstall2;
+  });
+
+  // pkgs/base/pkgs/pkg/export.ts
+  var g2 = globalThis;
+  if (!g2.pkgRunning) {
+    g2.pkgRunning = /* @__PURE__ */ new Set();
+  }
+  var getModuleVersion = (name) => {
+    const res = (0, import_child_process2.spawnSync)("pnpm", ["why", "-r", name], {
+      cwd: dir.root(""),
+      env: process.env
+    });
+    const out = res.output.filter((e) => !!e);
+    try {
+      return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
+    } catch (e) {
+      return "";
+    }
+  };
+  var pkg = {
+    produce(pkg2) {
+      const dependencies = {};
+      if (pkg2.external) {
+        for (const f of pkg2.external) {
+          dependencies[f] = getModuleVersion(f);
+        }
+      }
+      return { name: pkg2.name, version: pkg2.version, dependencies };
+    },
+    async install(path2, arg) {
+      const _arg = arg ? arg : { cwd: void 0, silent: false };
+      const silent = _arg.silent === true ? true : false;
+      if (g2.pkgRunning.size > 0) {
+        await Promise.all([...g2.pkgRunning.values()]);
+      }
+      const prom = new Promise(async (resolve2) => {
+        let install = false;
+        if (arg?.deep) {
+          const dirs = await scanDir([path2]);
+          const all = await Promise.all(
+            dirs.map((e) => shouldInstall(e, silent))
+          );
+          if (all.filter((e) => e).length > 0) {
+            install = true;
+          }
+        } else {
+          install = await shouldInstall(path2, silent);
+        }
+        if (install) {
+          if (arg?.onInstall)
+            await arg.onInstall();
+          if (!silent)
+            console.log(
+              `
+${import_chalk2.default.magenta("Installing")} deps:
+ ${import_chalk2.default.blue("\u27A5")}`,
+              [path2].map(
+                (e) => import_chalk2.default.green((0, import_path4.dirname)(e.substring(process.cwd().length + 1)))
+              ).join(" ")
+            );
+          const child = (0, import_child_process2.spawn)("pnpm", ["i"], {
+            stdio: silent ? "ignore" : "inherit",
+            cwd: _arg.cwd || process.cwd()
+          });
+          child.on("exit", () => {
+            g2.pkgRunning.delete(prom);
+            if (arg?.onInstallDone)
+              arg.onInstallDone();
+            resolve2();
+          });
+        } else {
+          resolve2();
+        }
+      });
+      g2.pkgRunning.add(prom);
+      return await prom;
+    }
+  };
+  var scanDir = async (paths) => {
+    const pkgs = [];
+    for (const path2 of paths) {
+      for await (const p of walk(path2)) {
+        if (p.endsWith("package.json")) {
+          pkgs.push(p);
+        }
+        if (p.endsWith("node_modules"))
+          break;
+      }
+    }
+    return pkgs;
+  };
+  async function* walk(dir2) {
+    for await (const d of await import_fs4.default.promises.opendir(dir2)) {
+      const entry = import_path4.default.join(dir2, d.name);
+      if (d.isDirectory()) {
+        if (!entry.endsWith("node_modules")) {
+          yield* await walk(entry);
+        }
+      } else if (d.isFile())
+        yield entry;
+    }
+  }
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var import_cuid2 = __toESM(require_cuid2());
@@ -54584,7 +54512,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   };
 
   // pkgs/base/pkgs/rpc/src/connect.ts
-  var import_lodash2 = __toESM(require_lodash2());
+  var import_lodash = __toESM(require_lodash2());
 
   // node_modules/.pnpm/ws@8.12.1/node_modules/ws/wrapper.mjs
   var import_stream = __toESM(require_stream(), 1);
@@ -54594,8 +54522,8 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var import_websocket_server = __toESM(require_websocket_server(), 1);
 
   // pkgs/base/pkgs/rpc/src/config.ts
-  var import_fs4 = __require("fs");
-  var import_path6 = __require("path");
+  var import_fs5 = __require("fs");
+  var import_path5 = __require("path");
   var config = new Proxy(
     {
       _path: "",
@@ -54609,22 +54537,22 @@ ${import_chalk2.default.magenta("Installing")} deps:
       set(target, p, newValue, receiver) {
         initConf(target);
         target._raw[p] = newValue;
-        (0, import_fs4.writeFileSync)(target._path, JSON.stringify(target._raw, null, 2));
+        (0, import_fs5.writeFileSync)(target._path, JSON.stringify(target._raw, null, 2));
         return true;
       }
     }
   );
   var initConf = (target) => {
-    target._path = (0, import_path6.join)(process.cwd(), "rpc.json");
+    target._path = (0, import_path5.join)(process.cwd(), "rpc.json");
     try {
-      if ((0, import_fs4.existsSync)((0, import_path6.join)(process.cwd(), "base"))) {
+      if ((0, import_fs5.existsSync)((0, import_path5.join)(process.cwd(), "base"))) {
         target._path = dir.root(".output/app/rpc.json");
       }
-      if ((0, import_fs4.existsSync)(target._path)) {
-        const json = (0, import_fs4.readFileSync)(target._path, "utf-8");
+      if ((0, import_fs5.existsSync)(target._path)) {
+        const json = (0, import_fs5.readFileSync)(target._path, "utf-8");
         target._raw = JSON.parse(json);
       } else {
-        (0, import_fs4.mkdirSync)((0, import_path6.dirname)(target._path), { recursive: true });
+        (0, import_fs5.mkdirSync)((0, import_path5.dirname)(target._path), { recursive: true });
       }
     } catch (e) {
     }
@@ -54638,7 +54566,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var connectRPC = (name, arg) => __async(void 0, null, function* () {
-    const waitConnection = (0, import_lodash2.default)(arg, "waitConnection", true);
+    const waitConnection = (0, import_lodash.default)(arg, "waitConnection", true);
     let ws = false;
     let serverConnected = false;
     if (waitConnection) {
@@ -54853,7 +54781,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/pkgs/rpc/src/server.ts
   var import_cuid22 = __toESM(require_cuid2());
-  var import_lodash3 = __toESM(require_lodash2());
+  var import_lodash2 = __toESM(require_lodash2());
   var import_pretty_error = __toESM(require_PrettyError());
   var pe = new import_pretty_error.default();
   var createRPC = (name, action3, opt) => __async(void 0, null, function* () {
@@ -54911,7 +54839,7 @@ Make sure to kill running instance before starting.
         ws.on("message", (raw) => __async(void 0, null, function* () {
           const msg = JSON.parse(raw);
           if (msg.type === "action") {
-            const fn = (0, import_lodash3.default)(action3, msg.path.join("."));
+            const fn = (0, import_lodash2.default)(action3, msg.path.join("."));
             if (typeof fn === "function") {
               let result = void 0;
               let error = void 0;
@@ -55005,9 +54933,122 @@ Make sure to kill running instance before starting.
     return server;
   });
 
+  // pkgs/base/pkgs/bundler/bundle.ts
+  var import_chalk3 = __toESM(require_source());
+  var import_fs_jetpack2 = __toESM(require_main2());
+  var import_lodash3 = __toESM(require_lodash());
+  var import_path6 = __require("path");
+  var bundle = async (arg) => {
+    try {
+      const { context } = await import("esbuild");
+      const { input, output, printTimer, watch } = arg;
+      const printableName = import_chalk3.default.green(
+        (0, import_path6.dirname)(input.substring(dir.root("").length + 1))
+      );
+      const tag = `Built ${(0, import_lodash3.default)(printableName, 23, " ")}`;
+      if (printTimer)
+        console.time(tag);
+      const pkgFile = await ascendFile(input, "package.json");
+      let json = pkg.produce(await (0, import_fs_jetpack2.readAsync)(pkgFile, "json"));
+      await pkg.install(pkgFile, {
+        cwd: arg.pkgcwd || (0, import_path6.dirname)(pkgFile),
+        silent: true,
+        onInstall() {
+          console.log(`Installing ${printableName} deps...`);
+        },
+        onInstallDone() {
+          console.log(`Dependency ${printableName} installed`);
+        }
+      });
+      let isRebuild = false;
+      const external = [
+        "esbuild",
+        ...Object.keys(json.dependencies).filter((e) => !["esbuild"].includes(e))
+      ];
+      return new Promise(async (resolve2) => {
+        const ctx = await context({
+          entryPoints: [input],
+          outfile: output,
+          bundle: true,
+          sourcemap: true,
+          format: "cjs",
+          platform: "node",
+          external,
+          plugins: [
+            {
+              name: "bundle",
+              setup(build) {
+                build.onEnd(async () => {
+                  if (watch) {
+                    let installDeps = false;
+                    await pkg.install(pkgFile, {
+                      cwd: arg.pkgcwd || (0, import_path6.dirname)(pkgFile),
+                      silent: true,
+                      onInstall() {
+                        console.log(`Installing ${printableName} deps...`);
+                      },
+                      onInstallDone() {
+                        console.log(`Dependency ${printableName} installed`);
+                        installDeps = true;
+                      }
+                    });
+                    if (installDeps) {
+                      const pkgFile2 = await ascendFile(input, "package.json");
+                      json = pkg.produce(await (0, import_fs_jetpack2.readAsync)(pkgFile2, "json"));
+                    }
+                    await outputPkgJson(json, arg.pkgjson);
+                    if (arg.onBeforeDone)
+                      await arg.onBeforeDone({ isRebuild });
+                    if (printTimer)
+                      console.timeEnd(tag);
+                    try {
+                      await watch({ isRebuild, installDeps });
+                    } catch (e) {
+                      console.error(JSON.stringify(e));
+                    }
+                    if (!isRebuild)
+                      resolve2(true);
+                  } else {
+                    if (!isRebuild)
+                      resolve2(true);
+                  }
+                  isRebuild = true;
+                });
+              }
+            }
+          ]
+        });
+        if (watch) {
+          await ctx.watch();
+        } else {
+          resolve2(true);
+        }
+      });
+    } catch (e) {
+      return false;
+    }
+  };
+  var outputPkgJson = async (json, pkgjson) => {
+    if (pkgjson) {
+      await (0, import_fs_jetpack2.writeAsync)(pkgjson, json);
+      await pkg.install(pkgjson, {
+        cwd: (0, import_path6.dirname)(pkgjson)
+      });
+    }
+  };
+
+  // pkgs/base/src/watcher/watch-service.ts
+  var watchService = (name, event) => {
+    watcher.watch({
+      dir: dir.root(`app/${name}`),
+      ignore: ["node_modules"],
+      event
+    });
+  };
+
   // pkgs/base/src/builder/service/db.ts
   var import_chalk6 = __toESM(require_source());
-  var import_fs_jetpack6 = __toESM(require_main());
+  var import_fs_jetpack6 = __toESM(require_main2());
 
   // node_modules/.pnpm/chalk@5.2.0/node_modules/chalk/source/vendor/ansi-styles/index.js
   var ANSI_BACKGROUND_OFFSET = 10;
@@ -55499,7 +55540,7 @@ Make sure to kill running instance before starting.
   var source_default = chalk4;
 
   // pkgs/service/pkgs/service-db/src/create-db.ts
-  var import_fs_jetpack4 = __toESM(require_main());
+  var import_fs_jetpack4 = __toESM(require_main2());
 
   // pkgs/service/export.ts
   var import_catch_exit = __toESM(require_dist());
@@ -55544,14 +55585,14 @@ Make sure to kill running instance before starting.
 
   // pkgs/service/pkgs/service-db/src/parse-prisma.ts
   var import_prisma_ast = __toESM(require_dist2());
-  var import_fs_jetpack3 = __toESM(require_main());
+  var import_fs_jetpack3 = __toESM(require_main2());
 
   // pkgs/service/pkgs/service-db/src/create-db.ts
   var import_lodash4 = __toESM(require_lodash());
 
   // pkgs/service/pkgs/service-db/src/ensure-prisma.ts
   var import_prisma_ast2 = __toESM(require_dist2());
-  var import_fs_jetpack5 = __toESM(require_main());
+  var import_fs_jetpack5 = __toESM(require_main2());
   var import_path7 = __require("path");
   var ensurePrisma = async (name) => {
     const prismaPath = dir.root(`app/${name}/prisma/schema.prisma`);
@@ -55647,22 +55688,13 @@ datasource db {
     }
   });
 
-  // pkgs/base/src/watcher/watch-service.ts
-  var watchService = (name, event) => {
-    watcher.watch({
-      dir: dir.root(`app/${name}`),
-      ignore: ["node_modules"],
-      event
-    });
-  };
-
   // pkgs/base/src/builder/service/srv.ts
-  var import_fs_jetpack8 = __toESM(require_main());
+  var import_fs_jetpack8 = __toESM(require_main2());
   var import_promises2 = __require("fs/promises");
   var import_path10 = __require("path");
 
   // pkgs/base/src/scaffold/srv/api.ts
-  var import_fs_jetpack7 = __toESM(require_main());
+  var import_fs_jetpack7 = __toESM(require_main2());
   var import_path9 = __require("path");
 
   // pkgs/base/src/scaffold/parser/traverse.ts
@@ -57219,18 +57251,18 @@ export const _ = {
   };
 
   // pkgs/base/src/builder/app.ts
-  var import_fs5 = __require("fs");
-  var import_fs_jetpack9 = __toESM(require_main());
+  var import_fs6 = __require("fs");
+  var import_fs_jetpack9 = __toESM(require_main2());
   var buildApp = (opt) => __async(void 0, null, function* () {
     yield (0, import_fs_jetpack9.writeAsync)(
       dir.path(".output/app/pnpm-workspace.yaml"),
       `packages:
   - ./*`
     );
-    const dirs = (0, import_fs5.readdirSync)(dir.path("app")).filter(
+    const dirs = (0, import_fs6.readdirSync)(dir.path("app")).filter(
       (e) => !["node_modules", "app.ts", "package.json", "gen"].includes(e)
-    ).map((e) => ({ name: e, stat: (0, import_fs5.statSync)(dir.path(`app/${e}`)) })).filter(
-      ({ stat: stat5, name }) => stat5.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
+    ).map((e) => ({ name: e, stat: (0, import_fs6.statSync)(dir.path(`app/${e}`)) })).filter(
+      ({ stat: stat5, name }) => stat5.isDirectory() && (0, import_fs6.existsSync)(dir.path(`app/${name}/main.ts`))
     );
     return {
       path: dir.root(".output/app/app.js"),
@@ -57263,7 +57295,7 @@ export const _ = {
 
   // pkgs/base/src/commit-hook.ts
   var import_child_process3 = __require("child_process");
-  var import_fs_jetpack10 = __toESM(require_main());
+  var import_fs_jetpack10 = __toESM(require_main2());
   var commitHook = (args) => __async(void 0, null, function* () {
     const isMainRepo = () => __async(void 0, null, function* () {
       const conf = yield (0, import_fs_jetpack10.readAsync)(dir.root(".git/config"), "utf8");
@@ -57292,12 +57324,12 @@ export const _ = {
           yield (0, import_fs_jetpack10.removeAsync)(dir.root(".output/.commit"));
           yield (0, import_fs_jetpack10.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
           yield new Promise((resolve2) => {
-            spawn2("git", ["add", "./pkgs/version.json"], {
+            spawn("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
             }).onExit(resolve2);
           });
           yield new Promise((resolve2) => {
-            spawn2("git", ["commit", "--amend", "-C", "HEAD", "--no-verify"], {
+            spawn("git", ["commit", "--amend", "-C", "HEAD", "--no-verify"], {
               cwd: dir.root("")
             }).onExit(resolve2);
           });
@@ -57783,8 +57815,8 @@ export const _ = {
   }
 
   // pkgs/base/src/upgrade.ts
-  var import_fs6 = __require("fs");
-  var import_fs_jetpack11 = __toESM(require_main());
+  var import_fs7 = __require("fs");
+  var import_fs_jetpack11 = __toESM(require_main2());
   var import_path11 = __require("path");
   var upgradeHook = (args) => __async(void 0, null, function* () {
     if (args.includes("upgrade")) {
@@ -57813,7 +57845,7 @@ export const _ = {
       );
       console.log(` > Backing up existing pkgs to: .output/upgrade/backup`);
       const root2 = dir.root("");
-      for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
+      for (const f of (0, import_fs7.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
           if (yield (0, import_fs_jetpack11.existsAsync)((0, import_path11.join)(root2, `.output/upgrade/backup/${f}`))) {
             yield (0, import_fs_jetpack11.moveAsync)(
@@ -57824,7 +57856,7 @@ export const _ = {
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs6.readdirSync)((0, import_path11.join)(root2, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs7.readdirSync)((0, import_path11.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
           yield (0, import_fs_jetpack11.copyAsync)(
             (0, import_path11.join)(root2, `.output/upgrade/royal-main/${f}`),
@@ -57848,7 +57880,7 @@ export const _ = {
   // pkgs/base/src/version-check.ts
   var import_chalk7 = __toESM(require_source());
   var import_date_fns = __toESM(require_date_fns());
-  var import_fs_jetpack12 = __toESM(require_main());
+  var import_fs_jetpack12 = __toESM(require_main2());
   var versionCheck = (opt) => __async(void 0, null, function* () {
     const version = yield (0, import_fs_jetpack12.readAsync)(dir.root("pkgs/version.json"), "json");
     let timeout = {
@@ -57890,7 +57922,7 @@ If somehow upgrade failed you can rollback using
   });
 
   // pkgs/base/src/vscode.ts
-  var import_fs_jetpack13 = __toESM(require_main());
+  var import_fs_jetpack13 = __toESM(require_main2());
   var import_path12 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
@@ -57941,16 +57973,16 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/watcher/all.ts
-  var import_fs_jetpack16 = __toESM(require_main());
+  var import_fs_jetpack16 = __toESM(require_main2());
 
   // pkgs/base/src/watcher/new-service.ts
   var import_chalk8 = __toESM(require_source());
-  var import_fs_jetpack15 = __toESM(require_main());
+  var import_fs_jetpack15 = __toESM(require_main2());
   var import_promises4 = __require("fs/promises");
   var import_path13 = __require("path");
 
   // pkgs/base/src/appgen/service.ts
-  var import_fs_jetpack14 = __toESM(require_main());
+  var import_fs_jetpack14 = __toESM(require_main2());
   var import_promises3 = __require("fs/promises");
   var serviceGen = () => __async(void 0, null, function* () {
     const names = [];
@@ -58019,6 +58051,7 @@ If somehow upgrade failed you can rollback using
               if (baseGlobal.app)
                 yield (0, import_fs_jetpack16.removeAsync)(baseGlobal.app.path);
               yield onExit();
+              process.exit(99);
             }
           })
         });
@@ -58051,6 +58084,9 @@ If somehow upgrade failed you can rollback using
         waitConnection: false
       });
       baseGlobal.rootRPC = rootRPC;
+      if (args.includes("devbase")) {
+        yield pkg.install(dir.root("pkgs"), { cwd: dir.root(), deep: true });
+      }
       const app = yield buildApp({ watch: true });
       baseGlobal.app = app;
       let cacheFound = false;

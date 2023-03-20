@@ -1,4 +1,5 @@
-import { bundle, runner } from "bundler";
+import { bundle } from "bundler/bundle";
+import { runner } from "bundler/runner";
 import { dir } from "dir";
 import { existsSync, readdirSync, statSync } from "fs";
 import { writeAsync } from "fs-jetpack";

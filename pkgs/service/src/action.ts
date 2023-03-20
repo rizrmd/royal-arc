@@ -1,5 +1,5 @@
 import { SERVICE_NAME } from "./types";
-import { runner } from "bundler";
+import { runner } from "bundler/runner";
 import { dir } from "dir";
 import chalk from "chalk";
 

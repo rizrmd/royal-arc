@@ -1,4 +1,4 @@
-import { runner } from "bundler";
+import { runner } from "bundler/runner";
 import chalk from "chalk";
 import { dir } from "dir";
 import { removeAsync } from "fs-jetpack";

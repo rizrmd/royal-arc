@@ -1,5 +1,5 @@
 import { SubscribeCallback } from "@parcel/watcher";
-import { watcher } from "bundler/src/watch";
+import { watcher } from "bundler/watch";
 import { dir } from "dir";
 
 export const watchService = (name: string, event: SubscribeCallback) => {
