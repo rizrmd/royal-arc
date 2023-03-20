@@ -12,11 +12,11 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
         ignore: ["pkgs/*/node_modules", "node_modules"],
         event: async (err, ev) => {
           if (!err) {
-            await removeAsync(baseGlobal.app.path)
+            if (baseGlobal.app) await removeAsync(baseGlobal.app.path);
             await onExit();
-            process.exit();
+            process.exit(99);
           }
-        }, 
+        },
       });
     });
   }

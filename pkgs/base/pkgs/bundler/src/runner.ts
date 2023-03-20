@@ -8,7 +8,6 @@ const g = globalThis as unknown as {
       arg: any;
       markedRunning: boolean;
       stopped: boolean;
-      clearOnExit: IDisposable;
     }
   >;
 };
@@ -23,7 +22,6 @@ export const runner = {
     if (g.runs[path]) {
       if (!g.runs[path].stopped) {
         return new Promise<boolean>((resolve) => {
-          g.runs[path].clearOnExit.dispose();
           g.runs[path].onExit(async () => {
             g.runs[path].stopped = true;
             resolve(await runner.run(g.runs[path].arg));

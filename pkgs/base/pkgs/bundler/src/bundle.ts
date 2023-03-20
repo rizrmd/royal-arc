@@ -85,7 +85,7 @@ export const bundle = async (arg: {
                   try {
                     await watch({ isRebuild, installDeps });
                   } catch (e) {
-                    console.error(e);
+                    console.error(JSON.stringify(e));
                   }
                   if (!isRebuild) resolve(true);
                 } else {

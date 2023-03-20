@@ -29,8 +29,10 @@ export const buildService = async (
       watch: arg.watch
         ? async ({ isRebuild, installDeps }) => {
             if (installDeps) return;
+
             if (isRebuild && runner.list[app.path]) {
               const marker = watcher.marker[name];
+
               if (marker) {
                 if (marker instanceof Set) {
                   if (name.startsWith("db")) await prepareDB(name, marker);

@@ -21,7 +21,7 @@ export const connectRPC = async <T extends RPCAction>(
     }
   }
 
-  return new DeepProxy({}, ({ target, PROXY, key, path, handler }) => {
+  return new DeepProxy({}, ({ PROXY, key, path, handler }) => {
     if (key) {
       if (key === "then") {
         return PROXY({}, handler, path);
@@ -39,7 +39,7 @@ export const connectRPC = async <T extends RPCAction>(
           }
         }
 
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<any>((resolve) => {
           if (ws) {
             const onmsg = (raw: string) => {
               if (ws) {
@@ -51,7 +51,8 @@ export const connectRPC = async <T extends RPCAction>(
                   if (!msg.error) {
                     resolve(msg.result);
                   } else {
-                    reject(msg.error);
+                    process.stdout.write(msg.error.msg);
+                    resolve(msg.result);
                   }
                 }
               }

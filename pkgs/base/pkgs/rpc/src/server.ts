@@ -6,6 +6,9 @@ import getPort, { portNumbers } from "get-port";
 import { DeepProxy } from "@qiwi/deep-proxy";
 import { createId } from "@paralleldrive/cuid2";
 import get from "lodash.get";
+import PrettyError from "pretty-error";
+
+const pe = new PrettyError();
 
 type ActionMsg = {
   type: "action";
@@ -25,7 +28,10 @@ export type ActionResult = {
 
 export const createRPC = async <T extends RPCAction>(
   name: string,
-  action: T
+  action: T,
+  opt?: {
+    isMain?: boolean;
+  }
 ) => {
   let srv: null | Awaited<ReturnType<typeof createServer>> = null;
   if (!config.port) {
@@ -37,6 +43,17 @@ export const createRPC = async <T extends RPCAction>(
   if (!ws) {
     srv = await createServer();
     ws = await connect(name, action);
+  }
+
+  if (opt?.isMain && !srv) {
+    console.log(
+      `
+Royal is already running.
+Make sure to kill running instance before starting.
+
+`
+    );
+    process.exit(1);
   }
 
   return new DeepProxy(action, ({ target, PROXY, key, path, handler }) => {
@@ -76,8 +93,8 @@ const connect = (name: string, action: RPCAction) => {
             let error = undefined as any;
             try {
               result = await fn(...msg.args);
-            } catch (e) {
-              error = e;
+            } catch (e: any) {
+              error = { msg: pe.render(e) };
             }
 
             ws.send(

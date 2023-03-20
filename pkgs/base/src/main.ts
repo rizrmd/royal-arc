@@ -2,6 +2,7 @@ import { runner } from "bundler";
 import { watcher } from "bundler/src/watch";
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
+import { appendFile } from "fs";
 import padEnd from "lodash.padend";
 import { connectRPC, createRPC } from "rpc";
 import { action as RootAction } from "../../service/src/action";
@@ -38,7 +39,8 @@ export const baseMain = async () => {
     addExitCallback(() => {});
     setupWatchers(args, onExit);
 
-    await createRPC("base", action);
+    await createRPC("base", action, { isMain: true });
+
     const rootRPC = await connectRPC<typeof RootAction>("root", {
       waitConnection: false,
     });
