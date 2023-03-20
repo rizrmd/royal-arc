@@ -182,8 +182,8 @@
           var isPathName = /[\\]/.test(s);
           if (isPathName) {
             var dirname8 = '"' + path2.dirname(s) + '"';
-            var basename4 = '"' + path2.basename(s) + '"';
-            return dirname8 + ":" + basename4;
+            var basename5 = '"' + path2.basename(s) + '"';
+            return dirname8 + ":" + basename5;
           }
           return '"' + s + '"';
         };
@@ -54301,14 +54301,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             continue;
           }
           if (!(yield (0, import_fs_jetpack.existsAsync)((0, import_path3.join)(dir2, "node_modules", k)))) {
-            if (silent === false) {
-              console.log(
-                `module ${import_chalk.default.cyan(k)} not found in ${(0, import_path3.join)(
-                  dir2,
-                  "node_modules"
-                ).substring(process.cwd().length + 1)}`
-              );
-            }
+            console.log(
+              `module ${import_chalk.default.cyan(k)} not found in ${(0, import_path3.join)(
+                dir2,
+                "node_modules"
+              ).substring(process.cwd().length + 1)}`
+            );
             shouldInstall2 = true;
           }
           if (v === "*") {
@@ -54318,13 +54316,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
               );
               const json = yield res.json();
               pkg2[e][k] = json.version;
-              if (silent === false) {
-                console.log(
-                  `found ${k} = "*" in ${path2.substring(
-                    process.cwd().length + 1
-                  )}`
-                );
-              }
+              console.log(
+                `found ${k} = "*" in ${path2.substring(process.cwd().length + 1)}`
+              );
               shouldInstall2 = true;
             } catch (e2) {
             }
@@ -55046,6 +55040,9 @@ Make sure to kill running instance before starting.
       });
     }
   };
+
+  // pkgs/base/src/builder/service.ts
+  var import_path11 = __require("path");
 
   // pkgs/base/src/watcher/watch-service.ts
   var watchService = (name, event) => {
@@ -57201,8 +57198,6 @@ export const _ = {
             }
             if (shouldRestart)
               yield rpc.restart({ name });
-          } else {
-            marker[name] = true;
           }
         }
       }) : void 0
@@ -57216,17 +57211,16 @@ export const _ = {
         if (!err2) {
           for (const c of changes) {
             if (c.type === "update") {
+              if ((0, import_path11.basename)(c.path) === "package.json")
+                return;
               if (!marker[name])
                 marker[name] = /* @__PURE__ */ new Set();
               const mark = marker[name];
               if (mark) {
                 if (mark instanceof Set) {
                   mark.add(c.path);
-                } else if (mark === true) {
-                  marker[name] = /* @__PURE__ */ new Set([c.path]);
                 }
               }
-            } else {
             }
           }
           const deladd = changes.filter((e) => e.type !== "delete");
@@ -57830,7 +57824,7 @@ export const _ = {
   // pkgs/base/src/upgrade.ts
   var import_fs7 = __require("fs");
   var import_fs_jetpack11 = __toESM(require_main2());
-  var import_path11 = __require("path");
+  var import_path12 = __require("path");
   var upgradeHook = (args) => __async(void 0, null, function* () {
     if (args.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
@@ -57860,20 +57854,20 @@ export const _ = {
       const root2 = dir.root("");
       for (const f of (0, import_fs7.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack11.existsAsync)((0, import_path11.join)(root2, `.output/upgrade/backup/${f}`))) {
+          if (yield (0, import_fs_jetpack11.existsAsync)((0, import_path12.join)(root2, `.output/upgrade/backup/${f}`))) {
             yield (0, import_fs_jetpack11.moveAsync)(
-              (0, import_path11.join)(root2, f),
-              (0, import_path11.join)(root2, `.output/upgrade/backup/${f}`)
+              (0, import_path12.join)(root2, f),
+              (0, import_path12.join)(root2, `.output/upgrade/backup/${f}`)
             );
           }
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs7.readdirSync)((0, import_path11.join)(root2, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs7.readdirSync)((0, import_path12.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
           yield (0, import_fs_jetpack11.copyAsync)(
-            (0, import_path11.join)(root2, `.output/upgrade/royal-main/${f}`),
-            (0, import_path11.join)(root2, f),
+            (0, import_path12.join)(root2, `.output/upgrade/royal-main/${f}`),
+            (0, import_path12.join)(root2, f),
             {
               overwrite: true
             }
@@ -57936,7 +57930,7 @@ If somehow upgrade failed you can rollback using
 
   // pkgs/base/src/vscode.ts
   var import_fs_jetpack13 = __toESM(require_main2());
-  var import_path12 = __require("path");
+  var import_path13 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
@@ -57945,7 +57939,7 @@ If somehow upgrade failed you can rollback using
         return;
       }
     }
-    yield (0, import_fs_jetpack13.dirAsync)((0, import_path12.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack13.dirAsync)((0, import_path13.dirname)(vscodeFile));
     yield (0, import_fs_jetpack13.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
@@ -57992,7 +57986,7 @@ If somehow upgrade failed you can rollback using
   var import_chalk8 = __toESM(require_source());
   var import_fs_jetpack15 = __toESM(require_main2());
   var import_promises4 = __require("fs/promises");
-  var import_path13 = __require("path");
+  var import_path14 = __require("path");
 
   // pkgs/base/src/appgen/service.ts
   var import_fs_jetpack14 = __toESM(require_main2());
@@ -58018,7 +58012,7 @@ If somehow upgrade failed you can rollback using
       event: (err2, changes) => __async(void 0, null, function* () {
         if (!err2) {
           for (const c of changes) {
-            const name = (0, import_path13.basename)(c.path);
+            const name = (0, import_path14.basename)(c.path);
             if (c.type === "delete") {
               console.log(`Removing service: ${import_chalk8.default.red(name)}`);
               yield (0, import_fs_jetpack15.removeAsync)(dir.root(`.output/app/${name}`));
@@ -58037,7 +58031,7 @@ If somehow upgrade failed you can rollback using
                   if (f !== "node_modules") {
                     const src = yield (0, import_fs_jetpack15.readAsync)(dir.root(`${root2}/${f}`), "utf8");
                     yield (0, import_fs_jetpack15.writeAsync)(
-                      (0, import_path13.join)(c.path, f),
+                      (0, import_path14.join)(c.path, f),
                       (src || "").replace(/template_service/g, name)
                     );
                   }

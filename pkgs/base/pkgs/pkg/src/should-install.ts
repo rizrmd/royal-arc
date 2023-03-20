@@ -19,14 +19,12 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
           continue;
         }
         if (!(await existsAsync(join(dir, "node_modules", k)))) {
-          if (silent === false) {
-            console.log(
-              `module ${chalk.cyan(k)} not found in ${join(
-                dir,
-                "node_modules"
-              ).substring(process.cwd().length + 1)}`
-            );
-          }
+          console.log(
+            `module ${chalk.cyan(k)} not found in ${join(
+              dir,
+              "node_modules"
+            ).substring(process.cwd().length + 1)}`
+          );
           shouldInstall = true;
         }
         if (v === "*") {
@@ -36,13 +34,9 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
             );
             const json = await res.json();
             pkg[e][k] = json.version;
-            if (silent === false) {
-              console.log(
-                `found ${k} = "*" in ${path.substring(
-                  process.cwd().length + 1
-                )}`
-              );
-            }
+            console.log(
+              `found ${k} = "*" in ${path.substring(process.cwd().length + 1)}`
+            );
 
             shouldInstall = true;
           } catch (e) {}

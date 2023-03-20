@@ -1,4 +1,5 @@
 import { createAPIServer } from "service-srv";
+import react from "react"
 
 export const main = createAPIServer({
   name: "srv",

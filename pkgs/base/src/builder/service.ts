@@ -1,13 +1,14 @@
 import { bundle } from "bundler";
 import { runner } from "bundler/runner";
 import { dir } from "dir";
+import { basename } from "path";
 import { RPCActionResult } from "rpc/src/types";
 import { action } from "../../../service/src/action";
 import { watchService } from "../watcher/watch-service";
 import { prepareDB } from "./service/db";
 import { prepareSrv } from "./service/srv";
 
-export const marker = {} as Record<string, true | Set<string>>;
+export const marker = {} as Record<string, "skip" | Set<string>>;
 
 export const buildService = async (
   name: string,
@@ -45,8 +46,6 @@ export const buildService = async (
                 }
 
                 if (shouldRestart) await rpc.restart({ name: name as any });
-              } else {
-                marker[name] = true;
               }
             }
           }
@@ -64,17 +63,16 @@ export const buildService = async (
       if (!err) {
         for (const c of changes) {
           if (c.type === "update") {
+            if (basename(c.path) === "package.json") return;
+
             if (!marker[name]) marker[name] = new Set();
 
             const mark = marker[name];
             if (mark) {
               if (mark instanceof Set) {
                 mark.add(c.path);
-              } else if (mark === true) {
-                marker[name] = new Set([c.path]);
               }
             }
-          } else {
           }
         }
 

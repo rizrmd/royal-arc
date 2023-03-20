@@ -4,6 +4,7 @@ import { readAsync, writeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { dirname } from "path";
 import { pkg } from "pkg";
+import { marker } from "../../src/builder/service";
 
 export const bundle = async (arg: {
   input: string;

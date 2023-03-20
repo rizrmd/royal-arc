@@ -2,7 +2,11 @@
   "name": "srv",
   "version": "0.0.1",
   "dependencies": {
-    "service-srv": "workspace:*"
+    "service-srv": "workspace:*",
+    "react": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "18.0.28"
   },
   "external": [
     "hyper-express",
