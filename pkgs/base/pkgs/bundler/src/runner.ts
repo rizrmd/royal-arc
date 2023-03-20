@@ -18,6 +18,9 @@ export const runner = {
   get list() {
     return g.runs;
   },
+  dispose() {
+    return Promise.all(Object.values(g.runs).map((pty) => pty.kill));
+  },
   async restart(path: keyof typeof g.runs) {
     if (g.runs[path]) {
       if (!g.runs[path].stopped) {

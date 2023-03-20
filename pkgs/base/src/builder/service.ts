@@ -5,6 +5,7 @@ import { RPCActionResult } from "rpc/src/types";
 import { prepareDB } from "./service/db";
 import { watchService } from "../watcher/watch-service";
 import { watcher } from "bundler/src/watch";
+import { prepareSrv } from "./service/srv";
 
 const marker = {} as Record<string, true | Set<string>>;
 
@@ -37,17 +38,14 @@ export const buildService = async (
 
               if (mark) {
                 if (mark instanceof Set) {
-                  if (name.startsWith("db")) await prepareDB(name, mark);
-                  else {
-                    console.log(name);
-                  }
+                  await prepare(name, mark);
                   delete marker[name];
                 }
+
+                await rpc.restart({ name: name as any });
               } else {
                 marker[name] = true;
               }
-
-              await rpc.restart({ name: name as any });
             }
           }
         : undefined,
@@ -57,17 +55,17 @@ export const buildService = async (
     return false;
   }
 
-  if (name.startsWith("db")) {
-    await prepareDB(name);
-  }
+  await prepare(name);
+
   watchService(name, (err, changes) => {
     if (!err) {
       if (!err) {
         for (const c of changes) {
           if (c.type === "update") {
+            console.log(c)
             if (!marker[name]) marker[name] = new Set();
 
-            const mark = marker[name]; 
+            const mark = marker[name];
             if (mark) {
               if (mark instanceof Set) {
                 mark.add(c.path);
@@ -75,11 +73,22 @@ export const buildService = async (
                 delete marker[name];
               }
             }
+          } else {
           }
+        }
+
+        const deladd = changes.filter((e) => e.type !== "delete");
+        if (deladd.length > 0) {
+          prepare(name, new Set(deladd.map((e) => e.path)));
         }
       }
     }
   });
 
   return true;
+};
+
+const prepare = async (name: string, mark?: Set<string> | undefined) => {
+  if (name.startsWith("db")) await prepareDB(name, mark);
+  if (name.startsWith("srv")) await prepareSrv(name, mark);
 };

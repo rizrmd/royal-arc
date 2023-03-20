@@ -35,6 +35,7 @@ export const baseMain = async () => {
   } else {
     const onExit = async () => {
       await watcher.dispose();
+      await runner.dispose()
     };
     addExitCallback(() => {});
     setupWatchers(args, onExit);

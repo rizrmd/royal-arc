@@ -21,6 +21,7 @@ export const spawn = (
   const callback = {
     onMessage: (e: any) => {},
     onExit: (e: { exitCode: number; signal: NodeJS.Signals | null }) => {},
+    killResolve: (value: void | PromiseLike<void>) => {},
   };
 
   if (opt?.ipc) {
@@ -30,6 +31,7 @@ export const spawn = (
   }
 
   proc.on("exit", (code, signal) => {
+    callback.killResolve();
     callback.onExit({
       exitCode: code || 0,
       signal: signal,
@@ -44,11 +46,17 @@ export const spawn = (
       fn: (e: { exitCode: number; signal: NodeJS.Signals | null }) => any
     ) => {
       callback.onExit = fn;
-      return {
-        dispose: () => {},
-      } as IDisposable;
     },
-    kill: () => {},
+    kill: () => {
+      return new Promise<void>((resolve) => {
+        callback.killResolve = resolve;
+        if (opt?.ipc) {
+          proc.send("::KILL::");
+        } else {
+          proc.kill();
+        }
+      });
+    },
   };
 };
 

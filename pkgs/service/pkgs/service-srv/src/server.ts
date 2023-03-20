@@ -48,6 +48,8 @@ export const server = async ({
           handler: Promise<{ _: { api: (...arg: any[]) => any } }>;
         };
 
+        if (!item || (!!item && !item.url)) return;
+
         const urlParts = item.url.split("/");
         const cleanedUrl = urlParts
           .map((e, idx) => {
@@ -69,17 +71,17 @@ export const server = async ({
           const handler = (await item.handler)._.api;
           server.any(url, async (req, res) => {
             let found = router.lookup(req.path);
-
+  
             const nreq = new DeepProxy(req, ({ target, path, key, value }) => {
               if (typeof value === "function") {
                 return async (...args: any[]) => {
                   const result = (req as any)[key](...args);
-
+ 
                   if (result instanceof Promise) {
                     const awaited = await result;
                     return awaited;
                   }
-                  return result;
+                  return result; 
                 };
               }
 
@@ -93,7 +95,7 @@ export const server = async ({
                 } else {
                   return {};
                 }
-              }
+              } 
 
               return value;
             });

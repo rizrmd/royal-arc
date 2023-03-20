@@ -1829,7 +1829,7 @@
           maxRetries: 3
         });
       };
-      var removeAsync6 = (path2) => {
+      var removeAsync7 = (path2) => {
         return fs.rm(path2, {
           recursive: true,
           force: true,
@@ -1838,7 +1838,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync6;
+      exports2.async = removeAsync7;
     }
   });
 
@@ -1875,18 +1875,18 @@
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat3;
+        let stat5;
         try {
-          stat3 = fs.statSync(path2);
+          stat5 = fs.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
           }
         }
-        if (stat3 && !stat3.isDirectory()) {
+        if (stat5 && !stat5.isDirectory()) {
           throw generatePathOccupiedByNotDirectoryError(path2);
         }
-        return stat3;
+        return stat5;
       };
       var createBrandNewDirectorySync = (path2, opts) => {
         const options = opts || {};
@@ -1902,9 +1902,9 @@
           }
         }
       };
-      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat3, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat5, criteria) => {
         const checkMode = () => {
-          const mode = modeUtil.normalizeFileMode(stat3.mode);
+          const mode = modeUtil.normalizeFileMode(stat5.mode);
           if (criteria.mode !== void 0 && criteria.mode !== mode) {
             fs.chmodSync(path2, criteria.mode);
           }
@@ -1922,18 +1922,18 @@
       };
       var dirSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat3 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat3) {
-          checkExistingDirectoryFulfillsCriteriaSync(path2, stat3, criteria);
+        const stat5 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat5) {
+          checkExistingDirectoryFulfillsCriteriaSync(path2, stat5, criteria);
         } else {
           createBrandNewDirectorySync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve2, reject) => {
-          fs.stat(path2).then((stat3) => {
-            if (stat3.isDirectory()) {
-              resolve2(stat3);
+          fs.stat(path2).then((stat5) => {
+            if (stat5.isDirectory()) {
+              resolve2(stat5);
             } else {
               reject(generatePathOccupiedByNotDirectoryError(path2));
             }
@@ -1963,10 +1963,10 @@
           }).catch(reject);
         });
       };
-      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat3, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat5, criteria) => {
         return new Promise((resolve2, reject) => {
           const checkMode = () => {
-            const mode = modeUtil.normalizeFileMode(stat3.mode);
+            const mode = modeUtil.normalizeFileMode(stat5.mode);
             if (criteria.mode !== void 0 && criteria.mode !== mode) {
               return fs.chmod(path2, criteria.mode);
             }
@@ -2006,11 +2006,11 @@
       var dirAsync4 = (path2, passedCriteria) => {
         return new Promise((resolve2, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat3) => {
-            if (stat3 !== void 0) {
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
+            if (stat5 !== void 0) {
               return checkExistingDirectoryFulfillsCriteriaAsync(
                 path2,
-                stat3,
+                stat5,
                 criteria
               );
             }
@@ -2105,7 +2105,7 @@
           }).then(resolve2, reject);
         });
       };
-      var writeAsync10 = (path2, data, options) => {
+      var writeAsync12 = (path2, data, options) => {
         const opts = options || {};
         const processedData = serializeToJsonMaybe(data, opts.jsonIndent);
         let writeStrategy = writeFileAsync;
@@ -2116,7 +2116,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = writeSync;
-      exports2.async = writeAsync10;
+      exports2.async = writeAsync12;
     }
   });
 
@@ -2193,21 +2193,21 @@
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat3;
+        let stat5;
         try {
-          stat3 = fs.statSync(path2);
+          stat5 = fs.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
           }
         }
-        if (stat3 && !stat3.isFile()) {
+        if (stat5 && !stat5.isFile()) {
           throw generatePathOccupiedByNotFileError(path2);
         }
-        return stat3;
+        return stat5;
       };
-      var checkExistingFileFulfillsCriteriaSync = (path2, stat3, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat3.mode);
+      var checkExistingFileFulfillsCriteriaSync = (path2, stat5, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat5.mode);
         const checkContent = () => {
           if (criteria.content !== void 0) {
             write.sync(path2, criteria.content, {
@@ -2240,18 +2240,18 @@
       };
       var fileSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat3 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat3 !== void 0) {
-          checkExistingFileFulfillsCriteriaSync(path2, stat3, criteria);
+        const stat5 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat5 !== void 0) {
+          checkExistingFileFulfillsCriteriaSync(path2, stat5, criteria);
         } else {
           createBrandNewFileSync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve2, reject) => {
-          fs.stat(path2).then((stat3) => {
-            if (stat3.isFile()) {
-              resolve2(stat3);
+          fs.stat(path2).then((stat5) => {
+            if (stat5.isFile()) {
+              resolve2(stat5);
             } else {
               reject(generatePathOccupiedByNotFileError(path2));
             }
@@ -2264,8 +2264,8 @@
           });
         });
       };
-      var checkExistingFileFulfillsCriteriaAsync = (path2, stat3, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat3.mode);
+      var checkExistingFileFulfillsCriteriaAsync = (path2, stat5, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat5.mode);
         const checkContent = () => {
           return new Promise((resolve2, reject) => {
             if (criteria.content !== void 0) {
@@ -2306,9 +2306,9 @@
       var fileAsync = (path2, passedCriteria) => {
         return new Promise((resolve2, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat3) => {
-            if (stat3 !== void 0) {
-              return checkExistingFileFulfillsCriteriaAsync(path2, stat3, criteria);
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
+            if (stat5 !== void 0) {
+              return checkExistingFileFulfillsCriteriaAsync(path2, stat5, criteria);
             }
             return createBrandNewFileAsync(path2, criteria);
           }).then(resolve2, reject);
@@ -2355,27 +2355,27 @@
           );
         }
       };
-      var createInspectObj = (path2, options, stat3) => {
+      var createInspectObj = (path2, options, stat5) => {
         const obj = {};
         obj.name = pathUtil.basename(path2);
-        if (stat3.isFile()) {
+        if (stat5.isFile()) {
           obj.type = "file";
-          obj.size = stat3.size;
-        } else if (stat3.isDirectory()) {
+          obj.size = stat5.size;
+        } else if (stat5.isDirectory()) {
           obj.type = "dir";
-        } else if (stat3.isSymbolicLink()) {
+        } else if (stat5.isSymbolicLink()) {
           obj.type = "symlink";
         } else {
           obj.type = "other";
         }
         if (options.mode) {
-          obj.mode = stat3.mode;
+          obj.mode = stat5.mode;
         }
         if (options.times) {
-          obj.accessTime = stat3.atime;
-          obj.modifyTime = stat3.mtime;
-          obj.changeTime = stat3.ctime;
-          obj.birthTime = stat3.birthtime;
+          obj.accessTime = stat5.atime;
+          obj.modifyTime = stat5.mtime;
+          obj.changeTime = stat5.ctime;
+          obj.birthTime = stat5.birthtime;
         }
         if (options.absolutePath) {
           obj.absolutePath = path2;
@@ -2397,20 +2397,20 @@
       };
       var inspectSync = (path2, options) => {
         let statOperation = fs.lstatSync;
-        let stat3;
+        let stat5;
         const opts = options || {};
         if (opts.symlinks === "follow") {
           statOperation = fs.statSync;
         }
         try {
-          stat3 = statOperation(path2);
+          stat5 = statOperation(path2);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             return void 0;
           }
           throw err2;
         }
-        const inspectObj = createInspectObj(path2, opts, stat3);
+        const inspectObj = createInspectObj(path2, opts, stat5);
         addExtraFieldsSync(path2, inspectObj, opts);
         return inspectObj;
       };
@@ -2448,8 +2448,8 @@
           if (opts.symlinks === "follow") {
             statOperation = fs.stat;
           }
-          statOperation(path2).then((stat3) => {
-            const inspectObj = createInspectObj(path2, opts, stat3);
+          statOperation(path2).then((stat5) => {
+            const inspectObj = createInspectObj(path2, opts, stat5);
             addExtraFieldsAsync(path2, inspectObj, opts).then(resolve2, reject);
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
@@ -3924,10 +3924,10 @@
       };
       var existsSync5 = (path2) => {
         try {
-          const stat3 = fs.statSync(path2);
-          if (stat3.isDirectory()) {
+          const stat5 = fs.statSync(path2);
+          if (stat5.isDirectory()) {
             return "dir";
-          } else if (stat3.isFile()) {
+          } else if (stat5.isFile()) {
             return "file";
           }
           return "other";
@@ -3938,12 +3938,12 @@
         }
         return false;
       };
-      var existsAsync8 = (path2) => {
+      var existsAsync9 = (path2) => {
         return new Promise((resolve2, reject) => {
-          fs.stat(path2).then((stat3) => {
-            if (stat3.isDirectory()) {
+          fs.stat(path2).then((stat5) => {
+            if (stat5.isDirectory()) {
               resolve2("dir");
-            } else if (stat3.isFile()) {
+            } else if (stat5.isFile()) {
               resolve2("file");
             } else {
               resolve2("other");
@@ -3959,7 +3959,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = existsSync5;
-      exports2.async = existsAsync8;
+      exports2.async = existsAsync9;
     }
   });
 
@@ -4400,7 +4400,7 @@
         }
         return data;
       };
-      var readAsync9 = (path2, returnAs) => {
+      var readAsync10 = (path2, returnAs) => {
         return new Promise((resolve2, reject) => {
           const retAs = returnAs || "utf8";
           let encoding = "utf8";
@@ -4430,7 +4430,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = readSync;
-      exports2.async = readAsync9;
+      exports2.async = readAsync10;
     }
   });
 
@@ -5133,8 +5133,8 @@
           var isPathName = /[\\]/.test(s);
           if (isPathName) {
             var dirname8 = '"' + path2.dirname(s) + '"';
-            var basename2 = '"' + path2.basename(s) + '"';
-            return dirname8 + ":" + basename2;
+            var basename4 = '"' + path2.basename(s) + '"';
+            return dirname8 + ":" + basename4;
           }
           return '"' + s + '"';
         };
@@ -8605,7 +8605,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         else
           dest[name].push(elem);
       }
-      function parse(header) {
+      function parse2(header) {
         const offers = /* @__PURE__ */ Object.create(null);
         let params = /* @__PURE__ */ Object.create(null);
         let mustUnescape = false;
@@ -8760,7 +8760,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }).join(", ");
         }).join(", ");
       }
-      module2.exports = { format: format2, parse };
+      module2.exports = { format: format2, parse: parse2 };
     }
   });
 
@@ -8792,7 +8792,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var {
         EventTarget: { addEventListener, removeEventListener }
       } = require_event_target();
-      var { format: format2, parse } = require_extension();
+      var { format: format2, parse: parse2 } = require_extension();
       var { toBuffer } = require_buffer_util();
       var closeTimeout = 30 * 1e3;
       var kAborted = Symbol("kAborted");
@@ -9467,7 +9467,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             }
             let extensions;
             try {
-              extensions = parse(secWebSocketExtensions);
+              extensions = parse2(secWebSocketExtensions);
             } catch (err2) {
               const message = "Invalid Sec-WebSocket-Extensions header";
               abortHandshake(websocket, socket, message);
@@ -9637,7 +9637,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     "node_modules/.pnpm/ws@8.12.1/node_modules/ws/lib/subprotocol.js"(exports2, module2) {
       "use strict";
       var { tokenChars } = require_validation();
-      function parse(header) {
+      function parse2(header) {
         const protocols = /* @__PURE__ */ new Set();
         let start = -1;
         let end = -1;
@@ -9676,7 +9676,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         protocols.add(protocol);
         return protocols;
       }
-      module2.exports = { parse };
+      module2.exports = { parse: parse2 };
     }
   });
 
@@ -17569,7 +17569,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       function isWhitespace(c) {
         return c === 32 || c === 9 || c === 10 || c === 12 || c === 13;
       }
-      function parse(selector) {
+      function parse2(selector) {
         var subselects = [];
         var endIndex = parseSelector(subselects, "".concat(selector), 0);
         if (endIndex < selector.length) {
@@ -17577,7 +17577,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         return subselects;
       }
-      exports2.parse = parse;
+      exports2.parse = parse2;
       function parseSelector(subselects, selector, selectorIndex) {
         var tokens = [];
         function getName(offset) {
@@ -18331,7 +18331,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var whitespace = /* @__PURE__ */ new Set([9, 10, 12, 13, 32]);
       var ZERO = "0".charCodeAt(0);
       var NINE = "9".charCodeAt(0);
-      function parse(formula) {
+      function parse2(formula) {
         formula = formula.trim().toLowerCase();
         if (formula === "even") {
           return [2, 0];
@@ -18383,7 +18383,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
         }
       }
-      exports2.parse = parse;
+      exports2.parse = parse2;
     }
   });
 
@@ -39906,8 +39906,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           return (0, _index.default)(fractionalSeconds, token.length);
         }
       };
-      var _default = formatters;
-      exports2.default = _default;
+      var _default2 = formatters;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -40567,8 +40567,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         var minutes = (0, _index6.default)(absOffset % 60, 2);
         return sign + hours + delimiter + minutes;
       }
-      var _default = formatters;
-      exports2.default = _default;
+      var _default2 = formatters;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -40660,8 +40660,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         p: timeLongFormatter,
         P: dateTimeLongFormatter
       };
-      var _default = longFormatters;
-      exports2.default = _default;
+      var _default2 = longFormatters;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -40788,8 +40788,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         return result;
       };
-      var _default = formatDistance;
-      exports2.default = _default;
+      var _default2 = formatDistance;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -40858,8 +40858,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           defaultWidth: "full"
         })
       };
-      var _default = formatLong;
-      exports2.default = _default;
+      var _default2 = formatLong;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -40883,8 +40883,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var formatRelative = function formatRelative2(token, _date, _baseDate, _options) {
         return formatRelativeLocale[token];
       };
-      var _default = formatRelative;
-      exports2.default = _default;
+      var _default2 = formatRelative;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -41058,8 +41058,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           defaultFormattingWidth: "wide"
         })
       };
-      var _default = localize;
-      exports2.default = _default;
+      var _default2 = localize;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -41257,8 +41257,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           defaultParseWidth: "any"
         })
       };
-      var _default = match;
-      exports2.default = _default;
+      var _default2 = match;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -41291,8 +41291,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           firstWeekContainsDate: 1
         }
       };
-      var _default = locale;
-      exports2.default = _default;
+      var _default2 = locale;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -41309,8 +41309,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : { default: obj };
       }
-      var _default = _index.default;
-      exports2.default = _default;
+      var _default2 = _index.default;
+      exports2.default = _default2;
       module2.exports = exports2.default;
     }
   });
@@ -43553,7 +43553,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(EraParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "G":
               case "GG":
@@ -43907,7 +43907,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(YearParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             var valueCallback = function valueCallback2(year) {
               return {
                 year,
@@ -44087,7 +44087,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(LocalWeekYearParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             var valueCallback = function valueCallback2(year) {
               return {
                 year,
@@ -44266,7 +44266,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISOWeekYearParser2, [{
           key: "parse",
-          value: function parse(dateString, token) {
+          value: function parse2(dateString, token) {
             if (token === "R") {
               return (0, _utils.parseNDigitsSigned)(4, dateString);
             }
@@ -44417,7 +44417,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ExtendedYearParser2, [{
           key: "parse",
-          value: function parse(dateString, token) {
+          value: function parse2(dateString, token) {
             if (token === "u") {
               return (0, _utils.parseNDigitsSigned)(4, dateString);
             }
@@ -44567,7 +44567,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(QuarterParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "Q":
               case "QQ":
@@ -44752,7 +44752,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(StandAloneQuarterParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "q":
               case "qq":
@@ -44938,7 +44938,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(MonthParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             var valueCallback = function valueCallback2(value) {
               return value - 1;
             };
@@ -45128,7 +45128,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(StandAloneMonthParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             var valueCallback = function valueCallback2(value) {
               return value - 1;
             };
@@ -45350,7 +45350,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(LocalWeekParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "w":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.week, dateString);
@@ -45542,7 +45542,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISOWeekParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "I":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.week, dateString);
@@ -45705,7 +45705,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(DateParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "d":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.date, dateString);
@@ -45875,7 +45875,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(DayOfYearParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "D":
               case "DD":
@@ -46082,7 +46082,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(DayParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "E":
               case "EE":
@@ -46280,7 +46280,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(LocalDayParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match, options) {
+          value: function parse2(dateString, token, match, options) {
             var valueCallback = function valueCallback2(value) {
               var wholeWeekDays = Math.floor((value - 1) / 7) * 7;
               return (value + options.weekStartsOn + 6) % 7 + wholeWeekDays;
@@ -46487,7 +46487,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(StandAloneLocalDayParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match, options) {
+          value: function parse2(dateString, token, match, options) {
             var valueCallback = function valueCallback2(value) {
               var wholeWeekDays = Math.floor((value - 1) / 7) * 7;
               return (value + options.weekStartsOn + 6) % 7 + wholeWeekDays;
@@ -46727,7 +46727,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISODayParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             var valueCallback = function valueCallback2(value) {
               if (value === 0) {
                 return 7;
@@ -46932,7 +46932,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(AMPMParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "a":
               case "aa":
@@ -47106,7 +47106,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(AMPMMidnightParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "b":
               case "bb":
@@ -47280,7 +47280,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(DayPeriodParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "B":
               case "BB":
@@ -47455,7 +47455,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(Hour1to12Parser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "h":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.hour12h, dateString);
@@ -47623,7 +47623,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(Hour0to23Parser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "H":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.hour23h, dateString);
@@ -47784,7 +47784,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(Hour0To11Parser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "K":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.hour11h, dateString);
@@ -47950,7 +47950,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(Hour1To24Parser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "k":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.hour24h, dateString);
@@ -48112,7 +48112,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(MinuteParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "m":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.minute, dateString);
@@ -48273,7 +48273,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(SecondParser2, [{
           key: "parse",
-          value: function parse(dateString, token, match) {
+          value: function parse2(dateString, token, match) {
             switch (token) {
               case "s":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.second, dateString);
@@ -48433,7 +48433,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(FractionOfSecondParser2, [{
           key: "parse",
-          value: function parse(dateString, token) {
+          value: function parse2(dateString, token) {
             var valueCallback = function valueCallback2(value) {
               return Math.floor(value * Math.pow(10, -token.length + 3));
             };
@@ -48583,7 +48583,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISOTimezoneWithZParser2, [{
           key: "parse",
-          value: function parse(dateString, token) {
+          value: function parse2(dateString, token) {
             switch (token) {
               case "X":
                 return (0, _utils.parseTimezonePattern)(_constants.timezonePatterns.basicOptionalMinutes, dateString);
@@ -48744,7 +48744,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISOTimezoneParser2, [{
           key: "parse",
-          value: function parse(dateString, token) {
+          value: function parse2(dateString, token) {
             switch (token) {
               case "x":
                 return (0, _utils.parseTimezonePattern)(_constants.timezonePatterns.basicOptionalMinutes, dateString);
@@ -48904,7 +48904,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(TimestampSecondsParser2, [{
           key: "parse",
-          value: function parse(dateString) {
+          value: function parse2(dateString) {
             return (0, _utils.parseAnyDigitsSigned)(dateString);
           }
         }, {
@@ -49051,7 +49051,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(TimestampMillisecondsParser2, [{
           key: "parse",
-          value: function parse(dateString) {
+          value: function parse2(dateString) {
             return (0, _utils.parseAnyDigitsSigned)(dateString);
           }
         }, {
@@ -49151,7 +49151,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       Object.defineProperty(exports2, "__esModule", {
         value: true
       });
-      exports2.default = parse;
+      exports2.default = parse2;
       var _index = _interopRequireDefault(require_defaultLocale());
       var _index2 = _interopRequireDefault(require_subMilliseconds());
       var _index3 = _interopRequireDefault(require_toDate());
@@ -49246,7 +49246,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var doubleQuoteRegExp = /''/g;
       var notWhitespaceRegExp = /\S/;
       var unescapedLatinCharacterRegExp = /[a-zA-Z]/;
-      function parse(dirtyDateString, dirtyFormatString, dirtyReferenceDate, options) {
+      function parse2(dirtyDateString, dirtyFormatString, dirtyReferenceDate, options) {
         var _ref, _options$locale, _ref2, _ref3, _ref4, _options$firstWeekCon, _options$locale2, _options$locale2$opti, _defaultOptions$local, _defaultOptions$local2, _ref5, _ref6, _ref7, _options$weekStartsOn, _options$locale3, _options$locale3$opti, _defaultOptions$local3, _defaultOptions$local4;
         (0, _index9.default)(3, arguments);
         var dateString = String(dirtyDateString);
@@ -54359,6 +54359,8 @@ ${import_chalk2.default.magenta("Installing")} deps:
       onMessage: (e) => {
       },
       onExit: (e) => {
+      },
+      killResolve: (value) => {
       }
     };
     if (opt?.ipc) {
@@ -54367,6 +54369,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
       });
     }
     proc.on("exit", (code, signal) => {
+      callback.killResolve();
       callback.onExit({
         exitCode: code || 0,
         signal
@@ -54378,12 +54381,16 @@ ${import_chalk2.default.magenta("Installing")} deps:
       },
       onExit: (fn) => {
         callback.onExit = fn;
-        return {
-          dispose: () => {
-          }
-        };
       },
       kill: () => {
+        return new Promise((resolve2) => {
+          callback.killResolve = resolve2;
+          if (opt?.ipc) {
+            proc.send("::KILL::");
+          } else {
+            proc.kill();
+          }
+        });
       }
     };
   };
@@ -54395,6 +54402,9 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var runner = {
     get list() {
       return g2.runs;
+    },
+    dispose() {
+      return Promise.all(Object.values(g2.runs).map((pty) => pty.kill));
     },
     restart(path2) {
       return __async(this, null, function* () {
@@ -55646,6 +55656,1488 @@ datasource db {
     });
   };
 
+  // pkgs/base/src/builder/service/srv.ts
+  var import_fs_jetpack8 = __toESM(require_main());
+  var import_promises2 = __require("fs/promises");
+  var import_path10 = __require("path");
+
+  // pkgs/base/src/scaffold/srv/api.ts
+  var import_fs_jetpack7 = __toESM(require_main());
+  var import_path9 = __require("path");
+
+  // pkgs/base/src/scaffold/parser/traverse.ts
+  var swc = __toESM(__require("@swc/core"));
+
+  // pkgs/base/src/scaffold/parser/swc/visitor.js
+  var Visitor$1 = {};
+  Object.defineProperty(Visitor$1, "__esModule", { value: true });
+  var Visitor_2 = Visitor$1.Visitor = void 0;
+  var Visitor = class {
+    visitProgram(n) {
+      switch (n.type) {
+        case "Module":
+          return this.visitModule(n);
+        case "Script":
+          return this.visitScript(n);
+      }
+    }
+    visitModule(m) {
+      m.body = this.visitModuleItems(m.body);
+      return m;
+    }
+    visitScript(m) {
+      m.body = this.visitStatements(m.body);
+      return m;
+    }
+    visitModuleItems(items) {
+      return items.map(this.visitModuleItem.bind(this));
+    }
+    visitModuleItem(n) {
+      switch (n.type) {
+        case "ExportDeclaration":
+        case "ExportDefaultDeclaration":
+        case "ExportNamedDeclaration":
+        case "ExportDefaultExpression":
+        case "ImportDeclaration":
+        case "ExportAllDeclaration":
+        case "TsImportEqualsDeclaration":
+        case "TsExportAssignment":
+        case "TsNamespaceExportDeclaration":
+          return this.visitModuleDeclaration(n);
+        default:
+          return this.visitStatement(n);
+      }
+    }
+    visitModuleDeclaration(n) {
+      switch (n.type) {
+        case "ExportDeclaration":
+          return this.visitExportDeclaration(n);
+        case "ExportDefaultDeclaration":
+          return this.visitExportDefaultDeclaration(n);
+        case "ExportNamedDeclaration":
+          return this.visitExportNamedDeclaration(n);
+        case "ExportDefaultExpression":
+          return this.visitExportDefaultExpression(n);
+        case "ImportDeclaration":
+          return this.visitImportDeclaration(n);
+        case "ExportAllDeclaration":
+          return this.visitExportAllDeclaration(n);
+        case "TsImportEqualsDeclaration":
+          return this.visitTsImportEqualsDeclaration(n);
+        case "TsExportAssignment":
+          return this.visitTsExportAssignment(n);
+        case "TsNamespaceExportDeclaration":
+          return this.visitTsNamespaceExportDeclaration(n);
+      }
+    }
+    visitTsNamespaceExportDeclaration(n) {
+      n.id = this.visitBindingIdentifier(n.id);
+      return n;
+    }
+    visitTsExportAssignment(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitTsImportEqualsDeclaration(n) {
+      n.id = this.visitBindingIdentifier(n.id);
+      n.moduleRef = this.visitTsModuleReference(n.moduleRef);
+      return n;
+    }
+    visitTsModuleReference(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitIdentifierReference(n);
+        case "TsExternalModuleReference":
+          return this.visitTsExternalModuleReference(n);
+        case "TsQualifiedName":
+          return this.visitTsQualifiedName(n);
+      }
+    }
+    visitTsExternalModuleReference(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitExportAllDeclaration(n) {
+      n.source = this.visitStringLiteral(n.source);
+      return n;
+    }
+    visitExportDefaultExpression(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitExportNamedDeclaration(n) {
+      n.specifiers = this.visitExportSpecifiers(n.specifiers);
+      n.source = this.visitOptionalStringLiteral(n.source);
+      return n;
+    }
+    visitExportSpecifiers(nodes) {
+      return nodes.map(this.visitExportSpecifier.bind(this));
+    }
+    visitExportSpecifier(n) {
+      switch (n.type) {
+        case "ExportDefaultSpecifier":
+          return this.visitExportDefaultSpecifier(n);
+        case "ExportNamespaceSpecifier":
+          return this.visitExportNamespaceSpecifier(n);
+        case "ExportSpecifier":
+          return this.visitNamedExportSpecifier(n);
+      }
+    }
+    visitNamedExportSpecifier(n) {
+      if (n.exported) {
+        n.exported = this.visitBindingIdentifier(n.exported);
+      }
+      n.orig = this.visitIdentifierReference(n.orig);
+      return n;
+    }
+    visitExportNamespaceSpecifier(n) {
+      n.name = this.visitBindingIdentifier(n.name);
+      return n;
+    }
+    visitExportDefaultSpecifier(n) {
+      n.exported = this.visitBindingIdentifier(n.exported);
+      return n;
+    }
+    visitOptionalStringLiteral(n) {
+      if (n) {
+        return this.visitStringLiteral(n);
+      }
+    }
+    visitExportDefaultDeclaration(n) {
+      n.decl = this.visitDefaultDeclaration(n.decl);
+      return n;
+    }
+    visitDefaultDeclaration(n) {
+      switch (n.type) {
+        case "ClassExpression":
+          return this.visitClassExpression(n);
+        case "FunctionExpression":
+          return this.visitFunctionExpression(n);
+        case "TsInterfaceDeclaration":
+          return this.visitTsInterfaceDeclaration(n);
+      }
+    }
+    visitFunctionExpression(n) {
+      n = this.visitFunction(n);
+      if (n.identifier) {
+        n.identifier = this.visitBindingIdentifier(n.identifier);
+      }
+      return n;
+    }
+    visitClassExpression(n) {
+      n = this.visitClass(n);
+      if (n.identifier) {
+        n.identifier = this.visitBindingIdentifier(n.identifier);
+      }
+      return n;
+    }
+    visitExportDeclaration(n) {
+      n.declaration = this.visitDeclaration(n.declaration);
+      return n;
+    }
+    visitArrayExpression(e) {
+      if (e.elements) {
+        e.elements = e.elements.map(this.visitArrayElement.bind(this));
+      }
+      return e;
+    }
+    visitArrayElement(e) {
+      if (e) {
+        return this.visitExprOrSpread(e);
+      }
+    }
+    visitExprOrSpread(e) {
+      return Object.assign(Object.assign({}, e), {
+        expression: this.visitExpression(e.expression)
+      });
+    }
+    visitSpreadElement(e) {
+      e.arguments = this.visitExpression(e.arguments);
+      return e;
+    }
+    visitOptionalExpression(e) {
+      if (e) {
+        return this.visitExpression(e);
+      }
+    }
+    visitArrowFunctionExpression(e) {
+      e.body = this.visitArrowBody(e.body);
+      e.params = this.visitPatterns(e.params);
+      e.returnType = this.visitTsTypeAnnotation(e.returnType);
+      e.typeParameters = this.visitTsTypeParameterDeclaration(e.typeParameters);
+      return e;
+    }
+    visitArrowBody(body) {
+      switch (body.type) {
+        case "BlockStatement":
+          return this.visitBlockStatement(body);
+        default:
+          return this.visitExpression(body);
+      }
+    }
+    visitBlockStatement(block) {
+      block.stmts = this.visitStatements(block.stmts);
+      return block;
+    }
+    visitStatements(stmts) {
+      return stmts.map(this.visitStatement.bind(this));
+    }
+    visitStatement(stmt) {
+      switch (stmt.type) {
+        case "ClassDeclaration":
+        case "FunctionDeclaration":
+        case "TsEnumDeclaration":
+        case "TsInterfaceDeclaration":
+        case "TsModuleDeclaration":
+        case "TsTypeAliasDeclaration":
+        case "VariableDeclaration":
+          return this.visitDeclaration(stmt);
+        case "BreakStatement":
+          return this.visitBreakStatement(stmt);
+        case "BlockStatement":
+          return this.visitBlockStatement(stmt);
+        case "ContinueStatement":
+          return this.visitContinueStatement(stmt);
+        case "DebuggerStatement":
+          return this.visitDebuggerStatement(stmt);
+        case "DoWhileStatement":
+          return this.visitDoWhileStatement(stmt);
+        case "EmptyStatement":
+          return this.visitEmptyStatement(stmt);
+        case "ForInStatement":
+          return this.visitForInStatement(stmt);
+        case "ForOfStatement":
+          return this.visitForOfStatement(stmt);
+        case "ForStatement":
+          return this.visitForStatement(stmt);
+        case "IfStatement":
+          return this.visitIfStatement(stmt);
+        case "LabeledStatement":
+          return this.visitLabeledStatement(stmt);
+        case "ReturnStatement":
+          return this.visitReturnStatement(stmt);
+        case "SwitchStatement":
+          return this.visitSwitchStatement(stmt);
+        case "ThrowStatement":
+          return this.visitThrowStatement(stmt);
+        case "TryStatement":
+          return this.visitTryStatement(stmt);
+        case "WhileStatement":
+          return this.visitWhileStatement(stmt);
+        case "WithStatement":
+          return this.visitWithStatement(stmt);
+        case "ExpressionStatement":
+          return this.visitExpressionStatement(stmt);
+        default:
+          throw new Error(`Unknown statement type: ` + stmt.type);
+      }
+    }
+    visitSwitchStatement(stmt) {
+      stmt.discriminant = this.visitExpression(stmt.discriminant);
+      stmt.cases = this.visitSwitchCases(stmt.cases);
+      return stmt;
+    }
+    visitSwitchCases(cases) {
+      return cases.map(this.visitSwitchCase.bind(this));
+    }
+    visitSwitchCase(c) {
+      c.test = this.visitOptionalExpression(c.test);
+      c.consequent = this.visitStatements(c.consequent);
+      return c;
+    }
+    visitIfStatement(stmt) {
+      stmt.test = this.visitExpression(stmt.test);
+      stmt.consequent = this.visitStatement(stmt.consequent);
+      stmt.alternate = this.visitOptionalStatement(stmt.alternate);
+      return stmt;
+    }
+    visitOptionalStatement(stmt) {
+      if (stmt) {
+        return this.visitStatement(stmt);
+      }
+    }
+    visitBreakStatement(stmt) {
+      if (stmt.label) {
+        stmt.label = this.visitLabelIdentifier(stmt.label);
+      }
+      return stmt;
+    }
+    visitWhileStatement(stmt) {
+      stmt.test = this.visitExpression(stmt.test);
+      stmt.body = this.visitStatement(stmt.body);
+      return stmt;
+    }
+    visitTryStatement(stmt) {
+      stmt.block = this.visitBlockStatement(stmt.block);
+      stmt.handler = this.visitCatchClause(stmt.handler);
+      if (stmt.finalizer) {
+        stmt.finalizer = this.visitBlockStatement(stmt.finalizer);
+      }
+      return stmt;
+    }
+    visitCatchClause(handler) {
+      if (handler) {
+        if (handler.param) {
+          handler.param = this.visitPattern(handler.param);
+        }
+        handler.body = this.visitBlockStatement(handler.body);
+      }
+      return handler;
+    }
+    visitThrowStatement(stmt) {
+      stmt.argument = this.visitExpression(stmt.argument);
+      return stmt;
+    }
+    visitReturnStatement(stmt) {
+      if (stmt.argument) {
+        stmt.argument = this.visitExpression(stmt.argument);
+      }
+      return stmt;
+    }
+    visitLabeledStatement(stmt) {
+      stmt.label = this.visitLabelIdentifier(stmt.label);
+      stmt.body = this.visitStatement(stmt.body);
+      return stmt;
+    }
+    visitForStatement(stmt) {
+      if (stmt.init) {
+        if (stmt.init.type === "VariableDeclaration") {
+          stmt.init = this.visitVariableDeclaration(stmt.init);
+        } else {
+          stmt.init = this.visitOptionalExpression(stmt.init);
+        }
+      }
+      stmt.test = this.visitOptionalExpression(stmt.test);
+      stmt.update = this.visitOptionalExpression(stmt.update);
+      stmt.body = this.visitStatement(stmt.body);
+      return stmt;
+    }
+    visitForOfStatement(stmt) {
+      if (stmt.left.type === "VariableDeclaration") {
+        stmt.left = this.visitVariableDeclaration(stmt.left);
+      } else {
+        stmt.left = this.visitPattern(stmt.left);
+      }
+      stmt.right = this.visitExpression(stmt.right);
+      stmt.body = this.visitStatement(stmt.body);
+      return stmt;
+    }
+    visitForInStatement(stmt) {
+      if (stmt.left.type === "VariableDeclaration") {
+        stmt.left = this.visitVariableDeclaration(stmt.left);
+      } else {
+        stmt.left = this.visitPattern(stmt.left);
+      }
+      stmt.right = this.visitExpression(stmt.right);
+      stmt.body = this.visitStatement(stmt.body);
+      return stmt;
+    }
+    visitEmptyStatement(stmt) {
+      return stmt;
+    }
+    visitDoWhileStatement(stmt) {
+      stmt.body = this.visitStatement(stmt.body);
+      stmt.test = this.visitExpression(stmt.test);
+      return stmt;
+    }
+    visitDebuggerStatement(stmt) {
+      return stmt;
+    }
+    visitWithStatement(stmt) {
+      stmt.object = this.visitExpression(stmt.object);
+      stmt.body = this.visitStatement(stmt.body);
+      return stmt;
+    }
+    visitDeclaration(decl) {
+      switch (decl.type) {
+        case "ClassDeclaration":
+          return this.visitClassDeclaration(decl);
+        case "FunctionDeclaration":
+          return this.visitFunctionDeclaration(decl);
+        case "TsEnumDeclaration":
+          return this.visitTsEnumDeclaration(decl);
+        case "TsInterfaceDeclaration":
+          return this.visitTsInterfaceDeclaration(decl);
+        case "TsModuleDeclaration":
+          return this.visitTsModuleDeclaration(decl);
+        case "TsTypeAliasDeclaration":
+          return this.visitTsTypeAliasDeclaration(decl);
+        case "VariableDeclaration":
+          return this.visitVariableDeclaration(decl);
+      }
+    }
+    visitVariableDeclaration(n) {
+      n.declarations = this.visitVariableDeclarators(n.declarations);
+      return n;
+    }
+    visitVariableDeclarators(nodes) {
+      return nodes.map(this.visitVariableDeclarator.bind(this));
+    }
+    visitVariableDeclarator(n) {
+      n.id = this.visitPattern(n.id);
+      n.init = this.visitOptionalExpression(n.init);
+      return n;
+    }
+    visitTsTypeAliasDeclaration(n) {
+      n.id = this.visitBindingIdentifier(n.id);
+      n.typeAnnotation = this.visitTsType(n.typeAnnotation);
+      n.typeParams = this.visitTsTypeParameterDeclaration(n.typeParams);
+      return n;
+    }
+    visitTsModuleDeclaration(n) {
+      n.id = this.visitTsModuleName(n.id);
+      if (n.body) {
+        n.body = this.visitTsNamespaceBody(n.body);
+      }
+      return n;
+    }
+    visitTsModuleName(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitBindingIdentifier(n);
+        case "StringLiteral":
+          return this.visitStringLiteral(n);
+      }
+    }
+    visitTsNamespaceBody(n) {
+      if (n) {
+        switch (n.type) {
+          case "TsModuleBlock":
+            return this.visitTsModuleBlock(n);
+          case "TsNamespaceDeclaration":
+            return this.visitTsNamespaceDeclaration(n);
+        }
+      }
+    }
+    visitTsNamespaceDeclaration(n) {
+      const body = this.visitTsNamespaceBody(n.body);
+      if (body) {
+        n.body = body;
+      }
+      n.id = this.visitBindingIdentifier(n.id);
+      return n;
+    }
+    visitTsModuleBlock(n) {
+      n.body = this.visitModuleItems(n.body);
+      return n;
+    }
+    visitTsInterfaceDeclaration(n) {
+      n.id = this.visitBindingIdentifier(n.id);
+      n.typeParams = this.visitTsTypeParameterDeclaration(n.typeParams);
+      n.extends = this.visitTsExpressionsWithTypeArguments(n.extends);
+      n.body = this.visitTsInterfaceBody(n.body);
+      return n;
+    }
+    visitTsInterfaceBody(n) {
+      n.body = this.visitTsTypeElements(n.body);
+      return n;
+    }
+    visitTsTypeElements(nodes) {
+      return nodes.map(this.visitTsTypeElement.bind(this));
+    }
+    visitTsTypeElement(n) {
+      n.params = this.visitTsFnParameters(n.params);
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      return n;
+    }
+    visitTsEnumDeclaration(n) {
+      n.id = this.visitIdentifier(n.id);
+      n.members = this.visitTsEnumMembers(n.members);
+      return n;
+    }
+    visitTsEnumMembers(nodes) {
+      return nodes.map(this.visitTsEnumMember.bind(this));
+    }
+    visitTsEnumMember(n) {
+      n.id = this.visitTsEnumMemberId(n.id);
+      n.init = this.visitOptionalExpression(n.init);
+      return n;
+    }
+    visitTsEnumMemberId(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitBindingIdentifier(n);
+        case "StringLiteral":
+          return this.visitStringLiteral(n);
+      }
+    }
+    visitFunctionDeclaration(decl) {
+      decl.identifier = this.visitIdentifier(decl.identifier);
+      decl = this.visitFunction(decl);
+      return decl;
+    }
+    visitClassDeclaration(decl) {
+      decl = this.visitClass(decl);
+      decl.identifier = this.visitIdentifier(decl.identifier);
+      return decl;
+    }
+    visitClassBody(members) {
+      return members.map(this.visitClassMember.bind(this));
+    }
+    visitClassMember(member) {
+      switch (member.type) {
+        case "ClassMethod":
+          return this.visitClassMethod(member);
+        case "ClassProperty":
+          return this.visitClassProperty(member);
+        case "Constructor":
+          return this.visitConstructor(member);
+        case "PrivateMethod":
+          return this.visitPrivateMethod(member);
+        case "PrivateProperty":
+          return this.visitPrivateProperty(member);
+        case "TsIndexSignature":
+          return this.visitTsIndexSignature(member);
+      }
+    }
+    visitTsIndexSignature(n) {
+      n.params = this.visitTsFnParameters(n.params);
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      return n;
+    }
+    visitTsFnParameters(params) {
+      return params.map(this.visitTsFnParameter.bind(this));
+    }
+    visitTsFnParameter(n) {
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      return n;
+    }
+    visitPrivateProperty(n) {
+      n.decorators = this.visitDecorators(n.decorators);
+      n.key = this.visitPrivateName(n.key);
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      n.value = this.visitOptionalExpression(n.value);
+      return n;
+    }
+    visitPrivateMethod(n) {
+      n.accessibility = this.visitAccessibility(n.accessibility);
+      n.function = this.visitFunction(n.function);
+      n.key = this.visitPrivateName(n.key);
+      return n;
+    }
+    visitPrivateName(n) {
+      return n;
+    }
+    visitConstructor(n) {
+      n.accessibility = this.visitAccessibility(n.accessibility);
+      n.key = this.visitPropertyName(n.key);
+      n.params = this.visitConstructorParameters(n.params);
+      if (n.body) {
+        n.body = this.visitBlockStatement(n.body);
+      }
+      return n;
+    }
+    visitConstructorParameters(nodes) {
+      return nodes.map(this.visitConstructorParameter.bind(this));
+    }
+    visitConstructorParameter(n) {
+      switch (n.type) {
+        case "TsParameterProperty":
+          return this.visitTsParameterProperty(n);
+        default:
+          return this.visitParameter(n);
+      }
+    }
+    visitTsParameterProperty(n) {
+      n.accessibility = this.visitAccessibility(n.accessibility);
+      n.decorators = this.visitDecorators(n.decorators);
+      n.param = this.visitTsParameterPropertyParameter(n.param);
+      return n;
+    }
+    visitTsParameterPropertyParameter(n) {
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      return n;
+    }
+    visitPropertyName(key) {
+      switch (key.type) {
+        case "Identifier":
+          return this.visitBindingIdentifier(key);
+        case "StringLiteral":
+          return this.visitStringLiteral(key);
+        case "NumericLiteral":
+          return this.visitNumericLiteral(key);
+        default:
+          return this.visitComputedPropertyKey(key);
+      }
+    }
+    visitAccessibility(n) {
+      return n;
+    }
+    visitClassProperty(n) {
+      n.accessibility = this.visitAccessibility(n.accessibility);
+      n.decorators = this.visitDecorators(n.decorators);
+      n.key = this.visitExpression(n.key);
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      n.value = this.visitOptionalExpression(n.value);
+      return n;
+    }
+    visitClassMethod(n) {
+      n.accessibility = this.visitAccessibility(n.accessibility);
+      n.function = this.visitFunction(n.function);
+      n.key = this.visitPropertyName(n.key);
+      return n;
+    }
+    visitPropertName(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitIdentifier(n);
+        case "NumericLiteral":
+          return this.visitNumericLiteral(n);
+        case "StringLiteral":
+          return this.visitStringLiteral(n);
+        case "Computed":
+          return this.visitComputedPropertyKey(n);
+      }
+    }
+    visitComputedPropertyKey(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitClass(n) {
+      n.decorators = this.visitDecorators(n.decorators);
+      n.superClass = this.visitOptionalExpression(n.superClass);
+      n.superTypeParams = this.visitTsTypeParameterInstantiation(
+        n.superTypeParams
+      );
+      if (n.implements) {
+        n.implements = this.visitTsExpressionsWithTypeArguments(n.implements);
+      }
+      n.body = this.visitClassBody(n.body);
+      return n;
+    }
+    visitFunction(n) {
+      n.decorators = this.visitDecorators(n.decorators);
+      n.params = this.visitParameters(n.params);
+      if (n.body) {
+        n.body = this.visitBlockStatement(n.body);
+      }
+      n.returnType = this.visitTsTypeAnnotation(n.returnType);
+      n.typeParameters = this.visitTsTypeParameterDeclaration(n.typeParameters);
+      return n;
+    }
+    visitTsExpressionsWithTypeArguments(nodes) {
+      return nodes.map(this.visitTsExpressionWithTypeArguments.bind(this));
+    }
+    visitTsExpressionWithTypeArguments(n) {
+      n.expression = this.visitTsEntityName(n.expression);
+      n.typeArguments = this.visitTsTypeParameterInstantiation(n.typeArguments);
+      return n;
+    }
+    visitTsTypeParameterInstantiation(n) {
+      if (n) {
+        n.params = this.visitTsTypes(n.params);
+      }
+      return n;
+    }
+    visitTsTypes(nodes) {
+      return nodes.map(this.visitTsType.bind(this));
+    }
+    visitTsEntityName(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitBindingIdentifier(n);
+        case "TsQualifiedName":
+          return this.visitTsQualifiedName(n);
+      }
+    }
+    visitTsQualifiedName(n) {
+      n.left = this.visitTsEntityName(n.left);
+      n.right = this.visitIdentifier(n.right);
+      return n;
+    }
+    visitDecorators(nodes) {
+      if (nodes) {
+        return nodes.map(this.visitDecorator.bind(this));
+      }
+    }
+    visitDecorator(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitExpressionStatement(stmt) {
+      stmt.expression = this.visitExpression(stmt.expression);
+      return stmt;
+    }
+    visitContinueStatement(stmt) {
+      if (stmt.label) {
+        stmt.label = this.visitLabelIdentifier(stmt.label);
+      }
+      return stmt;
+    }
+    visitExpression(n) {
+      switch (n.type) {
+        case "ArrayExpression":
+          return this.visitArrayExpression(n);
+        case "ArrowFunctionExpression":
+          return this.visitArrowFunctionExpression(n);
+        case "AssignmentExpression":
+          return this.visitAssignmentExpression(n);
+        case "AwaitExpression":
+          return this.visitAwaitExpression(n);
+        case "BinaryExpression":
+          return this.visitBinaryExpression(n);
+        case "BooleanLiteral":
+          return this.visitBooleanLiteral(n);
+        case "CallExpression":
+          return this.visitCallExpression(n);
+        case "ClassExpression":
+          return this.visitClassExpression(n);
+        case "ConditionalExpression":
+          return this.visitConditionalExpression(n);
+        case "FunctionExpression":
+          return this.visitFunctionExpression(n);
+        case "Identifier":
+          return this.visitIdentifierReference(n);
+        case "JSXElement":
+          return this.visitJSXElement(n);
+        case "JSXEmptyExpression":
+          return this.visitJSXEmptyExpression(n);
+        case "JSXFragment":
+          return this.visitJSXFragment(n);
+        case "JSXMemberExpression":
+          return this.visitJSXMemberExpression(n);
+        case "JSXNamespacedName":
+          return this.visitJSXNamespacedName(n);
+        case "JSXText":
+          return this.visitJSXText(n);
+        case "MemberExpression":
+          return this.visitMemberExpression(n);
+        case "MetaProperty":
+          return this.visitMetaProperty(n);
+        case "NewExpression":
+          return this.visitNewExpression(n);
+        case "NullLiteral":
+          return this.visitNullLiteral(n);
+        case "NumericLiteral":
+          return this.visitNumericLiteral(n);
+        case "ObjectExpression":
+          return this.visitObjectExpression(n);
+        case "ParenthesisExpression":
+          return this.visitParenthesisExpression(n);
+        case "PrivateName":
+          return this.visitPrivateName(n);
+        case "RegExpLiteral":
+          return this.visitRegExpLiteral(n);
+        case "SequenceExpression":
+          return this.visitSequenceExpression(n);
+        case "StringLiteral":
+          return this.visitStringLiteral(n);
+        case "TaggedTemplateExpression":
+          return this.visitTaggedTemplateExpression(n);
+        case "TemplateLiteral":
+          return this.visitTemplateLiteral(n);
+        case "ThisExpression":
+          return this.visitThisExpression(n);
+        case "TsAsExpression":
+          return this.visitTsAsExpression(n);
+        case "TsNonNullExpression":
+          return this.visitTsNonNullExpression(n);
+        case "TsTypeAssertion":
+          return this.visitTsTypeAssertion(n);
+        case "TsConstAssertion":
+          return this.visitTsConstAssertion(n);
+        case "UnaryExpression":
+          return this.visitUnaryExpression(n);
+        case "UpdateExpression":
+          return this.visitUpdateExpression(n);
+        case "YieldExpression":
+          return this.visitYieldExpression(n);
+        case "OptionalChainingExpression":
+          return this.visitOptionalChainingExpression(n);
+        case "Invalid":
+          return n;
+      }
+    }
+    visitOptionalChainingExpression(n) {
+      if (n.expr) {
+        n.expr = this.visitExpression(n.expr);
+      }
+      return n;
+    }
+    visitAssignmentExpression(n) {
+      n.left = this.visitPatternOrExpressison(n.left);
+      n.right = this.visitExpression(n.right);
+      return n;
+    }
+    visitPatternOrExpressison(n) {
+      switch (n.type) {
+        case "ObjectPattern":
+        case "ArrayPattern":
+        case "Identifier":
+        case "AssignmentPattern":
+        case "RestElement":
+          return this.visitPattern(n);
+        default:
+          return this.visitExpression(n);
+      }
+    }
+    visitYieldExpression(n) {
+      n.argument = this.visitOptionalExpression(n.argument);
+      return n;
+    }
+    visitUpdateExpression(n) {
+      n.argument = this.visitExpression(n.argument);
+      return n;
+    }
+    visitUnaryExpression(n) {
+      n.argument = this.visitExpression(n.argument);
+      return n;
+    }
+    visitTsTypeAssertion(n) {
+      n.expression = this.visitExpression(n.expression);
+      n.typeAnnotation = this.visitTsType(n.typeAnnotation);
+      return n;
+    }
+    visitTsConstAssertion(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitTsNonNullExpression(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitTsAsExpression(n) {
+      n.expression = this.visitExpression(n.expression);
+      n.typeAnnotation = this.visitTsType(n.typeAnnotation);
+      return n;
+    }
+    visitThisExpression(n) {
+      return n;
+    }
+    visitTemplateLiteral(n) {
+      n.expressions = n.expressions.map(this.visitExpression.bind(this));
+      return n;
+    }
+    visitParameters(n) {
+      return n.map(this.visitParameter.bind(this));
+    }
+    visitParameter(n) {
+      n.pat = this.visitPattern(n.pat);
+      return n;
+    }
+    visitTaggedTemplateExpression(n) {
+      n.tag = this.visitExpression(n.tag);
+      const template = this.visitTemplateLiteral(n.template);
+      if (template.type === "TemplateLiteral") {
+        n.template = template;
+      }
+      return n;
+    }
+    visitSequenceExpression(n) {
+      n.expressions = n.expressions.map(this.visitExpression.bind(this));
+      return n;
+    }
+    visitRegExpLiteral(n) {
+      return n;
+    }
+    visitParenthesisExpression(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitObjectExpression(n) {
+      if (n.properties) {
+        n.properties = this.visitObjectProperties(n.properties);
+      }
+      return n;
+    }
+    visitObjectProperties(nodes) {
+      return nodes.map(this.visitObjectProperty.bind(this));
+    }
+    visitObjectProperty(n) {
+      switch (n.type) {
+        case "SpreadElement":
+          return this.visitSpreadElement(n);
+        default:
+          return this.visitProperty(n);
+      }
+    }
+    visitProperty(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitIdentifier(n);
+        case "AssignmentProperty":
+          return this.visitAssignmentProperty(n);
+        case "GetterProperty":
+          return this.visitGetterProperty(n);
+        case "KeyValueProperty":
+          return this.visitKeyValueProperty(n);
+        case "MethodProperty":
+          return this.visitMethodProperty(n);
+        case "SetterProperty":
+          return this.visitSetterProperty(n);
+      }
+    }
+    visitSetterProperty(n) {
+      n.key = this.visitPropertyName(n.key);
+      n.param = this.visitPattern(n.param);
+      if (n.body) {
+        n.body = this.visitBlockStatement(n.body);
+      }
+      return n;
+    }
+    visitMethodProperty(n) {
+      n.key = this.visitPropertyName(n.key);
+      if (n.body) {
+        n.body = this.visitBlockStatement(n.body);
+      }
+      n.decorators = this.visitDecorators(n.decorators);
+      n.params = this.visitParameters(n.params);
+      n.returnType = this.visitTsTypeAnnotation(n.returnType);
+      n.typeParameters = this.visitTsTypeParameterDeclaration(n.typeParameters);
+      return n;
+    }
+    visitKeyValueProperty(n) {
+      n.key = this.visitPropertyName(n.key);
+      n.value = this.visitExpression(n.value);
+      return n;
+    }
+    visitGetterProperty(n) {
+      n.key = this.visitPropertyName(n.key);
+      if (n.body) {
+        n.body = this.visitBlockStatement(n.body);
+      }
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      return n;
+    }
+    visitAssignmentProperty(n) {
+      n.key = this.visitIdentifier(n.key);
+      n.value = this.visitExpression(n.value);
+      return n;
+    }
+    visitNullLiteral(n) {
+      return n;
+    }
+    visitNewExpression(n) {
+      n.callee = this.visitExpression(n.callee);
+      if (n.arguments) {
+        n.arguments = this.visitArguments(n.arguments);
+      }
+      n.typeArguments = this.visitTsTypeArguments(n.typeArguments);
+      return n;
+    }
+    visitTsTypeArguments(n) {
+      if (n) {
+        n.params = this.visitTsTypes(n.params);
+      }
+      return n;
+    }
+    visitArguments(nodes) {
+      return nodes.map(this.visitArgument.bind(this));
+    }
+    visitArgument(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitMetaProperty(n) {
+      n.meta = this.visitIdentifierReference(n.meta);
+      n.property = this.visitIdentifier(n.property);
+      return n;
+    }
+    visitMemberExpression(n) {
+      n.object = this.visitExpressionOrSuper(n.object);
+      n.property = this.visitExpression(n.property);
+      return n;
+    }
+    visitExpressionOrSuper(n) {
+      if (n.type === "Super") {
+        return n;
+      }
+      return this.visitExpression(n);
+    }
+    visitJSXText(n) {
+      return n;
+    }
+    visitJSXNamespacedName(n) {
+      n.namespace = this.visitIdentifierReference(n.namespace);
+      n.name = this.visitIdentifierReference(n.name);
+      return n;
+    }
+    visitJSXMemberExpression(n) {
+      n.object = this.visitJSXObject(n.object);
+      n.property = this.visitIdentifierReference(n.property);
+      return n;
+    }
+    visitJSXObject(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitIdentifierReference(n);
+        case "JSXMemberExpression":
+          return this.visitJSXMemberExpression(n);
+      }
+    }
+    visitJSXFragment(n) {
+      n.opening = this.visitJSXOpeningFragment(n.opening);
+      if (n.children) {
+        n.children = this.visitJSXElementChildren(n.children);
+      }
+      n.closing = this.visitJSXClosingFragment(n.closing);
+      return n;
+    }
+    visitJSXClosingFragment(n) {
+      return n;
+    }
+    visitJSXElementChildren(nodes) {
+      return nodes.map(this.visitJSXElementChild.bind(this));
+    }
+    visitJSXElementChild(n) {
+      switch (n.type) {
+        case "JSXElement":
+          return this.visitJSXElement(n);
+        case "JSXExpressionContainer":
+          return this.visitJSXExpressionContainer(n);
+        case "JSXFragment":
+          return this.visitJSXFragment(n);
+        case "JSXSpreadChild":
+          return this.visitJSXSpreadChild(n);
+        case "JSXText":
+          return this.visitJSXText(n);
+      }
+    }
+    visitJSXExpressionContainer(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitJSXSpreadChild(n) {
+      n.expression = this.visitExpression(n.expression);
+      return n;
+    }
+    visitJSXOpeningFragment(n) {
+      return n;
+    }
+    visitJSXEmptyExpression(n) {
+      return n;
+    }
+    visitJSXElement(n) {
+      n.opening = this.visitJSXOpeningElement(n.opening);
+      n.children = this.visitJSXElementChildren(n.children);
+      n.closing = this.visitJSXClosingElement(n.closing);
+      return n;
+    }
+    visitJSXClosingElement(n) {
+      if (n) {
+        n.name = this.visitJSXElementName(n.name);
+      }
+      return n;
+    }
+    visitJSXElementName(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitIdentifierReference(n);
+        case "JSXMemberExpression":
+          return this.visitJSXMemberExpression(n);
+        case "JSXNamespacedName":
+          return this.visitJSXNamespacedName(n);
+      }
+    }
+    visitJSXOpeningElement(n) {
+      n.name = this.visitJSXElementName(n.name);
+      n.typeArguments = this.visitTsTypeParameterInstantiation(n.typeArguments);
+      n.attributes = this.visitJSXAttributes(n.attributes);
+      return n;
+    }
+    visitJSXAttributes(attrs) {
+      if (attrs) {
+        return attrs.map(this.visitJSXAttributeOrSpread.bind(this));
+      }
+    }
+    visitJSXAttributeOrSpread(n) {
+      switch (n.type) {
+        case "JSXAttribute":
+          return this.visitJSXAttribute(n);
+        case "SpreadElement":
+          return this.visitSpreadElement(n);
+      }
+    }
+    visitJSXAttribute(n) {
+      n.name = this.visitJSXAttributeName(n.name);
+      n.value = this.visitJSXAttributeValue(n.value);
+      return n;
+    }
+    visitJSXAttributeValue(n) {
+      if (!n) {
+        return n;
+      }
+      switch (n.type) {
+        case "BooleanLiteral":
+          return this.visitBooleanLiteral(n);
+        case "NullLiteral":
+          return this.visitNullLiteral(n);
+        case "NumericLiteral":
+          return this.visitNumericLiteral(n);
+        case "JSXText":
+          return this.visitJSXText(n);
+        case "StringLiteral":
+          return this.visitStringLiteral(n);
+        case "JSXElement":
+          return this.visitJSXElement(n);
+        case "JSXExpressionContainer":
+          return this.visitJSXExpressionContainer(n);
+        case "JSXFragment":
+          return this.visitJSXFragment(n);
+      }
+      return n;
+    }
+    visitJSXAttributeName(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitIdentifierReference(n);
+        case "JSXNamespacedName":
+          return this.visitJSXNamespacedName(n);
+      }
+    }
+    visitConditionalExpression(n) {
+      n.test = this.visitExpression(n.test);
+      n.consequent = this.visitExpression(n.consequent);
+      n.alternate = this.visitExpression(n.alternate);
+      return n;
+    }
+    visitCallExpression(n) {
+      n.callee = this.visitExpressionOrSuper(n.callee);
+      n.typeArguments = this.visitTsTypeParameterInstantiation(n.typeArguments);
+      if (n.arguments) {
+        n.arguments = this.visitArguments(n.arguments);
+      }
+      return n;
+    }
+    visitBooleanLiteral(n) {
+      return n;
+    }
+    visitBinaryExpression(n) {
+      n.left = this.visitExpression(n.left);
+      n.right = this.visitExpression(n.right);
+      return n;
+    }
+    visitAwaitExpression(n) {
+      n.argument = this.visitExpression(n.argument);
+      return n;
+    }
+    visitTsTypeParameterDeclaration(n) {
+      if (n) {
+        n.parameters = this.visitTsTypeParameters(n.parameters);
+      }
+      return n;
+    }
+    visitTsTypeParameters(nodes) {
+      return nodes.map(this.visitTsTypeParameter.bind(this));
+    }
+    visitTsTypeParameter(n) {
+      if (n.constraint) {
+        n.constraint = this.visitTsType(n.constraint);
+      }
+      if (n.default) {
+        n.default = this.visitTsType(n.default);
+      }
+      n.name = this.visitIdentifierReference(n.name);
+      return n;
+    }
+    visitTsTypeAnnotation(a) {
+      if (a) {
+        a.typeAnnotation = this.visitTsType(a.typeAnnotation);
+      }
+      return a;
+    }
+    visitTsType(n) {
+      return n;
+    }
+    visitPatterns(nodes) {
+      return nodes.map(this.visitPattern.bind(this));
+    }
+    visitImportDeclaration(n) {
+      n.source = this.visitStringLiteral(n.source);
+      n.specifiers = this.visitImportSpecifiers(n.specifiers || []);
+      return n;
+    }
+    visitImportSpecifiers(nodes) {
+      return nodes.map(this.visitImportSpecifier.bind(this));
+    }
+    visitImportSpecifier(node) {
+      switch (node.type) {
+        case "ImportDefaultSpecifier":
+          return this.visitImportDefaultSpecifier(node);
+        case "ImportNamespaceSpecifier":
+          return this.visitImportNamespaceSpecifier(node);
+        case "ImportSpecifier":
+          return this.visitNamedImportSpecifier(node);
+      }
+    }
+    visitNamedImportSpecifier(node) {
+      node.local = this.visitBindingIdentifier(node.local);
+      if (node.imported) {
+        node.imported = this.visitIdentifierReference(node.imported);
+      }
+      return node;
+    }
+    visitImportNamespaceSpecifier(node) {
+      node.local = this.visitBindingIdentifier(node.local);
+      return node;
+    }
+    visitImportDefaultSpecifier(node) {
+      node.local = this.visitBindingIdentifier(node.local);
+      return node;
+    }
+    visitBindingIdentifier(i) {
+      return this.visitIdentifier(i);
+    }
+    visitIdentifierReference(i) {
+      return this.visitIdentifier(i);
+    }
+    visitLabelIdentifier(label) {
+      return this.visitIdentifier(label);
+    }
+    visitIdentifier(n) {
+      return n;
+    }
+    visitStringLiteral(n) {
+      return n;
+    }
+    visitNumericLiteral(n) {
+      return n;
+    }
+    visitPattern(n) {
+      switch (n.type) {
+        case "Identifier":
+          return this.visitBindingIdentifier(n);
+        case "ArrayPattern":
+          return this.visitArrayPattern(n);
+        case "ObjectPattern":
+          return this.visitObjectPattern(n);
+        case "AssignmentPattern":
+          return this.visitAssignmentPattern(n);
+        case "RestElement":
+          return this.visitRestElement(n);
+        default:
+          return this.visitExpression(n);
+      }
+    }
+    visitRestElement(n) {
+      n.argument = this.visitPattern(n.argument);
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      return n;
+    }
+    visitAssignmentPattern(n) {
+      n.left = this.visitPattern(n.left);
+      n.right = this.visitExpression(n.right);
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      return n;
+    }
+    visitObjectPattern(n) {
+      n.properties = this.visitObjectPatternProperties(n.properties || []);
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      return n;
+    }
+    visitObjectPatternProperties(nodes) {
+      return nodes.map(this.visitObjectPatternProperty.bind(this));
+    }
+    visitObjectPatternProperty(n) {
+      switch (n.type) {
+        case "AssignmentPatternProperty":
+          return this.visitAssignmentPatternProperty(n);
+        case "KeyValuePatternProperty":
+          return this.visitKeyValuePatternProperty(n);
+        case "RestElement":
+          return this.visitRestElement(n);
+      }
+    }
+    visitKeyValuePatternProperty(n) {
+      n.key = this.visitPropertyName(n.key);
+      n.value = this.visitPattern(n.value);
+      return n;
+    }
+    visitAssignmentPatternProperty(n) {
+      n.key = this.visitBindingIdentifier(n.key);
+      n.value = this.visitOptionalExpression(n.value);
+      return n;
+    }
+    visitArrayPattern(n) {
+      n.typeAnnotation = this.visitTsTypeAnnotation(n.typeAnnotation);
+      n.elements = this.visitArrayPatternElements(n.elements);
+      return n;
+    }
+    visitArrayPatternElements(nodes) {
+      return nodes.map(this.visitArrayPatternElement.bind(this));
+    }
+    visitArrayPatternElement(n) {
+      if (n) {
+        n = this.visitPattern(n);
+      }
+      return n;
+    }
+  };
+  Visitor_2 = Visitor$1.Visitor = Visitor;
+  var _default = Visitor$1.default = Visitor;
+
+  // pkgs/base/src/scaffold/parser/traverse.ts
+  var traverse = (source, params) => __async(void 0, null, function* () {
+    const parsed = yield swc.parse(source, {
+      syntax: "typescript",
+      tsx: true,
+      target: "es2022",
+      script: true
+    });
+    class Traverse extends _default {
+      constructor() {
+        super();
+        const result = params(
+          new Proxy(
+            {},
+            {
+              get: (target, p, receiver) => {
+                return this._parent(p);
+              }
+            }
+          )
+        );
+        for (const [k, v] of Object.entries(result)) {
+          this[k] = v;
+        }
+      }
+      _parent(name) {
+        return super[name];
+      }
+    }
+    new Traverse().visitModule(parsed);
+  });
+
+  // pkgs/base/src/scaffold/parser/utils.ts
+  var import_promises = __require("fs/promises");
+  var import_path8 = __require("path");
+  var walkDir = function(directory) {
+    return __async(this, null, function* () {
+      let fileList = [];
+      try {
+        const files = yield (0, import_promises.readdir)(directory);
+        for (const file of files) {
+          const p = (0, import_path8.join)(directory, file);
+          if ((yield (0, import_promises.stat)(p)).isDirectory()) {
+            fileList = [...fileList, ...yield walkDir(p)];
+          } else {
+            fileList.push(p);
+          }
+        }
+      } catch (e) {
+      }
+      return fileList;
+    });
+  };
+
+  // pkgs/base/src/scaffold/srv/api.ts
+  var scan = (path2) => __async(void 0, null, function* () {
+    const dirs = (yield walkDir(path2)).filter(
+      (e) => e.endsWith(".ts") || e.endsWith(".tsx")
+    );
+    return dirs;
+  });
+  var parseAPI = (filePath) => __async(void 0, null, function* () {
+    let name = (0, import_path9.basename)(filePath);
+    name = name.substring(0, name.length - (0, import_path9.extname)(name).length).replace(/\W/gi, "_");
+    const result = {
+      name,
+      url: "",
+      file: filePath,
+      params: []
+    };
+    const src = yield (0, import_fs_jetpack7.readAsync)(filePath, "utf8");
+    if (src) {
+      yield traverse(src, (parent) => ({
+        visitObjectExpression(n) {
+          for (const p of n.properties) {
+            if (p.type === "KeyValueProperty" && p.key.type === "Identifier") {
+              if (p.key.value === "url" && p.value.type === "StringLiteral") {
+                result.url = p.value.value;
+              }
+            } else if (p.type === "MethodProperty" && p.key.type === "Identifier" && p.key.value === "api") {
+              for (const prm of p.params) {
+                if (prm.pat.type === "Identifier") {
+                  result.params.push(prm.pat.value);
+                }
+              }
+            }
+          }
+          return parent.visitObjectExpression(n);
+        }
+      }));
+    }
+    return result;
+  });
+  var generateAPI = (name, path2) => __async(void 0, null, function* () {
+    const parsed = yield Promise.all((yield scan(path2)).map(parseAPI));
+    const content = () => (e) => {
+      const filePath = e.file.substring(path2.length + 1);
+      const importPath = `"../../../${name}/api/${filePath.substring(
+        0,
+        filePath.length - (0, import_path9.extname)(filePath).length
+      )}"`;
+      return `export const ${e.name} = {
+  name: "${e.name}",
+  url: "${e.url}",
+  path: "${e.file.substring(dir.root("").length + 1)}",
+  args: ${JSON.stringify(e.params)},
+  handler: import(${importPath})
+}`;
+    };
+    yield (0, import_fs_jetpack7.writeAsync)(
+      dir.root(`app/gen/srv/api/${name}-args.ts`),
+      parsed.map((e) => {
+        let page = (0, import_path9.basename)(e.file);
+        page = page.substring(0, page.length - (0, import_path9.extname)(page).length).replace(/\W/gi, "_");
+        return `export const ${page} = {
+  url: "${e.url}",
+  args: ${JSON.stringify(e.params)},
+}`;
+      }).join("\n")
+    );
+    yield (0, import_fs_jetpack7.writeAsync)(
+      dir.root(`app/gen/srv/api/${name}.ts`),
+      parsed.map(content()).join("\n")
+    );
+  });
+  var generateAPIEntry = (dirs) => __async(void 0, null, function* () {
+    yield (0, import_fs_jetpack7.removeAsync)(dir.root(`app/gen/srv/api`));
+    yield (0, import_fs_jetpack7.writeAsync)(
+      dir.root(`app/gen/srv/api/entry.ts`),
+      dirs.map((e) => `export * as ${e} from "./${e}"`).join("\n")
+    );
+    yield (0, import_fs_jetpack7.writeAsync)(
+      dir.root(`app/gen/srv/api/entry-args.ts`),
+      dirs.map((e) => `export * as ${e} from "./${e}-args"`).join("\n")
+    );
+  });
+
+  // pkgs/base/src/builder/service/srv.ts
+  var prepareSrv = (name, changes) => __async(void 0, null, function* () {
+    if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
+      yield generateAPIEntry([name]);
+      yield generateAPI(name, dir.root(`app/${name}/api`));
+    }
+    changes == null ? void 0 : changes.forEach((e) => __async(void 0, null, function* () {
+      if (e.startsWith(dir.root(`app/${name}/api`))) {
+        try {
+          const s = yield (0, import_promises2.stat)(e);
+          if (s.size === 0) {
+            if (s.size === 0) {
+              const routeName = (0, import_path10.basename)(
+                e.substring(0, e.length - (0, import_path10.extname)(e).length)
+              );
+              yield (0, import_fs_jetpack8.writeAsync)(
+                e,
+                `import { apiContext } from "service-srv";
+export const _ = {
+  url: "/${routeName}",
+  async api() {
+    const { req, res } = apiContext(this);
+    return "hello world";
+  },
+};
+            `
+              );
+            }
+          }
+        } catch (e2) {
+        }
+      }
+    }));
+  });
+
   // pkgs/base/src/builder/service.ts
   var marker = {};
   var buildService = (name, arg) => __async(void 0, null, function* () {
@@ -55666,26 +57158,20 @@ datasource db {
           const mark = marker[name];
           if (mark) {
             if (mark instanceof Set) {
-              if (name.startsWith("db"))
-                yield prepareDB(name, mark);
-              else {
-                console.log(name);
-              }
+              yield prepare(name, mark);
               delete marker[name];
             }
+            yield rpc.restart({ name });
           } else {
             marker[name] = true;
           }
-          yield rpc.restart({ name });
         }
       }) : void 0
     }))) {
       console.log(`build service ${name} failed`);
       return false;
     }
-    if (name.startsWith("db")) {
-      yield prepareDB(name);
-    }
+    yield prepare(name);
     watchService(name, (err2, changes) => {
       if (!err2) {
         if (!err2) {
@@ -55701,12 +57187,23 @@ datasource db {
                   delete marker[name];
                 }
               }
+            } else {
             }
+          }
+          const deladd = changes.filter((e) => e.type !== "delete");
+          if (deladd.length > 0) {
+            prepare(name, new Set(deladd.map((e) => e.path)));
           }
         }
       }
     });
     return true;
+  });
+  var prepare = (name, mark) => __async(void 0, null, function* () {
+    if (name.startsWith("db"))
+      yield prepareDB(name, mark);
+    if (name.startsWith("srv"))
+      yield prepareSrv(name, mark);
   });
 
   // pkgs/base/src/action.ts
@@ -55723,9 +57220,9 @@ datasource db {
 
   // pkgs/base/src/builder/app.ts
   var import_fs5 = __require("fs");
-  var import_fs_jetpack7 = __toESM(require_main());
+  var import_fs_jetpack9 = __toESM(require_main());
   var buildApp = (opt) => __async(void 0, null, function* () {
-    yield (0, import_fs_jetpack7.writeAsync)(
+    yield (0, import_fs_jetpack9.writeAsync)(
       dir.path(".output/app/pnpm-workspace.yaml"),
       `packages:
   - ./*`
@@ -55733,7 +57230,7 @@ datasource db {
     const dirs = (0, import_fs5.readdirSync)(dir.path("app")).filter(
       (e) => !["node_modules", "app.ts", "package.json", "gen"].includes(e)
     ).map((e) => ({ name: e, stat: (0, import_fs5.statSync)(dir.path(`app/${e}`)) })).filter(
-      ({ stat: stat3, name }) => stat3.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
+      ({ stat: stat5, name }) => stat5.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
     );
     return {
       path: dir.root(".output/app/app.js"),
@@ -55766,10 +57263,10 @@ datasource db {
 
   // pkgs/base/src/commit-hook.ts
   var import_child_process3 = __require("child_process");
-  var import_fs_jetpack8 = __toESM(require_main());
+  var import_fs_jetpack10 = __toESM(require_main());
   var commitHook = (args) => __async(void 0, null, function* () {
     const isMainRepo = () => __async(void 0, null, function* () {
-      const conf = yield (0, import_fs_jetpack8.readAsync)(dir.root(".git/config"), "utf8");
+      const conf = yield (0, import_fs_jetpack10.readAsync)(dir.root(".git/config"), "utf8");
       if (conf == null ? void 0 : conf.includes("url = https://github.com/avolut/royal")) {
         return true;
       }
@@ -55777,10 +57274,10 @@ datasource db {
     });
     if (args.includes("pre-commit")) {
       if (yield isMainRepo()) {
-        if (!(yield (0, import_fs_jetpack8.existsAsync)(dir.root(".husky/_/husky.sh")))) {
+        if (!(yield (0, import_fs_jetpack10.existsAsync)(dir.root(".husky/_/husky.sh")))) {
           (0, import_child_process3.spawnSync)("pnpm husky install", { cwd: dir.root("") });
         }
-        yield (0, import_fs_jetpack8.writeAsync)(dir.root(".output/.commit"), "");
+        yield (0, import_fs_jetpack10.writeAsync)(dir.root(".output/.commit"), "");
       }
       if (process.send) {
         process.send("exit");
@@ -55791,9 +57288,9 @@ datasource db {
     }
     if (args.includes("post-commit")) {
       if (yield isMainRepo()) {
-        if (yield (0, import_fs_jetpack8.existsAsync)(dir.root(".output/.commit"))) {
-          yield (0, import_fs_jetpack8.removeAsync)(dir.root(".output/.commit"));
-          yield (0, import_fs_jetpack8.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
+        if (yield (0, import_fs_jetpack10.existsAsync)(dir.root(".output/.commit"))) {
+          yield (0, import_fs_jetpack10.removeAsync)(dir.root(".output/.commit"));
+          yield (0, import_fs_jetpack10.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
           yield new Promise((resolve2) => {
             spawn2("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
@@ -56287,13 +57784,13 @@ datasource db {
 
   // pkgs/base/src/upgrade.ts
   var import_fs6 = __require("fs");
-  var import_fs_jetpack9 = __toESM(require_main());
-  var import_path8 = __require("path");
+  var import_fs_jetpack11 = __toESM(require_main());
+  var import_path11 = __require("path");
   var upgradeHook = (args) => __async(void 0, null, function* () {
     if (args.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
-      yield (0, import_fs_jetpack9.removeAsync)(dir.root(".output/upgrade"));
-      yield (0, import_fs_jetpack9.dirAsync)(backupDir);
+      yield (0, import_fs_jetpack11.removeAsync)(dir.root(".output/upgrade"));
+      yield (0, import_fs_jetpack11.dirAsync)(backupDir);
       console.log(`Upgrading Base Framework`);
       console.log(` > Downloading upgrade zip`);
       const downloadURI = `https://github.com/avolut/royal/archive/refs/heads/main.zip`;
@@ -56301,13 +57798,13 @@ datasource db {
       const ab = yield res.arrayBuffer();
       console.log(` > Extracting: .output/upgrade/royal`);
       const uzi = unzipSync(new Uint8Array(ab));
-      yield (0, import_fs_jetpack9.dirAsync)(dir.root(".output/upgrade/royal-main"));
+      yield (0, import_fs_jetpack11.dirAsync)(dir.root(".output/upgrade/royal-main"));
       yield Promise.all(
         Object.entries(uzi).map((_0) => __async(void 0, [_0], function* ([filename, buf]) {
           if (buf.length === 0) {
-            yield (0, import_fs_jetpack9.dirAsync)(dir.root(`.output/upgrade/${filename}`));
+            yield (0, import_fs_jetpack11.dirAsync)(dir.root(`.output/upgrade/${filename}`));
           } else {
-            yield (0, import_fs_jetpack9.writeAsync)(
+            yield (0, import_fs_jetpack11.writeAsync)(
               dir.root(`.output/upgrade/${filename}`),
               Buffer.from(buf)
             );
@@ -56318,20 +57815,20 @@ datasource db {
       const root2 = dir.root("");
       for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack9.existsAsync)((0, import_path8.join)(root2, `.output/upgrade/backup/${f}`))) {
-            yield (0, import_fs_jetpack9.moveAsync)(
-              (0, import_path8.join)(root2, f),
-              (0, import_path8.join)(root2, `.output/upgrade/backup/${f}`)
+          if (yield (0, import_fs_jetpack11.existsAsync)((0, import_path11.join)(root2, `.output/upgrade/backup/${f}`))) {
+            yield (0, import_fs_jetpack11.moveAsync)(
+              (0, import_path11.join)(root2, f),
+              (0, import_path11.join)(root2, `.output/upgrade/backup/${f}`)
             );
           }
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs6.readdirSync)((0, import_path8.join)(root2, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs6.readdirSync)((0, import_path11.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
-          yield (0, import_fs_jetpack9.copyAsync)(
-            (0, import_path8.join)(root2, `.output/upgrade/royal-main/${f}`),
-            (0, import_path8.join)(root2, f),
+          yield (0, import_fs_jetpack11.copyAsync)(
+            (0, import_path11.join)(root2, `.output/upgrade/royal-main/${f}`),
+            (0, import_path11.join)(root2, f),
             {
               overwrite: true
             }
@@ -56351,9 +57848,9 @@ datasource db {
   // pkgs/base/src/version-check.ts
   var import_chalk7 = __toESM(require_source());
   var import_date_fns = __toESM(require_date_fns());
-  var import_fs_jetpack10 = __toESM(require_main());
+  var import_fs_jetpack12 = __toESM(require_main());
   var versionCheck = (opt) => __async(void 0, null, function* () {
-    const version = yield (0, import_fs_jetpack10.readAsync)(dir.root("pkgs/version.json"), "json");
+    const version = yield (0, import_fs_jetpack12.readAsync)(dir.root("pkgs/version.json"), "json");
     let timeout = {
       timer: null
     };
@@ -56393,18 +57890,18 @@ If somehow upgrade failed you can rollback using
   });
 
   // pkgs/base/src/vscode.ts
-  var import_fs_jetpack11 = __toESM(require_main());
-  var import_path9 = __require("path");
+  var import_fs_jetpack13 = __toESM(require_main());
+  var import_path12 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
-    if (yield (0, import_fs_jetpack11.existsAsync)(vscodeFile)) {
-      if ((yield (0, import_fs_jetpack11.readAsync)(vscodeFile, "utf8")) === source) {
+    if (yield (0, import_fs_jetpack13.existsAsync)(vscodeFile)) {
+      if ((yield (0, import_fs_jetpack13.readAsync)(vscodeFile, "utf8")) === source) {
         return;
       }
     }
-    yield (0, import_fs_jetpack11.dirAsync)((0, import_path9.dirname)(vscodeFile));
-    yield (0, import_fs_jetpack11.writeAsync)(vscodeFile, source);
+    yield (0, import_fs_jetpack13.dirAsync)((0, import_path12.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack13.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
     "typescript.preferences.importModuleSpecifier": "relative",
@@ -56444,25 +57941,25 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/watcher/all.ts
-  var import_fs_jetpack14 = __toESM(require_main());
+  var import_fs_jetpack16 = __toESM(require_main());
 
   // pkgs/base/src/watcher/new-service.ts
   var import_chalk8 = __toESM(require_source());
-  var import_fs_jetpack13 = __toESM(require_main());
-  var import_promises2 = __require("fs/promises");
-  var import_path10 = __require("path");
+  var import_fs_jetpack15 = __toESM(require_main());
+  var import_promises4 = __require("fs/promises");
+  var import_path13 = __require("path");
 
   // pkgs/base/src/appgen/service.ts
-  var import_fs_jetpack12 = __toESM(require_main());
-  var import_promises = __require("fs/promises");
+  var import_fs_jetpack14 = __toESM(require_main());
+  var import_promises3 = __require("fs/promises");
   var serviceGen = () => __async(void 0, null, function* () {
     const names = [];
-    for (const f of yield (0, import_promises.readdir)(dir.root("app"))) {
-      const s = yield (0, import_promises.stat)(dir.root(`app/${f}`));
-      if (s.isDirectory() && (yield (0, import_fs_jetpack12.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
+    for (const f of yield (0, import_promises3.readdir)(dir.root("app"))) {
+      const s = yield (0, import_promises3.stat)(dir.root(`app/${f}`));
+      if (s.isDirectory() && (yield (0, import_fs_jetpack14.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
         names.push(f);
       }
-      yield (0, import_fs_jetpack12.writeAsync)(
+      yield (0, import_fs_jetpack14.writeAsync)(
         dir.root(`app/gen/service/name.ts`),
         `export type SERVICE_NAME = "${names.join(`" | "`)}";`
       );
@@ -56476,26 +57973,26 @@ If somehow upgrade failed you can rollback using
       event: (err2, changes) => __async(void 0, null, function* () {
         if (!err2) {
           for (const c of changes) {
-            const name = (0, import_path10.basename)(c.path);
+            const name = (0, import_path13.basename)(c.path);
             if (c.type === "delete") {
               console.log(`Removing service: ${import_chalk8.default.red(name)}`);
-              yield (0, import_fs_jetpack13.removeAsync)(dir.root(`.output/app/${name}`));
+              yield (0, import_fs_jetpack15.removeAsync)(dir.root(`.output/app/${name}`));
               yield serviceGen();
               process.exit(99);
             } else if (c.type === "create") {
-              const s = yield (0, import_promises2.stat)(c.path);
-              if (s.isDirectory() && (yield (0, import_promises2.readdir)(c.path)).length === 0) {
+              const s = yield (0, import_promises4.stat)(c.path);
+              if (s.isDirectory() && (yield (0, import_promises4.readdir)(c.path)).length === 0) {
                 console.log(`Scaffolding new service: ${import_chalk8.default.blue(name)}`);
                 let root2 = "pkgs/template/pkgs/service";
                 if (name.startsWith("db")) {
                   root2 = "pkgs/template/pkgs/db";
                 }
-                const files = yield (0, import_promises2.readdir)(dir.root(root2));
+                const files = yield (0, import_promises4.readdir)(dir.root(root2));
                 for (const f of files) {
                   if (f !== "node_modules") {
-                    const src = yield (0, import_fs_jetpack13.readAsync)(dir.root(`${root2}/${f}`), "utf8");
-                    yield (0, import_fs_jetpack13.writeAsync)(
-                      (0, import_path10.join)(c.path, f),
+                    const src = yield (0, import_fs_jetpack15.readAsync)(dir.root(`${root2}/${f}`), "utf8");
+                    yield (0, import_fs_jetpack15.writeAsync)(
+                      (0, import_path13.join)(c.path, f),
                       (src || "").replace(/template_service/g, name)
                     );
                   }
@@ -56520,9 +58017,8 @@ If somehow upgrade failed you can rollback using
           event: (err2, ev) => __async(void 0, null, function* () {
             if (!err2) {
               if (baseGlobal.app)
-                yield (0, import_fs_jetpack14.removeAsync)(baseGlobal.app.path);
+                yield (0, import_fs_jetpack16.removeAsync)(baseGlobal.app.path);
               yield onExit();
-              process.exit(99);
             }
           })
         });
@@ -56545,6 +58041,7 @@ If somehow upgrade failed you can rollback using
     } else {
       const onExit = () => __async(void 0, null, function* () {
         yield watcher.dispose();
+        yield runner.dispose();
       });
       (0, import_catch_exit2.addExitCallback)(() => {
       });
