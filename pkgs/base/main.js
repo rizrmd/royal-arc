@@ -4400,7 +4400,7 @@
         }
         return data;
       };
-      var readAsync9 = (path2, returnAs) => {
+      var readAsync8 = (path2, returnAs) => {
         return new Promise((resolve2, reject) => {
           const retAs = returnAs || "utf8";
           let encoding = "utf8";
@@ -4430,7 +4430,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = readSync;
-      exports2.async = readAsync9;
+      exports2.async = readAsync8;
     }
   });
 

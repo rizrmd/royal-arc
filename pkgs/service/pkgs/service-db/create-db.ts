@@ -1,14 +1,27 @@
 import { runner } from "bundler";
 import chalk from "chalk";
 import { dir } from "dir";
-import { existsAsync, readAsync } from "fs-jetpack";
+import { existsAsync } from "fs-jetpack";
+import { createRPC } from "rpc";
 import { createService } from "service";
+import type PRISMA from "../../../../app/db/node_modules/.gen/index";
 import { SERVICE_NAME } from "../../src/types";
+import { dbAction } from "./action";
+import { glbdb } from "./glbdb";
 
 export const createDB = (arg: { name: SERVICE_NAME }) => {
   const { name } = arg;
 
   createService(name, async ({ enableStdout }) => {
+    const prisma = (await import(
+      dir.path(`${name}/node_modules/.gen/index.js`)
+    )) as typeof PRISMA;
+
+    glbdb.prisma = new prisma.PrismaClient();
+    await glbdb.prisma.$connect();
+
+    await createRPC(`svc.${name}`, dbAction);
+
     enableStdout();
 
     const schemaPath = dir.path(`${name}/prisma/schema.prisma`);
