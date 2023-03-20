@@ -3,6 +3,7 @@ import { Server } from "hyper-express";
 import { connectRPC } from "rpc";
 import { SERVICE_NAME } from "../../../src/types";
 import { dbs } from "../../service-db";
+
 export const srv = globalize({
   name: "srv",
   value: {
@@ -17,5 +18,10 @@ export const srv = globalize({
   },
   async init() {
     srv.rpc.db = dbs(await connectRPC("svc.db"));
+    (global as any).db = srv.rpc.db;
   },
 });
+
+declare global {
+  const db: ReturnType<typeof dbs>;
+}

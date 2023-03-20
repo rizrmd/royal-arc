@@ -10,7 +10,13 @@ export const createService = async (
     mode: "dev",
     markAsRunning() {
       try {
-        if (process.send) process.send(`::RUNNING|${serviceName}::`);
+        if (process.send)
+          process.send(
+            `::RUNNING|${serviceName}::`,
+            undefined,
+            undefined,
+            (e) => {}
+          );
       } catch (e) {}
     },
   });

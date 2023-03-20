@@ -1,7 +1,6 @@
 import { connectRPC } from "rpc";
-import { root } from "service";
-import { glbdb } from "./glbdb";
 import { dbAction } from "./action";
+import { glbdb } from "./glbdb";
 
 export type DBName = "db";
 
@@ -80,7 +79,7 @@ export const dbs: DBProxy = (rpc) => {
                 }
 
                 //@ts-ignore
-                const result = await root.action("db").query({
+                const result = await rpc.query({
                   action,
                   table,
                   params,
