@@ -8,7 +8,8 @@ import type PRISMA from "../../../../app/db/node_modules/.gen/index";
 import { SERVICE_NAME } from "../../src/types";
 import { dbAction } from "./action";
 import { glbdb } from "./glbdb";
-
+import { parsePrisma } from "./parse-prisma";
+import padEnd from "lodash.padend";
 export const createDB = (arg: { name: SERVICE_NAME }) => {
   const { name } = arg;
 
@@ -32,6 +33,22 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
         )}`
       );
     } else {
+      const schema = await parsePrisma(schemaPath);
+      if (schema?.dburl) {
+        const db = new URL(schema?.dburl);
+        console.log(
+          `${chalk.magenta("Started")} ${chalk.green(
+            `${padEnd(name, 12, " ")}`
+          )} ${chalk.gray(`${db.hostname} • ${db.pathname.substring(1)}`)} `
+        );
+      } else {
+        console.log(
+          `${chalk.magenta("Skipped")} ${chalk.green(
+            `${padEnd(name, 12, " ")}`
+          )} Database URL is empty`
+        );
+      }
+
       const genExists = await existsAsync(
         dir.path(`${name}/node_modules/.gen`)
       );

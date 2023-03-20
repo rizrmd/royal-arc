@@ -4400,7 +4400,7 @@
         }
         return data;
       };
-      var readAsync8 = (path2, returnAs) => {
+      var readAsync9 = (path2, returnAs) => {
         return new Promise((resolve2, reject) => {
           const retAs = returnAs || "utf8";
           let encoding = "utf8";
@@ -4430,7 +4430,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = readSync;
-      exports2.async = readAsync8;
+      exports2.async = readAsync9;
     }
   });
 
@@ -5011,13 +5011,13 @@
       function toString(value) {
         return value == null ? "" : baseToString(value);
       }
-      function padEnd3(string, length, chars) {
+      function padEnd4(string, length, chars) {
         string = toString(string);
         length = toInteger(length);
         var strLength = length ? stringSize(string) : 0;
         return length && strLength < length ? string + createPadding(length - strLength, chars) : string;
       }
-      module2.exports = padEnd3;
+      module2.exports = padEnd4;
     }
   });
 
@@ -8775,7 +8775,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var tls = __require("tls");
       var { randomBytes, createHash } = __require("crypto");
       var { Readable } = __require("stream");
-      var { URL } = __require("url");
+      var { URL: URL2 } = __require("url");
       var PerMessageDeflate = require_permessage_deflate();
       var Receiver2 = require_receiver();
       var Sender2 = require_sender();
@@ -9273,12 +9273,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           );
         }
         let parsedUrl;
-        if (address instanceof URL) {
+        if (address instanceof URL2) {
           parsedUrl = address;
           websocket._url = address.href;
         } else {
           try {
-            parsedUrl = new URL(address);
+            parsedUrl = new URL2(address);
           } catch (e) {
             throw new SyntaxError(`Invalid URL: ${address}`);
           }
@@ -9412,7 +9412,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             req.abort();
             let addr;
             try {
-              addr = new URL(location, address);
+              addr = new URL2(location, address);
             } catch (e) {
               const err2 = new SyntaxError(`Invalid URL: ${location}`);
               emitErrorAndClose(websocket, err2);
@@ -24098,7 +24098,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       function isToken(node) {
         return "image" in node[0];
       }
-      function getSchema2(source) {
+      function getSchema3(source) {
         var lexingResult = PrismaLexer.tokenize(source);
         parser.input = lexingResult.tokens;
         var cstNode = parser.schema();
@@ -24129,7 +24129,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           return 0;
         };
       };
-      function printSchema2(schema, options) {
+      function printSchema3(schema, options) {
         if (options === void 0) {
           options = {};
         }
@@ -24348,16 +24348,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           if (source === void 0) {
             source = "";
           }
-          this.schema = getSchema2(source);
+          this.schema = getSchema3(source);
         }
         var _proto = ConcretePrismaSchemaBuilder2.prototype;
         _proto.print = function print(options) {
           if (options === void 0) {
             options = {};
           }
-          return printSchema2(this.schema, options);
+          return printSchema3(this.schema, options);
         };
-        _proto.getSchema = function getSchema3() {
+        _proto.getSchema = function getSchema4() {
           return this.schema;
         };
         _proto.generator = function generator(name, provider) {
@@ -24704,8 +24704,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       }
       exports2.ConcretePrismaSchemaBuilder = ConcretePrismaSchemaBuilder;
       exports2.createPrismaSchemaBuilder = createPrismaSchemaBuilder;
-      exports2.getSchema = getSchema2;
-      exports2.printSchema = printSchema2;
+      exports2.getSchema = getSchema3;
+      exports2.printSchema = printSchema3;
     }
   });
 
@@ -42276,7 +42276,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   // pkgs/base/src/main.ts
   var import_catch_exit2 = __toESM(require_dist());
   var import_chalk8 = __toESM(require_source());
-  var import_lodash4 = __toESM(require_lodash());
+  var import_lodash5 = __toESM(require_lodash());
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var import_cuid2 = __toESM(require_cuid2());
@@ -42804,7 +42804,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/src/builder/service/db.ts
   var import_chalk5 = __toESM(require_source());
-  var import_fs_jetpack6 = __toESM(require_main());
+  var import_fs_jetpack7 = __toESM(require_main());
 
   // node_modules/.pnpm/chalk@5.2.0/node_modules/chalk/source/vendor/ansi-styles/index.js
   var ANSI_BACKGROUND_OFFSET = 10;
@@ -43295,7 +43295,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
 
   // pkgs/service/pkgs/service-db/create-db.ts
-  var import_fs_jetpack4 = __toESM(require_main());
+  var import_fs_jetpack5 = __toESM(require_main());
 
   // pkgs/service/export.ts
   var import_catch_exit = __toESM(require_dist());
@@ -43330,16 +43330,23 @@ ${import_chalk2.default.magenta("Installing")} deps:
     }
   });
 
-  // pkgs/service/pkgs/service-db/ensure-prisma.ts
+  // pkgs/service/pkgs/service-db/parse-prisma.ts
   var import_prisma_ast = __toESM(require_dist2());
-  var import_fs_jetpack5 = __toESM(require_main());
+  var import_fs_jetpack4 = __toESM(require_main());
+
+  // pkgs/service/pkgs/service-db/create-db.ts
+  var import_lodash4 = __toESM(require_lodash());
+
+  // pkgs/service/pkgs/service-db/ensure-prisma.ts
+  var import_prisma_ast2 = __toESM(require_dist2());
+  var import_fs_jetpack6 = __toESM(require_main());
   var import_path7 = __require("path");
   var ensurePrisma = async (name) => {
     const prismaPath = dir.root(`app/${name}/prisma/schema.prisma`);
     let dburl = "";
-    if (!await (0, import_fs_jetpack5.existsAsync)(prismaPath)) {
-      await (0, import_fs_jetpack5.dirAsync)((0, import_path7.dirname)(prismaPath));
-      await (0, import_fs_jetpack5.writeAsync)(
+    if (!await (0, import_fs_jetpack6.existsAsync)(prismaPath)) {
+      await (0, import_fs_jetpack6.dirAsync)((0, import_path7.dirname)(prismaPath));
+      await (0, import_fs_jetpack6.writeAsync)(
         prismaPath,
         `generator client {
   provider = "prisma-client-js"
@@ -43352,9 +43359,9 @@ datasource db {
 }`
       );
     }
-    const schemaRaw = await (0, import_fs_jetpack5.readAsync)(prismaPath, "utf8");
+    const schemaRaw = await (0, import_fs_jetpack6.readAsync)(prismaPath, "utf8");
     if (schemaRaw) {
-      const schema = (0, import_prisma_ast.getSchema)(schemaRaw);
+      const schema = (0, import_prisma_ast2.getSchema)(schemaRaw);
       let hasModel = false;
       for (const s of schema.list) {
         if (s.type === "model") {
@@ -43381,29 +43388,29 @@ datasource db {
           });
         }
       }
-      const newSchemaRaw = (0, import_prisma_ast.printSchema)(schema).trim();
-      await (0, import_fs_jetpack5.writeAsync)(prismaPath, newSchemaRaw);
+      const newSchemaRaw = (0, import_prisma_ast2.printSchema)(schema).trim();
+      await (0, import_fs_jetpack6.writeAsync)(prismaPath, newSchemaRaw);
       if (newSchemaRaw !== schemaRaw.trim() || !hasModel) {
         return { generated: false, pulled: false, dburl };
       }
       let prismaOutputSame = false;
-      if (await (0, import_fs_jetpack5.existsAsync)(dir.root(`.output/app/${name}/prisma/schema.prisma`))) {
+      if (await (0, import_fs_jetpack6.existsAsync)(dir.root(`.output/app/${name}/prisma/schema.prisma`))) {
         prismaOutputSame = true;
-        const outputSchema = await (0, import_fs_jetpack5.readAsync)(
+        const outputSchema = await (0, import_fs_jetpack6.readAsync)(
           dir.root(`.output/app/${name}/prisma/schema.prisma`)
         );
         if (newSchemaRaw.trim() !== outputSchema?.trim()) {
           prismaOutputSame = false;
         }
       }
-      await (0, import_fs_jetpack5.copyAsync)(
+      await (0, import_fs_jetpack6.copyAsync)(
         dir.root(`app/${name}/prisma`),
         dir.root(`.output/app/${name}/prisma`),
         {
           overwrite: true
         }
       );
-      if (!prismaOutputSame || !await (0, import_fs_jetpack5.existsAsync)(dir.root(`.output/app/${name}/node_modules/.gen`)) || !await (0, import_fs_jetpack5.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
+      if (!prismaOutputSame || !await (0, import_fs_jetpack6.existsAsync)(dir.root(`.output/app/${name}/node_modules/.gen`)) || !await (0, import_fs_jetpack6.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
         return { generated: false, pulled: true, dburl };
       }
     }
@@ -43423,7 +43430,7 @@ datasource db {
           onData(e) {
           }
         });
-        yield (0, import_fs_jetpack6.removeAsync)(`.output/app/${name}/node_modules/.gen`);
+        yield (0, import_fs_jetpack7.removeAsync)(`.output/app/${name}/node_modules/.gen`);
       }
     }
   });
@@ -43479,11 +43486,11 @@ datasource db {
 
   // pkgs/base/src/commit-hook.ts
   var import_child_process2 = __require("child_process");
-  var import_fs_jetpack7 = __toESM(require_main());
+  var import_fs_jetpack8 = __toESM(require_main());
   var import_node_pty2 = __require("node-pty");
   var commitHook = (args) => __async(void 0, null, function* () {
     const isMainRepo = () => __async(void 0, null, function* () {
-      const conf = yield (0, import_fs_jetpack7.readAsync)(dir.root(".git/config"), "utf8");
+      const conf = yield (0, import_fs_jetpack8.readAsync)(dir.root(".git/config"), "utf8");
       if (conf == null ? void 0 : conf.includes("url = https://github.com/avolut/royal")) {
         return true;
       }
@@ -43491,10 +43498,10 @@ datasource db {
     });
     if (args.includes("pre-commit")) {
       if (yield isMainRepo()) {
-        if (!(yield (0, import_fs_jetpack7.existsAsync)(dir.root(".husky/_/husky.sh")))) {
+        if (!(yield (0, import_fs_jetpack8.existsAsync)(dir.root(".husky/_/husky.sh")))) {
           (0, import_child_process2.spawnSync)("pnpm husky install", { cwd: dir.root("") });
         }
-        yield (0, import_fs_jetpack7.writeAsync)(dir.root(".output/.commit"), "");
+        yield (0, import_fs_jetpack8.writeAsync)(dir.root(".output/.commit"), "");
       }
       if (process.send) {
         process.send("exit");
@@ -43505,9 +43512,9 @@ datasource db {
     }
     if (args.includes("post-commit")) {
       if (yield isMainRepo()) {
-        if (yield (0, import_fs_jetpack7.existsAsync)(dir.root(".output/.commit"))) {
-          yield (0, import_fs_jetpack7.removeAsync)(dir.root(".output/.commit"));
-          yield (0, import_fs_jetpack7.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
+        if (yield (0, import_fs_jetpack8.existsAsync)(dir.root(".output/.commit"))) {
+          yield (0, import_fs_jetpack8.removeAsync)(dir.root(".output/.commit"));
+          yield (0, import_fs_jetpack8.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
           yield new Promise((resolve2) => {
             (0, import_node_pty2.spawn)("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
@@ -44001,13 +44008,13 @@ datasource db {
 
   // pkgs/base/src/upgrade.ts
   var import_fs6 = __require("fs");
-  var import_fs_jetpack8 = __toESM(require_main());
+  var import_fs_jetpack9 = __toESM(require_main());
   var import_path8 = __require("path");
   var upgradeHook = (args) => __async(void 0, null, function* () {
     if (args.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
-      yield (0, import_fs_jetpack8.removeAsync)(dir.root(".output/upgrade"));
-      yield (0, import_fs_jetpack8.dirAsync)(backupDir);
+      yield (0, import_fs_jetpack9.removeAsync)(dir.root(".output/upgrade"));
+      yield (0, import_fs_jetpack9.dirAsync)(backupDir);
       console.log(`Upgrading Base Framework`);
       console.log(` > Downloading upgrade zip`);
       const downloadURI = `https://github.com/avolut/royal/archive/refs/heads/main.zip`;
@@ -44015,13 +44022,13 @@ datasource db {
       const ab = yield res.arrayBuffer();
       console.log(` > Extracting: .output/upgrade/royal`);
       const uzi = unzipSync(new Uint8Array(ab));
-      yield (0, import_fs_jetpack8.dirAsync)(dir.root(".output/upgrade/royal-main"));
+      yield (0, import_fs_jetpack9.dirAsync)(dir.root(".output/upgrade/royal-main"));
       yield Promise.all(
         Object.entries(uzi).map((_0) => __async(void 0, [_0], function* ([filename, buf]) {
           if (buf.length === 0) {
-            yield (0, import_fs_jetpack8.dirAsync)(dir.root(`.output/upgrade/${filename}`));
+            yield (0, import_fs_jetpack9.dirAsync)(dir.root(`.output/upgrade/${filename}`));
           } else {
-            yield (0, import_fs_jetpack8.writeAsync)(
+            yield (0, import_fs_jetpack9.writeAsync)(
               dir.root(`.output/upgrade/${filename}`),
               Buffer.from(buf)
             );
@@ -44032,8 +44039,8 @@ datasource db {
       const root = dir.root("");
       for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack8.existsAsync)((0, import_path8.join)(root, `.output/upgrade/backup/${f}`))) {
-            yield (0, import_fs_jetpack8.moveAsync)(
+          if (yield (0, import_fs_jetpack9.existsAsync)((0, import_path8.join)(root, `.output/upgrade/backup/${f}`))) {
+            yield (0, import_fs_jetpack9.moveAsync)(
               (0, import_path8.join)(root, f),
               (0, import_path8.join)(root, `.output/upgrade/backup/${f}`)
             );
@@ -44043,7 +44050,7 @@ datasource db {
       console.log(` > Applying upgrade`);
       for (const f of (0, import_fs6.readdirSync)((0, import_path8.join)(root, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
-          yield (0, import_fs_jetpack8.copyAsync)(
+          yield (0, import_fs_jetpack9.copyAsync)(
             (0, import_path8.join)(root, `.output/upgrade/royal-main/${f}`),
             (0, import_path8.join)(root, f),
             {
@@ -44065,9 +44072,9 @@ datasource db {
   // pkgs/base/src/version-check.ts
   var import_chalk6 = __toESM(require_source());
   var import_date_fns = __toESM(require_date_fns());
-  var import_fs_jetpack9 = __toESM(require_main());
+  var import_fs_jetpack10 = __toESM(require_main());
   var versionCheck = (opt) => __async(void 0, null, function* () {
-    const version = yield (0, import_fs_jetpack9.readAsync)(dir.root("pkgs/version.json"), "json");
+    const version = yield (0, import_fs_jetpack10.readAsync)(dir.root("pkgs/version.json"), "json");
     let timeout = {
       timer: null
     };
@@ -44107,18 +44114,18 @@ If somehow upgrade failed you can rollback using
   });
 
   // pkgs/base/src/vscode.ts
-  var import_fs_jetpack10 = __toESM(require_main());
+  var import_fs_jetpack11 = __toESM(require_main());
   var import_path9 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
-    if (yield (0, import_fs_jetpack10.existsAsync)(vscodeFile)) {
-      if ((yield (0, import_fs_jetpack10.readAsync)(vscodeFile, "utf8")) === source) {
+    if (yield (0, import_fs_jetpack11.existsAsync)(vscodeFile)) {
+      if ((yield (0, import_fs_jetpack11.readAsync)(vscodeFile, "utf8")) === source) {
         return;
       }
     }
-    yield (0, import_fs_jetpack10.dirAsync)((0, import_path9.dirname)(vscodeFile));
-    yield (0, import_fs_jetpack10.writeAsync)(vscodeFile, source);
+    yield (0, import_fs_jetpack11.dirAsync)((0, import_path9.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack11.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
     "typescript.preferences.importModuleSpecifier": "relative",
@@ -44158,7 +44165,7 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/watcher/all.ts
-  var import_fs_jetpack13 = __toESM(require_main());
+  var import_fs_jetpack14 = __toESM(require_main());
 
   // pkgs/base/src/action.ts
   var baseGlobal = global;
@@ -44174,21 +44181,21 @@ If somehow upgrade failed you can rollback using
 
   // pkgs/base/src/watcher/new-service.ts
   var import_chalk7 = __toESM(require_source());
-  var import_fs_jetpack12 = __toESM(require_main());
+  var import_fs_jetpack13 = __toESM(require_main());
   var import_promises2 = __require("fs/promises");
   var import_path10 = __require("path");
 
   // pkgs/base/src/appgen/service.ts
-  var import_fs_jetpack11 = __toESM(require_main());
+  var import_fs_jetpack12 = __toESM(require_main());
   var import_promises = __require("fs/promises");
   var serviceGen = () => __async(void 0, null, function* () {
     const names = [];
     for (const f of yield (0, import_promises.readdir)(dir.root("app"))) {
       const s = yield (0, import_promises.stat)(dir.root(`app/${f}`));
-      if (s.isDirectory() && (yield (0, import_fs_jetpack11.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
+      if (s.isDirectory() && (yield (0, import_fs_jetpack12.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
         names.push(f);
       }
-      yield (0, import_fs_jetpack11.writeAsync)(
+      yield (0, import_fs_jetpack12.writeAsync)(
         dir.root(`app/gen/service/name.ts`),
         `export type SERVICE_NAME = "${names.join(`" | "`)}";`
       );
@@ -44218,8 +44225,8 @@ If somehow upgrade failed you can rollback using
                 const files = yield (0, import_promises2.readdir)(dir.root(root));
                 for (const f of files) {
                   if (f !== "node_modules") {
-                    const src = yield (0, import_fs_jetpack12.readAsync)(dir.root(`${root}/${f}`), "utf8");
-                    yield (0, import_fs_jetpack12.writeAsync)(
+                    const src = yield (0, import_fs_jetpack13.readAsync)(dir.root(`${root}/${f}`), "utf8");
+                    yield (0, import_fs_jetpack13.writeAsync)(
                       (0, import_path10.join)(c.path, f),
                       (src || "").replace(/template_service/g, name)
                     );
@@ -44244,7 +44251,7 @@ If somehow upgrade failed you can rollback using
           ignore: ["pkgs/*/node_modules", "node_modules"],
           event: (err2, ev) => __async(void 0, null, function* () {
             if (!err2) {
-              yield (0, import_fs_jetpack13.removeAsync)(baseGlobal.app.path);
+              yield (0, import_fs_jetpack14.removeAsync)(baseGlobal.app.path);
               yield onExit();
               process.exit();
             }
@@ -44256,7 +44263,7 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/main.ts
-  var import_fs_jetpack14 = __toESM(require_main());
+  var import_fs_jetpack15 = __toESM(require_main());
   var RUNNING_MARKER = "WARNING: SERVER ALREADY RUNNING";
   var baseMain = () => __async(void 0, null, function* () {
     process.removeAllListeners("warning");
@@ -44266,7 +44273,7 @@ If somehow upgrade failed you can rollback using
       return;
     if (yield upgradeHook(args))
       return;
-    console.log(`\u2500\u2500 ${(0, import_lodash4.default)(import_chalk8.default.yellow(`BASE`) + " ", 47, "\u2500")}`);
+    console.log(`\u2500\u2500 ${(0, import_lodash5.default)(import_chalk8.default.yellow(`BASE`) + " ", 47, "\u2500")}`);
     if (args.includes("build") || args.includes("deploy") || args.includes("prod") || args.includes("staging")) {
     } else {
       const onExit = () => __async(void 0, null, function* () {
@@ -44283,7 +44290,7 @@ If somehow upgrade failed you can rollback using
       const app = yield buildApp({ watch: true });
       baseGlobal.app = app;
       let cacheFound = false;
-      if (yield (0, import_fs_jetpack14.existsAsync)(app.path)) {
+      if (yield (0, import_fs_jetpack15.existsAsync)(app.path)) {
         console.log(`
 \u{1F31F} Running ${import_chalk8.default.cyan(`cached`)} app
 `);
@@ -44307,7 +44314,7 @@ If somehow upgrade failed you can rollback using
 
 `);
           console.log(
-            `\u2500\u2500 ${(0, import_lodash4.default)(
+            `\u2500\u2500 ${(0, import_lodash5.default)(
               import_chalk8.default.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
               47,
               "\u2500"

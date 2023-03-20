@@ -159,9 +159,11 @@ importers:
   pkgs/service/pkgs/service-db:
     specifiers:
       '@mrleebo/prisma-ast': 0.5.1
+      '@types/lodash.padend': 4.6.7
       chalk: 5.2.0
       dir: workspace:^
       fs-jetpack: 5.1.0
+      lodash.padend: 4.6.1
       pkg: workspace:^
       service: workspace:^
     dependencies:
@@ -169,8 +171,11 @@ importers:
       chalk: 5.2.0
       dir: link:../../../base/pkgs/dir
       fs-jetpack: 5.1.0
+      lodash.padend: 4.6.1
       pkg: link:../../../base/pkgs/pkg
       service: link:../..
+    devDependencies:
+      '@types/lodash.padend': 4.6.7
 
   pkgs/template/pkgs/db:
     specifiers:
