@@ -12,7 +12,6 @@ export const spawn = (
     ? fork(file, args, {
         cwd: opt?.cwd,
         stdio: "pipe",
-        execArgv: ["--enable-source-maps"],
       })
     : nativeSpawn(file, args, {
         cwd: opt?.cwd,
@@ -20,19 +19,26 @@ export const spawn = (
       });
 
   const callback = {
-    onData: (e: string) => {},
+    onMessage: (e: any) => {},
+    onPrint: (e: string) => {},
     onExit: (e: { exitCode: number; signal: NodeJS.Signals | null }) => {},
   };
 
   const tfm = new Transform({
     transform: (chunk, encoding, done) => {
       const str = chunk.toString();
-      callback.onData(str);
+      callback.onPrint(str);
     },
   });
   proc.stdout?.pipe(tfm);
   proc.stderr?.pipe(tfm);
-  
+
+  if (opt?.ipc) {
+    proc.on("message", (e) => {
+      callback.onMessage(e);
+    });
+  }
+
   proc.on("exit", (code, signal) => {
     callback.onExit({
       exitCode: code || 0,
@@ -41,8 +47,11 @@ export const spawn = (
   });
 
   return {
-    onData: (fn: (e: string) => any) => {
-      callback.onData = fn;
+    onMessage: (fn: (e: string) => any) => {
+      callback.onMessage = fn;
+    },
+    onPrint: (fn: (e: string) => any) => {
+      callback.onPrint = fn;
     },
     onExit: (
       fn: (e: { exitCode: number; signal: NodeJS.Signals | null }) => any

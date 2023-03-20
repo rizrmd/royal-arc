@@ -5,6 +5,7 @@
     "service-srv": "workspace:*"
   },
   "external": [
-    "hyper-express"
+    "hyper-express",
+    "lmdb"
   ]
 }

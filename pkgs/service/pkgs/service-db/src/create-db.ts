@@ -64,7 +64,7 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
           path: "pnpm",
           args: ["prisma", "generate"],
           cwd: dir.path(name),
-          onData(e) {
+          onMessage(e) {
             process.stdout.write(e);
           },
         });

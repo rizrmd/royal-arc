@@ -12,7 +12,6 @@ export const initialize = async (fn: () => Promise<void>) => {
   await fn();
 
   if ((await connectRPC("base")).connected) {
-    console.log("WARNING: SERVER ALREADY RUNNING");
   } else {
     addExitCallback(() => {
       svc.rpc.destroy();

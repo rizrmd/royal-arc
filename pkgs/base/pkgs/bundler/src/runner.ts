@@ -47,16 +47,16 @@ export const runner = {
   async run(arg: {
     path: string;
     args?: string[];
-    onData?: (e: string) => unknown;
+    onMessage?: (e: any) => unknown;
     onStop?: (e: {
       exitCode: number;
       signal: NodeJS.Signals | null;
     }) => unknown;
-    onMessage?: (stdout: string) => any;
+    onPrint?: (stdout: string) => any;
     cwd: string;
   }) {
     try {
-      const { path, onData, args, cwd, onStop } = arg;
+      const { path, onMessage: onData, args, cwd, onStop } = arg;
 
       let isCommand = false;
 
@@ -74,6 +74,7 @@ export const runner = {
         g.runs[path] = spawn(path, args || [], { cwd, ipc: false }) as any;
       } else {
         g.runs[path] = spawn(path, args || [], { cwd, ipc: true }) as any;
+        if (arg.onMessage) g.runs[path].onMessage(arg.onMessage);
       }
 
       g.runs[path].arg = arg;
@@ -84,19 +85,19 @@ export const runner = {
       });
 
       return new Promise<boolean>((resolve) => {
-        g.runs[path].onData((e) => {
-          if (arg.onMessage && !g.runs[path].markedRunning) {
-            if (arg.onMessage(e)) {
+        g.runs[path].onPrint((e) => {
+          if (arg.onPrint && !g.runs[path].markedRunning) {
+            if (arg.onPrint(e)) {
               g.runs[path].markedRunning = true;
               resolve(true);
             }
             return;
           }
 
-          if (arg.onData) arg.onData(e);
+          if (arg.onPrint) arg.onPrint(e);
           else process.stdout.write(e);
         });
-        if (!arg.onMessage) {
+        if (!arg.onPrint) {
           g.runs[path].markedRunning = true;
           resolve(true);
         }

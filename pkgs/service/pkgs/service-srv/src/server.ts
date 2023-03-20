@@ -26,7 +26,9 @@ export const server = async ({
   try {
     //@ts-ignore
     apiEntry = await import("../../../../../app/gen/srv/api/entry");
-  } catch (e) {}
+  } catch (e) {
+    return "API entry not found";
+  }
 
   server.any("/_api_frm", apiFrm);
 

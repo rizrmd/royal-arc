@@ -42139,14 +42139,15 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var spawn2 = (file, args, opt) => {
     let proc = opt?.ipc ? (0, import_child_process2.fork)(file, args, {
       cwd: opt?.cwd,
-      stdio: "pipe",
-      execArgv: ["--enable-source-maps"]
+      stdio: "pipe"
     }) : (0, import_child_process2.spawn)(file, args, {
       cwd: opt?.cwd,
       stdio: "pipe"
     });
     const callback = {
-      onData: (e) => {
+      onMessage: (e) => {
+      },
+      onPrint: (e) => {
       },
       onExit: (e) => {
       }
@@ -42154,11 +42155,16 @@ ${import_chalk2.default.magenta("Installing")} deps:
     const tfm = new import_stream.Transform({
       transform: (chunk, encoding, done) => {
         const str = chunk.toString();
-        callback.onData(str);
+        callback.onPrint(str);
       }
     });
     proc.stdout?.pipe(tfm);
     proc.stderr?.pipe(tfm);
+    if (opt?.ipc) {
+      proc.on("message", (e) => {
+        callback.onMessage(e);
+      });
+    }
     proc.on("exit", (code, signal) => {
       callback.onExit({
         exitCode: code || 0,
@@ -42166,8 +42172,11 @@ ${import_chalk2.default.magenta("Installing")} deps:
       });
     });
     return {
-      onData: (fn) => {
-        callback.onData = fn;
+      onMessage: (fn) => {
+        callback.onMessage = fn;
+      },
+      onPrint: (fn) => {
+        callback.onPrint = fn;
       },
       onExit: (fn) => {
         callback.onExit = fn;
@@ -42221,7 +42230,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
     run(arg) {
       return __async(this, null, function* () {
         try {
-          const { path: path2, onData, args, cwd: cwd2, onStop } = arg;
+          const { path: path2, onMessage: onData, args, cwd: cwd2, onStop } = arg;
           let isCommand = false;
           if (!(0, import_fs3.existsSync)(path2)) {
             if (yield (0, import_command_exists.default)(path2)) {
@@ -42236,6 +42245,8 @@ ${import_chalk2.default.magenta("Installing")} deps:
             g2.runs[path2] = spawn2(path2, args || [], { cwd: cwd2, ipc: false });
           } else {
             g2.runs[path2] = spawn2(path2, args || [], { cwd: cwd2, ipc: true });
+            if (arg.onMessage)
+              g2.runs[path2].onMessage(arg.onMessage);
           }
           g2.runs[path2].arg = arg;
           g2.runs[path2].onExit(() => __async(this, null, function* () {
@@ -42244,20 +42255,20 @@ ${import_chalk2.default.magenta("Installing")} deps:
               g2.runs[path2].onExit(onStop);
           }));
           return new Promise((resolve2) => {
-            g2.runs[path2].onData((e) => {
-              if (arg.onMessage && !g2.runs[path2].markedRunning) {
-                if (arg.onMessage(e)) {
+            g2.runs[path2].onPrint((e) => {
+              if (arg.onPrint && !g2.runs[path2].markedRunning) {
+                if (arg.onPrint(e)) {
                   g2.runs[path2].markedRunning = true;
                   resolve2(true);
                 }
                 return;
               }
-              if (arg.onData)
-                arg.onData(e);
+              if (arg.onPrint)
+                arg.onPrint(e);
               else
                 process.stdout.write(e);
             });
-            if (!arg.onMessage) {
+            if (!arg.onPrint) {
               g2.runs[path2].markedRunning = true;
               resolve2(true);
             }
@@ -43302,24 +43313,25 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/service/src/action.ts
   var action = {
-    async start(arg) {
-      const running = await runner.run({
-        path: dir.path(`${arg.name}/index.js`),
-        cwd: process.cwd(),
-        onMessage(stdout) {
-          if (stdout.trim() === `::RUNNING|${arg.name}::`)
-            return true;
-          return false;
+    start(arg) {
+      return new Promise(async (resolve2) => {
+        const running = await runner.run({
+          path: dir.path(`${arg.name}/index.js`),
+          cwd: process.cwd(),
+          onMessage(e) {
+            if (e === `::RUNNING|${arg.name}::`) {
+              resolve2(running);
+            }
+          }
+        });
+        if (!running) {
+          console.log(
+            `${source_default.red(`Failed`)} to start ${source_default.cyan(
+              arg.name
+            )}: Service not found`
+          );
         }
       });
-      if (!running) {
-        console.log(
-          `${source_default.red(`Failed`)} to start ${source_default.cyan(
-            arg.name
-          )}: Service not found`
-        );
-      }
-      return running;
     },
     async restart(arg) {
       return await runner.restart(dir.path(`${arg.name}/index.js`));
@@ -43434,7 +43446,7 @@ datasource db {
           path: "pnpm",
           args: ["prisma", "generate"],
           cwd: dir.root(`app/${name}`),
-          onData(e) {
+          onMessage(e) {
           }
         });
         yield (0, import_fs_jetpack6.removeAsync)(`.output/app/${name}/node_modules/.gen`);
