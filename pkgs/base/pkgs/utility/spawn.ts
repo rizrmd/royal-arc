@@ -10,18 +10,18 @@ export const spawn = (
 ) => {
   let proc = opt?.ipc
     ? fork(file, args, {
-      cwd: opt?.cwd,
-      stdio: "inherit",
-    })
+        cwd: opt?.cwd,
+        stdio: "inherit",
+      })
     : nativeSpawn(file, args, {
-      cwd: opt?.cwd,
-      stdio: "pipe",
-      shell: true
-    });
+        cwd: opt?.cwd,
+        stdio: "pipe",
+        shell: true,
+      });
 
   const callback = {
-    onMessage: (e: any) => { },
-    onExit: (e: { exitCode: number; signal: NodeJS.Signals | null }) => { },
+    onMessage: (e: any) => {},
+    onExit: (e: { exitCode: number; signal: NodeJS.Signals | null }) => {},
   };
 
   if (opt?.ipc) {
@@ -78,14 +78,14 @@ export const attachSpawnCleanup = () => {
                 resolve();
               }
             });
-            run.proc.send("::SPAWN_DISPOSE::");
+            if (run.proc.send) run.proc.send("::SPAWN_DISPOSE::");
           });
         })
       );
 
       try {
         if (process.send) process.send(`::SPAWN_DISPOSED::`);
-      } catch (e) { }
+      } catch (e) {}
       process.exit(0);
     }
   });

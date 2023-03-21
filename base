@@ -34,6 +34,23 @@ const main = async () => {
     });
   }
 
+  function exitHandler(options, exitCode) {
+    global.base.kill(1)
+  }
+
+  //do something when app is closing
+  process.on("exit", exitHandler.bind(null, { cleanup: true }));
+
+  //catches ctrl+c event
+  process.on("SIGINT", exitHandler.bind(null, { exit: true }));
+
+  // catches "kill pid" (for example: nodemon restart)
+  process.on("SIGUSR1", exitHandler.bind(null, { exit: true }));
+  process.on("SIGUSR2", exitHandler.bind(null, { exit: true }));
+
+  //catches uncaught exceptions
+  process.on("uncaughtException", exitHandler.bind(null, { exit: true }));
+
   while (true) {
     if (args.includes("devbase") || !existsSync(basePath)) {
       const res = spawnSync(
@@ -55,13 +72,13 @@ const main = async () => {
     }
 
     if (existsSync(basePath)) {
-      runBase();
+      await runBase();
     }
   }
 };
 
-const runBase = () => {
-  const res = spawnSync(
+const runBase = async () => {
+  global.base = spawn(
     process.execPath,
     [
       "--enable-source-maps",
@@ -78,6 +95,10 @@ const runBase = () => {
       stdio: "inherit",
     }
   );
+
+  const res = await new Promise((resolve) => {
+    global.base.on("exit", resolve);
+  });
 
   if (res.status === 99) nocache = true;
   else nocache = false;

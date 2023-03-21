@@ -2,13 +2,14 @@
   "name": "web",
   "version": "0.0.1",
   "dependencies": {
-    "service-web": "workspace:*",
-    "web-init": "workspace:*",
-    "web-utils": "workspace:*",
-    "react": "18.2.0",
     "@fluentui/react-components": "9.18.3",
     "@fluentui/react-icons": "2.0.196",
-    "react-dom": "18.2.0"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "scheduler": "^0.20.0",
+    "service-web": "workspace:*",
+    "web-init": "workspace:*",
+    "web-utils": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "18.0.28",
@@ -16,6 +17,13 @@
   },
   "external": [
     "hyper-express",
-    "live-directory"
+    "live-directory",
+    "react",
+    "react-dom",
+    "@types/react",
+    "@types/react-dom",
+    "@fluentui/react-components",
+    "@fluentui/react-icons",
+    "scheduler"
   ]
 }

@@ -26,7 +26,6 @@ export const buildService = async (
   const rpc = arg.rpc;
   if (
     !(await bundle({
-      incremental: true,
       input: dir.root(`app/${name}/main.ts`),
       output: dir.root(`.output/app/${name}/index.js`),
       pkgjson: {
@@ -66,41 +65,43 @@ export const buildService = async (
 
   await afterBuild(name);
 
-  watchService(name, async (err, changes) => {
-    if (!err) {
-      for (const c of changes) {
-        if (c.type === "update") {
-          if (basename(c.path) === "package.json") {
-            marker[name] = "skip";
+  if (arg.watch) {
+    watchService(name, async (err, changes) => {
+      if (!err) {
+        for (const c of changes) {
+          if (c.type === "update") {
+            if (basename(c.path) === "package.json") {
+              marker[name] = "skip";
 
-            await pkg.install(c.path);
-            await rpc.restart({ name: name as any });
-            return;
-          }
+              await pkg.install(c.path);
+              await rpc.restart({ name: name as any });
+              return;
+            }
 
-          if (!marker[name]) marker[name] = new Set();
+            if (!marker[name]) marker[name] = new Set();
 
-          const mark = marker[name];
-          if (mark) {
-            if (mark instanceof Set) {
-              mark.add(c.path);
+            const mark = marker[name];
+            if (mark) {
+              if (mark instanceof Set) {
+                mark.add(c.path);
+              }
             }
           }
         }
-      }
 
-      const deladd = changes.filter((e) => e.type !== "update");
-      if (deladd.length > 0) {
-        marker[name] = "skip";
-        await afterBuild(name, new Set(deladd.map((e) => e.path)));
-        await rpc.restart({ name: name as any });
+        const deladd = changes.filter((e) => e.type !== "update");
+        if (deladd.length > 0) {
+          marker[name] = "skip";
+          await afterBuild(name, new Set(deladd.map((e) => e.path)));
+          await rpc.restart({ name: name as any });
 
-        setTimeout(() => {
-          rpc.restart({ name: name as any });
-        }, 500);
+          setTimeout(() => {
+            rpc.restart({ name: name as any });
+          }, 500);
+        }
       }
-    }
-  });
+    });
+  }
 
   return true;
 };

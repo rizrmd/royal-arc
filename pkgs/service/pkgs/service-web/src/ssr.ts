@@ -63,6 +63,8 @@ export const initSSR = async () => {
   // import entry app
   const index = await import("../../../../../app/gen/web/entry");
   web.ssr.App = (index as any)[name];
+  g.cx = web.cx;
+  g.React = web.React;
 
   initRouter();
   return web.ssr;

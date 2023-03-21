@@ -6,7 +6,7 @@ import { dirname } from "path";
 import { pkg } from "pkg";
 import PrettyError from "pretty-error";
 
-const pe = new PrettyError()
+const pe = new PrettyError();
 
 export const bundle = async (arg: {
   input: string;
@@ -35,14 +35,6 @@ export const bundle = async (arg: {
         externalJson = pkg.extractExternal(json);
         await writeAsync(pkgjson.output, externalJson);
       }
-      await pkg.install(pkgjson.input, {
-        cwd: dirname(pkgjson.input),
-        silent: true,
-        onInstall() {
-          console.log(`Installing ${printableName} deps...`);
-        },
-        onInstallDone() { },
-      });
     }
 
     let isRebuild = false;
@@ -53,6 +45,7 @@ export const bundle = async (arg: {
       ),
     ];
 
+    console.log(external);
     return new Promise<boolean>(async (resolve) => {
       const ctx = await context({
         entryPoints: [input],
@@ -62,6 +55,18 @@ export const bundle = async (arg: {
         format: "cjs",
         platform: "node",
         external,
+        loader: {
+          ".css": "text",
+          ".png": "dataurl",
+          ".webp": "dataurl",
+          ".avif": "dataurl",
+          ".mp4": "dataurl",
+          ".jpg": "dataurl",
+          ".jpeg": "dataurl",
+          ".gif": "dataurl",
+          ".svg": "dataurl",
+          ".node": "dataurl",
+        },
         plugins: [
           {
             name: "bundle",
@@ -70,10 +75,10 @@ export const bundle = async (arg: {
                 if (watch) {
                   let installDeps = false;
 
-                  if (arg.onBeforeDone) await arg.onBeforeDone({ isRebuild });
+                  if (arg.onBeforeDone) arg.onBeforeDone({ isRebuild });
                   if (printTimer) console.timeEnd(tag);
                   try {
-                    await watch({ isRebuild, installDeps });
+                    watch({ isRebuild, installDeps });
                   } catch (e) {
                     console.error(JSON.stringify(e));
                   }
@@ -92,11 +97,13 @@ export const bundle = async (arg: {
       if (watch) {
         await ctx.watch();
       } else {
+        if (printTimer) console.timeEnd(tag);
+
         resolve(true);
       }
     });
   } catch (e: any) {
-    console.log(pe.render(e))
+    console.log(pe.render(e));
     return false;
   }
 };

@@ -7,11 +7,6 @@
     "pre-commit": "node base pre-commit",
     "post-commit": "node base post-commit"
   },
-  "pnpm": {
-    "overrides": {
-      "@fluentui/react-icons": "workspace:*"
-    }
-  },
   "devDependencies": {
     "husky": "^8.0.3"
   }

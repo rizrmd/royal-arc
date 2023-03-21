@@ -5,10 +5,10 @@ import {
 } from "goober";
 import { RadixRouter } from "radix3";
 import React, { FC, ReactNode } from "react";
-import type { dbs } from "../../../../svc-db/src/proxy";
 import { page } from "./web/page";
 import { ssr } from "./web/ssr";
-import type * as SRVAPI from "../../../../../app/gen/srv/api/srv";
+import { PrismaClient } from "../../../../../../../app/db/node_modules/.gen";
+import type * as SRVAPI from "../../../../../../../app/gen/srv/api/srv";
 
 export type PageResponse = {
   pathname: string;
@@ -56,7 +56,7 @@ declare global {
     tag: CSSAttribute | TemplateStringsArray | string,
     ...props: Array<string | number | boolean | undefined | null>
   ) => string;
-  const db: ReturnType<typeof dbs>;
+  const db: PrismaClient;
   const api: { [k in ApiName]: Awaited<Api[k]["handler"]>["_"]["api"] };
   const basepath: string;
   const baseurl: string;
