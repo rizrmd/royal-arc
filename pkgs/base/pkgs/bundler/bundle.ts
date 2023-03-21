@@ -4,14 +4,12 @@ import { readAsync, writeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { dirname } from "path";
 import { pkg } from "pkg";
-import { marker } from "../../src/builder/service";
 
 export const bundle = async (arg: {
   input: string;
   output: string;
   incremental?: boolean;
-  pkgjson?: string;
-  pkgcwd?: string;
+  pkgjson?: { input: string; output?: string };
   printTimer?: boolean;
   onBeforeDone?: (arg: { isRebuild: boolean }) => any;
   watch?: (arg: { isRebuild: boolean; installDeps: boolean }) => Promise<void>;
@@ -19,32 +17,37 @@ export const bundle = async (arg: {
   try {
     const { context } = await import("esbuild");
 
-    const { input, output, printTimer, watch } = arg;
+    const { input, output, printTimer, watch, pkgjson } = arg;
 
-    const printableName = chalk.green(
+    const printableName = chalk.cyan(
       dirname(input.substring(dir.root("").length + 1))
     );
     const tag = `Built ${padEnd(printableName, 23, " ")}`;
     if (printTimer) console.time(tag);
 
-    const pkgFile = await ascendFile(input, "package.json");
-    let json = pkg.produce(await readAsync(pkgFile, "json"));
-
-    await pkg.install(pkgFile, {
-      cwd: arg.pkgcwd || dirname(pkgFile),
-      silent: true,
-      onInstall() {
-        console.log(`Installing ${printableName} deps...`);
-      },
-      onInstallDone() {
-        console.log(`Dependency ${printableName} installed`);
-      },
-    });
+    let externalJson: any = { dependencies: {} };
+    if (pkgjson) {
+      let json = await readAsync(pkgjson.input, "json");
+      if (pkgjson.output) {
+        externalJson = pkg.extractExternal(json);
+        await writeAsync(pkgjson.output, externalJson);
+      }
+      await pkg.install(pkgjson.input, {
+        cwd: dirname(pkgjson.input),
+        silent: true,
+        onInstall() {
+          console.log(`Installing ${printableName} deps...`);
+        },
+        onInstallDone() {},
+      });
+    }
 
     let isRebuild = false;
     const external = [
       "esbuild",
-      ...Object.keys(json.dependencies).filter((e) => !["esbuild"].includes(e)),
+      ...Object.keys(externalJson.dependencies).filter(
+        (e) => !["esbuild"].includes(e)
+      ),
     ];
 
     return new Promise<boolean>(async (resolve) => {
@@ -63,26 +66,7 @@ export const bundle = async (arg: {
               build.onEnd(async () => {
                 if (watch) {
                   let installDeps = false;
-                  if (isRebuild) {
-                    await pkg.install(pkgFile, {
-                      cwd: arg.pkgcwd || dirname(pkgFile),
-                      silent: true,
-                      onInstall() {
-                        console.log(`Installing ${printableName} deps...`);
-                      },
-                      onInstallDone() {
-                        console.log(`Dependency ${printableName} installed`);
-                        installDeps = true;
-                      },
-                    });
-                  }
-                  
-                  if (installDeps) {
-                    const pkgFile = await ascendFile(input, "package.json");
-                    json = pkg.produce(await readAsync(pkgFile, "json"));
-                  }
 
-                  await outputPkgJson(json, arg.pkgjson);
                   if (arg.onBeforeDone) await arg.onBeforeDone({ isRebuild });
                   if (printTimer) console.timeEnd(tag);
                   try {
@@ -110,14 +94,5 @@ export const bundle = async (arg: {
     });
   } catch (e: any) {
     return false;
-  }
-};
-
-const outputPkgJson = async (json: any, pkgjson?: string) => {
-  if (pkgjson) {
-    await writeAsync(pkgjson, json);
-    await pkg.install(pkgjson, {
-      cwd: dirname(pkgjson),
-    });
   }
 };

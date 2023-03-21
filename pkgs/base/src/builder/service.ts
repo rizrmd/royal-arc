@@ -28,8 +28,10 @@ export const buildService = async (
       incremental: true,
       input: dir.root(`app/${name}/main.ts`),
       output: dir.root(`.output/app/${name}/index.js`),
-      pkgjson: dir.root(`.output/app/${name}/package.json`),
-      pkgcwd: dir.root(".output/app"),
+      pkgjson: {
+        input: dir.root(`app/${name}/package.json`),
+        output: dir.root(`.output/app/${name}/package.json`),
+      },
       printTimer: true,
       onBeforeDone: arg.onDone,
       watch: arg.watch

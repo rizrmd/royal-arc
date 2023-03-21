@@ -34,8 +34,10 @@ packages:
         incremental: true,
         input: dir.root("app/app.ts"),
         output: dir.root(".output/app/app.js"),
-        pkgjson: dir.root(".output/app/package.json"),
-        pkgcwd: dir.root(".outpu/app"),
+        pkgjson: {
+          input: dir.root("app/package.json"),
+          output: dir.root(".output/app/package.json"),
+        },
         printTimer: true,
         onBeforeDone: onDone,
         async watch({ isRebuild }) {

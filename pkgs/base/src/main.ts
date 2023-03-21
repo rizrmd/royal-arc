@@ -41,11 +41,7 @@ export const baseMain = async () => {
       waitConnection: false,
     });
     baseGlobal.rootRPC = rootRPC;
-
-    if (args.includes("devbase")) {
-      await pkg.install(dir.root("pkgs"), { cwd: dir.root(), deep: true });
-    }
-
+    
     const app = await buildApp({ watch: true });
 
     const onExit = async () => {
@@ -59,7 +55,7 @@ export const baseMain = async () => {
 
     let cacheFound = false;
 
-    if (await existsAsync(app.path)) {
+    if ((await existsAsync(app.path)) && !args.includes("nocache")) {
       console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
       await runner.run({
         path: app.path,

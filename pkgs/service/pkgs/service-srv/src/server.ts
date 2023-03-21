@@ -51,7 +51,9 @@ export const server = async ({
           handler: Promise<{ _: { url: string; api: (...arg: any[]) => any } }>;
         };
 
-        const itemHandler = (await item.handler)._;
+        const itemHandlerRaw = await item.handler;
+        if (!itemHandlerRaw) return;
+        const itemHandler = itemHandlerRaw._;
         if (!itemHandler) return;
 
         const handler = itemHandler.api;

@@ -27,7 +27,7 @@ const getModuleVersion = (name: string) => {
 };
 
 export const pkg = {
-  produce(pkg: { name: string; version: string; external?: string[] }) {
+  extractExternal(pkg: { name: string; version: string; external?: string[] }) {
     const dependencies: Record<string, string> = {};
 
     if (pkg.external) {
@@ -60,17 +60,14 @@ export const pkg = {
 
       if (arg?.deep) {
         const dirs = await scanDir([path]);
-
         const templateDir = dir.root("pkgs/template");
-
-        const all = await Promise.all(
-          dirs
-            .filter((e) => !e.startsWith(templateDir))
-            .map((e) => shouldInstall(e, silent))
-        );
-
-        if (all.filter((e) => e).length > 0) {
-          install = true;
+        for (const e of dirs) {
+          if (!e.startsWith(templateDir)) {
+            if (await shouldInstall(e)) {
+              install = true;
+              break;
+            }
+          }
         }
       } else {
         install = await shouldInstall(path, silent);

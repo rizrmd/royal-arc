@@ -24,6 +24,8 @@ const nodePath = [
   join(process.cwd(), "pkgs", "base", "pkgs", "bundler", "node_modules"),
 ].join(delimiter);
 
+let nocache = false;
+
 const main = async () => {
   if (!existsSync(join(process.cwd(), "node_modules"))) {
     await new Promise((resolve) => {
@@ -61,7 +63,12 @@ const main = async () => {
 const runBase = () => {
   const res = spawnSync(
     process.execPath,
-    ["--enable-source-maps", basePath, ...args],
+    [
+      "--enable-source-maps",
+      basePath,
+      ...args,
+      nocache ? "nocache" : "",
+    ].filter((e) => e),
     {
       env: {
         ...process.env,
@@ -72,6 +79,8 @@ const runBase = () => {
     }
   );
 
+  if (res.status === 99) nocache = true;
+  else nocache = false;
   if (res.status === 1) {
     process.exit(1);
   }

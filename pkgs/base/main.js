@@ -50,7 +50,7 @@
     mod
   ));
   var __async = (__this, __arguments, generator) => {
-    return new Promise((resolve2, reject) => {
+    return new Promise((resolve, reject) => {
       var fulfilled = (value) => {
         try {
           step(generator.next(value));
@@ -65,7 +65,7 @@
           reject(e);
         }
       };
-      var step = (x) => x.done ? resolve2(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
       step((generator = generator.apply(__this, __arguments)).next());
     });
   };
@@ -181,9 +181,9 @@
         cleanInput = function(s) {
           var isPathName = /[\\]/.test(s);
           if (isPathName) {
-            var dirname8 = '"' + path2.dirname(s) + '"';
+            var dirname7 = '"' + path2.dirname(s) + '"';
             var basename5 = '"' + path2.basename(s) + '"';
-            return dirname8 + ":" + basename5;
+            return dirname7 + ":" + basename5;
           }
           return '"' + s + '"';
         };
@@ -191,10 +191,10 @@
       module2.exports = function commandExists2(commandName, callback) {
         var cleanedCommandName = cleanInput(commandName);
         if (!callback && typeof Promise !== "undefined") {
-          return new Promise(function(resolve2, reject) {
+          return new Promise(function(resolve, reject) {
             commandExists2(commandName, function(error, output) {
               if (output) {
-                resolve2(commandName);
+                resolve(commandName);
               } else {
                 reject(error);
               }
@@ -2329,12 +2329,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           for (let i = 0; i < length; i += 1) {
             args[i] = arguments[i];
           }
-          return new Promise((resolve2, reject) => {
+          return new Promise((resolve, reject) => {
             args.push((err2, data) => {
               if (err2) {
                 reject(err2);
               } else {
-                resolve2(data);
+                resolve(data);
               }
             });
             fn.apply(null, args);
@@ -2631,16 +2631,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           fs2.stat(path2).then((stat5) => {
             if (stat5.isDirectory()) {
-              resolve2(stat5);
+              resolve(stat5);
             } else {
               reject(generatePathOccupiedByNotDirectoryError(path2));
             }
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
-              resolve2(void 0);
+              resolve(void 0);
             } else {
               reject(err2);
             }
@@ -2648,11 +2648,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         });
       };
       var emptyAsync = (path2) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           fs2.readdir(path2).then((list) => {
             const doOne = (index) => {
               if (index === list.length) {
-                resolve2();
+                resolve();
               } else {
                 const subPath = pathUtil.resolve(path2, list[index]);
                 remove.async(subPath).then(() => {
@@ -2665,7 +2665,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         });
       };
       var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat5, criteria) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const checkMode = () => {
             const mode = modeUtil.normalizeFileMode(stat5.mode);
             if (criteria.mode !== void 0 && criteria.mode !== mode) {
@@ -2679,25 +2679,25 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             }
             return Promise.resolve();
           };
-          checkMode().then(checkEmptiness).then(resolve2, reject);
+          checkMode().then(checkEmptiness).then(resolve, reject);
         });
       };
       var createBrandNewDirectoryAsync = (path2, opts) => {
         const options = opts || {};
-        return new Promise((resolve2, reject) => {
-          fs2.mkdir(path2, options.mode).then(resolve2).catch((err2) => {
+        return new Promise((resolve, reject) => {
+          fs2.mkdir(path2, options.mode).then(resolve).catch((err2) => {
             if (err2.code === "ENOENT") {
               createBrandNewDirectoryAsync(pathUtil.dirname(path2), options).then(() => {
                 return fs2.mkdir(path2, options.mode);
-              }).then(resolve2).catch((err22) => {
+              }).then(resolve).catch((err22) => {
                 if (err22.code === "EEXIST") {
-                  resolve2();
+                  resolve();
                 } else {
                   reject(err22);
                 }
               });
             } else if (err2.code === "EEXIST") {
-              resolve2();
+              resolve();
             } else {
               reject(err2);
             }
@@ -2705,7 +2705,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         });
       };
       var dirAsync4 = (path2, passedCriteria) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
           checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
             if (stat5 !== void 0) {
@@ -2716,7 +2716,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
               );
             }
             return createBrandNewDirectoryAsync(path2, criteria);
-          }).then(resolve2, reject);
+          }).then(resolve, reject);
         });
       };
       exports2.validateInput = validateInput;
@@ -2787,12 +2787,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         writeStrategy(path2, processedData, { mode: opts.mode });
       };
       var writeFileAsync = (path2, data, options) => {
-        return new Promise((resolve2, reject) => {
-          fs2.writeFile(path2, data, options).then(resolve2).catch((err2) => {
+        return new Promise((resolve, reject) => {
+          fs2.writeFile(path2, data, options).then(resolve).catch((err2) => {
             if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(path2)).then(() => {
                 return fs2.writeFile(path2, data, options);
-              }).then(resolve2, reject);
+              }).then(resolve, reject);
             } else {
               reject(err2);
             }
@@ -2800,10 +2800,10 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         });
       };
       var writeAtomicAsync = (path2, data, options) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           writeFileAsync(path2 + newExt, data, options).then(() => {
             return fs2.rename(path2 + newExt, path2);
-          }).then(resolve2, reject);
+          }).then(resolve, reject);
         });
       };
       var writeAsync12 = (path2, data, options) => {
@@ -2848,10 +2848,10 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
       };
       var appendAsync = (path2, data, options) => {
-        return new Promise((resolve2, reject) => {
-          fs2.appendFile(path2, data, options).then(resolve2).catch((err2) => {
+        return new Promise((resolve, reject) => {
+          fs2.appendFile(path2, data, options).then(resolve).catch((err2) => {
             if (err2.code === "ENOENT") {
-              write.async(path2, data, options).then(resolve2, reject);
+              write.async(path2, data, options).then(resolve, reject);
             } else {
               reject(err2);
             }
@@ -2949,16 +2949,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           fs2.stat(path2).then((stat5) => {
             if (stat5.isFile()) {
-              resolve2(stat5);
+              resolve(stat5);
             } else {
               reject(generatePathOccupiedByNotFileError(path2));
             }
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
-              resolve2(void 0);
+              resolve(void 0);
             } else {
               reject(err2);
             }
@@ -2968,16 +2968,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var checkExistingFileFulfillsCriteriaAsync = (path2, stat5, criteria) => {
         const mode = modeUtil.normalizeFileMode(stat5.mode);
         const checkContent = () => {
-          return new Promise((resolve2, reject) => {
+          return new Promise((resolve, reject) => {
             if (criteria.content !== void 0) {
               write.async(path2, criteria.content, {
                 mode,
                 jsonIndent: criteria.jsonIndent
               }).then(() => {
-                resolve2(true);
+                resolve(true);
               }).catch(reject);
             } else {
-              resolve2(false);
+              resolve(false);
             }
           });
         };
@@ -3005,14 +3005,14 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         });
       };
       var fileAsync = (path2, passedCriteria) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
           checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
             if (stat5 !== void 0) {
               return checkExistingFileFulfillsCriteriaAsync(path2, stat5, criteria);
             }
             return createBrandNewFileAsync(path2, criteria);
-          }).then(resolve2, reject);
+          }).then(resolve, reject);
         });
       };
       exports2.validateInput = validateInput;
@@ -3116,14 +3116,14 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         return inspectObj;
       };
       var fileChecksumAsync = (path2, algo) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const hash = crypto.createHash(algo);
           const s = fs2.createReadStream(path2);
           s.on("data", (data) => {
             hash.update(data);
           });
           s.on("end", () => {
-            resolve2(hash.digest("hex"));
+            resolve(hash.digest("hex"));
           });
           s.on("error", reject);
         });
@@ -3143,7 +3143,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         return Promise.resolve(inspectObj);
       };
       var inspectAsync = (path2, options) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           let statOperation = fs2.lstat;
           const opts = options || {};
           if (opts.symlinks === "follow") {
@@ -3151,10 +3151,10 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           statOperation(path2).then((stat5) => {
             const inspectObj = createInspectObj(path2, opts, stat5);
-            addExtraFieldsAsync(path2, inspectObj, opts).then(resolve2, reject);
+            addExtraFieldsAsync(path2, inspectObj, opts).then(resolve, reject);
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
-              resolve2(void 0);
+              resolve(void 0);
             } else {
               reject(err2);
             }
@@ -3190,12 +3190,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
       };
       var listAsync = (path2) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           fs2.readdir(path2).then((list) => {
-            resolve2(list);
+            resolve(list);
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
-              resolve2(void 0);
+              resolve(void 0);
             } else {
               reject(err2);
             }
@@ -4377,7 +4377,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         return findSync(path2, normalizeOptions(options));
       };
       var findAsync = (path2, options) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const foundAbsolutePaths = [];
           const matchesAnyOfGlobs = matcher.create(
             path2,
@@ -4393,7 +4393,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           const maybeDone = () => {
             if (treeWalkerDone && waitingForFiltersToFinish === 0) {
               foundAbsolutePaths.sort();
-              resolve2(processFoundPaths(foundAbsolutePaths, options.cwd));
+              resolve(processFoundPaths(foundAbsolutePaths, options.cwd));
             }
           };
           treeWalker.async(
@@ -4572,7 +4572,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var inspectTreeAsync = (path2, opts) => {
         const options = opts || {};
         let tree;
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           treeWalker.async(
             path2,
             { inspectOptions: options },
@@ -4601,7 +4601,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                 if (tree) {
                   calculateTreeDependentProperties(void 0, tree, options);
                 }
-                resolve2(tree);
+                resolve(tree);
               }
             }
           );
@@ -4640,18 +4640,18 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         return false;
       };
       var existsAsync9 = (path2) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           fs2.stat(path2).then((stat5) => {
             if (stat5.isDirectory()) {
-              resolve2("dir");
+              resolve("dir");
             } else if (stat5.isFile()) {
-              resolve2("file");
+              resolve("file");
             } else {
-              resolve2("other");
+              resolve("other");
             }
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
-              resolve2(false);
+              resolve(false);
             } else {
               reject(err2);
             }
@@ -4809,20 +4809,20 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         });
       };
       var canOverwriteItAsync = (context) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           if (typeof context.opts.overwrite === "function") {
             inspect2.async(context.destPath, inspectOptions).then((destInspectData) => {
-              resolve2(
+              resolve(
                 context.opts.overwrite(context.srcInspectData, destInspectData)
               );
             }).catch(reject);
           } else {
-            resolve2(context.opts.overwrite === true);
+            resolve(context.opts.overwrite === true);
           }
         });
       };
       var copyFileAsync = (srcPath, destPath, mode, context, runOptions) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const runOpts = runOptions || {};
           let flags = "wx";
           if (runOpts.overwrite) {
@@ -4836,7 +4836,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(destPath)).then(() => {
                 copyFileAsync(srcPath, destPath, mode, context).then(
-                  resolve2,
+                  resolve,
                   reject
                 );
               }).catch(reject);
@@ -4845,29 +4845,29 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                 if (canOverwite) {
                   copyFileAsync(srcPath, destPath, mode, context, {
                     overwrite: true
-                  }).then(resolve2, reject);
+                  }).then(resolve, reject);
                 } else if (shouldThrowDestinationExistsError(context)) {
                   reject(generateDestinationExistsError(destPath));
                 } else {
-                  resolve2();
+                  resolve();
                 }
               }).catch(reject);
             } else {
               reject(err2);
             }
           });
-          writeStream.on("finish", resolve2);
+          writeStream.on("finish", resolve);
           readStream.pipe(writeStream);
         });
       };
       var copySymlinkAsync = (from, to) => {
         return fs2.readlink(from).then((symlinkPointsAt) => {
-          return new Promise((resolve2, reject) => {
-            fs2.symlink(symlinkPointsAt, to).then(resolve2).catch((err2) => {
+          return new Promise((resolve, reject) => {
+            fs2.symlink(symlinkPointsAt, to).then(resolve).catch((err2) => {
               if (err2.code === "EEXIST") {
                 fs2.unlink(to).then(() => {
                   return fs2.symlink(symlinkPointsAt, to);
-                }).then(resolve2, reject);
+                }).then(resolve, reject);
               } else {
                 reject(err2);
               }
@@ -4887,8 +4887,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         return Promise.resolve();
       };
-      var copyAsync3 = (from, to, options) => {
-        return new Promise((resolve2, reject) => {
+      var copyAsync4 = (from, to, options) => {
+        return new Promise((resolve, reject) => {
           const opts = parseOptions(options, from);
           checksBeforeCopyingAsync(from, to, opts).then(() => {
             let allFilesDelivered = false;
@@ -4905,7 +4905,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                     copyItemAsync(srcPath, item, destPath, opts).then(() => {
                       filesInProgress -= 1;
                       if (allFilesDelivered && filesInProgress === 0) {
-                        resolve2();
+                        resolve();
                       }
                     }).catch(reject);
                   }
@@ -4917,7 +4917,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                 } else {
                   allFilesDelivered = true;
                   if (allFilesDelivered && filesInProgress === 0) {
-                    resolve2();
+                    resolve();
                   }
                 }
               }
@@ -4927,7 +4927,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = copySync;
-      exports2.async = copyAsync3;
+      exports2.async = copyAsync4;
     }
   });
 
@@ -4990,11 +4990,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
       };
       var ensureDestinationPathExistsAsync = (to) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const destDir = pathUtil.dirname(to);
           exists.async(destDir).then((dstExists) => {
             if (!dstExists) {
-              dir2.createAsync(destDir).then(resolve2, reject);
+              dir2.createAsync(destDir).then(resolve, reject);
             } else {
               reject();
             }
@@ -5003,16 +5003,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       var moveAsync2 = (from, to, options) => {
         const opts = parseOptions(options);
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           exists.async(to).then((destinationExists) => {
             if (destinationExists !== false && opts.overwrite !== true) {
               reject(generateDestinationExistsError(to));
             } else {
-              fs2.rename(from, to).then(resolve2).catch((err2) => {
+              fs2.rename(from, to).then(resolve).catch((err2) => {
                 if (err2.code === "EISDIR" || err2.code === "EPERM") {
-                  remove.async(to).then(() => fs2.rename(from, to)).then(resolve2, reject);
+                  remove.async(to).then(() => fs2.rename(from, to)).then(resolve, reject);
                 } else if (err2.code === "EXDEV") {
-                  copy.async(from, to, { overwrite: true }).then(() => remove.async(from)).then(resolve2, reject);
+                  copy.async(from, to, { overwrite: true }).then(() => remove.async(from)).then(resolve, reject);
                 } else if (err2.code === "ENOENT") {
                   exists.async(from).then((srcExists) => {
                     if (!srcExists) {
@@ -5020,7 +5020,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                     } else {
                       ensureDestinationPathExistsAsync(to).then(() => {
                         return fs2.rename(from, to);
-                      }).then(resolve2, reject);
+                      }).then(resolve, reject);
                     }
                   }).catch(reject);
                 } else {
@@ -5102,7 +5102,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         return data;
       };
       var readAsync10 = (path2, returnAs) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const retAs = returnAs || "utf8";
           let encoding = "utf8";
           if (retAs === "buffer") {
@@ -5111,18 +5111,18 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           fs2.readFile(path2, { encoding }).then((data) => {
             try {
               if (retAs === "json") {
-                resolve2(JSON.parse(data));
+                resolve(JSON.parse(data));
               } else if (retAs === "jsonWithDates") {
-                resolve2(JSON.parse(data, jsonDateParser));
+                resolve(JSON.parse(data, jsonDateParser));
               } else {
-                resolve2(data);
+                resolve(data);
               }
             } catch (err2) {
               reject(makeNicerJsonParsingError(path2, err2));
             }
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
-              resolve2(void 0);
+              resolve(void 0);
             } else {
               reject(err2);
             }
@@ -5195,12 +5195,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
       };
       var symlinkAsync = (symlinkValue, path2) => {
-        return new Promise((resolve2, reject) => {
-          fs2.symlink(symlinkValue, path2).then(resolve2).catch((err2) => {
+        return new Promise((resolve, reject) => {
+          fs2.symlink(symlinkValue, path2).then(resolve).catch((err2) => {
             if (err2.code === "ENOENT") {
               dir2.createAsync(pathUtil.dirname(path2)).then(() => {
                 return fs2.symlink(symlinkValue, path2);
-              }).then(resolve2, reject);
+              }).then(resolve, reject);
             } else {
               reject(err2);
             }
@@ -5275,7 +5275,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         return dirPath;
       };
       var tmpDirAsync = (cwdPath, passedOptions) => {
-        return new Promise((resolve2, reject) => {
+        return new Promise((resolve, reject) => {
           const options = getOptionsDefaults(passedOptions, cwdPath);
           crypto.randomBytes(randomStringLength / 2, (err2, bytes) => {
             if (err2) {
@@ -5290,13 +5290,13 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                 if (err3) {
                   if (err3.code === "ENOENT") {
                     dir2.async(dirPath).then(() => {
-                      resolve2(dirPath);
+                      resolve(dirPath);
                     }, reject);
                   } else {
                     reject(err3);
                   }
                 } else {
-                  resolve2(dirPath);
+                  resolve(dirPath);
                 }
               });
             }
@@ -5389,10 +5389,10 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           },
           dirAsync: (path2, criteria) => {
             dir2.validateInput("dirAsync", path2, criteria);
-            return new Promise((resolve2, reject) => {
+            return new Promise((resolve, reject) => {
               const normalizedPath = resolvePath(path2);
               dir2.async(normalizedPath, criteria).then(() => {
-                resolve2(cwd2(normalizedPath));
+                resolve(cwd2(normalizedPath));
               }, reject);
             });
           },
@@ -5411,9 +5411,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           },
           fileAsync: (path2, criteria) => {
             file.validateInput("fileAsync", path2, criteria);
-            return new Promise((resolve2, reject) => {
+            return new Promise((resolve, reject) => {
               file.async(resolvePath(path2), criteria).then(() => {
-                resolve2(api);
+                resolve(api);
               }, reject);
             });
           },
@@ -5504,9 +5504,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           },
           tmpDirAsync: (options) => {
             tmpDir.validateInput("tmpDirAsync", options);
-            return new Promise((resolve2, reject) => {
+            return new Promise((resolve, reject) => {
               tmpDir.async(getCwdPath(), options).then((pathOfCreatedDirectory) => {
-                resolve2(cwd2(pathOfCreatedDirectory));
+                resolve(cwd2(pathOfCreatedDirectory));
               }, reject);
             });
           },
@@ -54090,16 +54090,16 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       },
       killing: null,
       async kill() {
-        await new Promise((resolve2) => {
+        await new Promise((resolve) => {
           if (opt?.ipc) {
             proc.on("message", (e) => {
               if (e === "::SPAWN_DISPOSED::") {
-                resolve2();
+                resolve();
               }
             });
             proc.send("::SPAWN_DISPOSE::");
           } else {
-            resolve2();
+            resolve();
           }
         });
       }
@@ -54127,11 +54127,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       }
     },
     async stop(path2) {
-      return new Promise((resolve2) => {
+      return new Promise((resolve) => {
         if (!runnerGlb.runs[path2]) {
-          resolve2(true);
+          resolve(true);
         } else {
-          runnerGlb.runs[path2].onExit(() => resolve2(true));
+          runnerGlb.runs[path2].onExit(() => resolve(true));
           runnerGlb.runs[path2].kill();
           delete runnerGlb.runs[path2];
         }
@@ -54158,13 +54158,13 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             await onStop(e);
           delete runnerGlb.runs[path2];
         });
-        return await new Promise((resolve2) => {
+        return await new Promise((resolve) => {
           if (!isCommand) {
             runnerGlb.runs[path2].onMessage((e) => {
-              resolve2(true);
+              resolve(true);
             });
           } else {
-            resolve2(true);
+            resolve(true);
           }
         });
       } catch (e) {
@@ -54203,238 +54203,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // pkgs/base/src/main.ts
   var import_catch_exit2 = __toESM(require_dist());
   var import_chalk9 = __toESM(require_source());
-
-  // pkgs/base/pkgs/dir/export.ts
-  var import_fs2 = __require("fs");
-  var import_path = __require("path");
-  var import_process = __require("process");
-  var import_fs3 = __require("fs");
-  var import_path2 = __require("path");
-  var globalize = (arg) => {
-    const { name, init } = arg;
-    const g2 = global;
-    if (typeof g2[name] === "undefined") {
-      g2[name] = arg.value;
-    }
-    g2[name].init = async () => {
-      if (init) {
-        await init(g2[name]);
-      }
-    };
-    return g2[name];
-  };
-  var dir = new Proxy(
-    {},
-    {
-      get(_target, p) {
-        if (p === "path") {
-          return (arg = "") => {
-            return (0, import_path.join)(process.cwd(), ...(arg || "").split("/"));
-          };
-        }
-        if (p === "root") {
-          return (arg = "") => {
-            if ((0, import_fs2.existsSync)((0, import_path.join)((0, import_process.cwd)(), "base"))) {
-              return (0, import_path.join)(process.cwd(), ...arg.split("/"));
-            }
-            return (0, import_path.join)(process.cwd(), "..", "..", ...arg.split("/"));
-          };
-        }
-      }
-    }
-  );
-  var ascend = function(start, callback) {
-    let dir2 = (0, import_path2.resolve)(".", start);
-    let tmp, stats = (0, import_fs3.statSync)(dir2);
-    if (!stats.isDirectory()) {
-      dir2 = (0, import_path2.dirname)(dir2);
-    }
-    while (true) {
-      tmp = callback(dir2, (0, import_fs3.readdirSync)(dir2));
-      if (tmp)
-        return (0, import_path2.resolve)(dir2, tmp);
-      dir2 = (0, import_path2.dirname)(tmp = dir2);
-      if (tmp === dir2)
-        break;
-    }
-  };
-  var ascendFile = async (dir2, untilFoundFile) => {
-    return new Promise((resolve2) => {
-      ascend(dir2, (dir3, files) => {
-        if (files.includes(untilFoundFile)) {
-          resolve2((0, import_path.join)(dir3, untilFoundFile));
-          return dir3;
-        }
-      });
-    });
-  };
-
-  // pkgs/base/src/main.ts
   var import_fs_jetpack17 = __toESM(require_main2());
   var import_lodash5 = __toESM(require_lodash());
-
-  // pkgs/base/pkgs/pkg/export.ts
-  var import_child_process2 = __require("child_process");
-  var import_chalk2 = __toESM(require_source());
-  var import_fs4 = __toESM(__require("fs"));
-  var import_path4 = __toESM(__require("path"));
-
-  // pkgs/base/pkgs/pkg/src/should-install.ts
-  var import_chalk = __toESM(require_source());
-  var import_fs_jetpack = __toESM(require_main2());
-  var import_path3 = __require("path");
-  var shouldInstall = (path2, silent = false) => __async(void 0, null, function* () {
-    const dir2 = (0, import_path3.dirname)(path2);
-    let pkg2 = {};
-    try {
-      pkg2 = yield (0, import_fs_jetpack.readAsync)(path2, "json");
-    } catch (e) {
-    }
-    let shouldInstall2 = false;
-    yield Promise.all(
-      ["dependencies", "devDependencies"].map((e) => __async(void 0, null, function* () {
-        if (!pkg2 || pkg2 && !pkg2[e])
-          return;
-        const entries = Object.entries(pkg2[e]);
-        for (const [k, v] of entries) {
-          if (v.startsWith(".") || v.startsWith("/")) {
-            continue;
-          }
-          if (!(yield (0, import_fs_jetpack.existsAsync)((0, import_path3.join)(dir2, "node_modules", k)))) {
-            console.log(
-              `module ${import_chalk.default.cyan(k)} not found in ${(0, import_path3.join)(
-                dir2,
-                "node_modules"
-              ).substring(process.cwd().length + 1)}`
-            );
-            shouldInstall2 = true;
-          }
-          if (v === "*") {
-            try {
-              const res = yield fetch(
-                `https://data.jsdelivr.com/v1/packages/npm/${k}/resolved`
-              );
-              const json = yield res.json();
-              pkg2[e][k] = json.version;
-              console.log(
-                `found ${import_chalk.default.cyan(`${k} = "*"`)} in ${path2.substring(
-                  process.cwd().length + 1
-                )}`
-              );
-              shouldInstall2 = true;
-            } catch (e2) {
-            }
-          }
-        }
-      }))
-    );
-    if (shouldInstall2) {
-      yield (0, import_fs_jetpack.writeAsync)(path2, pkg2, { jsonIndent: 2 });
-    }
-    return shouldInstall2;
-  });
-
-  // pkgs/base/pkgs/pkg/export.ts
-  var g = globalThis;
-  if (!g.pkgRunning) {
-    g.pkgRunning = /* @__PURE__ */ new Set();
-  }
-  var getModuleVersion = (name) => {
-    const res = (0, import_child_process2.spawnSync)("pnpm", ["why", "-r", name], {
-      cwd: dir.root(""),
-      env: process.env
-    });
-    const out = res.output.filter((e) => !!e);
-    try {
-      return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
-    } catch (e) {
-      return "";
-    }
-  };
-  var pkg = {
-    produce(pkg2) {
-      const dependencies = {};
-      if (pkg2.external) {
-        for (const f of pkg2.external) {
-          dependencies[f] = getModuleVersion(f);
-        }
-      }
-      return { name: pkg2.name, version: pkg2.version, dependencies };
-    },
-    async install(path2, arg) {
-      const _arg = arg ? arg : { cwd: void 0, silent: false };
-      const silent = _arg.silent === true ? true : false;
-      if (g.pkgRunning.size > 0) {
-        await Promise.all([...g.pkgRunning.values()]);
-      }
-      const prom = new Promise(async (resolve2) => {
-        let install = false;
-        if (arg?.deep) {
-          const dirs = await scanDir([path2]);
-          const templateDir = dir.root("pkgs/template");
-          const all = await Promise.all(
-            dirs.filter((e) => !e.startsWith(templateDir)).map((e) => shouldInstall(e, silent))
-          );
-          if (all.filter((e) => e).length > 0) {
-            install = true;
-          }
-        } else {
-          install = await shouldInstall(path2, silent);
-        }
-        if (install) {
-          if (arg?.onInstall)
-            await arg.onInstall();
-          if (!silent)
-            console.log(
-              `
-${import_chalk2.default.magenta("Installing")} deps:
- ${import_chalk2.default.blue("\u27A5")}`,
-              [path2].map(
-                (e) => import_chalk2.default.green((0, import_path4.dirname)(e.substring(process.cwd().length + 1)))
-              ).join(" ")
-            );
-          const child = (0, import_child_process2.spawn)("pnpm", ["i"], {
-            stdio: silent ? "ignore" : "inherit",
-            cwd: _arg.cwd || process.cwd()
-          });
-          child.on("exit", () => {
-            g.pkgRunning.delete(prom);
-            if (arg?.onInstallDone)
-              arg.onInstallDone();
-            resolve2();
-          });
-        } else {
-          resolve2();
-        }
-      });
-      g.pkgRunning.add(prom);
-      return await prom;
-    }
-  };
-  var scanDir = async (paths) => {
-    const pkgs = [];
-    for (const path2 of paths) {
-      for await (const p of walk(path2)) {
-        if (p.endsWith("package.json")) {
-          pkgs.push(p);
-        }
-        if (p.endsWith("node_modules"))
-          break;
-      }
-    }
-    return pkgs;
-  };
-  async function* walk(dir2) {
-    for await (const d of await import_fs4.default.promises.opendir(dir2)) {
-      const entry = import_path4.default.join(dir2, d.name);
-      if (d.isDirectory()) {
-        if (!entry.endsWith("node_modules")) {
-          yield* await walk(entry);
-        }
-      } else if (d.isFile())
-        yield entry;
-    }
-  }
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var import_cuid2 = __toESM(require_cuid2());
@@ -54529,8 +54299,48 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var import_websocket_server = __toESM(require_websocket_server(), 1);
 
   // pkgs/base/pkgs/rpc/src/config.ts
-  var import_fs5 = __require("fs");
-  var import_path5 = __require("path");
+  var import_fs3 = __require("fs");
+  var import_path2 = __require("path");
+
+  // pkgs/base/pkgs/dir/export.ts
+  var import_fs2 = __require("fs");
+  var import_path = __require("path");
+  var import_process = __require("process");
+  var globalize = (arg) => {
+    const { name, init } = arg;
+    const g2 = global;
+    if (typeof g2[name] === "undefined") {
+      g2[name] = arg.value;
+    }
+    g2[name].init = async () => {
+      if (init) {
+        await init(g2[name]);
+      }
+    };
+    return g2[name];
+  };
+  var dir = new Proxy(
+    {},
+    {
+      get(_target, p) {
+        if (p === "path") {
+          return (arg = "") => {
+            return (0, import_path.join)(process.cwd(), ...(arg || "").split("/"));
+          };
+        }
+        if (p === "root") {
+          return (arg = "") => {
+            if ((0, import_fs2.existsSync)((0, import_path.join)((0, import_process.cwd)(), "base"))) {
+              return (0, import_path.join)(process.cwd(), ...arg.split("/"));
+            }
+            return (0, import_path.join)(process.cwd(), "..", "..", ...arg.split("/"));
+          };
+        }
+      }
+    }
+  );
+
+  // pkgs/base/pkgs/rpc/src/config.ts
   var config = new Proxy(
     {
       _path: "",
@@ -54544,22 +54354,22 @@ ${import_chalk2.default.magenta("Installing")} deps:
       set(target, p, newValue, receiver) {
         initConf(target);
         target._raw[p] = newValue;
-        (0, import_fs5.writeFileSync)(target._path, JSON.stringify(target._raw, null, 2));
+        (0, import_fs3.writeFileSync)(target._path, JSON.stringify(target._raw, null, 2));
         return true;
       }
     }
   );
   var initConf = (target) => {
-    target._path = (0, import_path5.join)(process.cwd(), "rpc.json");
+    target._path = (0, import_path2.join)(process.cwd(), "rpc.json");
     try {
-      if ((0, import_fs5.existsSync)((0, import_path5.join)(process.cwd(), "base"))) {
+      if ((0, import_fs3.existsSync)((0, import_path2.join)(process.cwd(), "base"))) {
         target._path = dir.root(".output/app/rpc.json");
       }
-      if ((0, import_fs5.existsSync)(target._path)) {
-        const json = (0, import_fs5.readFileSync)(target._path, "utf-8");
+      if ((0, import_fs3.existsSync)(target._path)) {
+        const json = (0, import_fs3.readFileSync)(target._path, "utf-8");
         target._raw = JSON.parse(json);
       } else {
-        (0, import_fs5.mkdirSync)((0, import_path5.dirname)(target._path), { recursive: true });
+        (0, import_fs3.mkdirSync)((0, import_path2.dirname)(target._path), { recursive: true });
       }
     } catch (e) {
     }
@@ -54598,7 +54408,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
               serverConnected = res.serverConnected;
             }
           }
-          return new Promise((resolve2) => {
+          return new Promise((resolve) => {
             if (ws) {
               const onmsg = (raw) => {
                 if (ws) {
@@ -54606,10 +54416,10 @@ ${import_chalk2.default.magenta("Installing")} deps:
                   const msg = JSON.parse(raw);
                   if (msg.type === "action-result") {
                     if (!msg.error) {
-                      resolve2(msg.result);
+                      resolve(msg.result);
                     } else {
                       process.stdout.write(msg.error.msg);
-                      resolve2(msg.result);
+                      resolve(msg.result);
                     }
                   }
                 }
@@ -54632,19 +54442,19 @@ ${import_chalk2.default.magenta("Installing")} deps:
   });
   var connect = (name) => {
     return new Promise(
-      (resolve2) => {
+      (resolve) => {
         const ws = new import_websocket.default(`ws://localhost:${config.port}/connect/${name}`);
         ws.on("open", () => {
           ws.send(JSON.stringify({ type: "identify", name }));
           ws.on("message", (raw) => {
             const msg = JSON.parse(raw);
             if (msg.type === "connected") {
-              resolve2({ ws, serverConnected: msg.serverConnected });
+              resolve({ ws, serverConnected: msg.serverConnected });
             }
           });
         });
-        ws.on("close", () => resolve2(false));
-        ws.on("error", () => resolve2(false));
+        ws.on("close", () => resolve(false));
+        ws.on("error", () => resolve(false));
       }
     );
   };
@@ -54678,14 +54488,14 @@ ${import_chalk2.default.magenta("Installing")} deps:
     }
     return results;
   };
-  var checkAvailablePort = (options) => new Promise((resolve2, reject) => {
+  var checkAvailablePort = (options) => new Promise((resolve, reject) => {
     const server = import_node_net.default.createServer();
     server.unref();
     server.on("error", reject);
     server.listen(options, () => {
       const { port } = server.address();
       server.close(() => {
-        resolve2(port);
+        resolve(port);
       });
     });
   });
@@ -54833,12 +54643,12 @@ Make sure to kill running instance before starting.
     });
   });
   var connect2 = (name, action3) => {
-    return new Promise((resolve2) => {
+    return new Promise((resolve) => {
       const ws = new import_websocket.default(`ws://localhost:${config.port}/create/${name}`);
       setTimeout(() => {
         if (ws.readyState !== ws.OPEN) {
           ws.close();
-          resolve2(false);
+          resolve(false);
         }
       }, 500);
       ws.on("open", () => {
@@ -54867,13 +54677,13 @@ Make sure to kill running instance before starting.
             }
           }
         }));
-        resolve2(ws);
+        resolve(ws);
       });
       ws.on("close", () => {
-        resolve2(false);
+        resolve(false);
       });
       ws.on("error", () => {
-        resolve2(false);
+        resolve(false);
       });
     });
   };
@@ -54944,35 +54754,209 @@ Make sure to kill running instance before starting.
   var import_chalk3 = __toESM(require_source());
   var import_fs_jetpack2 = __toESM(require_main2());
   var import_lodash3 = __toESM(require_lodash());
-  var import_path6 = __require("path");
+  var import_path5 = __require("path");
+
+  // pkgs/base/pkgs/pkg/export.ts
+  var import_child_process2 = __require("child_process");
+  var import_chalk2 = __toESM(require_source());
+  var import_fs4 = __toESM(__require("fs"));
+  var import_path4 = __toESM(__require("path"));
+
+  // pkgs/base/pkgs/pkg/src/should-install.ts
+  var import_chalk = __toESM(require_source());
+  var import_fs_jetpack = __toESM(require_main2());
+  var import_path3 = __require("path");
+  var shouldInstall = (path2, silent = false) => __async(void 0, null, function* () {
+    const dir2 = (0, import_path3.dirname)(path2);
+    let pkg2 = {};
+    try {
+      pkg2 = yield (0, import_fs_jetpack.readAsync)(path2, "json");
+    } catch (e) {
+    }
+    let install = false;
+    for (const e of ["dependencies", "devDependencies"]) {
+      if (!pkg2 || pkg2 && !pkg2[e])
+        continue;
+      const entries = Object.entries(pkg2[e]);
+      for (const [k, v] of entries) {
+        if (v.startsWith(".") || v.startsWith("/")) {
+          continue;
+        }
+        if (!(yield (0, import_fs_jetpack.existsAsync)((0, import_path3.join)(dir2, "node_modules", k))) && !install) {
+          if (!silent)
+            console.log(
+              `module ${import_chalk.default.cyan(k)} not found in ${(0, import_path3.join)(
+                dir2,
+                "node_modules"
+              ).substring(process.cwd().length + 1)}`
+            );
+          install = true;
+        }
+        if (v === "*") {
+          try {
+            const res = yield fetch(
+              `https://data.jsdelivr.com/v1/packages/npm/${k}/resolved`
+            );
+            const json = yield res.json();
+            pkg2[e][k] = json.version;
+            if (!silent && !install)
+              console.log(
+                `found ${import_chalk.default.cyan(`${k} = "*"`)} in ${path2.substring(
+                  process.cwd().length + 1
+                )}`
+              );
+            install = true;
+          } catch (e2) {
+          }
+        }
+      }
+    }
+    if (install) {
+      yield (0, import_fs_jetpack.writeAsync)(path2, pkg2, { jsonIndent: 2 });
+    }
+    return install;
+  });
+
+  // pkgs/base/pkgs/pkg/export.ts
+  var g = globalThis;
+  if (!g.pkgRunning) {
+    g.pkgRunning = /* @__PURE__ */ new Set();
+  }
+  var getModuleVersion = (name) => {
+    const res = (0, import_child_process2.spawnSync)("pnpm", ["why", "-r", name], {
+      cwd: dir.root(""),
+      env: process.env
+    });
+    const out = res.output.filter((e) => !!e);
+    try {
+      return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
+    } catch (e) {
+      return "";
+    }
+  };
+  var pkg = {
+    extractExternal(pkg2) {
+      const dependencies = {};
+      if (pkg2.external) {
+        for (const f of pkg2.external) {
+          dependencies[f] = getModuleVersion(f);
+        }
+      }
+      return { name: pkg2.name, version: pkg2.version, dependencies };
+    },
+    async install(path2, arg) {
+      const _arg = arg ? arg : { cwd: void 0, silent: false };
+      const silent = _arg.silent === true ? true : false;
+      if (g.pkgRunning.size > 0) {
+        await Promise.all([...g.pkgRunning.values()]);
+      }
+      const prom = new Promise(async (resolve) => {
+        let install = false;
+        if (arg?.deep) {
+          const dirs = await scanDir([path2]);
+          const templateDir = dir.root("pkgs/template");
+          for (const e of dirs) {
+            if (!e.startsWith(templateDir)) {
+              if (await shouldInstall(e)) {
+                install = true;
+                break;
+              }
+            }
+          }
+        } else {
+          install = await shouldInstall(path2, silent);
+        }
+        if (install) {
+          if (arg?.onInstall)
+            await arg.onInstall();
+          if (!silent)
+            console.log(
+              `
+${import_chalk2.default.magenta("Installing")} deps:
+ ${import_chalk2.default.blue("\u27A5")}`,
+              [path2].map(
+                (e) => import_chalk2.default.green((0, import_path4.dirname)(e.substring(process.cwd().length + 1)))
+              ).join(" ")
+            );
+          const child = (0, import_child_process2.spawn)("pnpm", ["i"], {
+            stdio: silent ? "ignore" : "inherit",
+            cwd: _arg.cwd || process.cwd()
+          });
+          child.on("exit", () => {
+            g.pkgRunning.delete(prom);
+            if (arg?.onInstallDone)
+              arg.onInstallDone();
+            resolve();
+          });
+        } else {
+          resolve();
+        }
+      });
+      g.pkgRunning.add(prom);
+      return await prom;
+    }
+  };
+  var scanDir = async (paths) => {
+    const pkgs = [];
+    for (const path2 of paths) {
+      for await (const p of walk(path2)) {
+        if (p.endsWith("package.json")) {
+          pkgs.push(p);
+        }
+        if (p.endsWith("node_modules"))
+          break;
+      }
+    }
+    return pkgs;
+  };
+  async function* walk(dir2) {
+    for await (const d of await import_fs4.default.promises.opendir(dir2)) {
+      const entry = import_path4.default.join(dir2, d.name);
+      if (d.isDirectory()) {
+        if (!entry.endsWith("node_modules")) {
+          yield* await walk(entry);
+        }
+      } else if (d.isFile())
+        yield entry;
+    }
+  }
+
+  // pkgs/base/pkgs/bundler/bundle.ts
   var bundle = async (arg) => {
     try {
       const { context } = await import("esbuild");
-      const { input, output, printTimer, watch } = arg;
-      const printableName = import_chalk3.default.green(
-        (0, import_path6.dirname)(input.substring(dir.root("").length + 1))
+      const { input, output, printTimer, watch, pkgjson } = arg;
+      const printableName = import_chalk3.default.cyan(
+        (0, import_path5.dirname)(input.substring(dir.root("").length + 1))
       );
       const tag = `Built ${(0, import_lodash3.default)(printableName, 23, " ")}`;
       if (printTimer)
         console.time(tag);
-      const pkgFile = await ascendFile(input, "package.json");
-      let json = pkg.produce(await (0, import_fs_jetpack2.readAsync)(pkgFile, "json"));
-      await pkg.install(pkgFile, {
-        cwd: arg.pkgcwd || (0, import_path6.dirname)(pkgFile),
-        silent: true,
-        onInstall() {
-          console.log(`Installing ${printableName} deps...`);
-        },
-        onInstallDone() {
-          console.log(`Dependency ${printableName} installed`);
+      let externalJson = { dependencies: {} };
+      if (pkgjson) {
+        let json = await (0, import_fs_jetpack2.readAsync)(pkgjson.input, "json");
+        if (pkgjson.output) {
+          externalJson = pkg.extractExternal(json);
+          await (0, import_fs_jetpack2.writeAsync)(pkgjson.output, externalJson);
         }
-      });
+        await pkg.install(pkgjson.input, {
+          cwd: (0, import_path5.dirname)(pkgjson.input),
+          silent: true,
+          onInstall() {
+            console.log(`Installing ${printableName} deps...`);
+          },
+          onInstallDone() {
+          }
+        });
+      }
       let isRebuild = false;
       const external = [
         "esbuild",
-        ...Object.keys(json.dependencies).filter((e) => !["esbuild"].includes(e))
+        ...Object.keys(externalJson.dependencies).filter(
+          (e) => !["esbuild"].includes(e)
+        )
       ];
-      return new Promise(async (resolve2) => {
+      return new Promise(async (resolve) => {
         const ctx = await context({
           entryPoints: [input],
           outfile: output,
@@ -54988,24 +54972,6 @@ Make sure to kill running instance before starting.
                 build.onEnd(async () => {
                   if (watch) {
                     let installDeps = false;
-                    if (isRebuild) {
-                      await pkg.install(pkgFile, {
-                        cwd: arg.pkgcwd || (0, import_path6.dirname)(pkgFile),
-                        silent: true,
-                        onInstall() {
-                          console.log(`Installing ${printableName} deps...`);
-                        },
-                        onInstallDone() {
-                          console.log(`Dependency ${printableName} installed`);
-                          installDeps = true;
-                        }
-                      });
-                    }
-                    if (installDeps) {
-                      const pkgFile2 = await ascendFile(input, "package.json");
-                      json = pkg.produce(await (0, import_fs_jetpack2.readAsync)(pkgFile2, "json"));
-                    }
-                    await outputPkgJson(json, arg.pkgjson);
                     if (arg.onBeforeDone)
                       await arg.onBeforeDone({ isRebuild });
                     if (printTimer)
@@ -55016,10 +54982,10 @@ Make sure to kill running instance before starting.
                       console.error(JSON.stringify(e));
                     }
                     if (!isRebuild)
-                      resolve2(true);
+                      resolve(true);
                   } else {
                     if (!isRebuild)
-                      resolve2(true);
+                      resolve(true);
                   }
                   isRebuild = true;
                 });
@@ -55030,24 +54996,16 @@ Make sure to kill running instance before starting.
         if (watch) {
           await ctx.watch();
         } else {
-          resolve2(true);
+          resolve(true);
         }
       });
     } catch (e) {
       return false;
     }
   };
-  var outputPkgJson = async (json, pkgjson) => {
-    if (pkgjson) {
-      await (0, import_fs_jetpack2.writeAsync)(pkgjson, json);
-      await pkg.install(pkgjson, {
-        cwd: (0, import_path6.dirname)(pkgjson)
-      });
-    }
-  };
 
   // pkgs/base/src/builder/service.ts
-  var import_path11 = __require("path");
+  var import_path10 = __require("path");
 
   // pkgs/base/src/watcher/watch-service.ts
   var watchService = (name, event) => {
@@ -55599,12 +55557,12 @@ Make sure to kill running instance before starting.
   // pkgs/service/pkgs/service-db/src/ensure-prisma.ts
   var import_prisma_ast2 = __toESM(require_dist2());
   var import_fs_jetpack5 = __toESM(require_main2());
-  var import_path7 = __require("path");
+  var import_path6 = __require("path");
   var ensurePrisma = async (name) => {
     const prismaPath = dir.root(`app/${name}/prisma/schema.prisma`);
     let dburl = "";
     if (!await (0, import_fs_jetpack5.existsAsync)(prismaPath)) {
-      await (0, import_fs_jetpack5.dirAsync)((0, import_path7.dirname)(prismaPath));
+      await (0, import_fs_jetpack5.dirAsync)((0, import_path6.dirname)(prismaPath));
       await (0, import_fs_jetpack5.writeAsync)(
         prismaPath,
         `generator client {
@@ -55696,11 +55654,11 @@ datasource db {
   // pkgs/base/src/builder/service/srv.ts
   var import_fs_jetpack8 = __toESM(require_main2());
   var import_promises2 = __require("fs/promises");
-  var import_path10 = __require("path");
+  var import_path9 = __require("path");
 
   // pkgs/base/src/scaffold/srv/api.ts
   var import_fs_jetpack7 = __toESM(require_main2());
-  var import_path9 = __require("path");
+  var import_path8 = __require("path");
 
   // pkgs/base/src/scaffold/parser/traverse.ts
   var swc = __toESM(__require("@swc/core"));
@@ -57037,14 +56995,14 @@ datasource db {
 
   // pkgs/base/src/scaffold/parser/utils.ts
   var import_promises = __require("fs/promises");
-  var import_path8 = __require("path");
+  var import_path7 = __require("path");
   var walkDir = function(directory) {
     return __async(this, null, function* () {
       let fileList = [];
       try {
         const files = yield (0, import_promises.readdir)(directory);
         for (const file of files) {
-          const p = (0, import_path8.join)(directory, file);
+          const p = (0, import_path7.join)(directory, file);
           if ((yield (0, import_promises.stat)(p)).isDirectory()) {
             fileList = [...fileList, ...yield walkDir(p)];
           } else {
@@ -57065,8 +57023,8 @@ datasource db {
     return dirs;
   });
   var parseAPI = (filePath) => __async(void 0, null, function* () {
-    let name = (0, import_path9.basename)(filePath);
-    name = name.substring(0, name.length - (0, import_path9.extname)(name).length).replace(/\W/gi, "_");
+    let name = (0, import_path8.basename)(filePath);
+    name = name.substring(0, name.length - (0, import_path8.extname)(name).length).replace(/\W/gi, "_");
     const result = {
       name,
       url: "",
@@ -57102,7 +57060,7 @@ datasource db {
       const filePath = e.file.substring(path2.length + 1);
       const importPath = `"../../../${name}/api/${filePath.substring(
         0,
-        filePath.length - (0, import_path9.extname)(filePath).length
+        filePath.length - (0, import_path8.extname)(filePath).length
       )}"`;
       return `export const ${e.name} = {
   name: "${e.name}",
@@ -57115,8 +57073,8 @@ datasource db {
     yield (0, import_fs_jetpack7.writeAsync)(
       dir.root(`app/gen/srv/api/${name}-args.ts`),
       parsed.map((e) => {
-        let page = (0, import_path9.basename)(e.file);
-        page = page.substring(0, page.length - (0, import_path9.extname)(page).length).replace(/\W/gi, "_");
+        let page = (0, import_path8.basename)(e.file);
+        page = page.substring(0, page.length - (0, import_path8.extname)(page).length).replace(/\W/gi, "_");
         return `export const ${page} = {
   url: "${e.url}",
   args: ${JSON.stringify(e.params)},
@@ -57152,8 +57110,8 @@ datasource db {
         if (e.startsWith(dir.root(`app/${name}/api`))) {
           const s = yield (0, import_promises2.stat)(e);
           if (s.size === 0) {
-            const routeName = (0, import_path10.basename)(
-              e.substring(0, e.length - (0, import_path10.extname)(e).length)
+            const routeName = (0, import_path9.basename)(
+              e.substring(0, e.length - (0, import_path9.extname)(e).length)
             );
             yield (0, import_fs_jetpack8.writeAsync)(
               e,
@@ -57185,8 +57143,10 @@ export const _ = {
       incremental: true,
       input: dir.root(`app/${name}/main.ts`),
       output: dir.root(`.output/app/${name}/index.js`),
-      pkgjson: dir.root(`.output/app/${name}/package.json`),
-      pkgcwd: dir.root(".output/app"),
+      pkgjson: {
+        input: dir.root(`app/${name}/package.json`),
+        output: dir.root(`.output/app/${name}/package.json`)
+      },
       printTimer: true,
       onBeforeDone: arg.onDone,
       watch: arg.watch ? (_0) => __async(void 0, [_0], function* ({ isRebuild, installDeps }) {
@@ -57218,7 +57178,7 @@ export const _ = {
       if (!err2) {
         for (const c of changes) {
           if (c.type === "update") {
-            if ((0, import_path11.basename)(c.path) === "package.json") {
+            if ((0, import_path10.basename)(c.path) === "package.json") {
               marker[name] = "skip";
               yield pkg.install(c.path);
               yield rpc.restart({ name });
@@ -57268,7 +57228,7 @@ export const _ = {
   };
 
   // pkgs/base/src/builder/app.ts
-  var import_fs6 = __require("fs");
+  var import_fs5 = __require("fs");
   var import_fs_jetpack10 = __toESM(require_main2());
 
   // pkgs/base/src/appgen/service.ts
@@ -57295,10 +57255,10 @@ export const _ = {
       `packages:
   - ./*`
     );
-    const dirs = (0, import_fs6.readdirSync)(dir.path("app")).filter(
+    const dirs = (0, import_fs5.readdirSync)(dir.path("app")).filter(
       (e) => !["node_modules", "app.ts", "package.json", "gen"].includes(e)
-    ).map((e) => ({ name: e, stat: (0, import_fs6.statSync)(dir.path(`app/${e}`)) })).filter(
-      ({ stat: stat5, name }) => stat5.isDirectory() && (0, import_fs6.existsSync)(dir.path(`app/${name}/main.ts`))
+    ).map((e) => ({ name: e, stat: (0, import_fs5.statSync)(dir.path(`app/${e}`)) })).filter(
+      ({ stat: stat5, name }) => stat5.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
     );
     yield serviceGen();
     return {
@@ -57311,8 +57271,10 @@ export const _ = {
             incremental: true,
             input: dir.root("app/app.ts"),
             output: dir.root(".output/app/app.js"),
-            pkgjson: dir.root(".output/app/package.json"),
-            pkgcwd: dir.root(".outpu/app"),
+            pkgjson: {
+              input: dir.root("app/package.json"),
+              output: dir.root(".output/app/package.json")
+            },
             printTimer: true,
             onBeforeDone: onDone,
             watch(_0) {
@@ -57360,15 +57322,15 @@ export const _ = {
         if (yield (0, import_fs_jetpack11.existsAsync)(dir.root(".output/.commit"))) {
           yield (0, import_fs_jetpack11.removeAsync)(dir.root(".output/.commit"));
           yield (0, import_fs_jetpack11.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
-          yield new Promise((resolve2) => {
+          yield new Promise((resolve) => {
             spawn("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
-            }).onExit(resolve2);
+            }).onExit(resolve);
           });
-          yield new Promise((resolve2) => {
+          yield new Promise((resolve) => {
             spawn("git", ["commit", "--amend", "-C", "HEAD", "--no-verify"], {
               cwd: dir.root("")
-            }).onExit(resolve2);
+            }).onExit(resolve);
           });
         }
       }
@@ -57852,9 +57814,9 @@ export const _ = {
   }
 
   // pkgs/base/src/upgrade.ts
-  var import_fs7 = __require("fs");
+  var import_fs6 = __require("fs");
   var import_fs_jetpack12 = __toESM(require_main2());
-  var import_path12 = __require("path");
+  var import_path11 = __require("path");
   var upgradeHook = (args) => __async(void 0, null, function* () {
     if (args.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
@@ -57882,22 +57844,22 @@ export const _ = {
       );
       console.log(` > Backing up existing pkgs to: .output/upgrade/backup`);
       const root2 = dir.root("");
-      for (const f of (0, import_fs7.readdirSync)(dir.root(""))) {
+      for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack12.existsAsync)((0, import_path12.join)(root2, `.output/upgrade/backup/${f}`))) {
+          if (yield (0, import_fs_jetpack12.existsAsync)((0, import_path11.join)(root2, `.output/upgrade/backup/${f}`))) {
             yield (0, import_fs_jetpack12.moveAsync)(
-              (0, import_path12.join)(root2, f),
-              (0, import_path12.join)(root2, `.output/upgrade/backup/${f}`)
+              (0, import_path11.join)(root2, f),
+              (0, import_path11.join)(root2, `.output/upgrade/backup/${f}`)
             );
           }
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs7.readdirSync)((0, import_path12.join)(root2, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs6.readdirSync)((0, import_path11.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
           yield (0, import_fs_jetpack12.copyAsync)(
-            (0, import_path12.join)(root2, `.output/upgrade/royal-main/${f}`),
-            (0, import_path12.join)(root2, f),
+            (0, import_path11.join)(root2, `.output/upgrade/royal-main/${f}`),
+            (0, import_path11.join)(root2, f),
             {
               overwrite: true
             }
@@ -57960,7 +57922,7 @@ If somehow upgrade failed you can rollback using
 
   // pkgs/base/src/vscode.ts
   var import_fs_jetpack14 = __toESM(require_main2());
-  var import_path13 = __require("path");
+  var import_path12 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
@@ -57969,7 +57931,7 @@ If somehow upgrade failed you can rollback using
         return;
       }
     }
-    yield (0, import_fs_jetpack14.dirAsync)((0, import_path13.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack14.dirAsync)((0, import_path12.dirname)(vscodeFile));
     yield (0, import_fs_jetpack14.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
@@ -58016,14 +57978,14 @@ If somehow upgrade failed you can rollback using
   var import_chalk8 = __toESM(require_source());
   var import_fs_jetpack15 = __toESM(require_main2());
   var import_promises4 = __require("fs/promises");
-  var import_path14 = __require("path");
+  var import_path13 = __require("path");
   var watchNewService = () => {
     watcher.watch({
       dir: dir.root("app"),
       event: (err2, changes) => __async(void 0, null, function* () {
         if (!err2) {
           for (const c of changes) {
-            const name = (0, import_path14.basename)(c.path);
+            const name = (0, import_path13.basename)(c.path);
             if (c.type === "delete") {
               console.log(`Removing service: ${import_chalk8.default.red(name)}`);
               yield (0, import_fs_jetpack15.removeAsync)(dir.root(`.output/app/${name}`));
@@ -58036,18 +57998,32 @@ If somehow upgrade failed you can rollback using
                 let root2 = "pkgs/template/pkgs/service";
                 if (name.startsWith("db")) {
                   root2 = "pkgs/template/pkgs/db";
+                } else if (name.startsWith("srv")) {
+                  root2 = "pkgs/template/pkgs/srv";
                 }
                 const files = yield (0, import_promises4.readdir)(dir.root(root2));
                 for (const f of files) {
                   if (f !== "node_modules") {
-                    const src = yield (0, import_fs_jetpack15.readAsync)(dir.root(`${root2}/${f}`), "utf8");
-                    yield (0, import_fs_jetpack15.writeAsync)(
-                      (0, import_path14.join)(c.path, f),
-                      (src || "").replace(/template_service/g, name)
-                    );
+                    const fpath = dir.root(`${root2}/${f}`);
+                    const s2 = yield (0, import_promises4.stat)(fpath);
+                    if (s2.isDirectory()) {
+                      yield (0, import_fs_jetpack15.copyAsync)(fpath, (0, import_path13.join)(c.path, f), {
+                        overwrite: true
+                      });
+                    } else {
+                      const src = yield (0, import_fs_jetpack15.readAsync)(fpath, "utf8");
+                      yield (0, import_fs_jetpack15.writeAsync)(
+                        (0, import_path13.join)(c.path, f),
+                        (src || "").replace(/template_service/g, name)
+                      );
+                    }
                   }
                 }
                 yield serviceGen();
+                yield pkg.install(dir.root(`app/${name}`), {
+                  cwd: dir.root(`app/${name}`),
+                  silent: true
+                });
                 process.exit(99);
               }
             }
@@ -58096,9 +58072,6 @@ If somehow upgrade failed you can rollback using
         waitConnection: false
       });
       baseGlobal.rootRPC = rootRPC;
-      if (args.includes("devbase")) {
-        yield pkg.install(dir.root("pkgs"), { cwd: dir.root(), deep: true });
-      }
       const app = yield buildApp({ watch: true });
       const onExit = () => __async(void 0, null, function* () {
         yield watcher.dispose();
@@ -58110,7 +58083,7 @@ If somehow upgrade failed you can rollback using
       setupWatchers(args, onExit);
       baseGlobal.app = app;
       let cacheFound = false;
-      if (yield (0, import_fs_jetpack17.existsAsync)(app.path)) {
+      if ((yield (0, import_fs_jetpack17.existsAsync)(app.path)) && !args.includes("nocache")) {
         console.log(`
 \u{1F31F} Running ${import_chalk9.default.cyan(`cached`)} app
 `);
