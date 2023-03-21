@@ -54384,6 +54384,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // pkgs/base/pkgs/rpc/src/connect.ts
   var connectRPC = (name, arg) => __async(void 0, null, function* () {
     const waitConnection = (0, import_lodash.default)(arg, "waitConnection", true);
+    const exitWhenDisconnect = (0, import_lodash.default)(arg, "exitWhenDisconnect", true);
     let ws = false;
     let serverConnected = false;
     if (waitConnection) {
@@ -54402,7 +54403,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           return !!ws && !!serverConnected;
         return (...args) => __async(void 0, null, function* () {
           if (ws === false) {
-            const res = yield connect(name);
+            const res = yield connect(name, {
+              onClose() {
+                if (exitWhenDisconnect)
+                  process.exit(0);
+              }
+            });
             if (res) {
               ws = res.ws;
               serverConnected = res.serverConnected;
@@ -54440,7 +54446,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       return void 0;
     });
   });
-  var connect = (name) => {
+  var connect = (name, arg) => {
     return new Promise(
       (resolve) => {
         const ws = new import_websocket.default(`ws://localhost:${config.port}/connect/${name}`);
@@ -54453,7 +54459,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             }
           });
         });
-        ws.on("close", () => resolve(false));
+        ws.on("close", () => {
+          resolve(false);
+          if (arg)
+            arg.onClose();
+        });
         ws.on("error", () => resolve(false));
       }
     );
