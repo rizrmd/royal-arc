@@ -8,6 +8,7 @@ import { action } from "../../../service/src/action";
 import { watchService } from "../watcher/watch-service";
 import { prepareDB } from "./service/db";
 import { prepareSrv } from "./service/srv";
+import { prepareWeb } from "./service/web";
 
 export const marker = {} as Record<string, "skip" | Set<string>>;
 
@@ -45,7 +46,7 @@ export const buildService = async (
                 let shouldRestart = false;
                 if (mark instanceof Set) {
                   const res = await afterBuild(name, mark);
-                  shouldRestart = res.shouldRestart;
+                  if (res) shouldRestart = res.shouldRestart;
                   delete marker[name];
                 } else if (mark === "skip") {
                   delete marker[name];
@@ -107,5 +108,6 @@ export const buildService = async (
 const afterBuild = async (name: string, mark?: Set<string> | undefined) => {
   if (name.startsWith("db")) return await prepareDB(name, mark);
   if (name.startsWith("srv")) return await prepareSrv(name, mark);
+  if (name.startsWith("web")) return await prepareWeb(name, mark);
   return { shouldRestart: false };
 };

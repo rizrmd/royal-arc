@@ -13,6 +13,7 @@ import { liveReloadSrc } from "./live-reload";
 import { initSSR } from "./ssr";
 import trim from "lodash.trim";
 import { web } from "./glbweb";
+import { dirAsync } from "fs-jetpack";
 
 export const server = async ({
   mode,
@@ -28,6 +29,7 @@ export const server = async ({
   });
 
   const publicPath = join(dir.path(`${name}/public`));
+  await dirAsync(publicPath)
   const live = new LiveDirectory(publicPath, {
     static: mode === "dev" ? false : true,
   });

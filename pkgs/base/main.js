@@ -2530,7 +2530,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           maxRetries: 3
         });
       };
-      var removeAsync7 = (path2) => {
+      var removeAsync10 = (path2) => {
         return fs2.rm(path2, {
           recursive: true,
           force: true,
@@ -2539,7 +2539,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync7;
+      exports2.async = removeAsync10;
     }
   });
 
@@ -2806,7 +2806,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }).then(resolve, reject);
         });
       };
-      var writeAsync12 = (path2, data, options) => {
+      var writeAsync15 = (path2, data, options) => {
         const opts = options || {};
         const processedData = serializeToJsonMaybe(data, opts.jsonIndent);
         let writeStrategy = writeFileAsync;
@@ -2817,7 +2817,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = writeSync;
-      exports2.async = writeAsync12;
+      exports2.async = writeAsync15;
     }
   });
 
@@ -5101,7 +5101,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         return data;
       };
-      var readAsync10 = (path2, returnAs) => {
+      var readAsync12 = (path2, returnAs) => {
         return new Promise((resolve, reject) => {
           const retAs = returnAs || "utf8";
           let encoding = "utf8";
@@ -5131,7 +5131,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = readSync;
-      exports2.async = readAsync10;
+      exports2.async = readAsync12;
     }
   });
 
@@ -8605,7 +8605,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         else
           dest[name].push(elem);
       }
-      function parse2(header) {
+      function parse4(header) {
         const offers = /* @__PURE__ */ Object.create(null);
         let params = /* @__PURE__ */ Object.create(null);
         let mustUnescape = false;
@@ -8760,7 +8760,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }).join(", ");
         }).join(", ");
       }
-      module2.exports = { format: format2, parse: parse2 };
+      module2.exports = { format: format2, parse: parse4 };
     }
   });
 
@@ -8792,7 +8792,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var {
         EventTarget: { addEventListener, removeEventListener }
       } = require_event_target();
-      var { format: format2, parse: parse2 } = require_extension();
+      var { format: format2, parse: parse4 } = require_extension();
       var { toBuffer } = require_buffer_util();
       var closeTimeout = 30 * 1e3;
       var kAborted = Symbol("kAborted");
@@ -9467,7 +9467,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             }
             let extensions;
             try {
-              extensions = parse2(secWebSocketExtensions);
+              extensions = parse4(secWebSocketExtensions);
             } catch (err2) {
               const message = "Invalid Sec-WebSocket-Extensions header";
               abortHandshake(websocket, socket, message);
@@ -9637,7 +9637,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     "node_modules/.pnpm/ws@8.12.1/node_modules/ws/lib/subprotocol.js"(exports2, module2) {
       "use strict";
       var { tokenChars } = require_validation();
-      function parse2(header) {
+      function parse4(header) {
         const protocols = /* @__PURE__ */ new Set();
         let start = -1;
         let end = -1;
@@ -9676,7 +9676,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         protocols.add(protocol);
         return protocols;
       }
-      module2.exports = { parse: parse2 };
+      module2.exports = { parse: parse4 };
     }
   });
 
@@ -17569,7 +17569,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       function isWhitespace(c) {
         return c === 32 || c === 9 || c === 10 || c === 12 || c === 13;
       }
-      function parse2(selector) {
+      function parse4(selector) {
         var subselects = [];
         var endIndex = parseSelector(subselects, "".concat(selector), 0);
         if (endIndex < selector.length) {
@@ -17577,7 +17577,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         return subselects;
       }
-      exports2.parse = parse2;
+      exports2.parse = parse4;
       function parseSelector(subselects, selector, selectorIndex) {
         var tokens = [];
         function getName(offset) {
@@ -18331,7 +18331,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var whitespace = /* @__PURE__ */ new Set([9, 10, 12, 13, 32]);
       var ZERO = "0".charCodeAt(0);
       var NINE = "9".charCodeAt(0);
-      function parse2(formula) {
+      function parse4(formula) {
         formula = formula.trim().toLowerCase();
         if (formula === "even") {
           return [2, 0];
@@ -18383,7 +18383,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
         }
       }
-      exports2.parse = parse2;
+      exports2.parse = parse4;
     }
   });
 
@@ -43553,7 +43553,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(EraParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "G":
               case "GG":
@@ -43907,7 +43907,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(YearParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             var valueCallback = function valueCallback2(year) {
               return {
                 year,
@@ -44087,7 +44087,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(LocalWeekYearParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             var valueCallback = function valueCallback2(year) {
               return {
                 year,
@@ -44266,7 +44266,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISOWeekYearParser2, [{
           key: "parse",
-          value: function parse2(dateString, token) {
+          value: function parse4(dateString, token) {
             if (token === "R") {
               return (0, _utils.parseNDigitsSigned)(4, dateString);
             }
@@ -44417,7 +44417,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ExtendedYearParser2, [{
           key: "parse",
-          value: function parse2(dateString, token) {
+          value: function parse4(dateString, token) {
             if (token === "u") {
               return (0, _utils.parseNDigitsSigned)(4, dateString);
             }
@@ -44567,7 +44567,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(QuarterParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "Q":
               case "QQ":
@@ -44752,7 +44752,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(StandAloneQuarterParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "q":
               case "qq":
@@ -44938,7 +44938,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(MonthParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             var valueCallback = function valueCallback2(value) {
               return value - 1;
             };
@@ -45128,7 +45128,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(StandAloneMonthParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             var valueCallback = function valueCallback2(value) {
               return value - 1;
             };
@@ -45350,7 +45350,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(LocalWeekParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "w":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.week, dateString);
@@ -45542,7 +45542,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISOWeekParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "I":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.week, dateString);
@@ -45705,7 +45705,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(DateParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "d":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.date, dateString);
@@ -45875,7 +45875,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(DayOfYearParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "D":
               case "DD":
@@ -46082,7 +46082,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(DayParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "E":
               case "EE":
@@ -46280,7 +46280,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(LocalDayParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match, options) {
+          value: function parse4(dateString, token, match, options) {
             var valueCallback = function valueCallback2(value) {
               var wholeWeekDays = Math.floor((value - 1) / 7) * 7;
               return (value + options.weekStartsOn + 6) % 7 + wholeWeekDays;
@@ -46487,7 +46487,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(StandAloneLocalDayParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match, options) {
+          value: function parse4(dateString, token, match, options) {
             var valueCallback = function valueCallback2(value) {
               var wholeWeekDays = Math.floor((value - 1) / 7) * 7;
               return (value + options.weekStartsOn + 6) % 7 + wholeWeekDays;
@@ -46727,7 +46727,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISODayParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             var valueCallback = function valueCallback2(value) {
               if (value === 0) {
                 return 7;
@@ -46932,7 +46932,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(AMPMParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "a":
               case "aa":
@@ -47106,7 +47106,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(AMPMMidnightParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "b":
               case "bb":
@@ -47280,7 +47280,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(DayPeriodParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "B":
               case "BB":
@@ -47455,7 +47455,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(Hour1to12Parser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "h":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.hour12h, dateString);
@@ -47623,7 +47623,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(Hour0to23Parser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "H":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.hour23h, dateString);
@@ -47784,7 +47784,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(Hour0To11Parser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "K":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.hour11h, dateString);
@@ -47950,7 +47950,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(Hour1To24Parser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "k":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.hour24h, dateString);
@@ -48112,7 +48112,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(MinuteParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "m":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.minute, dateString);
@@ -48273,7 +48273,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(SecondParser2, [{
           key: "parse",
-          value: function parse2(dateString, token, match) {
+          value: function parse4(dateString, token, match) {
             switch (token) {
               case "s":
                 return (0, _utils.parseNumericPattern)(_constants.numericPatterns.second, dateString);
@@ -48433,7 +48433,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(FractionOfSecondParser2, [{
           key: "parse",
-          value: function parse2(dateString, token) {
+          value: function parse4(dateString, token) {
             var valueCallback = function valueCallback2(value) {
               return Math.floor(value * Math.pow(10, -token.length + 3));
             };
@@ -48583,7 +48583,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISOTimezoneWithZParser2, [{
           key: "parse",
-          value: function parse2(dateString, token) {
+          value: function parse4(dateString, token) {
             switch (token) {
               case "X":
                 return (0, _utils.parseTimezonePattern)(_constants.timezonePatterns.basicOptionalMinutes, dateString);
@@ -48744,7 +48744,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(ISOTimezoneParser2, [{
           key: "parse",
-          value: function parse2(dateString, token) {
+          value: function parse4(dateString, token) {
             switch (token) {
               case "x":
                 return (0, _utils.parseTimezonePattern)(_constants.timezonePatterns.basicOptionalMinutes, dateString);
@@ -48904,7 +48904,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(TimestampSecondsParser2, [{
           key: "parse",
-          value: function parse2(dateString) {
+          value: function parse4(dateString) {
             return (0, _utils.parseAnyDigitsSigned)(dateString);
           }
         }, {
@@ -49051,7 +49051,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
         _createClass(TimestampMillisecondsParser2, [{
           key: "parse",
-          value: function parse2(dateString) {
+          value: function parse4(dateString) {
             return (0, _utils.parseAnyDigitsSigned)(dateString);
           }
         }, {
@@ -49151,7 +49151,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       Object.defineProperty(exports2, "__esModule", {
         value: true
       });
-      exports2.default = parse2;
+      exports2.default = parse4;
       var _index = _interopRequireDefault(require_defaultLocale());
       var _index2 = _interopRequireDefault(require_subMilliseconds());
       var _index3 = _interopRequireDefault(require_toDate());
@@ -49246,7 +49246,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       var doubleQuoteRegExp = /''/g;
       var notWhitespaceRegExp = /\S/;
       var unescapedLatinCharacterRegExp = /[a-zA-Z]/;
-      function parse2(dirtyDateString, dirtyFormatString, dirtyReferenceDate, options) {
+      function parse4(dirtyDateString, dirtyFormatString, dirtyReferenceDate, options) {
         var _ref, _options$locale, _ref2, _ref3, _ref4, _options$firstWeekCon, _options$locale2, _options$locale2$opti, _defaultOptions$local, _defaultOptions$local2, _ref5, _ref6, _ref7, _options$weekStartsOn, _options$locale3, _options$locale3$opti, _defaultOptions$local3, _defaultOptions$local4;
         (0, _index9.default)(3, arguments);
         var dateString = String(dirtyDateString);
@@ -54203,7 +54203,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // pkgs/base/src/main.ts
   var import_catch_exit2 = __toESM(require_dist());
   var import_chalk9 = __toESM(require_source());
-  var import_fs_jetpack17 = __toESM(require_main2());
+  var import_fs_jetpack20 = __toESM(require_main2());
   var import_lodash5 = __toESM(require_lodash());
 
   // pkgs/base/pkgs/rpc/src/connect.ts
@@ -55015,7 +55015,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   };
 
   // pkgs/base/src/builder/service.ts
-  var import_path10 = __require("path");
+  var import_path13 = __require("path");
 
   // pkgs/base/src/watcher/watch-service.ts
   var watchService = (name, event) => {
@@ -57144,6 +57144,180 @@ export const _ = {
     return { shouldRestart: true };
   });
 
+  // pkgs/base/src/scaffold/web/layout.ts
+  var import_fs_jetpack9 = __toESM(require_main2());
+  var import_path10 = __require("path");
+  var scan2 = (path2) => __async(void 0, null, function* () {
+    const dirs = (yield walkDir(path2)).filter(
+      (e) => e.endsWith(".ts") || e.endsWith(".tsx")
+    );
+    return dirs;
+  });
+  var parse2 = (filePath) => __async(void 0, null, function* () {
+    const result = { file: filePath };
+    return result;
+  });
+  var generateLayout = (name, path2) => __async(void 0, null, function* () {
+    const parsed = yield Promise.all((yield scan2(path2)).map(parse2));
+    yield (0, import_fs_jetpack9.writeAsync)(
+      dir.root(`app/gen/web/layout/${name}.ts`),
+      `export default {
+${parsed.map((e) => {
+        const page = e.file.substring(0, e.file.length - (0, import_path10.extname)(e.file).length).substring(path2.length + 1).replace(/\W/gi, "_");
+        const filePath = e.file.substring(path2.length + 1);
+        const importPath = `"../../../${name}/src/base/layout/${filePath.substring(
+          0,
+          filePath.length - (0, import_path10.extname)(filePath).length
+        )}"`;
+        return `  ${page}: import(${importPath})`;
+      }).join(",\n")}
+}`
+    );
+  });
+  var generateLayoutEntry = (dirs) => __async(void 0, null, function* () {
+    yield (0, import_fs_jetpack9.removeAsync)(dir.root(`app/gen/web/layout`));
+    yield (0, import_fs_jetpack9.writeAsync)(
+      dir.root(`app/gen/web/layout/entry.ts`),
+      dirs.map((e) => `export * as ${e} from "./${e}"`).join("\n")
+    );
+  });
+
+  // pkgs/base/src/scaffold/web/page.ts
+  var import_fs_jetpack10 = __toESM(require_main2());
+  var import_path11 = __require("path");
+  var scan3 = (path2) => __async(void 0, null, function* () {
+    const dirs = (yield walkDir(path2)).filter(
+      (e) => e.endsWith(".ts") || e.endsWith(".tsx")
+    );
+    return dirs;
+  });
+  var parsePage = (filePath) => __async(void 0, null, function* () {
+    const result = { url: "", ssr: false, layout: "", file: filePath };
+    const src = yield (0, import_fs_jetpack10.readAsync)(filePath, "utf8");
+    if (src) {
+      yield traverse(src, (parent) => ({
+        visitObjectExpression(n) {
+          for (const p of n.properties) {
+            if (p.type === "KeyValueProperty" && p.key.type === "Identifier") {
+              if (p.key.value === "url" && p.value.type === "StringLiteral") {
+                result.url = p.value.value;
+              }
+              if (p.key.value === "layout" && p.value.type === "StringLiteral") {
+                result.layout = p.value.value;
+              }
+              if (p.key.value === "ssr" && p.value.type === "BooleanLiteral") {
+                result.ssr = p.value.value;
+              }
+            }
+          }
+          return parent.visitObjectExpression(n);
+        }
+      }));
+    }
+    return result;
+  });
+  var generatePage = (name, path2) => __async(void 0, null, function* () {
+    const parsed = yield Promise.all((yield scan3(path2)).map(parsePage));
+    const content = (ssr) => (e) => {
+      const page = e.file.substring(0, e.file.length - (0, import_path11.extname)(e.file).length).substring(path2.length + 1).replace(/\W/gi, "_");
+      const filePath = e.file.substring(path2.length + 1);
+      const importPath = `"../../../${name}/src/base/page/${filePath.substring(
+        0,
+        filePath.length - (0, import_path11.extname)(filePath).length
+      )}"`;
+      return `export const ${page} = {
+  name: "${page}",
+  url: "${e.url}",
+  path: "${e.file.substring(dir.root("").length + 1)}",
+  ssr: ${e.ssr ? "true" : "false"},
+  layout: ${e.layout ? `"${e.layout}"` : `undefined`},
+  ${!ssr || e.ssr && ssr ? `component: () => import(${importPath})` : ""}
+}`;
+    };
+    yield (0, import_fs_jetpack10.writeAsync)(
+      dir.root(`app/gen/web/page/${name}.ts`),
+      parsed.map(content(false)).join("\n")
+    );
+    yield (0, import_fs_jetpack10.writeAsync)(
+      dir.root(`app/gen/web/page/${name}-ssr.ts`),
+      parsed.map(content(true)).join("\n")
+    );
+  });
+  var generatePageEntry = (dirs) => __async(void 0, null, function* () {
+    yield (0, import_fs_jetpack10.removeAsync)(dir.root(`app/gen/web/page`));
+    yield (0, import_fs_jetpack10.writeAsync)(
+      dir.root(`app/gen/web/page/entry.ts`),
+      dirs.map((e) => `export * as ${e} from "./${e}"`).join("\n")
+    );
+    yield (0, import_fs_jetpack10.writeAsync)(
+      dir.root(`app/gen/web/page/entry-ssr.ts`),
+      dirs.map((e) => `export * as ${e} from "./${e}-ssr"`).join("\n")
+    );
+  });
+
+  // pkgs/base/src/scaffold/web/ssr.ts
+  var import_fs_jetpack11 = __toESM(require_main2());
+  var import_path12 = __require("path");
+  var scan4 = (path2) => __async(void 0, null, function* () {
+    const dirs = (yield walkDir(path2)).filter(
+      (e) => e.endsWith(".ts") || e.endsWith(".tsx")
+    );
+    return dirs;
+  });
+  var parse3 = (filePath) => __async(void 0, null, function* () {
+    const result = { path: "", file: filePath };
+    const src = yield (0, import_fs_jetpack11.readAsync)(filePath, "utf8");
+    if (src) {
+      yield traverse(src, (parent) => ({
+        visitObjectExpression(n) {
+          for (const p of n.properties) {
+            if (p.type === "KeyValueProperty" && p.key.type === "Identifier") {
+              if (p.key.value === "path" && p.value.type === "StringLiteral") {
+                result.path = p.value.value;
+              }
+            }
+          }
+          return parent.visitObjectExpression(n);
+        }
+      }));
+    }
+    return result;
+  });
+  var generateSSR = (name, path2) => __async(void 0, null, function* () {
+    const parsed = yield Promise.all((yield scan4(path2)).map(parse3));
+    yield (0, import_fs_jetpack11.writeAsync)(
+      dir.root(`app/gen/web/ssr/${name}.ts`),
+      parsed.map((e) => {
+        const page = e.file.substring(0, e.file.length - (0, import_path12.extname)(e.file).length).substring(path2.length + 1).replace(/\W/gi, "_");
+        const filePath = e.file.substring(path2.length + 1);
+        return `export const ${page} = ["${e.path}", import("../../../${name}/src/base/ssr/${filePath.substring(
+          0,
+          filePath.length - (0, import_path12.extname)(filePath).length
+        )}")]`;
+      }).join("\n")
+    );
+  });
+  var generateSSREntry = (dirs) => __async(void 0, null, function* () {
+    yield (0, import_fs_jetpack11.removeAsync)(dir.root(`app/gen/web/ssr`));
+    yield (0, import_fs_jetpack11.writeAsync)(
+      dir.root(`app/gen/web/ssr/entry.ts`),
+      dirs.map((e) => `export * as ${e} from "./${e}"`).join("\n")
+    );
+  });
+
+  // pkgs/base/src/builder/service/web.ts
+  var prepareWeb = (name, changes) => __async(void 0, null, function* () {
+    if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
+      yield generatePageEntry([name]);
+      yield generatePage(name, dir.root(`app/${name}/src/base/page`));
+      yield generateLayoutEntry([name]);
+      yield generateLayout(name, dir.root(`app/${name}/src/base/layout`));
+      yield generateSSREntry([name]);
+      yield generateSSR(name, dir.root(`app/${name}/src/base/ssr`));
+      return { shouldRestart: false };
+    }
+  });
+
   // pkgs/base/src/builder/service.ts
   var marker = {};
   var buildService = (name, arg) => __async(void 0, null, function* () {
@@ -57168,7 +57342,8 @@ export const _ = {
             let shouldRestart = false;
             if (mark instanceof Set) {
               const res = yield afterBuild(name, mark);
-              shouldRestart = res.shouldRestart;
+              if (res)
+                shouldRestart = res.shouldRestart;
               delete marker[name];
             } else if (mark === "skip") {
               delete marker[name];
@@ -57188,7 +57363,7 @@ export const _ = {
       if (!err2) {
         for (const c of changes) {
           if (c.type === "update") {
-            if ((0, import_path10.basename)(c.path) === "package.json") {
+            if ((0, import_path13.basename)(c.path) === "package.json") {
               marker[name] = "skip";
               yield pkg.install(c.path);
               yield rpc.restart({ name });
@@ -57222,6 +57397,8 @@ export const _ = {
       return yield prepareDB(name, mark);
     if (name.startsWith("srv"))
       return yield prepareSrv(name, mark);
+    if (name.startsWith("web"))
+      return yield prepareWeb(name, mark);
     return { shouldRestart: false };
   });
 
@@ -57239,19 +57416,19 @@ export const _ = {
 
   // pkgs/base/src/builder/app.ts
   var import_fs5 = __require("fs");
-  var import_fs_jetpack10 = __toESM(require_main2());
+  var import_fs_jetpack13 = __toESM(require_main2());
 
   // pkgs/base/src/appgen/service.ts
-  var import_fs_jetpack9 = __toESM(require_main2());
+  var import_fs_jetpack12 = __toESM(require_main2());
   var import_promises3 = __require("fs/promises");
   var serviceGen = () => __async(void 0, null, function* () {
     const names = [];
     for (const f of yield (0, import_promises3.readdir)(dir.root("app"))) {
       const s = yield (0, import_promises3.stat)(dir.root(`app/${f}`));
-      if (s.isDirectory() && (yield (0, import_fs_jetpack9.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
+      if (s.isDirectory() && (yield (0, import_fs_jetpack12.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
         names.push(f);
       }
-      yield (0, import_fs_jetpack9.writeAsync)(
+      yield (0, import_fs_jetpack12.writeAsync)(
         dir.root(`app/gen/service/name.ts`),
         `export type SERVICE_NAME = "${names.join(`" | "`)}";`
       );
@@ -57260,7 +57437,7 @@ export const _ = {
 
   // pkgs/base/src/builder/app.ts
   var buildApp = (opt) => __async(void 0, null, function* () {
-    yield (0, import_fs_jetpack10.writeAsync)(
+    yield (0, import_fs_jetpack13.writeAsync)(
       dir.path(".output/app/pnpm-workspace.yaml"),
       `packages:
   - ./*`
@@ -57304,10 +57481,10 @@ export const _ = {
 
   // pkgs/base/src/commit-hook.ts
   var import_child_process3 = __require("child_process");
-  var import_fs_jetpack11 = __toESM(require_main2());
+  var import_fs_jetpack14 = __toESM(require_main2());
   var commitHook = (args) => __async(void 0, null, function* () {
     const isMainRepo = () => __async(void 0, null, function* () {
-      const conf = yield (0, import_fs_jetpack11.readAsync)(dir.root(".git/config"), "utf8");
+      const conf = yield (0, import_fs_jetpack14.readAsync)(dir.root(".git/config"), "utf8");
       if (conf == null ? void 0 : conf.includes("url = https://github.com/avolut/royal")) {
         return true;
       }
@@ -57315,10 +57492,10 @@ export const _ = {
     });
     if (args.includes("pre-commit")) {
       if (yield isMainRepo()) {
-        if (!(yield (0, import_fs_jetpack11.existsAsync)(dir.root(".husky/_/husky.sh")))) {
+        if (!(yield (0, import_fs_jetpack14.existsAsync)(dir.root(".husky/_/husky.sh")))) {
           (0, import_child_process3.spawnSync)("pnpm husky install", { cwd: dir.root("") });
         }
-        yield (0, import_fs_jetpack11.writeAsync)(dir.root(".output/.commit"), "");
+        yield (0, import_fs_jetpack14.writeAsync)(dir.root(".output/.commit"), "");
       }
       if (process.send) {
         process.send("exit");
@@ -57329,9 +57506,9 @@ export const _ = {
     }
     if (args.includes("post-commit")) {
       if (yield isMainRepo()) {
-        if (yield (0, import_fs_jetpack11.existsAsync)(dir.root(".output/.commit"))) {
-          yield (0, import_fs_jetpack11.removeAsync)(dir.root(".output/.commit"));
-          yield (0, import_fs_jetpack11.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
+        if (yield (0, import_fs_jetpack14.existsAsync)(dir.root(".output/.commit"))) {
+          yield (0, import_fs_jetpack14.removeAsync)(dir.root(".output/.commit"));
+          yield (0, import_fs_jetpack14.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
           yield new Promise((resolve) => {
             spawn("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
@@ -57825,13 +58002,13 @@ export const _ = {
 
   // pkgs/base/src/upgrade.ts
   var import_fs6 = __require("fs");
-  var import_fs_jetpack12 = __toESM(require_main2());
-  var import_path11 = __require("path");
+  var import_fs_jetpack15 = __toESM(require_main2());
+  var import_path14 = __require("path");
   var upgradeHook = (args) => __async(void 0, null, function* () {
     if (args.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
-      yield (0, import_fs_jetpack12.removeAsync)(dir.root(".output/upgrade"));
-      yield (0, import_fs_jetpack12.dirAsync)(backupDir);
+      yield (0, import_fs_jetpack15.removeAsync)(dir.root(".output/upgrade"));
+      yield (0, import_fs_jetpack15.dirAsync)(backupDir);
       console.log(`Upgrading Base Framework`);
       console.log(` > Downloading upgrade zip`);
       const downloadURI = `https://github.com/avolut/royal/archive/refs/heads/main.zip`;
@@ -57839,13 +58016,13 @@ export const _ = {
       const ab = yield res.arrayBuffer();
       console.log(` > Extracting: .output/upgrade/royal`);
       const uzi = unzipSync(new Uint8Array(ab));
-      yield (0, import_fs_jetpack12.dirAsync)(dir.root(".output/upgrade/royal-main"));
+      yield (0, import_fs_jetpack15.dirAsync)(dir.root(".output/upgrade/royal-main"));
       yield Promise.all(
         Object.entries(uzi).map((_0) => __async(void 0, [_0], function* ([filename, buf]) {
           if (buf.length === 0) {
-            yield (0, import_fs_jetpack12.dirAsync)(dir.root(`.output/upgrade/${filename}`));
+            yield (0, import_fs_jetpack15.dirAsync)(dir.root(`.output/upgrade/${filename}`));
           } else {
-            yield (0, import_fs_jetpack12.writeAsync)(
+            yield (0, import_fs_jetpack15.writeAsync)(
               dir.root(`.output/upgrade/${filename}`),
               Buffer.from(buf)
             );
@@ -57856,20 +58033,20 @@ export const _ = {
       const root2 = dir.root("");
       for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack12.existsAsync)((0, import_path11.join)(root2, `.output/upgrade/backup/${f}`))) {
-            yield (0, import_fs_jetpack12.moveAsync)(
-              (0, import_path11.join)(root2, f),
-              (0, import_path11.join)(root2, `.output/upgrade/backup/${f}`)
+          if (yield (0, import_fs_jetpack15.existsAsync)((0, import_path14.join)(root2, `.output/upgrade/backup/${f}`))) {
+            yield (0, import_fs_jetpack15.moveAsync)(
+              (0, import_path14.join)(root2, f),
+              (0, import_path14.join)(root2, `.output/upgrade/backup/${f}`)
             );
           }
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs6.readdirSync)((0, import_path11.join)(root2, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs6.readdirSync)((0, import_path14.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
-          yield (0, import_fs_jetpack12.copyAsync)(
-            (0, import_path11.join)(root2, `.output/upgrade/royal-main/${f}`),
-            (0, import_path11.join)(root2, f),
+          yield (0, import_fs_jetpack15.copyAsync)(
+            (0, import_path14.join)(root2, `.output/upgrade/royal-main/${f}`),
+            (0, import_path14.join)(root2, f),
             {
               overwrite: true
             }
@@ -57889,9 +58066,9 @@ export const _ = {
   // pkgs/base/src/version-check.ts
   var import_chalk7 = __toESM(require_source());
   var import_date_fns = __toESM(require_date_fns());
-  var import_fs_jetpack13 = __toESM(require_main2());
+  var import_fs_jetpack16 = __toESM(require_main2());
   var versionCheck = (opt) => __async(void 0, null, function* () {
-    const version = yield (0, import_fs_jetpack13.readAsync)(dir.root("pkgs/version.json"), "json");
+    const version = yield (0, import_fs_jetpack16.readAsync)(dir.root("pkgs/version.json"), "json");
     let timeout = {
       timer: null
     };
@@ -57931,18 +58108,18 @@ If somehow upgrade failed you can rollback using
   });
 
   // pkgs/base/src/vscode.ts
-  var import_fs_jetpack14 = __toESM(require_main2());
-  var import_path12 = __require("path");
+  var import_fs_jetpack17 = __toESM(require_main2());
+  var import_path15 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
-    if (yield (0, import_fs_jetpack14.existsAsync)(vscodeFile)) {
-      if ((yield (0, import_fs_jetpack14.readAsync)(vscodeFile, "utf8")) === source) {
+    if (yield (0, import_fs_jetpack17.existsAsync)(vscodeFile)) {
+      if ((yield (0, import_fs_jetpack17.readAsync)(vscodeFile, "utf8")) === source) {
         return;
       }
     }
-    yield (0, import_fs_jetpack14.dirAsync)((0, import_path12.dirname)(vscodeFile));
-    yield (0, import_fs_jetpack14.writeAsync)(vscodeFile, source);
+    yield (0, import_fs_jetpack17.dirAsync)((0, import_path15.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack17.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
     "typescript.preferences.importModuleSpecifier": "relative",
@@ -57982,23 +58159,23 @@ If somehow upgrade failed you can rollback using
   };
 
   // pkgs/base/src/watcher/all.ts
-  var import_fs_jetpack16 = __toESM(require_main2());
+  var import_fs_jetpack19 = __toESM(require_main2());
 
   // pkgs/base/src/watcher/new-service.ts
   var import_chalk8 = __toESM(require_source());
-  var import_fs_jetpack15 = __toESM(require_main2());
+  var import_fs_jetpack18 = __toESM(require_main2());
   var import_promises4 = __require("fs/promises");
-  var import_path13 = __require("path");
+  var import_path16 = __require("path");
   var watchNewService = () => {
     watcher.watch({
       dir: dir.root("app"),
       event: (err2, changes) => __async(void 0, null, function* () {
         if (!err2) {
           for (const c of changes) {
-            const name = (0, import_path13.basename)(c.path);
+            const name = (0, import_path16.basename)(c.path);
             if (c.type === "delete") {
               console.log(`Removing service: ${import_chalk8.default.red(name)}`);
-              yield (0, import_fs_jetpack15.removeAsync)(dir.root(`.output/app/${name}`));
+              yield (0, import_fs_jetpack18.removeAsync)(dir.root(`.output/app/${name}`));
               yield serviceGen();
               process.exit(99);
             } else if (c.type === "create") {
@@ -58017,13 +58194,13 @@ If somehow upgrade failed you can rollback using
                     const fpath = dir.root(`${root2}/${f}`);
                     const s2 = yield (0, import_promises4.stat)(fpath);
                     if (s2.isDirectory()) {
-                      yield (0, import_fs_jetpack15.copyAsync)(fpath, (0, import_path13.join)(c.path, f), {
+                      yield (0, import_fs_jetpack18.copyAsync)(fpath, (0, import_path16.join)(c.path, f), {
                         overwrite: true
                       });
                     } else {
-                      const src = yield (0, import_fs_jetpack15.readAsync)(fpath, "utf8");
-                      yield (0, import_fs_jetpack15.writeAsync)(
-                        (0, import_path13.join)(c.path, f),
+                      const src = yield (0, import_fs_jetpack18.readAsync)(fpath, "utf8");
+                      yield (0, import_fs_jetpack18.writeAsync)(
+                        (0, import_path16.join)(c.path, f),
                         (src || "").replace(/template_service/g, name)
                       );
                     }
@@ -58054,7 +58231,7 @@ If somehow upgrade failed you can rollback using
             if (!err2) {
               marker["*"] = /* @__PURE__ */ new Set();
               if (baseGlobal.app)
-                yield (0, import_fs_jetpack16.removeAsync)(baseGlobal.app.path);
+                yield (0, import_fs_jetpack19.removeAsync)(baseGlobal.app.path);
               yield onExit();
               process.exit(99);
             }
@@ -58093,7 +58270,7 @@ If somehow upgrade failed you can rollback using
       setupWatchers(args, onExit);
       baseGlobal.app = app;
       let cacheFound = false;
-      if ((yield (0, import_fs_jetpack17.existsAsync)(app.path)) && !args.includes("nocache")) {
+      if ((yield (0, import_fs_jetpack20.existsAsync)(app.path)) && !args.includes("nocache")) {
         console.log(`
 \u{1F31F} Running ${import_chalk9.default.cyan(`cached`)} app
 `);

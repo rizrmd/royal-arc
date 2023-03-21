@@ -52,9 +52,22 @@ importers:
 
   app/web:
     specifiers:
+      '@types/react': 18.0.28
+      '@types/react-dom': 18.0.11
+      react: 18.2.0
+      react-dom: 18.2.0
       service-web: workspace:*
+      web-init: workspace:*
+      web-utils: workspace:*
     dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
       service-web: link:../../pkgs/service/pkgs/service-web
+      web-init: link:../../pkgs/service/pkgs/service-web/pkgs/web-init
+      web-utils: link:../../pkgs/service/pkgs/service-web/pkgs/web-utils
+    devDependencies:
+      '@types/react': 18.0.28
+      '@types/react-dom': 18.0.11
 
   pkgs/base:
     specifiers:
@@ -315,6 +328,33 @@ importers:
       '@types/react-dom': 18.0.11
       '@types/ws': 8.5.4
 
+  pkgs/service/pkgs/service-web/pkgs/web-init:
+    specifiers:
+      '@paralleldrive/cuid2': 2.2.0
+      '@qiwi/deep-proxy': 2.0.3
+      '@types/react': 18.0.28
+      '@types/react-dom': 18.0.11
+      csstype: 3.1.1
+      goober: 2.1.12
+      hyper-express: 6.5.7
+      radix3: 1.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
+      web-utils: workspace:^
+    dependencies:
+      '@paralleldrive/cuid2': 2.2.0
+      '@qiwi/deep-proxy': 2.0.3
+      csstype: 3.1.1
+      goober: 2.1.12_csstype@3.1.1
+      hyper-express: 6.5.7
+      radix3: 1.0.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      web-utils: link:../web-utils
+    devDependencies:
+      '@types/react': 18.0.28
+      '@types/react-dom': 18.0.11
+
   pkgs/service/pkgs/service-web/pkgs/web-types:
     specifiers:
       '@types/react': 18.0.28
@@ -324,6 +364,19 @@ importers:
       '@types/react': 18.0.28
       hyper-express: 6.5.7
       live-directory: 3.0.3
+
+  pkgs/service/pkgs/service-web/pkgs/web-utils:
+    specifiers:
+      '@types/react': 18.0.28
+      '@types/react-dom': 18.0.11
+      react: 18.2.0
+      react-dom: 18.2.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    devDependencies:
+      '@types/react': 18.0.28
+      '@types/react-dom': 18.0.11
 
 packages:
 
@@ -1362,6 +1415,14 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       is-glob: 4.0.3
+    dev: false
+
+  /goober/2.1.12_csstype@3.1.1:
+    resolution: {integrity: sha512-yXHAvO08FU1JgTXX6Zn6sYCUFfB/OJSX8HHjDSgerZHZmFKAb08cykp5LBw5QnmyMcZyPRMqkdyHUSSzge788Q==}
+    peerDependencies:
+      csstype: ^3.0.10
+    dependencies:
+      csstype: 3.1.1
     dev: false
 
   /has-flag/4.0.0:

@@ -6,13 +6,12 @@ import { server } from "./server";
 export const createWeb = async ({
   name,
   port,
-  entry,
 }: {
   name: SERVICE_NAME;
   port: number;
   entry: string;
 }) => {
-  createService(name, async ({ markAsRunning, mode }) => {
+  await createService(name, async ({ markAsRunning, mode }) => {
     web.name = name;
     await web.init();
 
