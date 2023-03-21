@@ -1,0 +1,11 @@
+{
+  "name": "web",
+  "version": "0.0.1",
+  "dependencies": {
+    "service-web": "workspace:*"
+  },
+  "external": [
+    "hyper-express",
+    "live-directory"
+  ]
+}
