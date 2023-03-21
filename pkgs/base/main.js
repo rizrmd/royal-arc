@@ -58263,7 +58263,9 @@ If somehow upgrade failed you can rollback using
     if (args.includes("clean")) {
       console.log("Cleaning node_modules");
       const dirs = yield scanDir([dir.root()]);
+      yield (0, import_fs_jetpack20.removeAsync)(dir.root(".output"));
       yield Promise.all(dirs.map((e) => (0, import_fs_jetpack20.removeAsync)((0, import_path17.join)((0, import_path17.dirname)(e), "node_modules"))));
+      yield (0, import_fs_jetpack20.removeAsync)(dir.root("node_modules"));
       return;
     }
     console.log(`\u2500\u2500 ${(0, import_lodash5.default)(import_chalk9.default.yellow(`BASE`) + " ", 47, "\u2500")}`);
