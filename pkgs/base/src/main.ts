@@ -32,6 +32,7 @@ export const baseMain = async () => {
     const dirs = await scanDir([dir.root()])
     await removeAsync(dir.root(".output"));
     await Promise.all(dirs.map(e => removeAsync(join(dirname(e), "node_modules"))))
+    await removeAsync(dir.root("node_modules"))
     return;
   }
 
