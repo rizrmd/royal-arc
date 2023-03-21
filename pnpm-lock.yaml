@@ -118,12 +118,14 @@ importers:
       command-exists: 1.2.9
       dir: workspace:*
       pkg: workspace:*
+      pretty-error: 4.0.0
       utility: workspace:*
     dependencies:
       '@types/command-exists': 1.2.0
       command-exists: 1.2.9
       dir: link:../dir
       pkg: link:../pkg
+      pretty-error: 4.0.0
       utility: link:../utility
 
   pkgs/base/pkgs/dir:

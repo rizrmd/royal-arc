@@ -1,9 +1,12 @@
 import chalk from "chalk";
-import { ascendFile, dir } from "dir";
+import { dir } from "dir";
 import { readAsync, writeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { dirname } from "path";
 import { pkg } from "pkg";
+import PrettyError from "pretty-error";
+
+const pe = new PrettyError()
 
 export const bundle = async (arg: {
   input: string;
@@ -38,7 +41,7 @@ export const bundle = async (arg: {
         onInstall() {
           console.log(`Installing ${printableName} deps...`);
         },
-        onInstallDone() {},
+        onInstallDone() { },
       });
     }
 
@@ -93,6 +96,7 @@ export const bundle = async (arg: {
       }
     });
   } catch (e: any) {
+    console.log(pe.render(e))
     return false;
   }
 };

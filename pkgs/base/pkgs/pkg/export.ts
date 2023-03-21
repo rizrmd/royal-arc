@@ -17,12 +17,15 @@ const getModuleVersion = (name: string) => {
   const res = spawnSync("pnpm", ["why", "-r", name], {
     cwd: dir.root(""),
     env: process.env,
+    shell: true
   });
-  const out = res.output.filter((e) => !!e);
-  try {
-    return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
-  } catch (e) {
-    return "";
+  if (res) {
+    const out = res.output.filter((e) => !!e);
+    try {
+      return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
+    } catch (e) {
+      return "";
+    }
   }
 };
 
@@ -32,7 +35,9 @@ export const pkg = {
 
     if (pkg.external) {
       for (const f of pkg.external) {
-        dependencies[f] = getModuleVersion(f);
+        const v = getModuleVersion(f)
+        if (v)
+          dependencies[f] = v;
       }
     }
 
@@ -88,6 +93,7 @@ export const pkg = {
         const child = spawn("pnpm", ["i"], {
           stdio: silent ? "ignore" : "inherit",
           cwd: _arg.cwd || process.cwd(),
+          shell: true
         });
         child.on("exit", () => {
           g.pkgRunning.delete(prom);

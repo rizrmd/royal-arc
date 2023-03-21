@@ -1,24 +1,3 @@
-export const _dbs = {
-  name: "_dbs",
-  url: "/_dbs/:dbName/:action",
-  path: "app/srv/api/built-in/_dbs.ts",
-  args: ["dbName","action"],
-  handler: import("../../../srv/api/built-in/_dbs")
-}
-export const _file = {
-  name: "_file",
-  url: "/_file/*",
-  path: "app/srv/api/built-in/_file.ts",
-  args: [],
-  handler: import("../../../srv/api/built-in/_file")
-}
-export const _upload = {
-  name: "_upload",
-  url: "/_upload",
-  path: "app/srv/api/built-in/_upload.ts",
-  args: [],
-  handler: import("../../../srv/api/built-in/_upload")
-}
 export const login = {
   name: "login",
   url: "/_login",
@@ -46,6 +25,27 @@ export const session = {
   path: "app/srv/api/built-in/auth/session.ts",
   args: [],
   handler: import("../../../srv/api/built-in/auth/session")
+}
+export const _dbs = {
+  name: "_dbs",
+  url: "/_dbs/:dbName/:action",
+  path: "app/srv/api/built-in/_dbs.ts",
+  args: ["dbName","action"],
+  handler: import("../../../srv/api/built-in/_dbs")
+}
+export const _file = {
+  name: "_file",
+  url: "/_file/*",
+  path: "app/srv/api/built-in/_file.ts",
+  args: [],
+  handler: import("../../../srv/api/built-in/_file")
+}
+export const _upload = {
+  name: "_upload",
+  url: "/_upload",
+  path: "app/srv/api/built-in/_upload.ts",
+  args: [],
+  handler: import("../../../srv/api/built-in/_upload")
 }
 export const home = {
   name: "home",

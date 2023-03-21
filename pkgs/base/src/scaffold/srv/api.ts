@@ -1,6 +1,6 @@
 import { dir } from "dir";
 import { readAsync, removeAsync, writeAsync } from "fs-jetpack";
-import { basename, extname } from "path";
+import { basename, extname, sep } from "path";
 import { traverse } from "../parser/traverse";
 import { walkDir } from "../parser/utils";
 
@@ -103,13 +103,13 @@ export const generateAPI = async (name: string, path: string) => {
     const importPath = `"../../../${name}/api/${filePath.substring(
       0,
       filePath.length - extname(filePath).length
-    )}"`;
+    ).replace(/\\/ig,'/')}"`;
 
     return `\
 export const ${e.name} = {
   name: "${e.name}",
   url: "${e.url}",
-  path: "${e.file.substring(dir.root("").length + 1)}",
+  path: "${e.file.replace(/\\/ig,'/').substring(dir.root("").length + 1)}",
   args: ${JSON.stringify(e.params)},
   handler: import(${importPath})
 }`;

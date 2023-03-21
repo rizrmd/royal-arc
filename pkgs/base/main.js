@@ -23766,7 +23766,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var require_PrettyError = __commonJS({
     "node_modules/.pnpm/pretty-error@4.0.0/node_modules/pretty-error/lib/PrettyError.js"(exports2, module2) {
       var ParsedError;
-      var PrettyError2;
+      var PrettyError3;
       var RenderKid;
       var arrayUtils;
       var defaultStyle;
@@ -23839,10 +23839,10 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
         }
       };
       instance = null;
-      module2.exports = PrettyError2 = function() {
+      module2.exports = PrettyError3 = function() {
         var self2;
-        self2 = PrettyError3;
-        PrettyError3._filters = {
+        self2 = PrettyError4;
+        PrettyError4._filters = {
           "module.exports": function(item) {
             if (item.what == null) {
               return;
@@ -23850,20 +23850,20 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             item.what = item.what.replace(/\.module\.exports\./g, " - ");
           }
         };
-        PrettyError3._getDefaultStyle = function() {
+        PrettyError4._getDefaultStyle = function() {
           return defaultStyle();
         };
-        PrettyError3.start = function() {
+        PrettyError4.start = function() {
           if (instance == null) {
             instance = new self2();
             instance.start();
           }
           return instance;
         };
-        PrettyError3.stop = function() {
+        PrettyError4.stop = function() {
           return instance != null ? instance.stop() : void 0;
         };
-        function PrettyError3() {
+        function PrettyError4() {
           this._useColors = true;
           this._maxItems = 50;
           this._packagesToSkip = [];
@@ -23876,7 +23876,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           this._style = self2._getDefaultStyle();
           this._renderer.style(this._style);
         }
-        PrettyError3.prototype.start = function() {
+        PrettyError4.prototype.start = function() {
           var prepeare;
           this._oldPrepareStackTrace = Error.prepareStackTrace;
           prepeare = this._oldPrepareStackTrace || function(exc, frames) {
@@ -23899,11 +23899,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }(this);
           return this;
         };
-        PrettyError3.prototype.stop = function() {
+        PrettyError4.prototype.stop = function() {
           Error.prepareStackTrace = this._oldPrepareStackTrace;
           return this._oldPrepareStackTrace = null;
         };
-        PrettyError3.prototype.config = function(c) {
+        PrettyError4.prototype.config = function(c) {
           var alias, path2, _ref2;
           if (c.skipPackages != null) {
             if (c.skipPackages === false) {
@@ -23961,15 +23961,15 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.withoutColors = function() {
+        PrettyError4.prototype.withoutColors = function() {
           this._useColors = false;
           return this;
         };
-        PrettyError3.prototype.withColors = function() {
+        PrettyError4.prototype.withColors = function() {
           this._useColors = true;
           return this;
         };
-        PrettyError3.prototype.skipPackage = function() {
+        PrettyError4.prototype.skipPackage = function() {
           var packages, pkg2, _i2, _len2;
           packages = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = packages.length; _i2 < _len2; _i2++) {
@@ -23978,7 +23978,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.unskipPackage = function() {
+        PrettyError4.prototype.unskipPackage = function() {
           var packages, pkg2, _i2, _len2;
           packages = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = packages.length; _i2 < _len2; _i2++) {
@@ -23987,11 +23987,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.unskipAllPackages = function() {
+        PrettyError4.prototype.unskipAllPackages = function() {
           this._packagesToSkip.length = 0;
           return this;
         };
-        PrettyError3.prototype.skipPath = function() {
+        PrettyError4.prototype.skipPath = function() {
           var path2, paths, _i2, _len2;
           paths = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = paths.length; _i2 < _len2; _i2++) {
@@ -24000,7 +24000,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.unskipPath = function() {
+        PrettyError4.prototype.unskipPath = function() {
           var path2, paths, _i2, _len2;
           paths = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = paths.length; _i2 < _len2; _i2++) {
@@ -24009,11 +24009,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.unskipAllPaths = function() {
+        PrettyError4.prototype.unskipAllPaths = function() {
           this._pathsToSkip.length = 0;
           return this;
         };
-        PrettyError3.prototype.skip = function() {
+        PrettyError4.prototype.skip = function() {
           var callbacks, cb, _i2, _len2;
           callbacks = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = callbacks.length; _i2 < _len2; _i2++) {
@@ -24022,7 +24022,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.unskip = function() {
+        PrettyError4.prototype.unskip = function() {
           var callbacks, cb, _i2, _len2;
           callbacks = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = callbacks.length; _i2 < _len2; _i2++) {
@@ -24031,17 +24031,17 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.unskipAll = function() {
+        PrettyError4.prototype.unskipAll = function() {
           this._skipCallbacks.length = 0;
           return this;
         };
-        PrettyError3.prototype.skipNodeFiles = function() {
+        PrettyError4.prototype.skipNodeFiles = function() {
           return this.skipPath.apply(this, nodePaths);
         };
-        PrettyError3.prototype.unskipNodeFiles = function() {
+        PrettyError4.prototype.unskipNodeFiles = function() {
           return this.unskipPath.apply(this, nodePaths);
         };
-        PrettyError3.prototype.filter = function() {
+        PrettyError4.prototype.filter = function() {
           var callbacks, cb, _i2, _len2;
           callbacks = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = callbacks.length; _i2 < _len2; _i2++) {
@@ -24050,7 +24050,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.removeFilter = function() {
+        PrettyError4.prototype.removeFilter = function() {
           var callbacks, cb, _i2, _len2;
           callbacks = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = callbacks.length; _i2 < _len2; _i2++) {
@@ -24059,11 +24059,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.removeAllFilters = function() {
+        PrettyError4.prototype.removeAllFilters = function() {
           this._filterCallbacks.length = 0;
           return this;
         };
-        PrettyError3.prototype.filterParsedError = function() {
+        PrettyError4.prototype.filterParsedError = function() {
           var callbacks, cb, _i2, _len2;
           callbacks = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = callbacks.length; _i2 < _len2; _i2++) {
@@ -24072,7 +24072,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.removeParsedErrorFilter = function() {
+        PrettyError4.prototype.removeParsedErrorFilter = function() {
           var callbacks, cb, _i2, _len2;
           callbacks = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = callbacks.length; _i2 < _len2; _i2++) {
@@ -24081,11 +24081,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return this;
         };
-        PrettyError3.prototype.removeAllParsedErrorFilters = function() {
+        PrettyError4.prototype.removeAllParsedErrorFilters = function() {
           this._parsedErrorFilters.length = 0;
           return this;
         };
-        PrettyError3.prototype.setMaxItems = function(maxItems) {
+        PrettyError4.prototype.setMaxItems = function(maxItems) {
           if (maxItems == null) {
             maxItems = 50;
           }
@@ -24095,35 +24095,35 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           this._maxItems = maxItems | 0;
           return this;
         };
-        PrettyError3.prototype.alias = function(stringOrRx, alias) {
+        PrettyError4.prototype.alias = function(stringOrRx, alias) {
           this._aliases.push({
             stringOrRx,
             alias
           });
           return this;
         };
-        PrettyError3.prototype.removeAlias = function(stringOrRx) {
+        PrettyError4.prototype.removeAlias = function(stringOrRx) {
           arrayUtils.pluckByCallback(this._aliases, function(pair) {
             return pair.stringOrRx === stringOrRx;
           });
           return this;
         };
-        PrettyError3.prototype.removeAllAliases = function() {
+        PrettyError4.prototype.removeAllAliases = function() {
           this._aliases.length = 0;
           return this;
         };
-        PrettyError3.prototype._getStyle = function() {
+        PrettyError4.prototype._getStyle = function() {
           return this._style;
         };
-        PrettyError3.prototype.appendStyle = function(toAppend) {
+        PrettyError4.prototype.appendStyle = function(toAppend) {
           merge(this._style, toAppend);
           this._renderer.style(toAppend);
           return this;
         };
-        PrettyError3.prototype._getRenderer = function() {
+        PrettyError4.prototype._getRenderer = function() {
           return this._renderer;
         };
-        PrettyError3.prototype.render = function(e, logIt, useColors) {
+        PrettyError4.prototype.render = function(e, logIt, useColors) {
           var obj, rendered;
           if (logIt == null) {
             logIt = false;
@@ -24138,7 +24138,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return rendered;
         };
-        PrettyError3.prototype.getObject = function(e) {
+        PrettyError4.prototype.getObject = function(e) {
           var count, header, i, item, obj, traceItems, _i2, _len2, _ref2;
           if (!(e instanceof ParsedError)) {
             e = new ParsedError(e);
@@ -24224,7 +24224,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return obj;
         };
-        PrettyError3.prototype._skipOrFilter = function(item, itemNumber) {
+        PrettyError4.prototype._skipOrFilter = function(item, itemNumber) {
           var cb, modName, pair, _i2, _j, _k, _l, _len2, _len1, _len22, _len3, _ref2, _ref1, _ref22, _ref3, _ref4, _ref5;
           if (typeof item === "object") {
             if (_ref2 = item.modName, __indexOf.call(this._packagesToSkip, _ref2) >= 0) {
@@ -24262,7 +24262,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           }
           return false;
         };
-        PrettyError3.prototype._applyParsedErrorFiltersOn = function(error) {
+        PrettyError4.prototype._applyParsedErrorFiltersOn = function(error) {
           var cb, _i2, _len2, _ref2;
           _ref2 = this._parsedErrorFilters;
           for (_i2 = 0, _len2 = _ref2.length; _i2 < _len2; _i2++) {
@@ -24270,13 +24270,13 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
             cb(error);
           }
         };
-        return PrettyError3;
+        return PrettyError4;
       }();
       _ref = ["renderer", "style"];
       _fn = function() {
         var methodName;
         methodName = "_get" + prop[0].toUpperCase() + prop.substr(1, prop.length);
-        return PrettyError2.prototype.__defineGetter__(prop, function() {
+        return PrettyError3.prototype.__defineGetter__(prop, function() {
           return this[methodName]();
         });
       };
@@ -54059,7 +54059,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       stdio: "inherit"
     }) : (0, import_child_process.spawn)(file, args, {
       cwd: opt?.cwd,
-      stdio: "pipe"
+      stdio: "pipe",
+      shell: true
     });
     const callback = {
       onMessage: (e) => {
@@ -54835,13 +54836,16 @@ Make sure to kill running instance before starting.
   var getModuleVersion = (name) => {
     const res = (0, import_child_process2.spawnSync)("pnpm", ["why", "-r", name], {
       cwd: dir.root(""),
-      env: process.env
+      env: process.env,
+      shell: true
     });
-    const out = res.output.filter((e) => !!e);
-    try {
-      return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
-    } catch (e) {
-      return "";
+    if (res) {
+      const out = res.output.filter((e) => !!e);
+      try {
+        return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
+      } catch (e) {
+        return "";
+      }
     }
   };
   var pkg = {
@@ -54849,7 +54853,9 @@ Make sure to kill running instance before starting.
       const dependencies = {};
       if (pkg2.external) {
         for (const f of pkg2.external) {
-          dependencies[f] = getModuleVersion(f);
+          const v = getModuleVersion(f);
+          if (v)
+            dependencies[f] = v;
         }
       }
       return { name: pkg2.name, version: pkg2.version, dependencies };
@@ -54890,7 +54896,8 @@ ${import_chalk2.default.magenta("Installing")} deps:
             );
           const child = (0, import_child_process2.spawn)("pnpm", ["i"], {
             stdio: silent ? "ignore" : "inherit",
-            cwd: _arg.cwd || process.cwd()
+            cwd: _arg.cwd || process.cwd(),
+            shell: true
           });
           child.on("exit", () => {
             g.pkgRunning.delete(prom);
@@ -54932,6 +54939,8 @@ ${import_chalk2.default.magenta("Installing")} deps:
   }
 
   // pkgs/base/pkgs/bundler/bundle.ts
+  var import_pretty_error2 = __toESM(require_PrettyError());
+  var pe2 = new import_pretty_error2.default();
   var bundle = async (arg) => {
     try {
       const { context } = await import("esbuild");
@@ -55010,6 +55019,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
         }
       });
     } catch (e) {
+      console.log(pe2.render(e));
       return false;
     }
   };
@@ -57071,11 +57081,11 @@ datasource db {
       const importPath = `"../../../${name}/api/${filePath.substring(
         0,
         filePath.length - (0, import_path8.extname)(filePath).length
-      )}"`;
+      ).replace(/\\/ig, "/")}"`;
       return `export const ${e.name} = {
   name: "${e.name}",
   url: "${e.url}",
-  path: "${e.file.substring(dir.root("").length + 1)}",
+  path: "${e.file.replace(/\\/ig, "/").substring(dir.root("").length + 1)}",
   args: ${JSON.stringify(e.params)},
   handler: import(${importPath})
 }`;
