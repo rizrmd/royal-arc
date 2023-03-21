@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useLocal } from "svc-web/libs/web-utils";
+import { useLocal } from "web-utils";
 
 const layout: FC<{ children: any }> = ({ children }) => {
   const local = useLocal({ a: "saya" });

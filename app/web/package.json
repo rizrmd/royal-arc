@@ -6,6 +6,8 @@
     "web-init": "workspace:*",
     "web-utils": "workspace:*",
     "react": "18.2.0",
+    "@fluentui/react-components": "9.18.3",
+    "@fluentui/react-icons": "2.0.196",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
