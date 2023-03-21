@@ -181,9 +181,9 @@
         cleanInput = function(s) {
           var isPathName = /[\\]/.test(s);
           if (isPathName) {
-            var dirname7 = '"' + path2.dirname(s) + '"';
+            var dirname8 = '"' + path2.dirname(s) + '"';
             var basename5 = '"' + path2.basename(s) + '"';
-            return dirname7 + ":" + basename5;
+            return dirname8 + ":" + basename5;
           }
           return '"' + s + '"';
         };
@@ -2530,7 +2530,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           maxRetries: 3
         });
       };
-      var removeAsync10 = (path2) => {
+      var removeAsync11 = (path2) => {
         return fs2.rm(path2, {
           recursive: true,
           force: true,
@@ -2539,7 +2539,7 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync10;
+      exports2.async = removeAsync11;
     }
   });
 
@@ -23970,20 +23970,20 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           return this;
         };
         PrettyError4.prototype.skipPackage = function() {
-          var packages, pkg2, _i2, _len2;
+          var packages, pkg3, _i2, _len2;
           packages = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = packages.length; _i2 < _len2; _i2++) {
-            pkg2 = packages[_i2];
-            this._packagesToSkip.push(String(pkg2));
+            pkg3 = packages[_i2];
+            this._packagesToSkip.push(String(pkg3));
           }
           return this;
         };
         PrettyError4.prototype.unskipPackage = function() {
-          var packages, pkg2, _i2, _len2;
+          var packages, pkg3, _i2, _len2;
           packages = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           for (_i2 = 0, _len2 = packages.length; _i2 < _len2; _i2++) {
-            pkg2 = packages[_i2];
-            arrayUtils.pluckOneItem(this._packagesToSkip, pkg2);
+            pkg3 = packages[_i2];
+            arrayUtils.pluckOneItem(this._packagesToSkip, pkg3);
           }
           return this;
         };
@@ -54204,8 +54204,220 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   // pkgs/base/src/main.ts
   var import_catch_exit2 = __toESM(require_dist());
   var import_chalk9 = __toESM(require_source());
+
+  // pkgs/base/pkgs/dir/export.ts
+  var import_fs2 = __require("fs");
+  var import_path = __require("path");
+  var import_process = __require("process");
+  var globalize = (arg) => {
+    const { name, init } = arg;
+    const g2 = global;
+    if (typeof g2[name] === "undefined") {
+      g2[name] = arg.value;
+    }
+    g2[name].init = async () => {
+      if (init) {
+        await init(g2[name]);
+      }
+    };
+    return g2[name];
+  };
+  var dir = new Proxy(
+    {},
+    {
+      get(_target, p) {
+        if (p === "path") {
+          return (arg = "") => {
+            return (0, import_path.join)(process.cwd(), ...(arg || "").split("/"));
+          };
+        }
+        if (p === "root") {
+          return (arg = "") => {
+            if ((0, import_fs2.existsSync)((0, import_path.join)((0, import_process.cwd)(), "base"))) {
+              return (0, import_path.join)(process.cwd(), ...arg.split("/"));
+            }
+            return (0, import_path.join)(process.cwd(), "..", "..", ...arg.split("/"));
+          };
+        }
+      }
+    }
+  );
+
+  // pkgs/base/src/main.ts
   var import_fs_jetpack20 = __toESM(require_main2());
   var import_lodash5 = __toESM(require_lodash());
+  var import_path17 = __require("path");
+
+  // pkgs/base/pkgs/pkg/export.ts
+  var import_child_process2 = __require("child_process");
+  var import_chalk2 = __toESM(require_source());
+  var import_fs3 = __toESM(__require("fs"));
+  var import_path3 = __toESM(__require("path"));
+
+  // pkgs/base/pkgs/pkg/src/should-install.ts
+  var import_chalk = __toESM(require_source());
+  var import_fs_jetpack = __toESM(require_main2());
+  var import_path2 = __require("path");
+  var shouldInstall = (path2, silent = false) => __async(void 0, null, function* () {
+    const dir2 = (0, import_path2.dirname)(path2);
+    let pkg3 = {};
+    try {
+      pkg3 = yield (0, import_fs_jetpack.readAsync)(path2, "json");
+    } catch (e) {
+    }
+    let install = false;
+    for (const e of ["dependencies", "devDependencies"]) {
+      if (!pkg3 || pkg3 && !pkg3[e])
+        continue;
+      const entries = Object.entries(pkg3[e]);
+      for (const [k, v] of entries) {
+        if (v.startsWith(".") || v.startsWith("/")) {
+          continue;
+        }
+        if (!(yield (0, import_fs_jetpack.existsAsync)((0, import_path2.join)(dir2, "node_modules", k))) && !install) {
+          if (!silent)
+            console.log(
+              `module ${import_chalk.default.cyan(k)} not found in ${(0, import_path2.join)(
+                dir2,
+                "node_modules"
+              ).substring(process.cwd().length + 1)}`
+            );
+          install = true;
+        }
+        if (v === "*") {
+          try {
+            const res = yield fetch(
+              `https://data.jsdelivr.com/v1/packages/npm/${k}/resolved`
+            );
+            const json = yield res.json();
+            pkg3[e][k] = json.version;
+            if (!silent && !install)
+              console.log(
+                `found ${import_chalk.default.cyan(`${k} = "*"`)} in ${path2.substring(
+                  process.cwd().length + 1
+                )}`
+              );
+            install = true;
+          } catch (e2) {
+          }
+        }
+      }
+    }
+    if (install) {
+      yield (0, import_fs_jetpack.writeAsync)(path2, pkg3, { jsonIndent: 2 });
+    }
+    return install;
+  });
+
+  // pkgs/base/pkgs/pkg/export.ts
+  var g = globalThis;
+  if (!g.pkgRunning) {
+    g.pkgRunning = /* @__PURE__ */ new Set();
+  }
+  var getModuleVersion = (name) => {
+    const res = (0, import_child_process2.spawnSync)("pnpm", ["why", "-r", name], {
+      cwd: dir.root(""),
+      env: process.env,
+      shell: true
+    });
+    if (res) {
+      const out = res.output.filter((e) => !!e);
+      try {
+        return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
+      } catch (e) {
+        return "";
+      }
+    }
+  };
+  var pkg = {
+    extractExternal(pkg3) {
+      const dependencies = {};
+      if (pkg3.external) {
+        for (const f of pkg3.external) {
+          const v = getModuleVersion(f);
+          if (v)
+            dependencies[f] = v;
+        }
+      }
+      return { name: pkg3.name, version: pkg3.version, dependencies };
+    },
+    async install(path2, arg) {
+      const _arg = arg ? arg : { cwd: void 0, silent: false };
+      const silent = _arg.silent === true ? true : false;
+      if (g.pkgRunning.size > 0) {
+        await Promise.all([...g.pkgRunning.values()]);
+      }
+      const prom = new Promise(async (resolve) => {
+        let install = false;
+        if (arg?.deep) {
+          const dirs = await scanDir([path2]);
+          const templateDir = dir.root("pkgs/template");
+          for (const e of dirs) {
+            if (!e.startsWith(templateDir)) {
+              if (await shouldInstall(e)) {
+                install = true;
+                break;
+              }
+            }
+          }
+        } else {
+          install = await shouldInstall(path2, silent);
+        }
+        if (install) {
+          if (arg?.onInstall)
+            await arg.onInstall();
+          if (!silent)
+            console.log(
+              `
+${import_chalk2.default.magenta("Installing")} deps:
+ ${import_chalk2.default.blue("\u27A5")}`,
+              [path2].map(
+                (e) => import_chalk2.default.green((0, import_path3.dirname)(e.substring(process.cwd().length + 1)))
+              ).join(" ")
+            );
+          const child = (0, import_child_process2.spawn)("pnpm", ["i"], {
+            stdio: silent ? "ignore" : "inherit",
+            cwd: _arg.cwd || process.cwd(),
+            shell: true
+          });
+          child.on("exit", () => {
+            g.pkgRunning.delete(prom);
+            if (arg?.onInstallDone)
+              arg.onInstallDone();
+            resolve();
+          });
+        } else {
+          resolve();
+        }
+      });
+      g.pkgRunning.add(prom);
+      return await prom;
+    }
+  };
+  var scanDir = async (paths) => {
+    const pkgs = [];
+    for (const path2 of paths) {
+      for await (const p of walk(path2)) {
+        if (p.endsWith("package.json")) {
+          pkgs.push(p);
+        }
+        if (p.endsWith("node_modules"))
+          break;
+      }
+    }
+    return pkgs;
+  };
+  async function* walk(dir2) {
+    for await (const d of await import_fs3.default.promises.opendir(dir2)) {
+      const entry = import_path3.default.join(dir2, d.name);
+      if (d.isDirectory()) {
+        if (!entry.endsWith("node_modules")) {
+          yield* await walk(entry);
+        }
+      } else if (d.isFile())
+        yield entry;
+    }
+  }
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var import_cuid2 = __toESM(require_cuid2());
@@ -54300,48 +54512,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
   var import_websocket_server = __toESM(require_websocket_server(), 1);
 
   // pkgs/base/pkgs/rpc/src/config.ts
-  var import_fs3 = __require("fs");
-  var import_path2 = __require("path");
-
-  // pkgs/base/pkgs/dir/export.ts
-  var import_fs2 = __require("fs");
-  var import_path = __require("path");
-  var import_process = __require("process");
-  var globalize = (arg) => {
-    const { name, init } = arg;
-    const g2 = global;
-    if (typeof g2[name] === "undefined") {
-      g2[name] = arg.value;
-    }
-    g2[name].init = async () => {
-      if (init) {
-        await init(g2[name]);
-      }
-    };
-    return g2[name];
-  };
-  var dir = new Proxy(
-    {},
-    {
-      get(_target, p) {
-        if (p === "path") {
-          return (arg = "") => {
-            return (0, import_path.join)(process.cwd(), ...(arg || "").split("/"));
-          };
-        }
-        if (p === "root") {
-          return (arg = "") => {
-            if ((0, import_fs2.existsSync)((0, import_path.join)((0, import_process.cwd)(), "base"))) {
-              return (0, import_path.join)(process.cwd(), ...arg.split("/"));
-            }
-            return (0, import_path.join)(process.cwd(), "..", "..", ...arg.split("/"));
-          };
-        }
-      }
-    }
-  );
-
-  // pkgs/base/pkgs/rpc/src/config.ts
+  var import_fs4 = __require("fs");
+  var import_path4 = __require("path");
   var config = new Proxy(
     {
       _path: "",
@@ -54355,22 +54527,22 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       set(target, p, newValue, receiver) {
         initConf(target);
         target._raw[p] = newValue;
-        (0, import_fs3.writeFileSync)(target._path, JSON.stringify(target._raw, null, 2));
+        (0, import_fs4.writeFileSync)(target._path, JSON.stringify(target._raw, null, 2));
         return true;
       }
     }
   );
   var initConf = (target) => {
-    target._path = (0, import_path2.join)(process.cwd(), "rpc.json");
+    target._path = (0, import_path4.join)(process.cwd(), "rpc.json");
     try {
-      if ((0, import_fs3.existsSync)((0, import_path2.join)(process.cwd(), "base"))) {
+      if ((0, import_fs4.existsSync)((0, import_path4.join)(process.cwd(), "base"))) {
         target._path = dir.root(".output/app/rpc.json");
       }
-      if ((0, import_fs3.existsSync)(target._path)) {
-        const json = (0, import_fs3.readFileSync)(target._path, "utf-8");
+      if ((0, import_fs4.existsSync)(target._path)) {
+        const json = (0, import_fs4.readFileSync)(target._path, "utf-8");
         target._raw = JSON.parse(json);
       } else {
-        (0, import_fs3.mkdirSync)((0, import_path2.dirname)(target._path), { recursive: true });
+        (0, import_fs4.mkdirSync)((0, import_path4.dirname)(target._path), { recursive: true });
       }
     } catch (e) {
     }
@@ -54766,179 +54938,6 @@ Make sure to kill running instance before starting.
   var import_fs_jetpack2 = __toESM(require_main2());
   var import_lodash3 = __toESM(require_lodash());
   var import_path5 = __require("path");
-
-  // pkgs/base/pkgs/pkg/export.ts
-  var import_child_process2 = __require("child_process");
-  var import_chalk2 = __toESM(require_source());
-  var import_fs4 = __toESM(__require("fs"));
-  var import_path4 = __toESM(__require("path"));
-
-  // pkgs/base/pkgs/pkg/src/should-install.ts
-  var import_chalk = __toESM(require_source());
-  var import_fs_jetpack = __toESM(require_main2());
-  var import_path3 = __require("path");
-  var shouldInstall = (path2, silent = false) => __async(void 0, null, function* () {
-    const dir2 = (0, import_path3.dirname)(path2);
-    let pkg2 = {};
-    try {
-      pkg2 = yield (0, import_fs_jetpack.readAsync)(path2, "json");
-    } catch (e) {
-    }
-    let install = false;
-    for (const e of ["dependencies", "devDependencies"]) {
-      if (!pkg2 || pkg2 && !pkg2[e])
-        continue;
-      const entries = Object.entries(pkg2[e]);
-      for (const [k, v] of entries) {
-        if (v.startsWith(".") || v.startsWith("/")) {
-          continue;
-        }
-        if (!(yield (0, import_fs_jetpack.existsAsync)((0, import_path3.join)(dir2, "node_modules", k))) && !install) {
-          if (!silent)
-            console.log(
-              `module ${import_chalk.default.cyan(k)} not found in ${(0, import_path3.join)(
-                dir2,
-                "node_modules"
-              ).substring(process.cwd().length + 1)}`
-            );
-          install = true;
-        }
-        if (v === "*") {
-          try {
-            const res = yield fetch(
-              `https://data.jsdelivr.com/v1/packages/npm/${k}/resolved`
-            );
-            const json = yield res.json();
-            pkg2[e][k] = json.version;
-            if (!silent && !install)
-              console.log(
-                `found ${import_chalk.default.cyan(`${k} = "*"`)} in ${path2.substring(
-                  process.cwd().length + 1
-                )}`
-              );
-            install = true;
-          } catch (e2) {
-          }
-        }
-      }
-    }
-    if (install) {
-      yield (0, import_fs_jetpack.writeAsync)(path2, pkg2, { jsonIndent: 2 });
-    }
-    return install;
-  });
-
-  // pkgs/base/pkgs/pkg/export.ts
-  var g = globalThis;
-  if (!g.pkgRunning) {
-    g.pkgRunning = /* @__PURE__ */ new Set();
-  }
-  var getModuleVersion = (name) => {
-    const res = (0, import_child_process2.spawnSync)("pnpm", ["why", "-r", name], {
-      cwd: dir.root(""),
-      env: process.env,
-      shell: true
-    });
-    if (res) {
-      const out = res.output.filter((e) => !!e);
-      try {
-        return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
-      } catch (e) {
-        return "";
-      }
-    }
-  };
-  var pkg = {
-    extractExternal(pkg2) {
-      const dependencies = {};
-      if (pkg2.external) {
-        for (const f of pkg2.external) {
-          const v = getModuleVersion(f);
-          if (v)
-            dependencies[f] = v;
-        }
-      }
-      return { name: pkg2.name, version: pkg2.version, dependencies };
-    },
-    async install(path2, arg) {
-      const _arg = arg ? arg : { cwd: void 0, silent: false };
-      const silent = _arg.silent === true ? true : false;
-      if (g.pkgRunning.size > 0) {
-        await Promise.all([...g.pkgRunning.values()]);
-      }
-      const prom = new Promise(async (resolve) => {
-        let install = false;
-        if (arg?.deep) {
-          const dirs = await scanDir([path2]);
-          const templateDir = dir.root("pkgs/template");
-          for (const e of dirs) {
-            if (!e.startsWith(templateDir)) {
-              if (await shouldInstall(e)) {
-                install = true;
-                break;
-              }
-            }
-          }
-        } else {
-          install = await shouldInstall(path2, silent);
-        }
-        if (install) {
-          if (arg?.onInstall)
-            await arg.onInstall();
-          if (!silent)
-            console.log(
-              `
-${import_chalk2.default.magenta("Installing")} deps:
- ${import_chalk2.default.blue("\u27A5")}`,
-              [path2].map(
-                (e) => import_chalk2.default.green((0, import_path4.dirname)(e.substring(process.cwd().length + 1)))
-              ).join(" ")
-            );
-          const child = (0, import_child_process2.spawn)("pnpm", ["i"], {
-            stdio: silent ? "ignore" : "inherit",
-            cwd: _arg.cwd || process.cwd(),
-            shell: true
-          });
-          child.on("exit", () => {
-            g.pkgRunning.delete(prom);
-            if (arg?.onInstallDone)
-              arg.onInstallDone();
-            resolve();
-          });
-        } else {
-          resolve();
-        }
-      });
-      g.pkgRunning.add(prom);
-      return await prom;
-    }
-  };
-  var scanDir = async (paths) => {
-    const pkgs = [];
-    for (const path2 of paths) {
-      for await (const p of walk(path2)) {
-        if (p.endsWith("package.json")) {
-          pkgs.push(p);
-        }
-        if (p.endsWith("node_modules"))
-          break;
-      }
-    }
-    return pkgs;
-  };
-  async function* walk(dir2) {
-    for await (const d of await import_fs4.default.promises.opendir(dir2)) {
-      const entry = import_path4.default.join(dir2, d.name);
-      if (d.isDirectory()) {
-        if (!entry.endsWith("node_modules")) {
-          yield* await walk(entry);
-        }
-      } else if (d.isFile())
-        yield entry;
-    }
-  }
-
-  // pkgs/base/pkgs/bundler/bundle.ts
   var import_pretty_error2 = __toESM(require_PrettyError());
   var pe2 = new import_pretty_error2.default();
   var bundle = async (arg) => {
@@ -58261,6 +58260,12 @@ If somehow upgrade failed you can rollback using
       return;
     if (yield upgradeHook(args))
       return;
+    if (args.includes("clean")) {
+      console.log("Cleaning node_modules");
+      const dirs = yield scanDir([dir.root()]);
+      yield Promise.all(dirs.map((e) => (0, import_fs_jetpack20.removeAsync)((0, import_path17.join)((0, import_path17.dirname)(e), "node_modules"))));
+      return;
+    }
     console.log(`\u2500\u2500 ${(0, import_lodash5.default)(import_chalk9.default.yellow(`BASE`) + " ", 47, "\u2500")}`);
     if (args.includes("build") || args.includes("deploy") || args.includes("prod") || args.includes("staging")) {
     } else {

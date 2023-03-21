@@ -1,1 +1,0 @@
-export type SERVICE_NAME = "db" | "srv" | "web";

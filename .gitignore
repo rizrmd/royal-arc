@@ -63,6 +63,9 @@ node_modules
 # dotenv environment variables file
 .env
 
+app/gen
+app/gen/*
+
 # Parcel related files
 dist/
 .cache/

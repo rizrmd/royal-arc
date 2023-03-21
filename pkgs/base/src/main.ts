@@ -3,9 +3,10 @@ import { watcher } from "bundler/watch";
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
 import { dir } from "dir";
-import { existsAsync } from "fs-jetpack";
+import { existsAsync, removeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
-import { pkg } from "pkg";
+import { dirname, join } from "path";
+import { pkg, scanDir } from "pkg";
 import { connectRPC, createRPC } from "rpc";
 import { action as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
@@ -26,6 +27,15 @@ export const baseMain = async () => {
   if (await commitHook(args)) return;
   if (await upgradeHook(args)) return;
 
+  if (args.includes("clean")) {
+    console.log("Cleaning node_modules");
+    const dirs = await scanDir([dir.root()])
+    await removeAsync(dir.root(".output"));
+    await Promise.all(dirs.map(e => removeAsync(join(dirname(e), "node_modules"))))
+    return;
+  }
+
+
   console.log(`── ${padEnd(chalk.yellow(`BASE`) + " ", 47, "─")}`);
 
   if (
@@ -41,14 +51,14 @@ export const baseMain = async () => {
       waitConnection: false,
     });
     baseGlobal.rootRPC = rootRPC;
-    
+
     const app = await buildApp({ watch: true });
 
     const onExit = async () => {
       await watcher.dispose();
       if (app) await runner.stop(app.path);
     };
-    addExitCallback(() => {});
+    addExitCallback(() => { });
     setupWatchers(args, onExit);
 
     baseGlobal.app = app;
@@ -67,20 +77,20 @@ export const baseMain = async () => {
     let bannerPrinted = false;
     const onDone = cacheFound
       ? (arg: { isRebuild: boolean }) => {
-          if (!bannerPrinted) {
-            if (cacheFound) {
-              console.clear();
-            }
-            console.log(
-              `── ${padEnd(
-                chalk.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
-                47,
-                "─"
-              )}`
-            );
-            bannerPrinted = true;
+        if (!bannerPrinted) {
+          if (cacheFound) {
+            console.clear();
           }
+          console.log(
+            `── ${padEnd(
+              chalk.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
+              47,
+              "─"
+            )}`
+          );
+          bannerPrinted = true;
         }
+      }
       : undefined;
 
     await Promise.all([
