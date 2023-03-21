@@ -57269,9 +57269,28 @@ export const _ = {
 
   // pkgs/base/src/builder/app.ts
   var import_fs6 = __require("fs");
+  var import_fs_jetpack10 = __toESM(require_main2());
+
+  // pkgs/base/src/appgen/service.ts
   var import_fs_jetpack9 = __toESM(require_main2());
+  var import_promises3 = __require("fs/promises");
+  var serviceGen = () => __async(void 0, null, function* () {
+    const names = [];
+    for (const f of yield (0, import_promises3.readdir)(dir.root("app"))) {
+      const s = yield (0, import_promises3.stat)(dir.root(`app/${f}`));
+      if (s.isDirectory() && (yield (0, import_fs_jetpack9.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
+        names.push(f);
+      }
+      yield (0, import_fs_jetpack9.writeAsync)(
+        dir.root(`app/gen/service/name.ts`),
+        `export type SERVICE_NAME = "${names.join(`" | "`)}";`
+      );
+    }
+  });
+
+  // pkgs/base/src/builder/app.ts
   var buildApp = (opt) => __async(void 0, null, function* () {
-    yield (0, import_fs_jetpack9.writeAsync)(
+    yield (0, import_fs_jetpack10.writeAsync)(
       dir.path(".output/app/pnpm-workspace.yaml"),
       `packages:
   - ./*`
@@ -57281,6 +57300,7 @@ export const _ = {
     ).map((e) => ({ name: e, stat: (0, import_fs6.statSync)(dir.path(`app/${e}`)) })).filter(
       ({ stat: stat5, name }) => stat5.isDirectory() && (0, import_fs6.existsSync)(dir.path(`app/${name}/main.ts`))
     );
+    yield serviceGen();
     return {
       path: dir.root(".output/app/app.js"),
       cwd: dir.root(".output/app"),
@@ -57312,10 +57332,10 @@ export const _ = {
 
   // pkgs/base/src/commit-hook.ts
   var import_child_process3 = __require("child_process");
-  var import_fs_jetpack10 = __toESM(require_main2());
+  var import_fs_jetpack11 = __toESM(require_main2());
   var commitHook = (args) => __async(void 0, null, function* () {
     const isMainRepo = () => __async(void 0, null, function* () {
-      const conf = yield (0, import_fs_jetpack10.readAsync)(dir.root(".git/config"), "utf8");
+      const conf = yield (0, import_fs_jetpack11.readAsync)(dir.root(".git/config"), "utf8");
       if (conf == null ? void 0 : conf.includes("url = https://github.com/avolut/royal")) {
         return true;
       }
@@ -57323,10 +57343,10 @@ export const _ = {
     });
     if (args.includes("pre-commit")) {
       if (yield isMainRepo()) {
-        if (!(yield (0, import_fs_jetpack10.existsAsync)(dir.root(".husky/_/husky.sh")))) {
+        if (!(yield (0, import_fs_jetpack11.existsAsync)(dir.root(".husky/_/husky.sh")))) {
           (0, import_child_process3.spawnSync)("pnpm husky install", { cwd: dir.root("") });
         }
-        yield (0, import_fs_jetpack10.writeAsync)(dir.root(".output/.commit"), "");
+        yield (0, import_fs_jetpack11.writeAsync)(dir.root(".output/.commit"), "");
       }
       if (process.send) {
         process.send("exit");
@@ -57337,9 +57357,9 @@ export const _ = {
     }
     if (args.includes("post-commit")) {
       if (yield isMainRepo()) {
-        if (yield (0, import_fs_jetpack10.existsAsync)(dir.root(".output/.commit"))) {
-          yield (0, import_fs_jetpack10.removeAsync)(dir.root(".output/.commit"));
-          yield (0, import_fs_jetpack10.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
+        if (yield (0, import_fs_jetpack11.existsAsync)(dir.root(".output/.commit"))) {
+          yield (0, import_fs_jetpack11.removeAsync)(dir.root(".output/.commit"));
+          yield (0, import_fs_jetpack11.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
           yield new Promise((resolve2) => {
             spawn("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
@@ -57833,13 +57853,13 @@ export const _ = {
 
   // pkgs/base/src/upgrade.ts
   var import_fs7 = __require("fs");
-  var import_fs_jetpack11 = __toESM(require_main2());
+  var import_fs_jetpack12 = __toESM(require_main2());
   var import_path12 = __require("path");
   var upgradeHook = (args) => __async(void 0, null, function* () {
     if (args.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
-      yield (0, import_fs_jetpack11.removeAsync)(dir.root(".output/upgrade"));
-      yield (0, import_fs_jetpack11.dirAsync)(backupDir);
+      yield (0, import_fs_jetpack12.removeAsync)(dir.root(".output/upgrade"));
+      yield (0, import_fs_jetpack12.dirAsync)(backupDir);
       console.log(`Upgrading Base Framework`);
       console.log(` > Downloading upgrade zip`);
       const downloadURI = `https://github.com/avolut/royal/archive/refs/heads/main.zip`;
@@ -57847,13 +57867,13 @@ export const _ = {
       const ab = yield res.arrayBuffer();
       console.log(` > Extracting: .output/upgrade/royal`);
       const uzi = unzipSync(new Uint8Array(ab));
-      yield (0, import_fs_jetpack11.dirAsync)(dir.root(".output/upgrade/royal-main"));
+      yield (0, import_fs_jetpack12.dirAsync)(dir.root(".output/upgrade/royal-main"));
       yield Promise.all(
         Object.entries(uzi).map((_0) => __async(void 0, [_0], function* ([filename, buf]) {
           if (buf.length === 0) {
-            yield (0, import_fs_jetpack11.dirAsync)(dir.root(`.output/upgrade/${filename}`));
+            yield (0, import_fs_jetpack12.dirAsync)(dir.root(`.output/upgrade/${filename}`));
           } else {
-            yield (0, import_fs_jetpack11.writeAsync)(
+            yield (0, import_fs_jetpack12.writeAsync)(
               dir.root(`.output/upgrade/${filename}`),
               Buffer.from(buf)
             );
@@ -57864,8 +57884,8 @@ export const _ = {
       const root2 = dir.root("");
       for (const f of (0, import_fs7.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack11.existsAsync)((0, import_path12.join)(root2, `.output/upgrade/backup/${f}`))) {
-            yield (0, import_fs_jetpack11.moveAsync)(
+          if (yield (0, import_fs_jetpack12.existsAsync)((0, import_path12.join)(root2, `.output/upgrade/backup/${f}`))) {
+            yield (0, import_fs_jetpack12.moveAsync)(
               (0, import_path12.join)(root2, f),
               (0, import_path12.join)(root2, `.output/upgrade/backup/${f}`)
             );
@@ -57875,7 +57895,7 @@ export const _ = {
       console.log(` > Applying upgrade`);
       for (const f of (0, import_fs7.readdirSync)((0, import_path12.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
-          yield (0, import_fs_jetpack11.copyAsync)(
+          yield (0, import_fs_jetpack12.copyAsync)(
             (0, import_path12.join)(root2, `.output/upgrade/royal-main/${f}`),
             (0, import_path12.join)(root2, f),
             {
@@ -57897,9 +57917,9 @@ export const _ = {
   // pkgs/base/src/version-check.ts
   var import_chalk7 = __toESM(require_source());
   var import_date_fns = __toESM(require_date_fns());
-  var import_fs_jetpack12 = __toESM(require_main2());
+  var import_fs_jetpack13 = __toESM(require_main2());
   var versionCheck = (opt) => __async(void 0, null, function* () {
-    const version = yield (0, import_fs_jetpack12.readAsync)(dir.root("pkgs/version.json"), "json");
+    const version = yield (0, import_fs_jetpack13.readAsync)(dir.root("pkgs/version.json"), "json");
     let timeout = {
       timer: null
     };
@@ -57939,18 +57959,18 @@ If somehow upgrade failed you can rollback using
   });
 
   // pkgs/base/src/vscode.ts
-  var import_fs_jetpack13 = __toESM(require_main2());
+  var import_fs_jetpack14 = __toESM(require_main2());
   var import_path13 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
-    if (yield (0, import_fs_jetpack13.existsAsync)(vscodeFile)) {
-      if ((yield (0, import_fs_jetpack13.readAsync)(vscodeFile, "utf8")) === source) {
+    if (yield (0, import_fs_jetpack14.existsAsync)(vscodeFile)) {
+      if ((yield (0, import_fs_jetpack14.readAsync)(vscodeFile, "utf8")) === source) {
         return;
       }
     }
-    yield (0, import_fs_jetpack13.dirAsync)((0, import_path13.dirname)(vscodeFile));
-    yield (0, import_fs_jetpack13.writeAsync)(vscodeFile, source);
+    yield (0, import_fs_jetpack14.dirAsync)((0, import_path13.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack14.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
     "typescript.preferences.importModuleSpecifier": "relative",
@@ -57997,25 +58017,6 @@ If somehow upgrade failed you can rollback using
   var import_fs_jetpack15 = __toESM(require_main2());
   var import_promises4 = __require("fs/promises");
   var import_path14 = __require("path");
-
-  // pkgs/base/src/appgen/service.ts
-  var import_fs_jetpack14 = __toESM(require_main2());
-  var import_promises3 = __require("fs/promises");
-  var serviceGen = () => __async(void 0, null, function* () {
-    const names = [];
-    for (const f of yield (0, import_promises3.readdir)(dir.root("app"))) {
-      const s = yield (0, import_promises3.stat)(dir.root(`app/${f}`));
-      if (s.isDirectory() && (yield (0, import_fs_jetpack14.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
-        names.push(f);
-      }
-      yield (0, import_fs_jetpack14.writeAsync)(
-        dir.root(`app/gen/service/name.ts`),
-        `export type SERVICE_NAME = "${names.join(`" | "`)}";`
-      );
-    }
-  });
-
-  // pkgs/base/src/watcher/new-service.ts
   var watchNewService = () => {
     watcher.watch({
       dir: dir.root("app"),

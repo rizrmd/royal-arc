@@ -3,6 +3,7 @@ import { runner } from "bundler/runner";
 import { dir } from "dir";
 import { existsSync, readdirSync, statSync } from "fs";
 import { writeAsync } from "fs-jetpack";
+import { serviceGen } from "../appgen/service";
 import { marker } from "./service";
 
 export const buildApp = async (opt: { watch: boolean }) => {
@@ -23,6 +24,7 @@ packages:
         stat.isDirectory() && existsSync(dir.path(`app/${name}/main.ts`))
     );
 
+  await serviceGen();
   return {
     path: dir.root(".output/app/app.js"),
     cwd: dir.root(".output/app"),
@@ -36,8 +38,8 @@ packages:
         pkgcwd: dir.root(".outpu/app"),
         printTimer: true,
         onBeforeDone: onDone,
-        async watch({ isRebuild }) { 
-          if (isRebuild && !marker["*"]) 
+        async watch({ isRebuild }) {
+          if (isRebuild && !marker["*"])
             await runner.restart(dir.root(".output/app/app.js"));
         },
       });

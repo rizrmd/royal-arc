@@ -1,5 +1,5 @@
 {
-  "name": "srv",
+  "name": "template_service",
   "version": "0.0.1",
   "dependencies": {
     "service-srv": "workspace:*",
