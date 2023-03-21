@@ -1,9 +1,11 @@
 import chalk from "chalk";
 import padEnd from "lodash.padend";
+import { createRPC } from "rpc";
 import { createService } from "service";
 import { SERVICE_NAME } from "../../../src/types";
 import { srv } from "./glbsrv";
 import { server } from "./server";
+import { srvAction } from "./action";
 
 export const createAPIServer = ({
   name,
@@ -22,6 +24,7 @@ export const createAPIServer = ({
     srv.cookieKey = cookieKey;
     if (serverURL) srv.serverURL = serverURL;
 
+    await createRPC(`svc.${name}`, srvAction);
     await srv.init();
 
     const running = await server({

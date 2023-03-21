@@ -30,8 +30,10 @@ export const web = globalize({
     React: null as unknown as typeof React,
   },
   async init() {
-    web.rpc.srv = await connectRPC<typeof srvAction>("web.srv");
-    web.rpc.db = await connectRPC<typeof dbAction>("web.db");
+    web.rpc.srv = await connectRPC<typeof srvAction>("svc.srv");
+    web.rpc.db = await connectRPC<typeof dbAction>("svc.db");
     (global as any).db = dbs(web.rpc.db);
+    (global as any).isSSR = web.isSSR;
+    (global as any).__PAGES__ = web.pages;
   },
 });

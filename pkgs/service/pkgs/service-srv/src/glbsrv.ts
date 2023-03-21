@@ -25,7 +25,3 @@ export const srv = globalize({
     (global as any).db = dbs(srv.rpc.db);
   },
 });
-
-declare global {
-  const db: ReturnType<typeof dbs>;
-}

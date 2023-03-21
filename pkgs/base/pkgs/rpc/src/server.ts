@@ -89,9 +89,11 @@ const connect = (name: string, action: RPCAction) => {
       }
     }, 500);
     ws.on("open", () => {
+
       ws.send(JSON.stringify({ type: "identify", name }));
       ws.on("message", async (raw: string) => {
         const msg = JSON.parse(raw) as ActionMsg;
+
         if (msg.type === "action") {
           const fn = get(action, msg.path.join("."));
           if (typeof fn === "function") {

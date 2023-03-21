@@ -1,10 +1,10 @@
-import { glbsrv } from "./glbsrv";
+import { srv } from "./glbsrv";
 
 export const srvAction = {
   serverPort: async () => {
-    return glbsrv.port;
+    return srv.port;
   },
   publicURL: async () => {
-    return glbsrv.serverURL;
+    return srv.serverURL;
   },
 };

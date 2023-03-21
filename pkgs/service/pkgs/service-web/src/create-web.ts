@@ -1,3 +1,5 @@
+import chalk from "chalk";
+import padEnd from "lodash.padend";
 import { createService } from "service";
 import { SERVICE_NAME } from "../../../src/types";
 import { web } from "./glbweb";
@@ -21,6 +23,11 @@ export const createWeb = async ({
       name: name,
     });
 
+    console.log(
+      `${chalk.magenta("Started")} ${chalk.green(
+        `${padEnd(name, 12, " ")}`
+      )} http://localhost:${port}`
+    );
     markAsRunning();
   });
 };
