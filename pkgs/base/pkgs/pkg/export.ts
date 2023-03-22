@@ -55,6 +55,7 @@ export const pkg = {
     version: string;
     external?: string[];
     dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
   }) {
     const dependencies: Record<string, string> = {};
 
@@ -63,18 +64,38 @@ export const pkg = {
         const v = await getModuleVersion(f);
         if (v) dependencies[f] = v;
 
-        if (f === "*" && pkg.dependencies) {
-          for (const [k, v] of Object.entries(pkg.dependencies)) {
-            if (!v.startsWith("workspace:")) {
-              dependencies[k] = v;
+        if (f === "*") {
+          if (pkg.dependencies) {
+            for (const [k, v] of Object.entries(pkg.dependencies)) {
+              if (!v.startsWith("workspace:")) {
+                dependencies[k] = v;
+              }
+            }
+          }
+
+          if (pkg.devDependencies) {
+            for (const [k, v] of Object.entries(pkg.devDependencies)) {
+              if (!v.startsWith("workspace:")) {
+                dependencies[k] = v;
+              }
             }
           }
         }
       }
-    } else if (pkg.dependencies) {
-      for (const [k, v] of Object.entries(pkg.dependencies)) {
-        if (!v.startsWith("workspace:")) {
-          dependencies[k] = v;
+    } else {
+      if (pkg.dependencies) {
+        for (const [k, v] of Object.entries(pkg.dependencies)) {
+          if (!v.startsWith("workspace:")) {
+            dependencies[k] = v;
+          }
+        }
+      }
+
+      if (pkg.devDependencies) {
+        for (const [k, v] of Object.entries(pkg.devDependencies)) {
+          if (!v.startsWith("workspace:")) {
+            dependencies[k] = v;
+          }
         }
       }
     }

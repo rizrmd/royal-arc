@@ -54679,18 +54679,36 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           const v = await getModuleVersion(f);
           if (v)
             dependencies[f] = v;
-          if (f === "*" && pkg2.dependencies) {
-            for (const [k, v2] of Object.entries(pkg2.dependencies)) {
-              if (!v2.startsWith("workspace:")) {
-                dependencies[k] = v2;
+          if (f === "*") {
+            if (pkg2.dependencies) {
+              for (const [k, v2] of Object.entries(pkg2.dependencies)) {
+                if (!v2.startsWith("workspace:")) {
+                  dependencies[k] = v2;
+                }
+              }
+            }
+            if (pkg2.devDependencies) {
+              for (const [k, v2] of Object.entries(pkg2.devDependencies)) {
+                if (!v2.startsWith("workspace:")) {
+                  dependencies[k] = v2;
+                }
               }
             }
           }
         }
-      } else if (pkg2.dependencies) {
-        for (const [k, v] of Object.entries(pkg2.dependencies)) {
-          if (!v.startsWith("workspace:")) {
-            dependencies[k] = v;
+      } else {
+        if (pkg2.dependencies) {
+          for (const [k, v] of Object.entries(pkg2.dependencies)) {
+            if (!v.startsWith("workspace:")) {
+              dependencies[k] = v;
+            }
+          }
+        }
+        if (pkg2.devDependencies) {
+          for (const [k, v] of Object.entries(pkg2.devDependencies)) {
+            if (!v.startsWith("workspace:")) {
+              dependencies[k] = v;
+            }
           }
         }
       }
