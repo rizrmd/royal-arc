@@ -2,7 +2,7 @@ import { dir } from "dir";
 import { writeAsync } from "fs-jetpack";
 import { stat } from "fs/promises";
 import { basename, extname } from "path";
-import { generateAPI, generateAPIEntry } from "../../scaffold/srv/api";
+import { generateAPI, generateAPIEntry } from "../../../scaffold/srv/api";
 
 export const prepareSrv = async (name: string, changes?: Set<string>) => {
   if (!changes) {

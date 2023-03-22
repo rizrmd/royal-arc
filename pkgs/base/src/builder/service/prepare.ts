@@ -1,6 +1,6 @@
-import { prepareDB } from "./db";
-import { prepareSrv } from "./srv";
-import { prepareWeb } from "./web";
+import { prepareDB } from "./prepare/db";
+import { prepareSrv } from "./prepare/srv";
+import { prepareWeb } from "./prepare/web";
 
 export const prepareBuild = async (
   name: string,

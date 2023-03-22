@@ -3,6 +3,7 @@
   "main": "main.js",
   "dependencies": {
     "@parcel/watcher": "^2.1.0",
+    "@parcel/core": "2.8.3",
     "@swc/core": "^1.3.41",
     "bundler": "workspace:*",
     "chalk": "^5.2.0",
@@ -26,6 +27,7 @@
     "@parcel/watcher",
     "hyper-express",
     "typescript",
-    "@swc/core"
+    "@swc/core",
+    "@parcel/core"
   ]
 }

@@ -8,7 +8,11 @@ export const shouldInstall = async (path: string, silent: boolean = false) => {
   let pkg = {} as any;
   try {
     pkg = await readAsync(path, "json");
-  } catch (e) {}
+  } catch (e) {
+    try {
+      pkg = await readAsync(join(path, "package.json"), "json");
+    } catch (e) {}
+  }
 
   let install = false;
   for (const e of ["dependencies", "devDependencies"]) {

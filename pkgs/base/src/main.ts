@@ -11,6 +11,7 @@ import { connectRPC, createRPC } from "rpc";
 import { action as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
 import { bundleService } from "./builder/service";
+import { postBuild } from "./builder/service/postbuild";
 import { prepareBuild } from "./builder/service/prepare";
 import { attachCleanUp } from "./cleanup";
 import { commitHook } from "./commit-hook";
@@ -85,6 +86,7 @@ export const baseMain = async () => {
     await Promise.all(
       app.serviceNames.map(async (e) => await bundleService(e, { watch: true }))
     );
+    await Promise.all(app.serviceNames.map(async (e) => await postBuild(e)));
 
     versionCheck({ timeout: 3000 });
 

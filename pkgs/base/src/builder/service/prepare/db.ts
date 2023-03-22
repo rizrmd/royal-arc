@@ -2,7 +2,7 @@ import { runner } from "bundler/runner";
 import chalk from "chalk";
 import { dir } from "dir";
 import { removeAsync } from "fs-jetpack";
-import { ensurePrisma } from "../../../../../pkgs/service/pkgs/service-db";
+import { ensurePrisma } from "../../../../../service/pkgs/service-db/export";
 
 export const prepareDB = async (name: string, changes?: Set<string>) => {
   if (!changes) {

@@ -115,6 +115,7 @@ export const pkg = {
     const _arg = arg ? arg : { cwd: undefined, silent: false };
     const silent = _arg.silent === true ? true : false;
 
+
     if (g.pkgRunning.size > 0) {
       await Promise.all([...g.pkgRunning.values()]);
     }
@@ -138,23 +139,30 @@ export const pkg = {
           });
         }
 
-        mustInstall = (
+        const allDirs = (
           await Promise.all(
             dirs.map(async (e) => {
               const ex = await existsAsync(join(dirname(e), "node_modules"));
-              if (!ex) {
+
+              try {
                 const json = await readAsync(e, "json");
                 if (!json.dependencies && !json.devDependencies) {
                   return false;
                 }
 
-                return dirname(e);
-              }
+                return e;
+              } catch (e) {}
             })
           )
         ).filter((e) => e) as string[];
 
-        install = mustInstall.length > 0;
+        const mustInstall = [];
+        for (const p of allDirs) {
+          if (await shouldInstall(p, silent)) {
+            mustInstall.push(p);
+            install = true;
+          }
+        }
       } else {
         install = await shouldInstall(path, silent);
       }

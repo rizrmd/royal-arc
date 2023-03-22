@@ -54591,6 +54591,10 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
     try {
       pkg2 = yield (0, import_fs_jetpack.readAsync)(path2, "json");
     } catch (e) {
+      try {
+        pkg2 = yield (0, import_fs_jetpack.readAsync)((0, import_path2.join)(path2, "package.json"), "json");
+      } catch (e2) {
+      }
     }
     let install = false;
     for (const e of ["dependencies", "devDependencies"]) {
@@ -54737,19 +54741,26 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
               return true;
             });
           }
-          mustInstall = (await Promise.all(
+          const allDirs = (await Promise.all(
             dirs.map(async (e) => {
               const ex = await (0, import_fs_jetpack2.existsAsync)((0, import_path3.join)((0, import_path3.dirname)(e), "node_modules"));
-              if (!ex) {
+              try {
                 const json = await (0, import_fs_jetpack2.readAsync)(e, "json");
                 if (!json.dependencies && !json.devDependencies) {
                   return false;
                 }
-                return (0, import_path3.dirname)(e);
+                return e;
+              } catch (e2) {
               }
             })
           )).filter((e) => e);
-          install = mustInstall.length > 0;
+          const mustInstall2 = [];
+          for (const p of allDirs) {
+            if (await shouldInstall(p, silent)) {
+              mustInstall2.push(p);
+              install = true;
+            }
+          }
         } else {
           install = await shouldInstall(path2, silent);
         }
@@ -55649,7 +55660,7 @@ Make sure to kill running instance before starting.
     });
   };
 
-  // pkgs/base/src/builder/service/db.ts
+  // pkgs/base/src/builder/service/prepare/db.ts
   var import_fs_jetpack7 = __toESM(require_main());
 
   // pkgs/service/pkgs/service-db/src/create-db.ts
@@ -55777,7 +55788,7 @@ datasource db {
     return { generated: true, pulled: true, dburl };
   };
 
-  // pkgs/base/src/builder/service/db.ts
+  // pkgs/base/src/builder/service/prepare/db.ts
   var prepareDB = (name, changes) => __async(void 0, null, function* () {
     if (!changes) {
       const prisma = yield ensurePrisma(name);
@@ -55795,7 +55806,7 @@ datasource db {
     return { shouldRestart: true };
   });
 
-  // pkgs/base/src/builder/service/srv.ts
+  // pkgs/base/src/builder/service/prepare/srv.ts
   var import_fs_jetpack9 = __toESM(require_main());
   var import_promises2 = __require("fs/promises");
   var import_path10 = __require("path");
@@ -57242,7 +57253,7 @@ datasource db {
     );
   });
 
-  // pkgs/base/src/builder/service/srv.ts
+  // pkgs/base/src/builder/service/prepare/srv.ts
   var prepareSrv = (name, changes) => __async(void 0, null, function* () {
     if (!changes) {
       yield generateAPIEntry([name]);
@@ -57454,7 +57465,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
     );
   });
 
-  // pkgs/base/src/builder/service/web.ts
+  // pkgs/base/src/builder/service/prepare/web.ts
   var prepareWeb = (name, changes) => __async(void 0, null, function* () {
     if (!changes) {
       yield scaffoldWeb();
@@ -57566,6 +57577,16 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
       });
     })
   };
+
+  // pkgs/base/src/builder/service/postbuild/web.ts
+  var postBuildWeb = (name) => __async(void 0, null, function* () {
+  });
+
+  // pkgs/base/src/builder/service/postbuild.ts
+  var postBuild = (name) => __async(void 0, null, function* () {
+    if (name.startsWith("web"))
+      yield postBuildWeb(name);
+  });
 
   // pkgs/base/src/cleanup.ts
   var attachCleanUp = () => {
@@ -58452,6 +58473,9 @@ If somehow upgrade failed you can rollback using
           return yield bundleService(e, { watch: true });
         }))
       );
+      yield Promise.all(app.serviceNames.map((e) => __async(void 0, null, function* () {
+        return yield postBuild(e);
+      })));
       versionCheck({ timeout: 3e3 });
       if (process.send)
         process.send("base-ready");
