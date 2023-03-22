@@ -1,4 +1,4 @@
-import { runnerGlb } from "bundler/runner-glb";
+import { bundler } from "bundler/global";
 import { fork, spawn as nativeSpawn } from "child_process";
 
 export type IPty = ReturnType<typeof spawn>;
@@ -71,7 +71,7 @@ export const attachSpawnCleanup = () => {
   process.on("message", async (e) => {
     if (e === "::SPAWN_DISPOSE::") {
       await Promise.all(
-        Object.values(runnerGlb.runs).map(async (run) => {
+        Object.values(bundler.runs).map(async (run) => {
           await new Promise<void>((resolve) => {
             run.proc.on("message", (e) => {
               if (e === "::SPAWN_DISPOSED::") {

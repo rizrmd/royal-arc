@@ -2,22 +2,26 @@ import { runner } from "bundler/runner";
 import { watcher } from "bundler/watch";
 import chalk from "chalk";
 import { dir } from "dir";
-import { removeAsync } from "fs-jetpack";
+import { existsAsync, removeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { dirname, join } from "path";
 import { pkg, scanDir } from "pkg";
 import { connectRPC, createRPC } from "rpc";
 import { action as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
-import { buildApp } from "./builder/app";
-import { buildService } from "./builder/service";
+import { prepareApp } from "./scaffold/app";
+import { bundleService } from "./builder/service";
+import { attachCleanUp } from "./clean-up";
 import { commitHook } from "./commit-hook";
 import { upgradeHook } from "./upgrade";
+import { versionCheck } from "./version-check";
 import { vscodeSettings } from "./vscode";
 import { setupWatchers } from "./watcher/all";
+import { bundle } from "bundler";
 
 export const baseMain = async () => {
   process.removeAllListeners("warning");
+  attachCleanUp();
   vscodeSettings();
 
   const args = process.argv.slice(2);
@@ -52,21 +56,17 @@ export const baseMain = async () => {
     });
     baseGlobal.rootRPC = rootRPC;
 
-    const app = await buildApp({ watch: true });
+    const app = await prepareApp();
 
     const onExit = async () => {
       await watcher.dispose();
-      if (app) await runner.stop(app.path);
+      if (app) await runner.stop(app.output);
     };
     setupWatchers(args, onExit);
 
     baseGlobal.app = app;
 
     let cacheFound = false;
-
-    await pkg.install(dir.root(), {
-      cwd: dirname(dir.root()),
-    });
 
     // if ((await existsAsync(app.path)) && !args.includes("nocache")) {
     //   console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
@@ -77,34 +77,29 @@ export const baseMain = async () => {
     //   cacheFound = true;
     // }
 
-    let bannerPrinted = false;
-    const onDone = cacheFound
-      ? (arg: { isRebuild: boolean }) => {
-          if (!bannerPrinted) {
-            if (cacheFound) {
-              console.clear();
-            }
-            console.log(
-              `── ${padEnd(
-                chalk.magenta(arg.isRebuild ? `REBUILD` : `BUILD`) + " ",
-                47,
-                "─"
-              )}`
-            );
-            bannerPrinted = true;
-          }
-        }
-      : undefined;
-
-    await app.build(onDone);
-    for (const e of app.serviceNames) {
-      await buildService(e, {
-        watch: true,
-        app,
-        rpc: rootRPC,
-        onDone,
-        restart: onExit,
+    await bundle({ input: app.input, output: app.output });
+    for (const name of app.serviceNames) {
+      await bundle({
+        input: dir.root(`app/${name}/main.ts`),
+        output: dir.root(`.output/app/${name}/index.js`),
+        pkgjson: {
+          input: dir.root(`app/${name}/package.json`),
+          output: dir.root(`.output/app/${name}/package.json`),
+        },
       });
+    }
+
+    versionCheck({ timeout: 3000 });
+
+    if (!cacheFound) {
+      console.log("");
+      await runner.run({
+        path: app.output,
+        cwd: app.cwd,
+      });
+    } else {
+      console.log(`\n🌟 Running ${chalk.cyan(`latest`)} app\n`);
+      await runner.restart(app.output);
     }
   }
 };

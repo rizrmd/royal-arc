@@ -1,35 +1,35 @@
 import commandExists from "command-exists";
 import { existsSync } from "fs";
 import { spawn } from "utility/spawn";
-import { runnerGlb } from "./runner-glb";
+import { bundler } from "./global";
 
 export const runner = {
   get list() {
-    return runnerGlb.runs;
+    return bundler.runs;
   },
   async dispose() {
-    const all = Object.values(runnerGlb.runs).map(async (pty) => {
+    const all = Object.values(bundler.runs).map(async (pty) => {
       await pty.kill();
     });
     return await Promise.all(all);
   },
-  async restart(path: keyof typeof runnerGlb.runs) {
-    if (runnerGlb.runs[path]) {
-      const data = runnerGlb.runs[path].data;
+  async restart(path: keyof typeof bundler.runs) {
+    if (bundler.runs[path]) {
+      const data = bundler.runs[path].data;
       await this.stop(path);
       await runner.run(data.arg);
     } else {
       return false;
     }
   },
-  async stop(path: keyof typeof runnerGlb.runs) {
+  async stop(path: keyof typeof bundler.runs) {
     return new Promise<boolean>((resolve) => {
-      if (!runnerGlb.runs[path]) {
+      if (!bundler.runs[path]) {
         resolve(true);
       } else {
-        runnerGlb.runs[path].onExit(() => resolve(true));
-        runnerGlb.runs[path].kill();
-        delete runnerGlb.runs[path];
+        bundler.runs[path].onExit(() => resolve(true));
+        bundler.runs[path].kill();
+        delete bundler.runs[path];
       }
     });
   },
@@ -54,22 +54,22 @@ export const runner = {
         }
       }
 
-      runnerGlb.runs[path] = spawn(path, args || [], {
+      bundler.runs[path] = spawn(path, args || [], {
         cwd,
         ipc: isCommand ? false : true,
       });
-      runnerGlb.runs[path].data = {
+      bundler.runs[path].data = {
         arg,
       };
 
-      runnerGlb.runs[path].onExit(async (e) => {
+      bundler.runs[path].onExit(async (e) => {
         if (onStop) await onStop(e);
-        delete runnerGlb.runs[path];
+        delete bundler.runs[path];
       });
 
       return await new Promise<boolean>((resolve) => {
         if (!isCommand) {
-          runnerGlb.runs[path].onMessage((e) => {
+          bundler.runs[path].onMessage((e) => {
             resolve(true);
           });
         } else {

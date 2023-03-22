@@ -16,7 +16,7 @@ export const setupWatchers = (args: string[], onExit: () => Promise<void>) => {
             // mark all file as changed, so it does not restarted.
             marker["*"] = new Set();
 
-            if (baseGlobal.app) await removeAsync(baseGlobal.app.path);
+            if (baseGlobal.app) await removeAsync(baseGlobal.app.output);
             await onExit();
             process.exit(99);
           }

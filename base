@@ -13,7 +13,7 @@ if (
 `);
 }
 
-const { spawn, spawnSync } = require("child_process");
+const { spawn, fork } = require("child_process");
 const { existsSync } = require("fs");
 const { join, delimiter, dirname } = require("path");
 
@@ -35,7 +35,9 @@ const main = async () => {
   }
 
   function exitHandler(options, exitCode) {
-    global.base.kill(1)
+    global.exiting = true;
+    global.base.kill(2);
+    global.build.kill(2);
   }
 
   //do something when app is closing
@@ -51,33 +53,34 @@ const main = async () => {
   //catches uncaught exceptions
   process.on("uncaughtException", exitHandler.bind(null, { exit: true }));
 
-  while (true) {
-    if (args.includes("devbase") || !existsSync(basePath)) {
-      const res = spawnSync(
-        process.execPath,
-        ["pkgs/base/src/builder/base.mjs", ...args],
-        {
-          stdio: "inherit",
-          env: {
-            ...process.env,
-            NODE_PATH: nodePath,
-          },
-          cwd: process.cwd(),
-        }
-      );
-
-      if (res.status === 1) {
-        break;
-      }
-    }
-
-    if (existsSync(basePath)) {
-      await runBase();
-    }
+  if (args.includes("devbase") || !existsSync(basePath)) {
+    const buildBase = () => {
+      return new Promise((resolve) => {
+        let resolved = false;
+        global.build = fork(
+          join(process.cwd(), ..."pkgs/base/src/builder/base.mjs".split("/")),
+          args,
+          {
+            cwd: process.cwd(),
+          }
+        );
+        global.build.on("message", (m) => {
+          if (!resolved) {
+            resolved = true;
+            resolve();
+          } else {
+            global.base.kill(2);
+          }
+        });
+      });
+    };
+    await buildBase();
   }
+
+  runBase();
 };
 
-const runBase = async () => {
+const runBase = () => {
   global.base = spawn(
     process.execPath,
     [
@@ -96,15 +99,18 @@ const runBase = async () => {
     }
   );
 
-  const res = await new Promise((resolve) => {
-    global.base.on("exit", resolve);
-  });
+  global.base.on("exit", (code) => {
+    if (global.exiting) return;
 
-  if (res.status === 99) nocache = true;
-  else nocache = false;
-  if (res.status === 1) {
-    process.exit(1);
-  }
+    if (code === 1 || code === 2) {
+      if (global.build) {
+        global.build.kill();
+      }
+      process.exit();
+    } else {
+      runBase(); 
+    }
+  });
 };
 
 main();
