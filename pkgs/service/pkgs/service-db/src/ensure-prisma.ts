@@ -87,10 +87,8 @@ datasource db {
         overwrite: true,
       }
     );
-
     if (
       !prismaOutputSame ||
-      !(await existsAsync(dir.root(`.output/app/${name}/node_modules/.gen`))) ||
       !(await existsAsync(dir.root(`app/${name}/node_modules/.gen`)))
     ) {
       return { generated: false, pulled: true, dburl };

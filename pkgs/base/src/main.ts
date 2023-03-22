@@ -80,6 +80,7 @@ export const baseMain = async () => {
         output: dir.root(".output/app/package.json"),
       },
     });
+
     await Promise.all(
       app.serviceNames.map(async (e) => await bundleService(e, { watch: true }))
     );
@@ -88,10 +89,11 @@ export const baseMain = async () => {
 
     if (!cacheFound) {
       console.log("");
-      await runner.run({
-        path: app.output,
-        cwd: app.cwd,
-      });
+      // await runner.run({
+      //   path: app.output,
+      //   cwd: app.cwd,
+      // });
+      setTimeout(() => {}, 9900000);
     } else {
       console.log(`\n🌟 Running ${chalk.cyan(`latest`)} app\n`);
       await runner.restart(app.output);

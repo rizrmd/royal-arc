@@ -55068,14 +55068,19 @@ ${import_chalk2.default.magenta("Installing")} deps:
                   });
                 }
               }
-              for (const [e, v] of matcher) {
-                if (e.event)
-                  e.event(err2, v);
-              }
+            }
+            for (const [e, v] of matcher) {
+              if (e.event)
+                e.event(err2, v);
             }
           },
           {
-            ignore: ["node_modules", ".output"]
+            ignore: [
+              "**/app/gen/**",
+              "**/.**",
+              "**/node_modules/**",
+              "**/.output/**"
+            ]
           }
         );
       }
@@ -55734,7 +55739,7 @@ datasource db {
           overwrite: true
         }
       );
-      if (!prismaOutputSame || !await (0, import_fs_jetpack6.existsAsync)(dir.root(`.output/app/${name}/node_modules/.gen`)) || !await (0, import_fs_jetpack6.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
+      if (!prismaOutputSame || !await (0, import_fs_jetpack6.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
         return { generated: false, pulled: true, dburl };
       }
     }
@@ -58412,10 +58417,8 @@ If somehow upgrade failed you can rollback using
       versionCheck({ timeout: 3e3 });
       if (!cacheFound) {
         console.log("");
-        yield runner.run({
-          path: app.output,
-          cwd: app.cwd
-        });
+        setTimeout(() => {
+        }, 99e5);
       } else {
         console.log(`
 \u{1F31F} Running ${source_default.cyan(`latest`)} app

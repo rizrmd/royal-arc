@@ -50,14 +50,27 @@ export const watcher = {
                 });
               }
             }
+          }
 
-            for (const [e, v] of matcher) {
-              if (e.event) e.event(err, v);
-            }
+          // console.log(
+          //   changes.map((e) => [
+          //     e.type,
+          //     e.path.substring(dir.root().length + 1),
+          //   ]),
+          //   matcher.size
+          // );
+
+          for (const [e, v] of matcher) {
+            if (e.event) e.event(err, v);
           }
         },
-        {  
-          ignore: ["node_modules", ".output"],
+        {
+          ignore: [
+            "**/app/gen/**",
+            "**/.**",
+            "**/node_modules/**",
+            "**/.output/**",
+          ],
         }
       );
     }
