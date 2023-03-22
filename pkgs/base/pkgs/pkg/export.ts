@@ -139,25 +139,8 @@ export const pkg = {
           });
         }
 
-        const allDirs = (
-          await Promise.all(
-            dirs.map(async (e) => {
-              const ex = await existsAsync(join(dirname(e), "node_modules"));
-
-              try {
-                const json = await readAsync(e, "json");
-                if (!json.dependencies && !json.devDependencies) {
-                  return false;
-                }
-
-                return e;
-              } catch (e) {}
-            })
-          )
-        ).filter((e) => e) as string[];
-
         const mustInstall = [];
-        for (const p of allDirs) {
+        for (const p of dirs) {
           if (await shouldInstall(p, silent)) {
             mustInstall.push(p);
             install = true;

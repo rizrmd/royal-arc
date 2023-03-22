@@ -54741,21 +54741,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
               return true;
             });
           }
-          const allDirs = (await Promise.all(
-            dirs.map(async (e) => {
-              const ex = await (0, import_fs_jetpack2.existsAsync)((0, import_path3.join)((0, import_path3.dirname)(e), "node_modules"));
-              try {
-                const json = await (0, import_fs_jetpack2.readAsync)(e, "json");
-                if (!json.dependencies && !json.devDependencies) {
-                  return false;
-                }
-                return e;
-              } catch (e2) {
-              }
-            })
-          )).filter((e) => e);
           const mustInstall2 = [];
-          for (const p of allDirs) {
+          for (const p of dirs) {
             if (await shouldInstall(p, silent)) {
               mustInstall2.push(p);
               install = true;
