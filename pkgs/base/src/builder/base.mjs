@@ -6,7 +6,7 @@ import { join } from "path";
   const base = join(process.cwd(), "pkgs", "base");
   try {
     const pkg = JSON.parse(await readFile(join(base, "package.json"), "utf-8"));
-    let built = false;
+
     const c = await context({
       entryPoints: [join(base, "src", "main.ts")],
       outfile: join(base, "main.js"),

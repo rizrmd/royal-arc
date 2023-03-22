@@ -5,16 +5,13 @@ import { basename } from "path";
 import { pkg } from "pkg";
 import { baseGlobal } from "../action";
 import { watchService } from "../watcher/watch-service";
-import { prepareDB } from "./service/db";
-import { prepareSrv } from "./service/srv";
-import { prepareWeb } from "./service/web";
+import { prepareBuild } from "./service/prepare";
 
 export const marker = {} as Record<string, "skip" | Set<string>>;
- 
+
 export const bundleService = async (name: string, arg: { watch: boolean }) => {
   const tstart = performance.now();
 
-  await prepareBuild(name);
   let shouldRestart = false;
 
   await bundle({
@@ -92,11 +89,4 @@ export const bundleService = async (name: string, arg: { watch: boolean }) => {
       }
     }
   });
-};
-
-const prepareBuild = async (name: string, mark?: Set<string> | undefined) => {
-  if (name.startsWith("db")) return await prepareDB(name, mark);
-  if (name.startsWith("srv")) return await prepareSrv(name, mark);
-  if (name.startsWith("web")) return await prepareWeb(name, mark);
-  return { shouldRestart: false };
 };

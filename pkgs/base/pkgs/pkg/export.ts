@@ -1,10 +1,10 @@
 import { spawn, spawnSync } from "child_process";
 import chalk from "chalk";
 import fs from "fs";
-import path, { dirname } from "path";
+import path, { basename, dirname, join } from "path";
 import { shouldInstall } from "./src/should-install";
 import { dir } from "dir";
-import { readAsync } from "fs-jetpack";
+import { existsAsync, readAsync } from "fs-jetpack";
 
 const g = globalThis as unknown as {
   pkgRunning: Set<Promise<void>>;
@@ -109,7 +109,7 @@ export const pkg = {
       silent?: boolean;
       onInstall?: () => any;
       onInstallDone?: () => any;
-      deep?: boolean;
+      deep?: boolean | { exclude: string[] };
     }
   ) {
     const _arg = arg ? arg : { cwd: undefined, silent: false };
@@ -122,33 +122,56 @@ export const pkg = {
     const prom = new Promise<void>(async (resolve) => {
       let install = false;
 
-      if (arg?.deep) {
-        const dirs = await scanDir([path]);
-        const templateDir = dir.root("pkgs/template");
-        for (const e of dirs) {
-          if (!e.startsWith(templateDir)) {
-            if (await shouldInstall(e)) {
-              install = true;
-              break;
+      let mustInstall = [path];
+      if (arg && arg.deep) {
+        let dirs = await scanDir([path]);
+        if (typeof arg.deep === "object") {
+          dirs = dirs.filter((d) => {
+            if (typeof arg.deep === "object") {
+              for (const e of arg.deep.exclude) {
+                if (d.startsWith(e)) {
+                  return false;
+                }
+              }
             }
-          }
+            return true;
+          });
         }
+
+        mustInstall = (
+          await Promise.all(
+            dirs.map(async (e) => {
+              const ex = await existsAsync(join(dirname(e), "node_modules"));
+              if (!ex) {
+                const json = await readAsync(e, "json");
+                if (!json.dependencies && !json.devDependencies) {
+                  return false;
+                }
+
+                return dirname(e);
+              }
+            })
+          )
+        ).filter((e) => e) as string[];
+
+        install = mustInstall.length > 0;
       } else {
         install = await shouldInstall(path, silent);
       }
-
       if (install) {
         if (arg?.onInstall) await arg.onInstall();
-        if (!silent)
+        if (!silent) {
           console.log(
             `\n${chalk.magenta("Installing")} deps:\n ${chalk.blue("➥")}`,
-            [path]
-              .map((e) =>
-                chalk.green(dirname(e.substring(process.cwd().length + 1)))
-              )
+            mustInstall
+              .map((e) => {
+                if (e.startsWith(dir.root()))
+                  return chalk.green(e.substring(dir.root().length + 1));
+                if (e === dir.root()) return chalk.green(e);
+              })
               .join(" ")
           );
-
+        }
         const child = spawn("pnpm", ["i"], {
           stdio: silent ? "ignore" : "inherit",
           cwd: _arg.cwd || process.cwd(),

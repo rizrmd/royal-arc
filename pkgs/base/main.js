@@ -2391,7 +2391,7 @@
         }
         return false;
       };
-      var existsAsync9 = (path2) => {
+      var existsAsync10 = (path2) => {
         return new Promise((resolve, reject) => {
           fs2.stat(path2).then((stat5) => {
             if (stat5.isDirectory()) {
@@ -2412,7 +2412,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = existsSync5;
-      exports2.async = existsAsync9;
+      exports2.async = existsAsync10;
     }
   });
 
@@ -19349,8 +19349,8 @@
           var isPathName = /[\\]/.test(s);
           if (isPathName) {
             var dirname8 = '"' + path2.dirname(s) + '"';
-            var basename5 = '"' + path2.basename(s) + '"';
-            return dirname8 + ":" + basename5;
+            var basename6 = '"' + path2.basename(s) + '"';
+            return dirname8 + ":" + basename6;
           }
           return '"' + s + '"';
         };
@@ -54722,32 +54722,53 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       }
       const prom = new Promise(async (resolve) => {
         let install = false;
-        if (arg?.deep) {
-          const dirs = await scanDir([path2]);
-          const templateDir = dir.root("pkgs/template");
-          for (const e of dirs) {
-            if (!e.startsWith(templateDir)) {
-              if (await shouldInstall(e)) {
-                install = true;
-                break;
+        let mustInstall = [path2];
+        if (arg && arg.deep) {
+          let dirs = await scanDir([path2]);
+          if (typeof arg.deep === "object") {
+            dirs = dirs.filter((d) => {
+              if (typeof arg.deep === "object") {
+                for (const e of arg.deep.exclude) {
+                  if (d.startsWith(e)) {
+                    return false;
+                  }
+                }
               }
-            }
+              return true;
+            });
           }
+          mustInstall = (await Promise.all(
+            dirs.map(async (e) => {
+              const ex = await (0, import_fs_jetpack2.existsAsync)((0, import_path3.join)((0, import_path3.dirname)(e), "node_modules"));
+              if (!ex) {
+                const json = await (0, import_fs_jetpack2.readAsync)(e, "json");
+                if (!json.dependencies && !json.devDependencies) {
+                  return false;
+                }
+                return (0, import_path3.dirname)(e);
+              }
+            })
+          )).filter((e) => e);
+          install = mustInstall.length > 0;
         } else {
           install = await shouldInstall(path2, silent);
         }
         if (install) {
           if (arg?.onInstall)
             await arg.onInstall();
-          if (!silent)
+          if (!silent) {
             console.log(
               `
 ${import_chalk2.default.magenta("Installing")} deps:
  ${import_chalk2.default.blue("\u27A5")}`,
-              [path2].map(
-                (e) => import_chalk2.default.green((0, import_path3.dirname)(e.substring(process.cwd().length + 1)))
-              ).join(" ")
+              mustInstall.map((e) => {
+                if (e.startsWith(dir.root()))
+                  return import_chalk2.default.green(e.substring(dir.root().length + 1));
+                if (e === dir.root())
+                  return import_chalk2.default.green(e);
+              }).join(" ")
             );
+          }
           const child = (0, import_child_process.spawn)("pnpm", ["i"], {
             stdio: silent ? "ignore" : "inherit",
             cwd: _arg.cwd || process.cwd(),
@@ -54912,7 +54933,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
       stdio: "inherit"
     }) : (0, import_child_process2.spawn)(file, args2, {
       cwd: opt?.cwd,
-      stdio: "pipe",
+      stdio: opt?.silent === true ? "ignore" : "inherit",
       shell: true
     });
     const callback = {
@@ -54921,18 +54942,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
       onExit: (e) => {
       }
     };
-    if (opt?.ipc) {
-      proc.on("message", async (e) => {
-        callback.onMessage(e);
-      });
-    }
-    proc.on("exit", async (code, signal) => {
-      callback.onExit({
-        exitCode: code || 0,
-        signal
-      });
-    });
-    return {
+    const result = {
       data: {},
       markedRunning: false,
       onMessage: (fn) => {
@@ -54958,6 +54968,28 @@ ${import_chalk2.default.magenta("Installing")} deps:
         });
       }
     };
+    return new Promise((resolve) => {
+      if (opt?.ipc) {
+        proc.on("message", async (e) => {
+          callback.onMessage(e);
+        });
+        proc.on("exit", async (code, signal) => {
+          callback.onExit({
+            exitCode: code || 0,
+            signal
+          });
+        });
+        resolve(result);
+      } else {
+        proc.on("exit", async (code, signal) => {
+          callback.onExit({
+            exitCode: code || 0,
+            signal
+          });
+          resolve(result);
+        });
+      }
+    });
   };
 
   // pkgs/base/pkgs/bundler/runner.ts
@@ -55000,9 +55032,10 @@ ${import_chalk2.default.magenta("Installing")} deps:
             isCommand = true;
           }
         }
-        bundler.runs[path2] = spawn2(path2, args2 || [], {
+        bundler.runs[path2] = await spawn2(path2, args2 || [], {
           cwd: cwd2,
-          ipc: isCommand ? false : true
+          ipc: isCommand ? false : true,
+          silent: arg.silent
         });
         bundler.runs[path2].data = {
           arg
@@ -55078,7 +55111,6 @@ ${import_chalk2.default.magenta("Installing")} deps:
             ignore: [
               "**/app/gen/**",
               "**/.**",
-              "**/node_modules/**",
               "**/.output/**"
             ]
           }
@@ -55613,7 +55645,6 @@ Make sure to kill running instance before starting.
   var watchService = (name, event) => {
     watcher.watch({
       dir: dir.root(`app/${name}`),
-      ignore: ["node_modules"],
       event
     });
   };
@@ -55755,7 +55786,8 @@ datasource db {
         yield runner.run({
           path: "pnpm",
           args: ["prisma", "generate"],
-          cwd: dir.root(`app/${name}`)
+          cwd: dir.root(`app/${name}`),
+          silent: true
         });
         yield (0, import_fs_jetpack7.removeAsync)(`.output/app/${name}/node_modules/.gen`);
       }
@@ -57436,11 +57468,21 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
     }
   });
 
+  // pkgs/base/src/builder/service/prepare.ts
+  var prepareBuild = (name, mark) => __async(void 0, null, function* () {
+    if (name.startsWith("db"))
+      return yield prepareDB(name, mark);
+    if (name.startsWith("srv"))
+      return yield prepareSrv(name, mark);
+    if (name.startsWith("web"))
+      return yield prepareWeb(name, mark);
+    return { shouldRestart: false };
+  });
+
   // pkgs/base/src/builder/service.ts
   var marker = {};
   var bundleService = (name, arg) => __async(void 0, null, function* () {
     const tstart = performance.now();
-    yield prepareBuild(name);
     let shouldRestart = false;
     yield bundle({
       input: dir.root(`app/${name}/main.ts`),
@@ -57513,15 +57555,6 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
         }
       }
     }));
-  });
-  var prepareBuild = (name, mark) => __async(void 0, null, function* () {
-    if (name.startsWith("db"))
-      return yield prepareDB(name, mark);
-    if (name.startsWith("srv"))
-      return yield prepareSrv(name, mark);
-    if (name.startsWith("web"))
-      return yield prepareWeb(name, mark);
-    return { shouldRestart: false };
   });
 
   // pkgs/base/src/action.ts
@@ -58369,6 +58402,9 @@ If somehow upgrade failed you can rollback using
     process.removeAllListeners("warning");
     attachCleanUp();
     vscodeSettings();
+    yield pkg.install(dir.root(), {
+      deep: { exclude: [dir.root(".output"), dir.root("pkgs/template")] }
+    });
     if (yield commitHook(args))
       return;
     if (yield upgradeHook(args))
@@ -58400,7 +58436,6 @@ If somehow upgrade failed you can rollback using
       });
       setupWatchers(args, onExit);
       baseGlobal.app = app;
-      let cacheFound = false;
       yield bundle({
         input: app.input,
         output: app.output,
@@ -58409,22 +58444,20 @@ If somehow upgrade failed you can rollback using
           output: dir.root(".output/app/package.json")
         }
       });
+      yield Promise.all(app.serviceNames.map((e) => __async(void 0, null, function* () {
+        return yield prepareBuild(e);
+      })));
       yield Promise.all(
         app.serviceNames.map((e) => __async(void 0, null, function* () {
           return yield bundleService(e, { watch: true });
         }))
       );
       versionCheck({ timeout: 3e3 });
-      if (!cacheFound) {
-        console.log("");
-        setTimeout(() => {
-        }, 99e5);
-      } else {
-        console.log(`
-\u{1F31F} Running ${source_default.cyan(`latest`)} app
-`);
-        yield runner.restart(app.output);
-      }
+      if (process.send)
+        process.send("base-ready");
+      console.log("");
+      setTimeout(() => {
+      }, 99e5);
     }
   });
   baseMain();

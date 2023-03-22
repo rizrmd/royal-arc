@@ -14,6 +14,7 @@ export const prepareDB = async (name: string, changes?: Set<string>) => {
         path: "pnpm",
         args: ["prisma", "generate"],
         cwd: dir.root(`app/${name}`),
+        silent: true,
       });
 
       // di delete biar digenerate sama runtime, supaya pake yg paling baru

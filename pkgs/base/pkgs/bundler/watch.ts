@@ -28,6 +28,7 @@ export const watcher = {
       this._watcher = await subscribe(
         dir.root(),
         (err, changes) => {
+
           const keys = Object.keys(this._watches);
           const matcher = new Map<SingleWatch, ParcelWatcher.Event[]>();
           for (const c of changes) {
@@ -68,7 +69,6 @@ export const watcher = {
           ignore: [
             "**/app/gen/**",
             "**/.**",
-            "**/node_modules/**",
             "**/.output/**",
           ],
         }

@@ -19,12 +19,8 @@ const { join, delimiter, dirname } = require("path");
 
 const basePath = join(process.cwd(), ..."pkgs/base/main.js".split("/"));
 const args = process.argv.slice(2);
-const nodePath = [
-  join(process.cwd(), "pkgs", "base", "node_modules"),
-  join(process.cwd(), "pkgs", "base", "pkgs", "bundler", "node_modules"),
-].join(delimiter);
 
-let nocache = false;
+let baseReady = false;
 
 const main = async () => {
   if (!existsSync(join(process.cwd(), "node_modules"))) {
@@ -68,7 +64,7 @@ const main = async () => {
           if (!resolved) {
             resolved = true;
             resolve();
-          } else {
+          } else if (baseReady) {
             global.base.kill(2);
           }
         });
@@ -81,23 +77,16 @@ const main = async () => {
 };
 
 const runBase = () => {
-  global.base = spawn(
-    process.execPath,
-    [
-      "--enable-source-maps",
-      basePath,
-      ...args,
-      nocache ? "nocache" : "",
-    ].filter((e) => e),
-    {
-      env: {
-        ...process.env,
-        NODE_PATH: join(dirname(basePath), "node_modules"),
-      },
-      cwd: process.cwd(),
-      stdio: "inherit",
-    }
-  );
+  global.base = fork(basePath, args, {
+    env: {
+      ...process.env,
+      NODE_PATH: join(dirname(basePath), "node_modules"),
+    },
+    cwd: process.cwd(),
+  });
+
+  global.base.on("message", (e) => {
+  });
 
   global.base.on("exit", (code) => {
     if (global.exiting) return;
@@ -108,7 +97,7 @@ const runBase = () => {
       }
       process.exit();
     } else {
-      runBase(); 
+      runBase();
     }
   });
 };

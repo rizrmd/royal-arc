@@ -1,12 +1,12 @@
 import { bundler } from "bundler/global";
 import { fork, spawn as nativeSpawn } from "child_process";
 
-export type IPty = ReturnType<typeof spawn>;
+export type IPty = Awaited<ReturnType<typeof spawn>>;
 
 export const spawn = (
   file: string,
   args: string[],
-  opt?: { cwd?: string; ipc?: boolean }
+  opt?: { cwd?: string; ipc?: boolean; silent?: boolean }
 ) => {
   let proc = opt?.ipc
     ? fork(file, args, {
@@ -15,7 +15,7 @@ export const spawn = (
       })
     : nativeSpawn(file, args, {
         cwd: opt?.cwd,
-        stdio: "pipe",
+        stdio: opt?.silent === true ? "ignore" : "inherit",
         shell: true,
       });
 
@@ -24,20 +24,7 @@ export const spawn = (
     onExit: (e: { exitCode: number; signal: NodeJS.Signals | null }) => {},
   };
 
-  if (opt?.ipc) {
-    proc.on("message", async (e) => {
-      callback.onMessage(e);
-    });
-  }
-
-  proc.on("exit", async (code, signal) => {
-    callback.onExit({
-      exitCode: code || 0,
-      signal: signal,
-    });
-  });
-
-  return {
+  const result = {
     data: {} as any,
     markedRunning: false,
     onMessage: (fn: (e: string) => any) => {
@@ -65,6 +52,30 @@ export const spawn = (
       });
     },
   };
+
+  return new Promise<typeof result>((resolve) => {
+    if (opt?.ipc) {
+      proc.on("message", async (e) => {
+        callback.onMessage(e);
+      });
+
+      proc.on("exit", async (code, signal) => {
+        callback.onExit({
+          exitCode: code || 0,
+          signal: signal,
+        });
+      });
+      resolve(result);
+    } else {
+      proc.on("exit", async (code, signal) => {
+        callback.onExit({
+          exitCode: code || 0,
+          signal: signal,
+        });
+        resolve(result);
+      });
+    }
+  });
 };
 
 export const attachSpawnCleanup = () => {

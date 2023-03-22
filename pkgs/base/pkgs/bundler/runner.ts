@@ -42,6 +42,7 @@ export const runner = {
     }) => unknown;
     onPrint?: (stdout: string) => any;
     cwd: string;
+    silent?: boolean;
   }) {
     try {
       const { path, args, cwd, onStop } = arg;
@@ -54,9 +55,10 @@ export const runner = {
         }
       }
 
-      bundler.runs[path] = spawn(path, args || [], {
+      bundler.runs[path] = await spawn(path, args || [], {
         cwd,
         ipc: isCommand ? false : true,
+        silent: arg.silent,
       });
       bundler.runs[path].data = {
         arg,

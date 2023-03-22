@@ -6,11 +6,12 @@ import { dir } from "dir";
 import { existsAsync, removeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { dirname, join } from "path";
-import { scanDir } from "pkg";
+import { pkg, scanDir } from "pkg";
 import { connectRPC, createRPC } from "rpc";
 import { action as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
 import { bundleService } from "./builder/service";
+import { prepareBuild } from "./builder/service/prepare";
 import { attachCleanUp } from "./cleanup";
 import { commitHook } from "./commit-hook";
 import { prepareApp } from "./scaffold/app";
@@ -25,6 +26,10 @@ export const baseMain = async () => {
   process.removeAllListeners("warning");
   attachCleanUp();
   vscodeSettings();
+
+  await pkg.install(dir.root(), {
+    deep: { exclude: [dir.root(".output"), dir.root("pkgs/template")] },
+  });
 
   if (await commitHook(args)) return;
   if (await upgradeHook(args)) return;
@@ -67,11 +72,6 @@ export const baseMain = async () => {
 
     baseGlobal.app = app;
 
-    let cacheFound = false;
-    // if (await runCached()) {
-    //   cacheFound = true;
-    // }
-
     await bundle({
       input: app.input,
       output: app.output,
@@ -81,37 +81,22 @@ export const baseMain = async () => {
       },
     });
 
+    await Promise.all(app.serviceNames.map(async (e) => await prepareBuild(e)));
     await Promise.all(
       app.serviceNames.map(async (e) => await bundleService(e, { watch: true }))
     );
 
     versionCheck({ timeout: 3000 });
 
-    if (!cacheFound) {
-      console.log("");
-      // await runner.run({
-      //   path: app.output,
-      //   cwd: app.cwd,
-      // });
-      setTimeout(() => {}, 9900000);
-    } else {
-      console.log(`\n🌟 Running ${chalk.cyan(`latest`)} app\n`);
-      await runner.restart(app.output);
-    }
-  }
-};
+    if (process.send) process.send("base-ready");
 
-const runCached = async () => {
-  const app = baseGlobal.app;
-  if ((await existsAsync(app.output)) && !args.includes("nocache")) {
-    console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
-    await runner.run({
-      path: app.output,
-      cwd: app.cwd,
-    });
-    return true;
+    console.log("");
+    // await runner.run({
+    //   path: app.output,
+    //   cwd: app.cwd,
+    // });
+    setTimeout(() => {}, 9900000);
   }
-  return false;
 };
 
 baseMain();
