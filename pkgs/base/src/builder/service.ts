@@ -7,7 +7,7 @@ import { prepareSrv } from "./service/srv";
 import { prepareWeb } from "./service/web";
 
 export const marker = {} as Record<string, "skip" | Set<string>>;
- 
+
 export const bundleService = async (name: string, arg: { watch: boolean }) => {
   const tstart = performance.now();
 
@@ -22,8 +22,8 @@ export const bundleService = async (name: string, arg: { watch: boolean }) => {
       output: dir.root(`.output/app/${name}/package.json`),
     },
     watch: arg.watch
-      ? async ({ isRebuild, installDeps }) => {
-          if (installDeps || marker["*"]) return;
+      ? async ({ isRebuild }) => {
+          if (marker["*"]) return;
 
           if (isRebuild && runner.list[baseGlobal.app.output]) {
             const mark = marker[name];

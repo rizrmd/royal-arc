@@ -54,6 +54,7 @@ export const pkg = {
     name: string;
     version: string;
     external?: string[];
+    dependencies?: Record<string, string>;
   }) {
     const dependencies: Record<string, string> = {};
 
@@ -61,6 +62,20 @@ export const pkg = {
       for (const f of pkg.external) {
         const v = await getModuleVersion(f);
         if (v) dependencies[f] = v;
+
+        if (f === "*" && pkg.dependencies) {
+          for (const [k, v] of Object.entries(pkg.dependencies)) {
+            if (!v.startsWith("workspace:")) {
+              dependencies[k] = v;
+            }
+          }
+        }
+      }
+    } else if (pkg.dependencies) {
+      for (const [k, v] of Object.entries(pkg.dependencies)) {
+        if (!v.startsWith("workspace:")) {
+          dependencies[k] = v;
+        }
       }
     }
 

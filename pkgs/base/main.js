@@ -54679,6 +54679,19 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           const v = await getModuleVersion(f);
           if (v)
             dependencies[f] = v;
+          if (f === "*" && pkg2.dependencies) {
+            for (const [k, v2] of Object.entries(pkg2.dependencies)) {
+              if (!v2.startsWith("workspace:")) {
+                dependencies[k] = v2;
+              }
+            }
+          }
+        }
+      } else if (pkg2.dependencies) {
+        for (const [k, v] of Object.entries(pkg2.dependencies)) {
+          if (!v.startsWith("workspace:")) {
+            dependencies[k] = v;
+          }
         }
       }
       return { name: pkg2.name, version: pkg2.version, dependencies };
@@ -54792,6 +54805,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
           }
         }
         const external = ["esbuild", ...Object.keys(externalJson.dependencies)];
+        let isRebuild = false;
         const c = await (0, import_esbuild.context)({
           entryPoints: [input],
           outfile: output,
@@ -54815,12 +54829,18 @@ ${import_chalk2.default.magenta("Installing")} deps:
             {
               name: "root",
               setup(build) {
-                build.onEnd(() => {
+                build.onEnd(async () => {
                   const t1 = performance.now();
+                  if (watch) {
+                    await watch({ isRebuild });
+                  }
                   console.log(
                     `${(0, import_lodash.default)(tag, 30, " ")} ${formatDuration(t1 - t0)}`
                   );
-                  resolve(true);
+                  if (!isRebuild) {
+                    isRebuild = true;
+                    resolve(true);
+                  }
                 });
               }
             }
@@ -57349,8 +57369,8 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
         input: dir.root(`app/${name}/package.json`),
         output: dir.root(`.output/app/${name}/package.json`)
       },
-      watch: arg.watch ? (_0) => __async(void 0, [_0], function* ({ isRebuild, installDeps }) {
-        if (installDeps || marker["*"])
+      watch: arg.watch ? (_0) => __async(void 0, [_0], function* ({ isRebuild }) {
+        if (marker["*"])
           return;
         if (isRebuild && runner.list[baseGlobal.app.output]) {
           const mark = marker[name];

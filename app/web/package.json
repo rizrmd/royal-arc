@@ -18,12 +18,6 @@
   "external": [
     "hyper-express",
     "live-directory",
-    "react",
-    "react-dom",
-    "@types/react",
-    "@types/react-dom",
-    "@fluentui/react-components",
-    "@fluentui/react-icons",
-    "scheduler"
+    "*"
   ]
 }

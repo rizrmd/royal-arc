@@ -15,7 +15,7 @@ export const bundle = async (arg: {
   output: string;
   pkgjson?: { input: string; output?: string };
   tstart?: number;
-  watch?: (arg: { isRebuild: boolean; installDeps: boolean }) => Promise<void>;
+  watch?: (arg: { isRebuild: boolean }) => Promise<void>;
 }): Promise<boolean> => {
   const { input, output, watch, pkgjson, tstart } = arg;
 
@@ -41,6 +41,7 @@ export const bundle = async (arg: {
       }
       const external = ["esbuild", ...Object.keys(externalJson.dependencies)];
 
+      let isRebuild = false;
       const c = await context({
         entryPoints: [input],
         outfile: output,
@@ -64,12 +65,20 @@ export const bundle = async (arg: {
           {
             name: "root",
             setup(build) {
-              build.onEnd(() => {
+              build.onEnd(async () => {
                 const t1 = performance.now();
+
+                if (watch) {
+                  await watch({ isRebuild });
+                }
+
                 console.log(
                   `${padEnd(tag, 30, " ")} ${formatDuration(t1 - t0)}`
                 );
-                resolve(true);
+                if (!isRebuild) {
+                  isRebuild = true;
+                  resolve(true);
+                }
               });
             },
           },
