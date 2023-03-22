@@ -14,6 +14,7 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
 
   createService(name, async ({ markAsRunning }) => {
     try {
+      //@ts-ignore
       const PRISMA = await import("../../../../../app/db/node_modules/.gen");
 
       const prisma = (await import(
@@ -65,6 +66,7 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
           path: "pnpm",
           args: ["prisma", "generate"],
           cwd: dir.path(name),
+          silent: true,
         });
       }
     }

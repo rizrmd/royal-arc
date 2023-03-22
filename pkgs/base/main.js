@@ -58456,8 +58456,10 @@ If somehow upgrade failed you can rollback using
       if (process.send)
         process.send("base-ready");
       console.log("");
-      setTimeout(() => {
-      }, 99e5);
+      yield runner.run({
+        path: app.output,
+        cwd: app.cwd
+      });
     }
   });
   baseMain();

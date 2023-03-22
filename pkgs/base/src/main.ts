@@ -91,11 +91,10 @@ export const baseMain = async () => {
     if (process.send) process.send("base-ready");
 
     console.log("");
-    // await runner.run({
-    //   path: app.output,
-    //   cwd: app.cwd,
-    // });
-    setTimeout(() => {}, 9900000);
+    await runner.run({
+      path: app.output,
+      cwd: app.cwd,
+    });
   }
 };
 
