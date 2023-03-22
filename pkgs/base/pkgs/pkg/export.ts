@@ -4,40 +4,63 @@ import fs from "fs";
 import path, { dirname } from "path";
 import { shouldInstall } from "./src/should-install";
 import { dir } from "dir";
+import { readAsync } from "fs-jetpack";
 
 const g = globalThis as unknown as {
   pkgRunning: Set<Promise<void>>;
+  allPkgs: Record<
+    string,
+    {
+      dependencies: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    }
+  >;
 };
 
 if (!g.pkgRunning) {
   g.pkgRunning = new Set();
 }
 
-const getModuleVersion = (name: string) => {
-  const res = spawnSync("pnpm", ["why", "-r", name], {
-    cwd: dir.root(""),
-    env: process.env,
-    shell: true
-  });
-  if (res) {
-    const out = res.output.filter((e) => !!e);
-    try {
-      return out.toString().split(`${name} `)[1].split("\n")[0].split(" ")[0];
-    } catch (e) {
-      return "";
+const getModuleVersion = async (name: string) => {
+  if (!g.allPkgs) {
+    g.allPkgs = {};
+    const dirs = await scanDir([dir.root()]);
+    await Promise.all(
+      dirs.map(async (e) => {
+        try {
+          const res = await readAsync(e, "json");
+          g.allPkgs[e] = res;
+        } catch (e) {}
+      })
+    );
+  }
+
+  for (const pkg of Object.values(g.allPkgs)) {
+    if (pkg.dependencies) {
+      for (const [k, v] of Object.entries(pkg.dependencies)) {
+        if (k === name) return v;
+      }
+    }
+    if (pkg.devDependencies) {
+      for (const [k, v] of Object.entries(pkg.devDependencies)) {
+        if (k === name) return v;
+      }
     }
   }
 };
 
 export const pkg = {
-  extractExternal(pkg: { name: string; version: string; external?: string[] }) {
+  async extractExternal(pkg: {
+    name: string;
+    version: string;
+    external?: string[];
+  }) {
     const dependencies: Record<string, string> = {};
 
     if (pkg.external) {
       for (const f of pkg.external) {
-        const v = getModuleVersion(f)
-        if (v)
-          dependencies[f] = v;
+        const v = await getModuleVersion(f);
+        if (v) dependencies[f] = v;
       }
     }
 
@@ -93,7 +116,7 @@ export const pkg = {
         const child = spawn("pnpm", ["i"], {
           stdio: silent ? "ignore" : "inherit",
           cwd: _arg.cwd || process.cwd(),
-          shell: true
+          shell: true,
         });
         child.on("exit", () => {
           g.pkgRunning.delete(prom);

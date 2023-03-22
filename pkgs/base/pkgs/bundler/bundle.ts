@@ -14,11 +14,12 @@ export const bundle = async (arg: {
   input: string;
   output: string;
   pkgjson?: { input: string; output?: string };
+  tstart?: number;
   watch?: (arg: { isRebuild: boolean; installDeps: boolean }) => Promise<void>;
 }): Promise<boolean> => {
-  const { input, output, watch, pkgjson } = arg;
+  const { input, output, watch, pkgjson, tstart } = arg;
 
-  const t0 = performance.now();
+  const t0 = tstart || performance.now();
   if (!bundler.bundlers) {
     bundler.bundlers = new Set();
   }
@@ -34,10 +35,11 @@ export const bundle = async (arg: {
       if (pkgjson) {
         let json = await readAsync(pkgjson.input, "json");
         if (pkgjson.output) {
-          externalJson = pkg.extractExternal(json);
+          externalJson = await pkg.extractExternal(json);
           await writeAsync(pkgjson.output, externalJson);
         }
       }
+      const external = ["esbuild", ...Object.keys(externalJson.dependencies)];
 
       const c = await context({
         entryPoints: [input],
@@ -45,14 +47,28 @@ export const bundle = async (arg: {
         bundle: true,
         sourcemap: true,
         platform: "node",
-        external: ["esbuild", ...Object.keys(externalJson.dependencies)],
+        external,
+        loader: {
+          ".css": "text",
+          ".png": "dataurl",
+          ".webp": "dataurl",
+          ".avif": "dataurl",
+          ".mp4": "dataurl",
+          ".jpg": "dataurl",
+          ".jpeg": "dataurl",
+          ".gif": "dataurl",
+          ".svg": "dataurl",
+          ".node": "dataurl",
+        },
         plugins: [
           {
             name: "root",
             setup(build) {
               build.onEnd(() => {
                 const t1 = performance.now();
-                console.log(`${tag} ${formatDuration(t1 - t0)}`);
+                console.log(
+                  `${padEnd(tag, 30, " ")} ${formatDuration(t1 - t0)}`
+                );
                 resolve(true);
               });
             },

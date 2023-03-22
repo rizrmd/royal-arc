@@ -1,3 +1,4 @@
+import { bundle } from "bundler";
 import { runner } from "bundler/runner";
 import { watcher } from "bundler/watch";
 import chalk from "chalk";
@@ -5,26 +6,25 @@ import { dir } from "dir";
 import { existsAsync, removeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { dirname, join } from "path";
-import { pkg, scanDir } from "pkg";
+import { scanDir } from "pkg";
 import { connectRPC, createRPC } from "rpc";
 import { action as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
-import { prepareApp } from "./scaffold/app";
 import { bundleService } from "./builder/service";
 import { attachCleanUp } from "./clean-up";
 import { commitHook } from "./commit-hook";
+import { prepareApp } from "./scaffold/app";
 import { upgradeHook } from "./upgrade";
 import { versionCheck } from "./version-check";
 import { vscodeSettings } from "./vscode";
 import { setupWatchers } from "./watcher/all";
-import { bundle } from "bundler";
+
+const args = process.argv.slice(2);
 
 export const baseMain = async () => {
   process.removeAllListeners("warning");
   attachCleanUp();
   vscodeSettings();
-
-  const args = process.argv.slice(2);
 
   if (await commitHook(args)) return;
   if (await upgradeHook(args)) return;
@@ -51,10 +51,11 @@ export const baseMain = async () => {
   } else {
     await createRPC("base", action, { isMain: true });
 
-    const rootRPC = await connectRPC<typeof RootAction>("root", {
-      waitConnection: false,
-    });
-    baseGlobal.rootRPC = rootRPC;
+    baseGlobal.rpc = {
+      service: await connectRPC<typeof RootAction>("root", {
+        waitConnection: false,
+      }),
+    };
 
     const app = await prepareApp();
 
@@ -67,27 +68,21 @@ export const baseMain = async () => {
     baseGlobal.app = app;
 
     let cacheFound = false;
-
-    // if ((await existsAsync(app.path)) && !args.includes("nocache")) {
-    //   console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
-    //   await runner.run({
-    //     path: app.path,
-    //     cwd: app.cwd,
-    //   });
+    // if (await runCached()) {
     //   cacheFound = true;
     // }
 
-    await bundle({ input: app.input, output: app.output });
-    for (const name of app.serviceNames) {
-      await bundle({
-        input: dir.root(`app/${name}/main.ts`),
-        output: dir.root(`.output/app/${name}/index.js`),
-        pkgjson: {
-          input: dir.root(`app/${name}/package.json`),
-          output: dir.root(`.output/app/${name}/package.json`),
-        },
-      });
-    }
+    await bundle({
+      input: app.input,
+      output: app.output,
+      pkgjson: {
+        input: dir.root("app/package.json"),
+        output: dir.root(".output/app/package.json"),
+      },
+    });
+    await Promise.all(
+      app.serviceNames.map(async (e) => await bundleService(e, { watch: true }))
+    );
 
     versionCheck({ timeout: 3000 });
 
@@ -102,6 +97,19 @@ export const baseMain = async () => {
       await runner.restart(app.output);
     }
   }
+};
+
+const runCached = async () => {
+  const app = baseGlobal.app;
+  if ((await existsAsync(app.output)) && !args.includes("nocache")) {
+    console.log(`\n🌟 Running ${chalk.cyan(`cached`)} app\n`);
+    await runner.run({
+      path: app.output,
+      cwd: app.cwd,
+    });
+    return true;
+  }
+  return false;
 };
 
 baseMain();
