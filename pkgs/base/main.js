@@ -57534,7 +57534,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
     })
   };
 
-  // pkgs/base/src/clean-up.ts
+  // pkgs/base/src/cleanup.ts
   var attachCleanUp = () => {
     let exiting = false;
     function exitHandler() {

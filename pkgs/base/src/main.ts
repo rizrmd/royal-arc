@@ -11,7 +11,7 @@ import { connectRPC, createRPC } from "rpc";
 import { action as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
 import { bundleService } from "./builder/service";
-import { attachCleanUp } from "./clean-up";
+import { attachCleanUp } from "./cleanup";
 import { commitHook } from "./commit-hook";
 import { prepareApp } from "./scaffold/app";
 import { upgradeHook } from "./upgrade";

@@ -41,6 +41,7 @@ export const createAPIServer = ({
         )} ${running}`
       );
     } else {
+      srv.server = running;
       console.log(
         `${chalk.magenta("Started")} ${chalk.green(
           `${padEnd(srv.name, 12, " ")}`

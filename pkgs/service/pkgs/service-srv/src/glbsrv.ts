@@ -10,7 +10,7 @@ export const srv = globalize({
   name: "srv",
   value: {
     name: "" as SERVICE_NAME,
-    server: Server,
+    server: null as unknown as Server ,
     port: 0,
     serverURL: "",
     cookieKey: "",
