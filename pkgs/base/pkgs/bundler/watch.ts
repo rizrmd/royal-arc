@@ -3,33 +3,63 @@ import ParcelWatcher, {
   SubscribeCallback,
   AsyncSubscription,
 } from "@parcel/watcher";
+import { dir } from "dir";
+import { sep } from "path";
 
 type SingleWatch = {
   dir: string;
   event?: SubscribeCallback;
-  ignore?: ParcelWatcher.Options["ignore"];
+  depth?: number;
 };
 
 export const watcher = {
-  _watches: new Set<Promise<AsyncSubscription>>(),
+  _watches: {} as Record<string, Set<SingleWatch>>,
+  _watcher: null as unknown as AsyncSubscription,
   async dispose() {
-    await Promise.all(
-      [...this._watches.values()].map(async (e) => {
-        (await e).unsubscribe();
-      })
-    );
+    if (this._watcher) this._watcher.unsubscribe();
   },
-  watch(item: SingleWatch) {
-    this._watches.add(
-      subscribe(
-        item.dir,
-        async (err, changes) => {
-          if (item.event) return await item.event(err, changes);
+  async watch(item: SingleWatch) {
+    if (!this._watches[item.dir]) {
+      this._watches[item.dir] = new Set();
+    }
+    this._watches[item.dir].add(item);
+
+    if (!this._watcher) {
+      this._watcher = await subscribe(
+        dir.root(),
+        (err, changes) => {
+          const keys = Object.keys(this._watches);
+          const matcher = new Map<SingleWatch, ParcelWatcher.Event[]>();
+          for (const c of changes) {
+            const match = keys.filter((e) => c.path.startsWith(e));
+            if (match.length > 0) {
+              for (const dir of match) {
+                const depth = c.path.substring(dir.length + 1).split(sep);
+
+                const watches = this._watches[dir];
+                watches.forEach((e) => {
+                  if (e.event) {
+                    if (!e.depth || (e.depth && depth.length <= e.depth)) {
+                      if (!matcher.has(e)) matcher.set(e, [c]);
+                      else {
+                        const found = matcher.get(e);
+                        found?.push(c);
+                      }
+                    }
+                  }
+                });
+              }
+            }
+
+            for (const [e, v] of matcher) {
+              if (e.event) e.event(err, v);
+            }
+          }
         },
-        {
-          ignore: item.ignore ? item.ignore : ["node_modules", "*/**"],
+        {  
+          ignore: ["node_modules", ".output"],
         }
-      )
-    );
+      );
+    }
   },
 };

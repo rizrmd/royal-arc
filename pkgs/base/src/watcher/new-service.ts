@@ -10,6 +10,7 @@ import { serviceGen } from "../appgen/service";
 export const watchNewService = () => {
   watcher.watch({
     dir: dir.root("app"),
+    depth: 1,
     event: async (err, changes) => {
       if (!err) {
         for (const c of changes) {
