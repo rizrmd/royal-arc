@@ -5,7 +5,7 @@ import { removeAsync } from "fs-jetpack";
 import { ensurePrisma } from "../../../../../pkgs/service/pkgs/service-db";
 
 export const prepareDB = async (name: string, changes?: Set<string>) => {
-  if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
+  if (!changes) {
     const prisma = await ensurePrisma(name);
 
     if (!prisma.generated && !!prisma.dburl) {

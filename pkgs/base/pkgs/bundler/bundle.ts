@@ -15,11 +15,15 @@ export const bundle = async (arg: {
   output: string;
   pkgjson?: { input: string; output?: string };
   tstart?: number;
-  watch?: (arg: { isRebuild: boolean }) => Promise<void>;
+  watch?: boolean;
+  event?: {
+    onStart?: (arg: { isRebuild: boolean }) => any;
+    onEnd?: (arg: { isRebuild: boolean }) => any;
+  };
 }): Promise<boolean> => {
-  const { input, output, watch, pkgjson, tstart } = arg;
+  const { input, output, watch, pkgjson, tstart, event } = arg;
 
-  const t0 = tstart || performance.now();
+  let t0 = tstart || performance.now();
   if (!bundler.bundlers) {
     bundler.bundlers = new Set();
   }
@@ -65,17 +69,34 @@ export const bundle = async (arg: {
           {
             name: "root",
             setup(build) {
-              build.onEnd(async () => {
-                const t1 = performance.now();
-
-                if (watch) {
-                  await watch({ isRebuild });
+              build.onStart(async () => {
+                if (isRebuild) {
+                  t0 = performance.now();
                 }
 
-                console.log(
-                  `${padEnd(tag, 30, " ")} ${formatDuration(t1 - t0)}`
-                );
+                if (event && event.onStart) {
+                  await event.onStart({ isRebuild });
+                }
+              });
+              build.onEnd(async () => {
+                if (event && event.onEnd) {
+                  if (isRebuild) {
+                    console.log(
+                      `${padEnd(tag, 30, " ")} ${formatDuration(
+                        performance.now() - t0
+                      )}`
+                    );
+                  }
+
+                  await event.onEnd({ isRebuild });
+                }
+
                 if (!isRebuild) {
+                  console.log(
+                    `${padEnd(tag, 30, " ")} ${formatDuration(
+                      performance.now() - t0
+                    )}`
+                  );
                   isRebuild = true;
                   resolve(true);
                 }
@@ -99,8 +120,8 @@ export const bundle = async (arg: {
 
 const formatDuration = (ms: number) => {
   if (ms > 1000) {
-    return `${(ms / 1000).toFixed(2)} s`;
+    return `${padEnd((ms / 1000).toFixed(3) + "", 6, " ")} s`;
   } else {
-    return `${ms.toFixed(2)} ms`;
+    return `${padEnd(ms.toFixed(2) + "", 6, " ")} ms`;
   }
 };

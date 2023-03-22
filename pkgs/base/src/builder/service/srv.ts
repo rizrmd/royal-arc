@@ -5,12 +5,13 @@ import { basename, extname } from "path";
 import { generateAPI, generateAPIEntry } from "../../scaffold/srv/api";
 
 export const prepareSrv = async (name: string, changes?: Set<string>) => {
-  if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
+  if (!changes) {
     await generateAPIEntry([name]);
     await generateAPI(name, dir.root(`app/${name}/api`));
 
     return { shouldRestart: false };
   }
+
   try {
     for (const e of changes.values()) {
       if (e.startsWith(dir.root(`app/${name}/api`))) {
@@ -34,7 +35,9 @@ export const _ = {
         }
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
   await generateAPIEntry([name]);
   await generateAPI(name, dir.root(`app/${name}/api`));
 

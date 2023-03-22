@@ -19349,8 +19349,8 @@
           var isPathName = /[\\]/.test(s);
           if (isPathName) {
             var dirname8 = '"' + path2.dirname(s) + '"';
-            var basename4 = '"' + path2.basename(s) + '"';
-            return dirname8 + ":" + basename4;
+            var basename5 = '"' + path2.basename(s) + '"';
+            return dirname8 + ":" + basename5;
           }
           return '"' + s + '"';
         };
@@ -54785,8 +54785,8 @@ ${import_chalk2.default.magenta("Installing")} deps:
   // pkgs/base/pkgs/bundler/bundle.ts
   var pe = new import_pretty_error.default();
   var bundle = async (arg) => {
-    const { input, output, watch, pkgjson, tstart } = arg;
-    const t0 = tstart || performance.now();
+    const { input, output, watch, pkgjson, tstart, event } = arg;
+    let t0 = tstart || performance.now();
     if (!bundler.bundlers) {
       bundler.bundlers = /* @__PURE__ */ new Set();
     }
@@ -54829,15 +54829,31 @@ ${import_chalk2.default.magenta("Installing")} deps:
             {
               name: "root",
               setup(build) {
-                build.onEnd(async () => {
-                  const t1 = performance.now();
-                  if (watch) {
-                    await watch({ isRebuild });
+                build.onStart(async () => {
+                  if (isRebuild) {
+                    t0 = performance.now();
                   }
-                  console.log(
-                    `${(0, import_lodash.default)(tag, 30, " ")} ${formatDuration(t1 - t0)}`
-                  );
+                  if (event && event.onStart) {
+                    await event.onStart({ isRebuild });
+                  }
+                });
+                build.onEnd(async () => {
+                  if (event && event.onEnd) {
+                    if (isRebuild) {
+                      console.log(
+                        `${(0, import_lodash.default)(tag, 30, " ")} ${formatDuration(
+                          performance.now() - t0
+                        )}`
+                      );
+                    }
+                    await event.onEnd({ isRebuild });
+                  }
                   if (!isRebuild) {
+                    console.log(
+                      `${(0, import_lodash.default)(tag, 30, " ")} ${formatDuration(
+                        performance.now() - t0
+                      )}`
+                    );
                     isRebuild = true;
                     resolve(true);
                   }
@@ -54860,9 +54876,9 @@ ${import_chalk2.default.magenta("Installing")} deps:
   };
   var formatDuration = (ms) => {
     if (ms > 1e3) {
-      return `${(ms / 1e3).toFixed(2)} s`;
+      return `${(0, import_lodash.default)((ms / 1e3).toFixed(3) + "", 6, " ")} s`;
     } else {
-      return `${ms.toFixed(2)} ms`;
+      return `${(0, import_lodash.default)(ms.toFixed(2) + "", 6, " ")} ms`;
     }
   };
 
@@ -55023,7 +55039,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   // pkgs/base/src/main.ts
   var import_fs_jetpack22 = __toESM(require_main());
   var import_lodash5 = __toESM(require_lodash());
-  var import_path16 = __require("path");
+  var import_path17 = __require("path");
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var import_cuid2 = __toESM(require_cuid2());
@@ -55539,6 +55555,18 @@ Make sure to kill running instance before starting.
     return server;
   });
 
+  // pkgs/base/src/builder/service.ts
+  var import_path13 = __require("path");
+
+  // pkgs/base/src/watcher/watch-service.ts
+  var watchService = (name, event) => {
+    watcher.watch({
+      dir: dir.root(`app/${name}`),
+      ignore: ["node_modules"],
+      event
+    });
+  };
+
   // pkgs/base/src/builder/service/db.ts
   var import_fs_jetpack7 = __toESM(require_main());
 
@@ -55669,7 +55697,7 @@ datasource db {
 
   // pkgs/base/src/builder/service/db.ts
   var prepareDB = (name, changes) => __async(void 0, null, function* () {
-    if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
+    if (!changes) {
       const prisma = yield ensurePrisma(name);
       if (!prisma.generated && !!prisma.dburl) {
         console.log(`Generating prisma: ${source_default.cyan(`app/${name}`)}`);
@@ -57133,7 +57161,7 @@ datasource db {
 
   // pkgs/base/src/builder/service/srv.ts
   var prepareSrv = (name, changes) => __async(void 0, null, function* () {
-    if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
+    if (!changes) {
       yield generateAPIEntry([name]);
       yield generateAPI(name, dir.root(`app/${name}/api`));
       return { shouldRestart: false };
@@ -57161,6 +57189,7 @@ export const _ = {
         }
       }
     } catch (e) {
+      console.error(e);
     }
     yield generateAPIEntry([name]);
     yield generateAPI(name, dir.root(`app/${name}/api`));
@@ -57344,7 +57373,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
 
   // pkgs/base/src/builder/service/web.ts
   var prepareWeb = (name, changes) => __async(void 0, null, function* () {
-    if (!changes || changes.has(dir.root(`app/${name}/main.ts`))) {
+    if (!changes) {
       yield scaffoldWeb();
       yield generatePageEntry([name]);
       yield generatePage(name, dir.root(`app/${name}/src/base/page`));
@@ -57361,6 +57390,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
   var bundleService = (name, arg) => __async(void 0, null, function* () {
     const tstart = performance.now();
     yield prepareBuild(name);
+    let shouldRestart = false;
     yield bundle({
       input: dir.root(`app/${name}/main.ts`),
       output: dir.root(`.output/app/${name}/index.js`),
@@ -57369,28 +57399,69 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
         input: dir.root(`app/${name}/package.json`),
         output: dir.root(`.output/app/${name}/package.json`)
       },
-      watch: arg.watch ? (_0) => __async(void 0, [_0], function* ({ isRebuild }) {
-        if (marker["*"])
-          return;
-        if (isRebuild && runner.list[baseGlobal.app.output]) {
-          const mark = marker[name];
-          if (mark) {
-            let shouldRestart = false;
-            if (mark instanceof Set) {
-              const res = yield prepareBuild(name, mark);
-              if (res)
-                shouldRestart = res.shouldRestart;
-              delete marker[name];
-            } else if (mark === "skip") {
-              delete marker[name];
-              shouldRestart = false;
+      watch: arg.watch,
+      event: arg.watch ? {
+        onStart(_0) {
+          return __async(this, arguments, function* ({ isRebuild }) {
+            shouldRestart = false;
+            if (marker["*"])
+              return;
+            if (isRebuild && runner.list[baseGlobal.app.output]) {
+              const mark = marker[name];
+              if (mark) {
+                if (mark instanceof Set) {
+                  const res = yield prepareBuild(name, mark);
+                  if (res)
+                    shouldRestart = res.shouldRestart;
+                  delete marker[name];
+                } else if (mark === "skip") {
+                  delete marker[name];
+                }
+              }
             }
-            if (shouldRestart)
+          });
+        },
+        onEnd(_0) {
+          return __async(this, arguments, function* ({ isRebuild }) {
+            if (isRebuild) {
+              if (shouldRestart)
+                yield baseGlobal.rpc.service.restart({ name });
+            }
+          });
+        }
+      } : void 0
+    });
+    watchService(name, (err2, changes) => __async(void 0, null, function* () {
+      if (!err2) {
+        for (const c of changes) {
+          if (c.type === "update") {
+            if ((0, import_path13.basename)(c.path) === "package.json") {
+              marker[name] = "skip";
+              yield pkg.install(c.path);
               yield baseGlobal.rpc.service.restart({ name });
+              return;
+            }
+            if (!marker[name])
+              marker[name] = /* @__PURE__ */ new Set();
+            const mark = marker[name];
+            if (mark) {
+              if (mark instanceof Set) {
+                mark.add(c.path);
+              }
+            }
           }
         }
-      }) : void 0
-    });
+        const deladd = changes.filter((e) => e.type !== "update");
+        if (deladd.length > 0) {
+          marker[name] = "skip";
+          yield prepareBuild(name, new Set(deladd.map((e) => e.path)));
+          yield baseGlobal.rpc.service.restart({ name });
+          setTimeout(() => {
+            baseGlobal.rpc.service.restart({ name });
+          }, 500);
+        }
+      }
+    }));
   });
   var prepareBuild = (name, mark) => __async(void 0, null, function* () {
     if (name.startsWith("db"))
@@ -58004,7 +58075,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
   // pkgs/base/src/upgrade.ts
   var import_fs6 = __require("fs");
   var import_fs_jetpack17 = __toESM(require_main());
-  var import_path13 = __require("path");
+  var import_path14 = __require("path");
   var upgradeHook = (args2) => __async(void 0, null, function* () {
     if (args2.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
@@ -58034,20 +58105,20 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
       const root2 = dir.root("");
       for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack17.existsAsync)((0, import_path13.join)(root2, `.output/upgrade/backup/${f}`))) {
+          if (yield (0, import_fs_jetpack17.existsAsync)((0, import_path14.join)(root2, `.output/upgrade/backup/${f}`))) {
             yield (0, import_fs_jetpack17.moveAsync)(
-              (0, import_path13.join)(root2, f),
-              (0, import_path13.join)(root2, `.output/upgrade/backup/${f}`)
+              (0, import_path14.join)(root2, f),
+              (0, import_path14.join)(root2, `.output/upgrade/backup/${f}`)
             );
           }
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs6.readdirSync)((0, import_path13.join)(root2, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs6.readdirSync)((0, import_path14.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
           yield (0, import_fs_jetpack17.copyAsync)(
-            (0, import_path13.join)(root2, `.output/upgrade/royal-main/${f}`),
-            (0, import_path13.join)(root2, f),
+            (0, import_path14.join)(root2, `.output/upgrade/royal-main/${f}`),
+            (0, import_path14.join)(root2, f),
             {
               overwrite: true
             }
@@ -58109,7 +58180,7 @@ If somehow upgrade failed you can rollback using
 
   // pkgs/base/src/vscode.ts
   var import_fs_jetpack19 = __toESM(require_main());
-  var import_path14 = __require("path");
+  var import_path15 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
@@ -58118,7 +58189,7 @@ If somehow upgrade failed you can rollback using
         return;
       }
     }
-    yield (0, import_fs_jetpack19.dirAsync)((0, import_path14.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack19.dirAsync)((0, import_path15.dirname)(vscodeFile));
     yield (0, import_fs_jetpack19.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
@@ -58164,14 +58235,14 @@ If somehow upgrade failed you can rollback using
   // pkgs/base/src/watcher/new-service.ts
   var import_fs_jetpack20 = __toESM(require_main());
   var import_promises5 = __require("fs/promises");
-  var import_path15 = __require("path");
+  var import_path16 = __require("path");
   var watchNewService = () => {
     watcher.watch({
       dir: dir.root("app"),
       event: (err2, changes) => __async(void 0, null, function* () {
         if (!err2) {
           for (const c of changes) {
-            const name = (0, import_path15.basename)(c.path);
+            const name = (0, import_path16.basename)(c.path);
             if (c.type === "delete") {
               console.log(`Removing service: ${source_default.red(name)}`);
               yield (0, import_fs_jetpack20.removeAsync)(dir.root(`.output/app/${name}`));
@@ -58193,13 +58264,13 @@ If somehow upgrade failed you can rollback using
                     const fpath = dir.root(`${root2}/${f}`);
                     const s2 = yield (0, import_promises5.stat)(fpath);
                     if (s2.isDirectory()) {
-                      yield (0, import_fs_jetpack20.copyAsync)(fpath, (0, import_path15.join)(c.path, f), {
+                      yield (0, import_fs_jetpack20.copyAsync)(fpath, (0, import_path16.join)(c.path, f), {
                         overwrite: true
                       });
                     } else {
                       const src = yield (0, import_fs_jetpack20.readAsync)(fpath, "utf8");
                       yield (0, import_fs_jetpack20.writeAsync)(
-                        (0, import_path15.join)(c.path, f),
+                        (0, import_path16.join)(c.path, f),
                         (src || "").replace(/template_service/g, name)
                       );
                     }
@@ -58256,7 +58327,7 @@ If somehow upgrade failed you can rollback using
       const dirs = yield scanDir([dir.root()]);
       yield (0, import_fs_jetpack22.removeAsync)(dir.root(".output"));
       yield Promise.all(
-        dirs.map((e) => (0, import_fs_jetpack22.removeAsync)((0, import_path16.join)((0, import_path16.dirname)(e), "node_modules")))
+        dirs.map((e) => (0, import_fs_jetpack22.removeAsync)((0, import_path17.join)((0, import_path17.dirname)(e), "node_modules")))
       );
       yield (0, import_fs_jetpack22.removeAsync)(dir.root("node_modules"));
       return;
