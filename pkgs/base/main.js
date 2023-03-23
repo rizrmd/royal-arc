@@ -57622,15 +57622,26 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
           });
           let first = false;
           const t0 = performance.now();
+          setTimeout(() => {
+            if (!first) {
+              console.log(`\u2728 Parcel ${source_default.green(name)} building... `);
+            }
+          }, 2e3);
           yield bundler2.watch((err2, ev) => {
             if (!err2 && ev && ev.type === "buildSuccess") {
               if (!first) {
                 first = true;
                 console.log(
-                  `Parcel done: ${formatDuration2(performance.now() - t0)}`
+                  `\u2728 Parcel ${source_default.green(name)} ${formatDuration2(
+                    performance.now() - t0
+                  )}`
                 );
               } else {
-                console.log(`Parcel done: ${formatDuration2(ev.buildTime)}`);
+                console.log(
+                  `\u2728 Parcel ${source_default.green(name)}  ${formatDuration2(
+                    ev.buildTime
+                  )}`
+                );
               }
             } else {
               console.log(err2);

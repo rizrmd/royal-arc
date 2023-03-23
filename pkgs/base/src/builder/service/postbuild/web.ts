@@ -2,7 +2,7 @@ import { connectRPC } from "rpc";
 import { webAction } from "service-web/src/action";
 import { Parcel } from "@parcel/core";
 import { dir } from "dir";
-import padEnd from "lodash.padend";
+import chalk from "chalk";
 
 export const postBuildWeb = (name: string) => {
   connectRPC<typeof webAction>(`svc.${name}`, { waitConnection: true }).then(
@@ -26,15 +26,26 @@ export const postBuildWeb = (name: string) => {
 
         let first = false;
         const t0 = performance.now();
+        setTimeout(() => {
+          if (!first) {
+            console.log(`✨ Parcel ${chalk.green(name)} building... `);
+          }
+        }, 2000);
         await bundler.watch((err, ev) => {
           if (!err && ev && ev.type === "buildSuccess") {
             if (!first) {
               first = true;
               console.log(
-                `Parcel done: ${formatDuration(performance.now() - t0)}`
+                `✨ Parcel ${chalk.green(name)} ${formatDuration(
+                  performance.now() - t0
+                )}`
               );
             } else {
-              console.log(`Parcel done: ${formatDuration(ev.buildTime)}`);
+              console.log(
+                `✨ Parcel ${chalk.green(name)}  ${formatDuration(
+                  ev.buildTime
+                )}`
+              );
             }
           } else {
             console.log(err);
