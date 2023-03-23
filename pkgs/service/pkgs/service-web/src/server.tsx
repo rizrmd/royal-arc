@@ -65,7 +65,7 @@ export const server = async ({
         if (!App) {
           await initSSR();
         }
- 
+
         if (App) {
           const { pipe } = renderToPipeableStream(
             <App
@@ -80,9 +80,9 @@ export const server = async ({
               etag={stamp.toString()}
               props={props || {}}
               res={{ pathname: req.path, params: {}, statusCode: code }}
-            />,
+            />, 
             {
-              bootstrapScripts: ["/index.js?" + stamp],
+              bootstrapScripts: ["/index.js"],
               onShellReady() {
                 if (ssrMode === "stream") {
                   res.setHeader("content-type", "text/html");

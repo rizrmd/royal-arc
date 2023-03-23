@@ -1,3 +1,4 @@
+import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import { Suspense } from "react";
 import { Root, ServerScript, ServerStyle, setupEnv } from "web-init";
 import type { SSR } from "web-init/src/types";

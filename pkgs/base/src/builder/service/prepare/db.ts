@@ -2,7 +2,10 @@ import { runner } from "bundler/runner";
 import chalk from "chalk";
 import { dir } from "dir";
 import { removeAsync } from "fs-jetpack";
-import { ensurePrisma } from "../../../../../service/pkgs/service-db/export";
+import {
+  ensurePrisma,
+  fixPrismaName,
+} from "../../../../../service/pkgs/service-db/export";
 
 export const prepareDB = async (name: string, changes?: Set<string>) => {
   if (!changes) {
@@ -17,8 +20,12 @@ export const prepareDB = async (name: string, changes?: Set<string>) => {
         silent: true,
       });
 
+      await fixPrismaName(
+        dir.root(`app/${name}/node_modules/.gen/package.json`)
+      );
+
       // di delete biar digenerate sama runtime, supaya pake yg paling baru
-      await removeAsync(`.output/app/${name}/node_modules/.gen`);
+      await removeAsync(dir.root(`.output/app/${name}/node_modules/.gen`));
     }
   }
   return { shouldRestart: true };

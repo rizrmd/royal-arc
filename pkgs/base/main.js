@@ -55684,7 +55684,7 @@ Make sure to kill running instance before starting.
   var import_fs_jetpack7 = __toESM(require_main());
 
   // pkgs/service/pkgs/service-db/src/create-db.ts
-  var import_fs_jetpack5 = __toESM(require_main());
+  var import_fs_jetpack6 = __toESM(require_main());
 
   // pkgs/service/export.ts
   var import_catch_exit = __toESM(require_dist());
@@ -55730,14 +55730,24 @@ Make sure to kill running instance before starting.
 
   // pkgs/service/pkgs/service-db/src/ensure-prisma.ts
   var import_prisma_ast2 = __toESM(require_dist2());
-  var import_fs_jetpack6 = __toESM(require_main());
+  var import_fs_jetpack5 = __toESM(require_main());
   var import_path7 = __require("path");
+  var fixPrismaName = async (path2) => {
+    try {
+      const pkg2 = await (0, import_fs_jetpack5.readAsync)(path2, "json");
+      if (pkg2 && pkg2.name) {
+        pkg2.name = pkg2.name.replace(/[\W_]+/g, "_");
+        await (0, import_fs_jetpack5.writeAsync)(path2, pkg2);
+      }
+    } catch (e) {
+    }
+  };
   var ensurePrisma = async (name) => {
     const prismaPath = dir.root(`app/${name}/prisma/schema.prisma`);
     let dburl = "";
-    if (!await (0, import_fs_jetpack6.existsAsync)(prismaPath)) {
-      await (0, import_fs_jetpack6.dirAsync)((0, import_path7.dirname)(prismaPath));
-      await (0, import_fs_jetpack6.writeAsync)(
+    if (!await (0, import_fs_jetpack5.existsAsync)(prismaPath)) {
+      await (0, import_fs_jetpack5.dirAsync)((0, import_path7.dirname)(prismaPath));
+      await (0, import_fs_jetpack5.writeAsync)(
         prismaPath,
         `generator client {
   provider = "prisma-client-js"
@@ -55750,7 +55760,7 @@ datasource db {
 }`
       );
     }
-    const schemaRaw = await (0, import_fs_jetpack6.readAsync)(prismaPath, "utf8");
+    const schemaRaw = await (0, import_fs_jetpack5.readAsync)(prismaPath, "utf8");
     if (schemaRaw) {
       const schema = (0, import_prisma_ast2.getSchema)(schemaRaw);
       let hasModel = false;
@@ -55780,28 +55790,28 @@ datasource db {
         }
       }
       const newSchemaRaw = (0, import_prisma_ast2.printSchema)(schema).trim();
-      await (0, import_fs_jetpack6.writeAsync)(prismaPath, newSchemaRaw);
+      await (0, import_fs_jetpack5.writeAsync)(prismaPath, newSchemaRaw);
       if (newSchemaRaw !== schemaRaw.trim() || !hasModel) {
         return { generated: false, pulled: false, dburl };
       }
       let prismaOutputSame = false;
-      if (await (0, import_fs_jetpack6.existsAsync)(dir.root(`.output/app/${name}/prisma/schema.prisma`))) {
+      if (await (0, import_fs_jetpack5.existsAsync)(dir.root(`.output/app/${name}/prisma/schema.prisma`))) {
         prismaOutputSame = true;
-        const outputSchema = await (0, import_fs_jetpack6.readAsync)(
+        const outputSchema = await (0, import_fs_jetpack5.readAsync)(
           dir.root(`.output/app/${name}/prisma/schema.prisma`)
         );
         if (newSchemaRaw.trim() !== outputSchema?.trim()) {
           prismaOutputSame = false;
         }
       }
-      await (0, import_fs_jetpack6.copyAsync)(
+      await (0, import_fs_jetpack5.copyAsync)(
         dir.root(`app/${name}/prisma`),
         dir.root(`.output/app/${name}/prisma`),
         {
           overwrite: true
         }
       );
-      if (!prismaOutputSame || !await (0, import_fs_jetpack6.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
+      if (!prismaOutputSame || !await (0, import_fs_jetpack5.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
         return { generated: false, pulled: true, dburl };
       }
     }
@@ -55820,7 +55830,10 @@ datasource db {
           cwd: dir.root(`app/${name}`),
           silent: true
         });
-        yield (0, import_fs_jetpack7.removeAsync)(`.output/app/${name}/node_modules/.gen`);
+        yield fixPrismaName(
+          dir.root(`app/${name}/node_modules/.gen/package.json`)
+        );
+        yield (0, import_fs_jetpack7.removeAsync)(dir.root(`.output/app/${name}/node_modules/.gen`));
       }
     }
     return { shouldRestart: true };
@@ -57666,7 +57679,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
   // pkgs/base/src/builder/service/postbuild.ts
   var postBuild = (name) => __async(void 0, null, function* () {
     if (name.startsWith("web"))
-      yield postBuildWeb(name);
+      postBuildWeb(name);
   });
 
   // pkgs/base/src/cleanup.ts

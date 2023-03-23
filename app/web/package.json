@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@fluentui/react-components": "9.18.3",
-    "@fluentui/react-icons": "2.0.196",
+    "@fluentui/react-icons": "workspace:^",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "immer": "9.0.19",

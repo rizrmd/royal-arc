@@ -9,22 +9,11 @@ import { dbAction } from "./action";
 import { glbdb } from "./glbdb";
 import { parsePrisma } from "./parse-prisma";
 import padEnd from "lodash.padend";
+import { fixPrismaName } from "./ensure-prisma";
 export const createDB = (arg: { name: SERVICE_NAME }) => {
   const { name } = arg;
 
   createService(name, async ({ markAsRunning }) => {
-    try {
-      //@ts-ignore
-      const PRISMA = await import("../../../../../app/db/node_modules/.gen");
-
-      const prisma = (await import(
-        dir.path(`${name}/node_modules/.gen/index.js`)
-      )) as typeof PRISMA;
-
-      glbdb.prisma = new prisma.PrismaClient();
-      await glbdb.prisma.$connect();
-    } catch (e) {}
-
     await createRPC(`svc.${name}`, dbAction);
 
     const schemaPath = dir.path(`${name}/prisma/schema.prisma`);
@@ -68,8 +57,22 @@ export const createDB = (arg: { name: SERVICE_NAME }) => {
           cwd: dir.path(name),
           silent: true,
         });
+
+        await fixPrismaName(dir.path(`${name}/node_modules/.gen/package.json`));
       }
     }
+
+    try {
+      //@ts-ignore
+      const PRISMA = await import("../../../../../app/db/node_modules/.gen");
+
+      const prisma = (await import(
+        dir.path(`${name}/node_modules/.gen/index.js`)
+      )) as typeof PRISMA;
+
+      glbdb.prisma = new prisma.PrismaClient();
+      await glbdb.prisma.$connect();
+    } catch (e) {}
 
     markAsRunning();
   });

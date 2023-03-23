@@ -9,6 +9,16 @@ import {
 } from "fs-jetpack";
 import { dirname } from "path";
 
+export const fixPrismaName = async (path: string) => {
+  try {
+    const pkg = (await readAsync(path, "json")) as { name: string };
+    if (pkg && pkg.name) {
+      pkg.name = pkg.name.replace(/[\W_]+/g, "_");
+      await writeAsync(path, pkg);
+    }
+  } catch (e) {}
+};
+
 export const ensurePrisma = async (name: string) => {
   const prismaPath = dir.root(`app/${name}/prisma/schema.prisma`);
   let dburl = "";
