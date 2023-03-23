@@ -1,6 +1,6 @@
 import { root } from "service";
-import { DBArg } from "svc-db/src/glbdb";
 import { apiContext } from "service-srv";
+import { DBArg } from "service/pkgs/service-db/src/glbdb";
 
 export const _ = {
   url: "/_dbs/:dbName/:action",

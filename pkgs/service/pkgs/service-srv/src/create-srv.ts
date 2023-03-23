@@ -22,7 +22,11 @@ export const createAPIServer = ({
     srv.name = name;
     srv.port = port;
     srv.cookieKey = cookieKey;
-    if (serverURL) srv.serverURL = serverURL;
+    if (serverURL) {
+      srv.serverURL = serverURL;
+    } else {
+      srv.serverURL = `http://localhost:${port}`;
+    }
 
     await createRPC(`svc.${name}`, srvAction);
     await srv.init();
