@@ -14,7 +14,7 @@ const layout: FC<{ children: any }> = ({ children }) => {
       targetDocument={isSSR ? undefined : window.document}
     >
       <div className="bg-red-300">{children}</div>
-      <Button>Haloha</Button>
+      <Button appearance="primary">Haloha</Button>
     </FluentProvider>
   );
 };

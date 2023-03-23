@@ -57636,27 +57636,20 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
           });
           let first = false;
           const t0 = performance.now();
-          setTimeout(() => {
-            if (!first) {
-              console.log(`
-\u2728 Parcel ${source_default.green(name)} building... `);
-            }
-          }, 2e3);
           yield bundler2.watch((err2, ev) => {
             if (!err2 && ev && ev.type === "buildSuccess") {
+              const parcel = `
+${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
+                source_default.green(name),
+                22
+              )}`;
               if (!first) {
                 first = true;
                 console.log(
-                  `\u2728 Parcel ${(0, import_lodash5.default)(source_default.green(name), 20)} ${formatDuration2(
-                    performance.now() - t0
-                  )}`
+                  `${parcel} ${formatDuration2(performance.now() - t0, 1)}`
                 );
               } else {
-                console.log(
-                  `\u2728 Parcel ${(0, import_lodash5.default)(source_default.green(name), 20)} ${formatDuration2(
-                    ev.buildTime
-                  )}`
-                );
+                console.log(`${parcel} ${formatDuration2(ev.buildTime)}`);
               }
             } else {
               console.log(err2);
@@ -57668,11 +57661,11 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
       })
     );
   };
-  var formatDuration2 = (ms) => {
+  var formatDuration2 = (ms, pad) => {
     if (ms > 1e3) {
-      return `${(0, import_lodash5.default)((ms / 1e3).toFixed(3) + "", 6, " ")} s`;
+      return `${(0, import_lodash5.default)((ms / 1e3).toFixed(3) + "", pad || 6, " ")} s`;
     } else {
-      return `${(0, import_lodash5.default)(ms.toFixed(2) + "", 6, " ")} ms`;
+      return `${(0, import_lodash5.default)(ms.toFixed(2) + "", pad || 6, " ")} ms`;
     }
   };
 

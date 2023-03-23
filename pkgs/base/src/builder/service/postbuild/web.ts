@@ -27,26 +27,20 @@ export const postBuildWeb = (name: string) => {
 
         let first = false;
         const t0 = performance.now();
-        setTimeout(() => {
-          if (!first) {
-            console.log(`\n✨ Parcel ${chalk.green(name)} building... `);
-          }
-        }, 2000);
         await bundler.watch((err, ev) => {
           if (!err && ev && ev.type === "buildSuccess") {
+            const parcel = `\n${chalk.magenta(`Parcel `)} ${padEnd(
+              chalk.green(name),
+              22
+            )}`;
+
             if (!first) {
               first = true;
               console.log(
-                `✨ Parcel ${padEnd(chalk.green(name), 20)} ${formatDuration(
-                  performance.now() - t0
-                )}`
+                `${parcel} ${formatDuration(performance.now() - t0, 1)}`
               );
             } else {
-              console.log(
-                `✨ Parcel ${padEnd(chalk.green(name), 20)} ${formatDuration(
-                  ev.buildTime
-                )}`
-              );
+              console.log(`${parcel} ${formatDuration(ev.buildTime)}`);
             }
           } else {
             console.log(err);
@@ -59,10 +53,10 @@ export const postBuildWeb = (name: string) => {
   );
 };
 
-const formatDuration = (ms: number) => {
+const formatDuration = (ms: number, pad?: number) => {
   if (ms > 1000) {
-    return `${padEnd((ms / 1000).toFixed(3) + "", 6, " ")} s`;
+    return `${padEnd((ms / 1000).toFixed(3) + "", pad || 6, " ")} s`;
   } else {
-    return `${padEnd(ms.toFixed(2) + "", 6, " ")} ms`;
+    return `${padEnd(ms.toFixed(2) + "", pad || 6, " ")} ms`;
   }
 };
