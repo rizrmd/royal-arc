@@ -57624,7 +57624,8 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
           const t0 = performance.now();
           setTimeout(() => {
             if (!first) {
-              console.log(`\u2728 Parcel ${source_default.green(name)} building... `);
+              console.log(`
+\u2728 Parcel ${source_default.green(name)} building... `);
             }
           }, 2e3);
           yield bundler2.watch((err2, ev) => {

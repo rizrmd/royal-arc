@@ -28,7 +28,7 @@ export const postBuildWeb = (name: string) => {
         const t0 = performance.now();
         setTimeout(() => {
           if (!first) {
-            console.log(`✨ Parcel ${chalk.green(name)} building... `);
+            console.log(`\n✨ Parcel ${chalk.green(name)} building... `);
           }
         }, 2000);
         await bundler.watch((err, ev) => {
