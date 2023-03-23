@@ -57528,7 +57528,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
       event: arg.watch ? {
         onStart(_0) {
           return __async(this, arguments, function* ({ isRebuild }) {
-            shouldRestart = false;
+            shouldRestart = true;
             if (marker["*"])
               return;
             if (isRebuild && runner.list[baseGlobal.app.output]) {
@@ -57620,9 +57620,18 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
               }
             }
           });
+          let first = false;
+          const t0 = performance.now();
           yield bundler2.watch((err2, ev) => {
             if (!err2 && ev && ev.type === "buildSuccess") {
-              console.log(`Parcel done: ${formatDuration2(ev.buildTime)}`);
+              if (!first) {
+                first = true;
+                console.log(
+                  `Parcel done: ${formatDuration2(performance.now() - t0)}`
+                );
+              } else {
+                console.log(`Parcel done: ${formatDuration2(ev.buildTime)}`);
+              }
             } else {
               console.log(err2);
             }

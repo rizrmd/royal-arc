@@ -26,13 +26,13 @@ export const bundleService = async (name: string, arg: { watch: boolean }) => {
     event: arg.watch
       ? {
           async onStart({ isRebuild }) {
-            shouldRestart = false;
+            shouldRestart = true;
 
             if (marker["*"]) return;
 
             if (isRebuild && runner.list[baseGlobal.app.output]) {
               const mark = marker[name];
-
+ 
               if (mark) {
                 if (mark instanceof Set) {
                   const res = await prepareBuild(name, mark);

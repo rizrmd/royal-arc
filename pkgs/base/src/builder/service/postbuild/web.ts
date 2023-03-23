@@ -24,9 +24,18 @@ export const postBuildWeb = (name: string) => {
           },
         });
 
+        let first = false;
+        const t0 = performance.now();
         await bundler.watch((err, ev) => {
           if (!err && ev && ev.type === "buildSuccess") {
-            console.log(`Parcel done: ${formatDuration(ev.buildTime)}`);
+            if (!first) {
+              first = true;
+              console.log(
+                `Parcel done: ${formatDuration(performance.now() - t0)}`
+              );
+            } else {
+              console.log(`Parcel done: ${formatDuration(ev.buildTime)}`);
+            }
           } else {
             console.log(err);
           }

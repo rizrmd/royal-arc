@@ -79,6 +79,10 @@ export const Root: FC<{
       if (__LAYOUTS__ && __LAYOUTS__[page.layout]) {
         local.Layout = __LAYOUTS__[page.layout] as any;
       }
+    } else {
+      if (__LAYOUTS__ && __LAYOUTS__["default"]) {
+        local.Layout = __LAYOUTS__["default"] as any;
+      }
     }
 
     if (!local.pathLoaded && typeof page.component !== "undefined") {
@@ -96,8 +100,8 @@ export const Root: FC<{
             return {
               default: (await component).default.component,
             };
-          });
-        }
+          }); 
+        }  
       } else {
         local.Page = component;
         local.pathLoaded = true;
