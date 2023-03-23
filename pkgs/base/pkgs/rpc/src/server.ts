@@ -89,7 +89,6 @@ const connect = (name: string, action: RPCAction) => {
       }
     }, 500);
     ws.on("open", () => {
-
       ws.send(JSON.stringify({ type: "identify", name }));
       ws.on("message", async (raw: string) => {
         const msg = JSON.parse(raw) as ActionMsg;
@@ -143,13 +142,22 @@ const createServer = async () => {
         | ActionResult;
 
       if (msg.type === "identify") {
-        if (!conns[msg.name]) {
+        if (!conns[msg.name]) { 
           conns[msg.name] = {
             server: null,
             clients: new Set(),
           };
         }
         conns[msg.name].server = ws;
+
+        conns[msg.name].clients.forEach((ws) => {
+          ws.send(
+            JSON.stringify({
+              type: "connected",
+              serverConnected: true,
+            })
+          );
+        });
       } else if (msg.type === "action-result") {
         for (const v of Object.values(conns)) {
           v.clients.forEach((cws) => {
@@ -169,6 +177,8 @@ const createServer = async () => {
 
       if (msg.type === "identify") {
         if (!conns[msg.name]) {
+          // console.log(msg.name, "created on client");
+
           conns[msg.name] = {
             server: null,
             clients: new Set(),

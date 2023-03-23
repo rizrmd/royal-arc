@@ -3,7 +3,7 @@ import { runner } from "bundler/runner";
 import { dir } from "dir";
 import chalk from "chalk";
 
-export const action = {
+export const rootAction = {
   async start(arg: { name: SERVICE_NAME; multiInstance?: boolean }) {
     const running = await runner.run({
       path: dir.path(`${arg.name}/index.js`),

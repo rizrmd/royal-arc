@@ -30,7 +30,7 @@ export const spawn = (
     onMessage: (fn: (e: string) => any) => {
       callback.onMessage = fn;
     },
-    proc,
+    proc, 
     onExit: (
       fn: (e: { exitCode: number; signal: NodeJS.Signals | null }) => any
     ) => {
@@ -78,18 +78,20 @@ export const spawn = (
   });
 };
 
-export const attachSpawnCleanup = () => {
+export const attachSpawnCleanup = (name: string) => {
   process.on("message", async (e) => {
     if (e === "::SPAWN_DISPOSE::") {
       await Promise.all(
-        Object.values(bundler.runs).map(async (run) => {
-          await new Promise<void>((resolve) => {
-            run.proc.on("message", (e) => {
-              if (e === "::SPAWN_DISPOSED::") {
-                resolve();
-              }
+        Object.values(bundler.runs).map(async (runs) => {
+          runs.forEach(async (run) => {
+            await new Promise<void>((resolve) => {
+              run.proc.on("message", (e) => {
+                if (e === "::SPAWN_DISPOSED::") {
+                  resolve();
+                }
+              });
+              if (run.proc.send) run.proc.send("::SPAWN_DISPOSE::");
             });
-            if (run.proc.send) run.proc.send("::SPAWN_DISPOSE::");
           });
         })
       );

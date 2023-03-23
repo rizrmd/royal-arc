@@ -8,7 +8,7 @@ import { dir } from "dir";
 export * from "./src/create-service";
 
 export const initialize = async (fn: () => Promise<void>) => {
-  attachSpawnCleanup();
+  attachSpawnCleanup("root");
 
   await pkg.install(dir.path(), { deep: true });
   process.removeAllListeners("warning");

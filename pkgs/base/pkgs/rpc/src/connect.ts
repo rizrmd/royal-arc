@@ -10,17 +10,22 @@ export const connectRPC = async <T extends RPCAction>(
   name: string,
   arg?: { waitConnection: boolean; exitWhenDisconnect?: boolean }
 ) => {
-  const waitConnection = get(arg, "waitConnection", true);
+  const waitConnection = get(arg, "waitConnection", false);
   const exitWhenDisconnect = get(arg, "exitWhenDisconnect", true);
 
   let ws = false as false | WSClient;
   let serverConnected = false;
-  if (waitConnection) {
-    const res = await connect(name);
-    if (res) {
-      ws = res.ws;
-      serverConnected = res.serverConnected;
-    }
+
+  const onClose = () => {
+    if (exitWhenDisconnect) process.exit(0);
+  };
+  const res = await connect(name, {
+    waitServer: waitConnection,
+    onClose,
+  });
+  if (res) {
+    ws = res.ws;
+    serverConnected = res.serverConnected;
   }
 
   return new DeepProxy({}, ({ PROXY, key, path, handler }) => {
@@ -35,9 +40,8 @@ export const connectRPC = async <T extends RPCAction>(
       return async (...args: any[]) => {
         if (ws === false) {
           const res = await connect(name, {
-            onClose() {
-              if (exitWhenDisconnect) process.exit(0);
-            },
+            waitServer: true,
+            onClose,
           });
           if (res) {
             ws = res.ws;
@@ -80,7 +84,10 @@ export const connectRPC = async <T extends RPCAction>(
   }) as RPCActionResult<T> & { connected: boolean };
 };
 
-const connect = (name: string, arg?: { onClose: () => any }) => {
+const connect = (
+  name: string,
+  arg?: { onClose?: () => any; waitServer?: boolean }
+) => {
   return new Promise<false | { ws: WSClient; serverConnected: boolean }>(
     (resolve) => {
       const ws = new WSClient(`ws://localhost:${config.port}/connect/${name}`);
@@ -88,20 +95,28 @@ const connect = (name: string, arg?: { onClose: () => any }) => {
         ws.send(JSON.stringify({ type: "identify", name }));
         ws.on("message", (raw: string) => {
           const msg = JSON.parse(raw) as {
-            type: "connected"; 
+            type: "connected";
             serverConnected: boolean;
           };
 
           if (msg.type === "connected") {
-            resolve({ ws, serverConnected: msg.serverConnected });
+            if (arg?.waitServer) {
+              if (msg.serverConnected) {
+                resolve({ ws, serverConnected: msg.serverConnected });
+              }
+            } else {
+              resolve({ ws, serverConnected: msg.serverConnected });
+            }
           }
         });
       });
       ws.on("close", () => {
         resolve(false);
-        if (arg) arg.onClose();
+        if (arg?.onClose) arg.onClose();
       });
-      ws.on("error", () => resolve(false));
+      ws.on("error", () => {
+        resolve(false);
+      });
     }
   );
 };

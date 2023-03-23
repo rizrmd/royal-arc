@@ -8,7 +8,7 @@ import padEnd from "lodash.padend";
 import { dirname, join } from "path";
 import { pkg, scanDir } from "pkg";
 import { connectRPC, createRPC } from "rpc";
-import { action as RootAction } from "../../service/src/action";
+import { rootAction as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
 import { bundleService } from "./builder/service";
 import { postBuild } from "./builder/service/postbuild";
@@ -19,7 +19,6 @@ import { prepareApp } from "./scaffold/app";
 import { upgradeHook } from "./upgrade";
 import { versionCheck } from "./version-check";
 import { vscodeSettings } from "./vscode";
-import { setupWatchers } from "./watcher/all";
 
 const args = process.argv.slice(2);
 
@@ -27,7 +26,7 @@ export const baseMain = async () => {
   process.removeAllListeners("warning");
   attachCleanUp();
   vscodeSettings();
-
+ 
   await pkg.install(dir.root(), {
     deep: { exclude: [dir.root(".output"), dir.root("pkgs/template")] },
   });
@@ -38,7 +37,7 @@ export const baseMain = async () => {
   if (args.includes("clean")) {
     console.log("Cleaning node_modules");
     const dirs = await scanDir([dir.root()]);
-    await removeAsync(dir.root(".output"));
+    await removeAsync(dir.root(".output")); 
     await Promise.all(
       dirs.map((e) => removeAsync(join(dirname(e), "node_modules")))
     );
@@ -64,12 +63,6 @@ export const baseMain = async () => {
     };
 
     const app = await prepareApp();
-
-    const onExit = async () => {
-      await watcher.dispose();
-      if (app) await runner.stop(app.output);
-    };
-    setupWatchers(args, onExit);
 
     baseGlobal.app = app;
 

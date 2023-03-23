@@ -8,6 +8,7 @@
     "post-commit": "node base post-commit"
   },
   "devDependencies": {
-    "husky": "^8.0.3"
+    "husky": "^8.0.3",
+    "process": "0.11.10"
   }
 }

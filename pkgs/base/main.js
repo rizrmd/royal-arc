@@ -282,7 +282,7 @@
           maxRetries: 3
         });
       };
-      var removeAsync11 = (path2) => {
+      var removeAsync9 = (path2) => {
         return fs2.rm(path2, {
           recursive: true,
           force: true,
@@ -291,7 +291,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync11;
+      exports2.async = removeAsync9;
     }
   });
 
@@ -328,18 +328,18 @@
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat5;
+        let stat4;
         try {
-          stat5 = fs2.statSync(path2);
+          stat4 = fs2.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
           }
         }
-        if (stat5 && !stat5.isDirectory()) {
+        if (stat4 && !stat4.isDirectory()) {
           throw generatePathOccupiedByNotDirectoryError(path2);
         }
-        return stat5;
+        return stat4;
       };
       var createBrandNewDirectorySync = (path2, opts) => {
         const options = opts || {};
@@ -355,9 +355,9 @@
           }
         }
       };
-      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat5, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat4, criteria) => {
         const checkMode = () => {
-          const mode = modeUtil.normalizeFileMode(stat5.mode);
+          const mode = modeUtil.normalizeFileMode(stat4.mode);
           if (criteria.mode !== void 0 && criteria.mode !== mode) {
             fs2.chmodSync(path2, criteria.mode);
           }
@@ -375,18 +375,18 @@
       };
       var dirSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat5 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat5) {
-          checkExistingDirectoryFulfillsCriteriaSync(path2, stat5, criteria);
+        const stat4 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat4) {
+          checkExistingDirectoryFulfillsCriteriaSync(path2, stat4, criteria);
         } else {
           createBrandNewDirectorySync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve, reject) => {
-          fs2.stat(path2).then((stat5) => {
-            if (stat5.isDirectory()) {
-              resolve(stat5);
+          fs2.stat(path2).then((stat4) => {
+            if (stat4.isDirectory()) {
+              resolve(stat4);
             } else {
               reject(generatePathOccupiedByNotDirectoryError(path2));
             }
@@ -416,10 +416,10 @@
           }).catch(reject);
         });
       };
-      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat5, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat4, criteria) => {
         return new Promise((resolve, reject) => {
           const checkMode = () => {
-            const mode = modeUtil.normalizeFileMode(stat5.mode);
+            const mode = modeUtil.normalizeFileMode(stat4.mode);
             if (criteria.mode !== void 0 && criteria.mode !== mode) {
               return fs2.chmod(path2, criteria.mode);
             }
@@ -459,11 +459,11 @@
       var dirAsync4 = (path2, passedCriteria) => {
         return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
-            if (stat5 !== void 0) {
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat4) => {
+            if (stat4 !== void 0) {
               return checkExistingDirectoryFulfillsCriteriaAsync(
                 path2,
-                stat5,
+                stat4,
                 criteria
               );
             }
@@ -558,7 +558,7 @@
           }).then(resolve, reject);
         });
       };
-      var writeAsync16 = (path2, data, options) => {
+      var writeAsync15 = (path2, data, options) => {
         const opts = options || {};
         const processedData = serializeToJsonMaybe(data, opts.jsonIndent);
         let writeStrategy = writeFileAsync;
@@ -569,7 +569,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = writeSync;
-      exports2.async = writeAsync16;
+      exports2.async = writeAsync15;
     }
   });
 
@@ -646,21 +646,21 @@
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat5;
+        let stat4;
         try {
-          stat5 = fs2.statSync(path2);
+          stat4 = fs2.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
           }
         }
-        if (stat5 && !stat5.isFile()) {
+        if (stat4 && !stat4.isFile()) {
           throw generatePathOccupiedByNotFileError(path2);
         }
-        return stat5;
+        return stat4;
       };
-      var checkExistingFileFulfillsCriteriaSync = (path2, stat5, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat5.mode);
+      var checkExistingFileFulfillsCriteriaSync = (path2, stat4, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat4.mode);
         const checkContent = () => {
           if (criteria.content !== void 0) {
             write.sync(path2, criteria.content, {
@@ -693,18 +693,18 @@
       };
       var fileSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat5 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat5 !== void 0) {
-          checkExistingFileFulfillsCriteriaSync(path2, stat5, criteria);
+        const stat4 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat4 !== void 0) {
+          checkExistingFileFulfillsCriteriaSync(path2, stat4, criteria);
         } else {
           createBrandNewFileSync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve, reject) => {
-          fs2.stat(path2).then((stat5) => {
-            if (stat5.isFile()) {
-              resolve(stat5);
+          fs2.stat(path2).then((stat4) => {
+            if (stat4.isFile()) {
+              resolve(stat4);
             } else {
               reject(generatePathOccupiedByNotFileError(path2));
             }
@@ -717,8 +717,8 @@
           });
         });
       };
-      var checkExistingFileFulfillsCriteriaAsync = (path2, stat5, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat5.mode);
+      var checkExistingFileFulfillsCriteriaAsync = (path2, stat4, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat4.mode);
         const checkContent = () => {
           return new Promise((resolve, reject) => {
             if (criteria.content !== void 0) {
@@ -759,9 +759,9 @@
       var fileAsync = (path2, passedCriteria) => {
         return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
-            if (stat5 !== void 0) {
-              return checkExistingFileFulfillsCriteriaAsync(path2, stat5, criteria);
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat4) => {
+            if (stat4 !== void 0) {
+              return checkExistingFileFulfillsCriteriaAsync(path2, stat4, criteria);
             }
             return createBrandNewFileAsync(path2, criteria);
           }).then(resolve, reject);
@@ -808,27 +808,27 @@
           );
         }
       };
-      var createInspectObj = (path2, options, stat5) => {
+      var createInspectObj = (path2, options, stat4) => {
         const obj = {};
         obj.name = pathUtil.basename(path2);
-        if (stat5.isFile()) {
+        if (stat4.isFile()) {
           obj.type = "file";
-          obj.size = stat5.size;
-        } else if (stat5.isDirectory()) {
+          obj.size = stat4.size;
+        } else if (stat4.isDirectory()) {
           obj.type = "dir";
-        } else if (stat5.isSymbolicLink()) {
+        } else if (stat4.isSymbolicLink()) {
           obj.type = "symlink";
         } else {
           obj.type = "other";
         }
         if (options.mode) {
-          obj.mode = stat5.mode;
+          obj.mode = stat4.mode;
         }
         if (options.times) {
-          obj.accessTime = stat5.atime;
-          obj.modifyTime = stat5.mtime;
-          obj.changeTime = stat5.ctime;
-          obj.birthTime = stat5.birthtime;
+          obj.accessTime = stat4.atime;
+          obj.modifyTime = stat4.mtime;
+          obj.changeTime = stat4.ctime;
+          obj.birthTime = stat4.birthtime;
         }
         if (options.absolutePath) {
           obj.absolutePath = path2;
@@ -850,20 +850,20 @@
       };
       var inspectSync = (path2, options) => {
         let statOperation = fs2.lstatSync;
-        let stat5;
+        let stat4;
         const opts = options || {};
         if (opts.symlinks === "follow") {
           statOperation = fs2.statSync;
         }
         try {
-          stat5 = statOperation(path2);
+          stat4 = statOperation(path2);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             return void 0;
           }
           throw err2;
         }
-        const inspectObj = createInspectObj(path2, opts, stat5);
+        const inspectObj = createInspectObj(path2, opts, stat4);
         addExtraFieldsSync(path2, inspectObj, opts);
         return inspectObj;
       };
@@ -901,8 +901,8 @@
           if (opts.symlinks === "follow") {
             statOperation = fs2.stat;
           }
-          statOperation(path2).then((stat5) => {
-            const inspectObj = createInspectObj(path2, opts, stat5);
+          statOperation(path2).then((stat4) => {
+            const inspectObj = createInspectObj(path2, opts, stat4);
             addExtraFieldsAsync(path2, inspectObj, opts).then(resolve, reject);
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
@@ -2377,10 +2377,10 @@
       };
       var existsSync5 = (path2) => {
         try {
-          const stat5 = fs2.statSync(path2);
-          if (stat5.isDirectory()) {
+          const stat4 = fs2.statSync(path2);
+          if (stat4.isDirectory()) {
             return "dir";
-          } else if (stat5.isFile()) {
+          } else if (stat4.isFile()) {
             return "file";
           }
           return "other";
@@ -2393,10 +2393,10 @@
       };
       var existsAsync10 = (path2) => {
         return new Promise((resolve, reject) => {
-          fs2.stat(path2).then((stat5) => {
-            if (stat5.isDirectory()) {
+          fs2.stat(path2).then((stat4) => {
+            if (stat4.isDirectory()) {
               resolve("dir");
-            } else if (stat5.isFile()) {
+            } else if (stat4.isFile()) {
               resolve("file");
             } else {
               resolve("other");
@@ -2639,7 +2639,7 @@
         }
         return Promise.resolve();
       };
-      var copyAsync4 = (from, to, options) => {
+      var copyAsync3 = (from, to, options) => {
         return new Promise((resolve, reject) => {
           const opts = parseOptions(options, from);
           checksBeforeCopyingAsync(from, to, opts).then(() => {
@@ -2679,7 +2679,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = copySync;
-      exports2.async = copyAsync4;
+      exports2.async = copyAsync3;
     }
   });
 
@@ -2853,7 +2853,7 @@
         }
         return data;
       };
-      var readAsync13 = (path2, returnAs) => {
+      var readAsync12 = (path2, returnAs) => {
         return new Promise((resolve, reject) => {
           const retAs = returnAs || "utf8";
           let encoding = "utf8";
@@ -2883,7 +2883,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = readSync;
-      exports2.async = readAsync13;
+      exports2.async = readAsync12;
     }
   });
 
@@ -12580,11 +12580,11 @@
           ensureNotTraversal();
           tokens.push({ type });
         }
-        function addSpecialAttribute(name, action4) {
+        function addSpecialAttribute(name, action3) {
           tokens.push({
             type: types_1.SelectorType.Attribute,
             name,
-            action: action4,
+            action: action3,
             value: getName(1),
             namespace: null,
             ignoreCase: "quirks"
@@ -12664,21 +12664,21 @@
                   }
                 }
                 stripWhitespace(0);
-                var action3 = types_1.AttributeAction.Exists;
+                var action2 = types_1.AttributeAction.Exists;
                 var possibleAction = actionTypes.get(selector.charCodeAt(selectorIndex));
                 if (possibleAction) {
-                  action3 = possibleAction;
+                  action2 = possibleAction;
                   if (selector.charCodeAt(selectorIndex + 1) !== 61) {
                     throw new Error("Expected `=`");
                   }
                   stripWhitespace(2);
                 } else if (selector.charCodeAt(selectorIndex) === 61) {
-                  action3 = types_1.AttributeAction.Equals;
+                  action2 = types_1.AttributeAction.Equals;
                   stripWhitespace(1);
                 }
                 var value = "";
                 var ignoreCase = null;
-                if (action3 !== "exists") {
+                if (action2 !== "exists") {
                   if (isQuote(selector.charCodeAt(selectorIndex))) {
                     var quote = selector.charCodeAt(selectorIndex);
                     var sectionEnd = selectorIndex + 1;
@@ -12714,7 +12714,7 @@
                 var attributeSelector = {
                   type: types_1.SelectorType.Attribute,
                   name: name_1,
-                  action: action3,
+                  action: action2,
                   value,
                   namespace,
                   ignoreCase
@@ -12897,8 +12897,8 @@
           }
         }
       }
-      function getActionValue(action3) {
-        switch (action3) {
+      function getActionValue(action2) {
+        switch (action2) {
           case types_1.AttributeAction.Equals:
             return "";
           case types_1.AttributeAction.Element:
@@ -19349,8 +19349,8 @@
           var isPathName = /[\\]/.test(s);
           if (isPathName) {
             var dirname8 = '"' + path2.dirname(s) + '"';
-            var basename6 = '"' + path2.basename(s) + '"';
-            return dirname8 + ":" + basename6;
+            var basename5 = '"' + path2.basename(s) + '"';
+            return dirname8 + ":" + basename5;
           }
           return '"' + s + '"';
         };
@@ -24067,7 +24067,7 @@
         name,
         number: defaultNumber,
         description,
-        action: action3,
+        action: action2,
         forced = false,
         standard
       }) {
@@ -24076,7 +24076,7 @@
         } = _os.constants;
         const supported = constantSignal !== void 0;
         const number = supported ? constantSignal : defaultNumber;
-        return { name, number, description, supported, action: action3, forced, standard };
+        return { name, number, description, supported, action: action2, forced, standard };
       };
     }
   });
@@ -24094,10 +24094,10 @@
         const signals = (0, _signals.getSignals)();
         return signals.reduce(getSignalByName, {});
       };
-      var getSignalByName = function(signalByNameMemo, { name, number, description, supported, action: action3, forced, standard }) {
+      var getSignalByName = function(signalByNameMemo, { name, number, description, supported, action: action2, forced, standard }) {
         return {
           ...signalByNameMemo,
-          [name]: { name, number, description, supported, action: action3, forced, standard }
+          [name]: { name, number, description, supported, action: action2, forced, standard }
         };
       };
       var signalsByName = getSignalsByName();
@@ -24113,14 +24113,14 @@
         if (signal === void 0) {
           return {};
         }
-        const { name, description, supported, action: action3, forced, standard } = signal;
+        const { name, description, supported, action: action2, forced, standard } = signal;
         return {
           [number]: {
             name,
             number,
             description,
             supported,
-            action: action3,
+            action: action2,
             forced,
             standard
           }
@@ -28341,8 +28341,8 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           safeMode: false,
           positionTracking: "full",
           lineTerminatorCharacters: ["\r", "\n"],
-          tracer: function(msg, action3) {
-            return action3();
+          tracer: function(msg, action2) {
+            return action2();
           }
         });
         var tracer = options.tracer;
@@ -33392,9 +33392,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           RecognizerEngine2.prototype.optionInternalLogic = function(actionORMethodDef, occurrence, key) {
             var _this = this;
             var lookAheadFunc = this.getLaFuncFromCache(key);
-            var action3;
+            var action2;
             if (typeof actionORMethodDef !== "function") {
-              action3 = actionORMethodDef.DEF;
+              action2 = actionORMethodDef.DEF;
               var predicate_1 = actionORMethodDef.GATE;
               if (predicate_1 !== void 0) {
                 var orgLookaheadFunction_1 = lookAheadFunc;
@@ -33403,10 +33403,10 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                 };
               }
             } else {
-              action3 = actionORMethodDef;
+              action2 = actionORMethodDef;
             }
             if (lookAheadFunc.call(this) === true) {
-              return action3.call(this);
+              return action2.call(this);
             }
             return void 0;
           };
@@ -33417,9 +33417,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           RecognizerEngine2.prototype.atLeastOneInternalLogic = function(prodOccurrence, actionORMethodDef, key) {
             var _this = this;
             var lookAheadFunc = this.getLaFuncFromCache(key);
-            var action3;
+            var action2;
             if (typeof actionORMethodDef !== "function") {
-              action3 = actionORMethodDef.DEF;
+              action2 = actionORMethodDef.DEF;
               var predicate_2 = actionORMethodDef.GATE;
               if (predicate_2 !== void 0) {
                 var orgLookaheadFunction_2 = lookAheadFunc;
@@ -33428,12 +33428,12 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                 };
               }
             } else {
-              action3 = actionORMethodDef;
+              action2 = actionORMethodDef;
             }
             if (lookAheadFunc.call(this) === true) {
-              var notStuck = this.doSingleRepetition(action3);
+              var notStuck = this.doSingleRepetition(action2);
               while (lookAheadFunc.call(this) === true && notStuck === true) {
-                notStuck = this.doSingleRepetition(action3);
+                notStuck = this.doSingleRepetition(action2);
               }
             } else {
               throw this.raiseEarlyExitException(prodOccurrence, lookahead_1.PROD_TYPE.REPETITION_MANDATORY, actionORMethodDef.ERR_MSG);
@@ -33446,24 +33446,24 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           };
           RecognizerEngine2.prototype.atLeastOneSepFirstInternalLogic = function(prodOccurrence, options, key) {
             var _this = this;
-            var action3 = options.DEF;
+            var action2 = options.DEF;
             var separator = options.SEP;
             var firstIterationLookaheadFunc = this.getLaFuncFromCache(key);
             if (firstIterationLookaheadFunc.call(this) === true) {
               ;
-              action3.call(this);
+              action2.call(this);
               var separatorLookAheadFunc = function() {
                 return _this.tokenMatcher(_this.LA(1), separator);
               };
               while (this.tokenMatcher(this.LA(1), separator) === true) {
                 this.CONSUME(separator);
-                action3.call(this);
+                action2.call(this);
               }
               this.attemptInRepetitionRecovery(this.repetitionSepSecondInternal, [
                 prodOccurrence,
                 separator,
                 separatorLookAheadFunc,
-                action3,
+                action2,
                 interpreter_1.NextTerminalAfterAtLeastOneSepWalker
               ], separatorLookAheadFunc, keys_1.AT_LEAST_ONE_SEP_IDX, prodOccurrence, interpreter_1.NextTerminalAfterAtLeastOneSepWalker);
             } else {
@@ -33477,9 +33477,9 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           RecognizerEngine2.prototype.manyInternalLogic = function(prodOccurrence, actionORMethodDef, key) {
             var _this = this;
             var lookaheadFunction = this.getLaFuncFromCache(key);
-            var action3;
+            var action2;
             if (typeof actionORMethodDef !== "function") {
-              action3 = actionORMethodDef.DEF;
+              action2 = actionORMethodDef.DEF;
               var predicate_3 = actionORMethodDef.GATE;
               if (predicate_3 !== void 0) {
                 var orgLookaheadFunction_3 = lookaheadFunction;
@@ -33488,11 +33488,11 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
                 };
               }
             } else {
-              action3 = actionORMethodDef;
+              action2 = actionORMethodDef;
             }
             var notStuck = true;
             while (lookaheadFunction.call(this) === true && notStuck === true) {
-              notStuck = this.doSingleRepetition(action3);
+              notStuck = this.doSingleRepetition(action2);
             }
             this.attemptInRepetitionRecovery(
               this.manyInternal,
@@ -33515,43 +33515,43 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           };
           RecognizerEngine2.prototype.manySepFirstInternalLogic = function(prodOccurrence, options, key) {
             var _this = this;
-            var action3 = options.DEF;
+            var action2 = options.DEF;
             var separator = options.SEP;
             var firstIterationLaFunc = this.getLaFuncFromCache(key);
             if (firstIterationLaFunc.call(this) === true) {
-              action3.call(this);
+              action2.call(this);
               var separatorLookAheadFunc = function() {
                 return _this.tokenMatcher(_this.LA(1), separator);
               };
               while (this.tokenMatcher(this.LA(1), separator) === true) {
                 this.CONSUME(separator);
-                action3.call(this);
+                action2.call(this);
               }
               this.attemptInRepetitionRecovery(this.repetitionSepSecondInternal, [
                 prodOccurrence,
                 separator,
                 separatorLookAheadFunc,
-                action3,
+                action2,
                 interpreter_1.NextTerminalAfterManySepWalker
               ], separatorLookAheadFunc, keys_1.MANY_SEP_IDX, prodOccurrence, interpreter_1.NextTerminalAfterManySepWalker);
             }
           };
-          RecognizerEngine2.prototype.repetitionSepSecondInternal = function(prodOccurrence, separator, separatorLookAheadFunc, action3, nextTerminalAfterWalker) {
+          RecognizerEngine2.prototype.repetitionSepSecondInternal = function(prodOccurrence, separator, separatorLookAheadFunc, action2, nextTerminalAfterWalker) {
             while (separatorLookAheadFunc()) {
               this.CONSUME(separator);
-              action3.call(this);
+              action2.call(this);
             }
             this.attemptInRepetitionRecovery(this.repetitionSepSecondInternal, [
               prodOccurrence,
               separator,
               separatorLookAheadFunc,
-              action3,
+              action2,
               nextTerminalAfterWalker
             ], separatorLookAheadFunc, keys_1.AT_LEAST_ONE_SEP_IDX, prodOccurrence, nextTerminalAfterWalker);
           };
-          RecognizerEngine2.prototype.doSingleRepetition = function(action3) {
+          RecognizerEngine2.prototype.doSingleRepetition = function(action2) {
             var beforeIteration = this.getLexerPosition();
-            action3.call(this);
+            action2.call(this);
             var afterIteration = this.getLexerPosition();
             return afterIteration > beforeIteration;
           };
@@ -41728,14 +41728,14 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       Object.defineProperty(exports2, "__esModule", {
         value: true
       });
-      exports2.default = formatDuration2;
+      exports2.default = formatDuration3;
       var _index = require_defaultOptions();
       var _index2 = _interopRequireDefault(require_defaultLocale());
       function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : { default: obj };
       }
       var defaultFormat = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"];
-      function formatDuration2(duration, options) {
+      function formatDuration3(duration, options) {
         var _ref, _options$locale, _options$format, _options$zero, _options$delimiter;
         if (arguments.length < 1) {
           throw new TypeError("1 argument required, but only ".concat(arguments.length, " present"));
@@ -54996,16 +54996,20 @@ ${import_chalk2.default.magenta("Installing")} deps:
       return bundler.runs;
     },
     async dispose() {
-      const all = Object.values(bundler.runs).map(async (pty) => {
-        await pty.kill();
+      const all = Object.values(bundler.runs).map(async (runs) => {
+        runs.forEach(async (run) => {
+          await run.kill();
+        });
       });
       return await Promise.all(all);
     },
     async restart(path2) {
       if (bundler.runs[path2]) {
-        const data = bundler.runs[path2].data;
-        await this.stop(path2);
-        await runner.run(data.arg);
+        bundler.runs[path2].forEach(async (run) => {
+          const data = run.data;
+          await this.stop(path2);
+          await runner.run(data.arg);
+        });
       } else {
         return false;
       }
@@ -55015,9 +55019,13 @@ ${import_chalk2.default.magenta("Installing")} deps:
         if (!bundler.runs[path2]) {
           resolve(true);
         } else {
-          bundler.runs[path2].onExit(() => resolve(true));
-          bundler.runs[path2].kill();
-          delete bundler.runs[path2];
+          bundler.runs[path2].forEach((run) => {
+            run.onExit(() => resolve(true));
+            run.kill();
+            bundler.runs[path2].delete(run);
+            if (bundler.runs[path2].size === 0)
+              delete bundler.runs[path2];
+          });
         }
       });
     },
@@ -55030,22 +55038,28 @@ ${import_chalk2.default.magenta("Installing")} deps:
             isCommand = true;
           }
         }
-        bundler.runs[path2] = await spawn2(path2, args2 || [], {
+        if (!bundler.runs[path2]) {
+          bundler.runs[path2] = /* @__PURE__ */ new Set();
+        }
+        const run = await spawn2(path2, args2 || [], {
           cwd: cwd2,
           ipc: isCommand ? false : true,
           silent: arg.silent
         });
-        bundler.runs[path2].data = {
+        bundler.runs[path2].add(run);
+        run.data = {
           arg
         };
-        bundler.runs[path2].onExit(async (e) => {
+        run.onExit(async (e) => {
           if (onStop)
             await onStop(e);
-          delete bundler.runs[path2];
+          bundler.runs[path2].delete(run);
+          if (bundler.runs[path2].size === 0)
+            delete bundler.runs[path2];
         });
         return await new Promise((resolve) => {
           if (!isCommand) {
-            bundler.runs[path2].onMessage((e) => {
+            run.onMessage((e) => {
               resolve(true);
             });
           } else {
@@ -55058,69 +55072,10 @@ ${import_chalk2.default.magenta("Installing")} deps:
     }
   };
 
-  // pkgs/base/pkgs/bundler/watch.ts
-  var import_watcher = __require("@parcel/watcher");
-  var import_path5 = __require("path");
-  var watcher = {
-    _watches: {},
-    _watcher: null,
-    async dispose() {
-      if (this._watcher)
-        this._watcher.unsubscribe();
-    },
-    async watch(item) {
-      if (!this._watches[item.dir]) {
-        this._watches[item.dir] = /* @__PURE__ */ new Set();
-      }
-      this._watches[item.dir].add(item);
-      if (!this._watcher) {
-        this._watcher = await (0, import_watcher.subscribe)(
-          dir.root(),
-          (err2, changes) => {
-            const keys = Object.keys(this._watches);
-            const matcher = /* @__PURE__ */ new Map();
-            for (const c of changes) {
-              const match = keys.filter((e) => c.path.startsWith(e));
-              if (match.length > 0) {
-                for (const dir2 of match) {
-                  const depth = c.path.substring(dir2.length + 1).split(import_path5.sep);
-                  const watches = this._watches[dir2];
-                  watches.forEach((e) => {
-                    if (e.event) {
-                      if (!e.depth || e.depth && depth.length <= e.depth) {
-                        if (!matcher.has(e))
-                          matcher.set(e, [c]);
-                        else {
-                          const found = matcher.get(e);
-                          found?.push(c);
-                        }
-                      }
-                    }
-                  });
-                }
-              }
-            }
-            for (const [e, v] of matcher) {
-              if (e.event)
-                e.event(err2, v);
-            }
-          },
-          {
-            ignore: [
-              "**/app/gen/**",
-              "**/.**",
-              "**/.output/**"
-            ]
-          }
-        );
-      }
-    }
-  };
-
   // pkgs/base/src/main.ts
-  var import_fs_jetpack22 = __toESM(require_main());
+  var import_fs_jetpack20 = __toESM(require_main());
   var import_lodash5 = __toESM(require_lodash());
-  var import_path18 = __require("path");
+  var import_path17 = __require("path");
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var import_cuid2 = __toESM(require_cuid2());
@@ -55216,7 +55171,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/pkgs/rpc/src/config.ts
   var import_fs4 = __require("fs");
-  var import_path6 = __require("path");
+  var import_path5 = __require("path");
   var config = new Proxy(
     {
       _path: "",
@@ -55236,16 +55191,16 @@ ${import_chalk2.default.magenta("Installing")} deps:
     }
   );
   var initConf = (target) => {
-    target._path = (0, import_path6.join)(process.cwd(), "rpc.json");
+    target._path = (0, import_path5.join)(process.cwd(), "rpc.json");
     try {
-      if ((0, import_fs4.existsSync)((0, import_path6.join)(process.cwd(), "base"))) {
+      if ((0, import_fs4.existsSync)((0, import_path5.join)(process.cwd(), "base"))) {
         target._path = dir.root(".output/app/rpc.json");
       }
       if ((0, import_fs4.existsSync)(target._path)) {
         const json = (0, import_fs4.readFileSync)(target._path, "utf-8");
         target._raw = JSON.parse(json);
       } else {
-        (0, import_fs4.mkdirSync)((0, import_path6.dirname)(target._path), { recursive: true });
+        (0, import_fs4.mkdirSync)((0, import_path5.dirname)(target._path), { recursive: true });
       }
     } catch (e) {
     }
@@ -55259,16 +55214,21 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var connectRPC = (name, arg) => __async(void 0, null, function* () {
-    const waitConnection = (0, import_lodash2.default)(arg, "waitConnection", true);
+    const waitConnection = (0, import_lodash2.default)(arg, "waitConnection", false);
     const exitWhenDisconnect = (0, import_lodash2.default)(arg, "exitWhenDisconnect", true);
     let ws = false;
     let serverConnected = false;
-    if (waitConnection) {
-      const res = yield connect(name);
-      if (res) {
-        ws = res.ws;
-        serverConnected = res.serverConnected;
-      }
+    const onClose = () => {
+      if (exitWhenDisconnect)
+        process.exit(0);
+    };
+    const res = yield connect(name, {
+      waitServer: waitConnection,
+      onClose
+    });
+    if (res) {
+      ws = res.ws;
+      serverConnected = res.serverConnected;
     }
     return new DeepProxy({}, ({ PROXY, key, path: path2, handler }) => {
       if (key) {
@@ -55279,15 +55239,13 @@ ${import_chalk2.default.magenta("Installing")} deps:
           return !!ws && !!serverConnected;
         return (...args2) => __async(void 0, null, function* () {
           if (ws === false) {
-            const res = yield connect(name, {
-              onClose() {
-                if (exitWhenDisconnect)
-                  process.exit(0);
-              }
+            const res2 = yield connect(name, {
+              waitServer: true,
+              onClose
             });
-            if (res) {
-              ws = res.ws;
-              serverConnected = res.serverConnected;
+            if (res2) {
+              ws = res2.ws;
+              serverConnected = res2.serverConnected;
             }
           }
           return new Promise((resolve) => {
@@ -55331,16 +55289,24 @@ ${import_chalk2.default.magenta("Installing")} deps:
           ws.on("message", (raw) => {
             const msg = JSON.parse(raw);
             if (msg.type === "connected") {
-              resolve({ ws, serverConnected: msg.serverConnected });
+              if (arg == null ? void 0 : arg.waitServer) {
+                if (msg.serverConnected) {
+                  resolve({ ws, serverConnected: msg.serverConnected });
+                }
+              } else {
+                resolve({ ws, serverConnected: msg.serverConnected });
+              }
             }
           });
         });
         ws.on("close", () => {
           resolve(false);
-          if (arg)
+          if (arg == null ? void 0 : arg.onClose)
             arg.onClose();
         });
-        ws.on("error", () => resolve(false));
+        ws.on("error", () => {
+          resolve(false);
+        });
       }
     );
   };
@@ -55487,16 +55453,16 @@ ${import_chalk2.default.magenta("Installing")} deps:
   var import_lodash3 = __toESM(require_lodash2());
   var import_pretty_error2 = __toESM(require_PrettyError());
   var pe2 = new import_pretty_error2.default();
-  var createRPC = (name, action3, opt) => __async(void 0, null, function* () {
+  var createRPC = (name, action2, opt) => __async(void 0, null, function* () {
     let srv = null;
     if (!config.port) {
       config.port = yield getPorts({ port: portNumbers(14e3, 19e3) });
       srv = yield createServer();
     }
-    let ws = yield connect2(name, action3);
+    let ws = yield connect2(name, action2);
     if (!ws) {
       srv = yield createServer();
-      ws = yield connect2(name, action3);
+      ws = yield connect2(name, action2);
     }
     if ((opt == null ? void 0 : opt.isMain) && !srv) {
       console.log(
@@ -55508,7 +55474,7 @@ Make sure to kill running instance before starting.
       );
       process.exit(1);
     }
-    return new DeepProxy(action3, ({ target, PROXY, key, path: path2, handler }) => {
+    return new DeepProxy(action2, ({ target, PROXY, key, path: path2, handler }) => {
       if (key) {
         if (key === "destroy") {
           return () => {
@@ -55528,7 +55494,7 @@ Make sure to kill running instance before starting.
       return void 0;
     });
   });
-  var connect2 = (name, action3) => {
+  var connect2 = (name, action2) => {
     return new Promise((resolve) => {
       const ws = new import_websocket.default(`ws://localhost:${config.port}/create/${name}`);
       setTimeout(() => {
@@ -55542,7 +55508,7 @@ Make sure to kill running instance before starting.
         ws.on("message", (raw) => __async(void 0, null, function* () {
           const msg = JSON.parse(raw);
           if (msg.type === "action") {
-            const fn = (0, import_lodash3.default)(action3, msg.path.join("."));
+            const fn = (0, import_lodash3.default)(action2, msg.path.join("."));
             if (typeof fn === "function") {
               let result = void 0;
               let error = void 0;
@@ -55587,6 +55553,14 @@ Make sure to kill running instance before starting.
             };
           }
           conns[msg.name].server = ws;
+          conns[msg.name].clients.forEach((ws2) => {
+            ws2.send(
+              JSON.stringify({
+                type: "connected",
+                serverConnected: true
+              })
+            );
+          });
         } else if (msg.type === "action-result") {
           for (const v of Object.values(conns)) {
             v.clients.forEach((cws) => {
@@ -55639,6 +55613,65 @@ Make sure to kill running instance before starting.
   // pkgs/base/src/builder/service.ts
   var import_path14 = __require("path");
 
+  // pkgs/base/pkgs/bundler/watch.ts
+  var import_watcher = __require("@parcel/watcher");
+  var import_path6 = __require("path");
+  var watcher = {
+    _watches: {},
+    _watcher: null,
+    async dispose() {
+      if (this._watcher)
+        this._watcher.unsubscribe();
+    },
+    async watch(item) {
+      if (!this._watches[item.dir]) {
+        this._watches[item.dir] = /* @__PURE__ */ new Set();
+      }
+      this._watches[item.dir].add(item);
+      if (!this._watcher) {
+        this._watcher = await (0, import_watcher.subscribe)(
+          dir.root(),
+          (err2, changes) => {
+            const keys = Object.keys(this._watches);
+            const matcher = /* @__PURE__ */ new Map();
+            for (const c of changes) {
+              const match = keys.filter((e) => c.path.startsWith(e));
+              if (match.length > 0) {
+                for (const dir2 of match) {
+                  const depth = c.path.substring(dir2.length + 1).split(import_path6.sep);
+                  const watches = this._watches[dir2];
+                  watches.forEach((e) => {
+                    if (e.event) {
+                      if (!e.depth || e.depth && depth.length <= e.depth) {
+                        if (!matcher.has(e))
+                          matcher.set(e, [c]);
+                        else {
+                          const found = matcher.get(e);
+                          found?.push(c);
+                        }
+                      }
+                    }
+                  });
+                }
+              }
+            }
+            for (const [e, v] of matcher) {
+              if (e.event)
+                e.event(err2, v);
+            }
+          },
+          {
+            ignore: [
+              "**/app/gen/**",
+              "**/.**",
+              "**/.output/**"
+            ]
+          }
+        );
+      }
+    }
+  };
+
   // pkgs/base/src/watcher/watch-service.ts
   var watchService = (name, event) => {
     watcher.watch({
@@ -55657,7 +55690,7 @@ Make sure to kill running instance before starting.
   var import_catch_exit = __toESM(require_dist());
 
   // pkgs/service/src/action.ts
-  var action = {
+  var rootAction = {
     async start(arg) {
       const running = await runner.run({
         path: dir.path(`${arg.name}/index.js`),
@@ -55684,7 +55717,7 @@ Make sure to kill running instance before starting.
       rpc: null
     },
     init: async (g2) => {
-      g2.rpc = await createRPC("root", action);
+      g2.rpc = await createRPC("root", rootAction);
     }
   });
 
@@ -57464,6 +57497,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
       yield generateSSR(name, dir.root(`app/${name}/src/base/ssr`));
       return { shouldRestart: false };
     }
+    return { shouldRestart: true };
   });
 
   // pkgs/base/src/builder/service/prepare.ts
@@ -57557,7 +57591,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
 
   // pkgs/base/src/action.ts
   var baseGlobal = global;
-  var action2 = {
+  var action = {
     rebuildService: (name) => __async(void 0, null, function* () {
       return yield bundleService(name, {
         watch: true
@@ -57566,8 +57600,46 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
   };
 
   // pkgs/base/src/builder/service/postbuild/web.ts
-  var postBuildWeb = (name) => __async(void 0, null, function* () {
-  });
+  var import_core = __require("@parcel/core");
+  var postBuildWeb = (name) => {
+    connectRPC(`svc.${name}`, { waitConnection: true }).then(
+      (rpc) => __async(void 0, null, function* () {
+        let entry = yield rpc.getEntry();
+        if (entry.startsWith("./"))
+          entry = entry.substring(2);
+        try {
+          let bundler2 = new import_core.Parcel({
+            entries: dir.root(`app/${name}/${entry}`),
+            defaultConfig: dir.root(
+              `pkgs/base/src/builder/service/postbuild/parcel.config.json`
+            ),
+            shouldAutoInstall: true,
+            targets: {
+              web: {
+                distDir: dir.root(`.output/app/${name}/public`)
+              }
+            }
+          });
+          yield bundler2.watch((err2, ev) => {
+            if (!err2 && ev && ev.type === "buildSuccess") {
+              console.log(`Parcel done: ${formatDuration2(ev.buildTime)}`);
+            } else {
+              console.log(err2);
+            }
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      })
+    );
+  };
+  var formatDuration2 = (ms) => {
+    if (ms > 1e3) {
+      return `${(ms / 1e3).toFixed(3)}s`;
+    } else {
+      return `${ms.toFixed(2)}ms`;
+    }
+  };
 
   // pkgs/base/src/builder/service/postbuild.ts
   var postBuild = (name) => __async(void 0, null, function* () {
@@ -57587,8 +57659,10 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
           });
         }
         if (bundler.runs) {
-          for (const run of Object.values(bundler.runs)) {
-            run.kill();
+          for (const runs of Object.values(bundler.runs)) {
+            runs.forEach((run) => __async(this, null, function* () {
+              yield run.kill();
+            }));
           }
         }
         process.exit(0);
@@ -57683,7 +57757,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
     const dirs = (0, import_fs5.readdirSync)(dir.path("app")).filter(
       (e) => !["node_modules", "app.ts", "package.json", "gen"].includes(e)
     ).map((e) => ({ name: e, stat: (0, import_fs5.statSync)(dir.path(`app/${e}`)) })).filter(
-      ({ stat: stat5, name }) => stat5.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
+      ({ stat: stat4, name }) => stat4.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
     );
     yield serviceGen();
     return {
@@ -58321,89 +58395,6 @@ If somehow upgrade failed you can rollback using
     "hide-files.files": []
   };
 
-  // pkgs/base/src/watcher/all.ts
-  var import_fs_jetpack21 = __toESM(require_main());
-
-  // pkgs/base/src/watcher/new-service.ts
-  var import_fs_jetpack20 = __toESM(require_main());
-  var import_promises5 = __require("fs/promises");
-  var import_path17 = __require("path");
-  var watchNewService = () => {
-    watcher.watch({
-      dir: dir.root("app"),
-      depth: 1,
-      event: (err2, changes) => __async(void 0, null, function* () {
-        if (!err2) {
-          for (const c of changes) {
-            const name = (0, import_path17.basename)(c.path);
-            if (c.type === "delete") {
-              console.log(`Removing service: ${source_default.red(name)}`);
-              yield (0, import_fs_jetpack20.removeAsync)(dir.root(`.output/app/${name}`));
-              yield serviceGen();
-              process.exit(99);
-            } else if (c.type === "create") {
-              const s = yield (0, import_promises5.stat)(c.path);
-              if (s.isDirectory() && (yield (0, import_promises5.readdir)(c.path)).length === 0) {
-                console.log(`Scaffolding new service: ${source_default.blue(name)}`);
-                let root2 = "pkgs/template/pkgs/service";
-                if (name.startsWith("db")) {
-                  root2 = "pkgs/template/pkgs/db";
-                } else if (name.startsWith("srv")) {
-                  root2 = "pkgs/template/pkgs/srv";
-                }
-                const files = yield (0, import_promises5.readdir)(dir.root(root2));
-                for (const f of files) {
-                  if (f !== "node_modules") {
-                    const fpath = dir.root(`${root2}/${f}`);
-                    const s2 = yield (0, import_promises5.stat)(fpath);
-                    if (s2.isDirectory()) {
-                      yield (0, import_fs_jetpack20.copyAsync)(fpath, (0, import_path17.join)(c.path, f), {
-                        overwrite: true
-                      });
-                    } else {
-                      const src = yield (0, import_fs_jetpack20.readAsync)(fpath, "utf8");
-                      yield (0, import_fs_jetpack20.writeAsync)(
-                        (0, import_path17.join)(c.path, f),
-                        (src || "").replace(/template_service/g, name)
-                      );
-                    }
-                  }
-                }
-                yield serviceGen();
-                yield pkg.install(dir.root(`app/${name}`), {
-                  cwd: dir.root(`app/${name}`),
-                  silent: true
-                });
-                process.exit(99);
-              }
-            }
-          }
-        }
-      })
-    });
-  };
-
-  // pkgs/base/src/watcher/all.ts
-  var setupWatchers = (args2, onExit) => {
-    if (args2.includes("devbase")) {
-      ["pkgs/base", "pkgs/service"].map((e) => {
-        watcher.watch({
-          dir: dir.root(e),
-          event: (err2, ev) => __async(void 0, null, function* () {
-            if (!err2) {
-              marker["*"] = /* @__PURE__ */ new Set();
-              if (baseGlobal.app)
-                yield (0, import_fs_jetpack21.removeAsync)(baseGlobal.app.output);
-              yield onExit();
-              process.exit(99);
-            }
-          })
-        });
-      });
-    }
-    watchNewService();
-  };
-
   // pkgs/base/src/main.ts
   var args = process.argv.slice(2);
   var baseMain = () => __async(void 0, null, function* () {
@@ -58420,29 +58411,23 @@ If somehow upgrade failed you can rollback using
     if (args.includes("clean")) {
       console.log("Cleaning node_modules");
       const dirs = yield scanDir([dir.root()]);
-      yield (0, import_fs_jetpack22.removeAsync)(dir.root(".output"));
+      yield (0, import_fs_jetpack20.removeAsync)(dir.root(".output"));
       yield Promise.all(
-        dirs.map((e) => (0, import_fs_jetpack22.removeAsync)((0, import_path18.join)((0, import_path18.dirname)(e), "node_modules")))
+        dirs.map((e) => (0, import_fs_jetpack20.removeAsync)((0, import_path17.join)((0, import_path17.dirname)(e), "node_modules")))
       );
-      yield (0, import_fs_jetpack22.removeAsync)(dir.root("node_modules"));
+      yield (0, import_fs_jetpack20.removeAsync)(dir.root("node_modules"));
       return;
     }
     console.log(`\u2500\u2500 ${(0, import_lodash5.default)(source_default.yellow(`BASE`) + " ", 47, "\u2500")}`);
     if (args.includes("build") || args.includes("deploy") || args.includes("prod") || args.includes("staging")) {
     } else {
-      yield createRPC("base", action2, { isMain: true });
+      yield createRPC("base", action, { isMain: true });
       baseGlobal.rpc = {
         service: yield connectRPC("root", {
           waitConnection: false
         })
       };
       const app = yield prepareApp();
-      const onExit = () => __async(void 0, null, function* () {
-        yield watcher.dispose();
-        if (app)
-          yield runner.stop(app.output);
-      });
-      setupWatchers(args, onExit);
       baseGlobal.app = app;
       yield bundle({
         input: app.input,

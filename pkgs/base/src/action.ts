@@ -1,5 +1,5 @@
 import { SERVICE_TYPE } from "../../service/src/types";
-import { action as ServiceAction } from "../../service/src/action";
+import { rootAction as ServiceAction } from "../../service/src/action";
 import { RPCActionResult } from "rpc/src/types";
 import { prepareApp } from "./scaffold/app";
 import { bundleService } from "./builder/service";

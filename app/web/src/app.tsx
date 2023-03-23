@@ -37,9 +37,9 @@ export const App: SSR["App"] = ({ initScript, name, props, res: req }) => {
             `
           )}
         >
-          <FluentProvider theme={{ ...theme, ...customTheme }}>
-            <Root name={name} loading={<Loading />} props={props} res={req} />
-          </FluentProvider>
+          {/* <FluentProvider theme={{ ...theme, ...customTheme }}> */}
+          <Root name={name} loading={<Loading />} props={props} res={req} />
+          {/* </FluentProvider> */}
         </div>
         <ServerScript source={initScript} />
       </body>

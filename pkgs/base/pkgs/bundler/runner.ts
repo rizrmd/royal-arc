@@ -8,16 +8,20 @@ export const runner = {
     return bundler.runs;
   },
   async dispose() {
-    const all = Object.values(bundler.runs).map(async (pty) => {
-      await pty.kill();
+    const all = Object.values(bundler.runs).map(async (runs) => {
+      runs.forEach(async (run) => {
+        await run.kill();
+      });
     });
     return await Promise.all(all);
   },
   async restart(path: keyof typeof bundler.runs) {
     if (bundler.runs[path]) {
-      const data = bundler.runs[path].data;
-      await this.stop(path);
-      await runner.run(data.arg);
+      bundler.runs[path].forEach(async (run) => {
+        const data = run.data;
+        await this.stop(path);
+        await runner.run(data.arg);
+      });
     } else {
       return false;
     }
@@ -27,9 +31,12 @@ export const runner = {
       if (!bundler.runs[path]) {
         resolve(true);
       } else {
-        bundler.runs[path].onExit(() => resolve(true));
-        bundler.runs[path].kill();
-        delete bundler.runs[path];
+        bundler.runs[path].forEach((run) => {
+          run.onExit(() => resolve(true));
+          run.kill();
+          bundler.runs[path].delete(run);
+          if (bundler.runs[path].size === 0) delete bundler.runs[path];
+        });
       }
     });
   },
@@ -55,23 +62,30 @@ export const runner = {
         }
       }
 
-      bundler.runs[path] = await spawn(path, args || [], {
+      if (!bundler.runs[path]) {
+        bundler.runs[path] = new Set();
+      }
+
+      const run = await spawn(path, args || [], {
         cwd,
         ipc: isCommand ? false : true,
         silent: arg.silent,
       });
-      bundler.runs[path].data = {
+      bundler.runs[path].add(run);
+      run.data = {
         arg,
       };
-
-      bundler.runs[path].onExit(async (e) => {
+ 
+      run.onExit(async (e) => {
         if (onStop) await onStop(e);
-        delete bundler.runs[path];
+ 
+        bundler.runs[path].delete(run);
+        if (bundler.runs[path].size === 0) delete bundler.runs[path];
       });
 
       return await new Promise<boolean>((resolve) => {
         if (!isCommand) {
-          bundler.runs[path].onMessage((e) => {
+          run.onMessage((e) => {
             resolve(true);
           });
         } else {

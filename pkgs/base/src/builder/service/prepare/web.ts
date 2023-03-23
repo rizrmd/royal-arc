@@ -19,4 +19,6 @@ export const prepareWeb = async (name: string, changes?: Set<string>) => {
 
     return { shouldRestart: false };
   }
+
+  return { shouldRestart: true };
 };

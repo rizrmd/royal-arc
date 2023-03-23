@@ -2,7 +2,7 @@ import { BuildContext } from "esbuild";
 import { IPty } from "utility/spawn";
 
 export const bundler = globalThis as unknown as {
-  runs: Record<string, IPty>;
+  runs: Record<string, Set<IPty>>;
   bundlers: Set<BuildContext>;
 };
 

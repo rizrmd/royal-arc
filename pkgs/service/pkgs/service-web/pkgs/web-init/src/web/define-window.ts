@@ -26,7 +26,9 @@ export const defineWindow = async () => {
     return classNames.filter((e) => e).join(" ");
   };
 
-  const apiEntry = await import("../../../../../../app/gen/srv/api/entry-args");
+  const apiEntry = await import(
+    "../../../../../../../../app/gen/srv/api/entry-args"
+  );
   w.db = dbClient("db");
   w.api = apiClient((apiEntry as any)["srv"]);
   w.navigate = (href: string) => {

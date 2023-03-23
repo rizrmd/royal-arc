@@ -3,7 +3,7 @@ import { bundler } from "bundler/global";
 export const attachCleanUp = () => {
   let exiting = false;
   function exitHandler() {
-    if (!exiting) {
+    if (!exiting) { 
       exiting = true;
       if (bundler.bundlers) {
         bundler.bundlers.forEach((ctx) => {
@@ -11,8 +11,10 @@ export const attachCleanUp = () => {
         });
       }
       if (bundler.runs) {
-        for (const run of Object.values(bundler.runs)) {
-          run.kill();
+        for (const runs of Object.values(bundler.runs)) {
+          runs.forEach(async (run) => {
+            await run.kill();
+          }); 
         }
       }
       process.exit(0);

@@ -86,6 +86,7 @@ const runBase = () => {
   });
 
   global.base.on("message", (e) => {
+    if (e === "base-ready") baseReady = true;
   });
 
   global.base.on("exit", (code) => {

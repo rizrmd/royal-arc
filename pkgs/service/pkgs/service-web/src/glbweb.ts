@@ -12,6 +12,7 @@ export const web = globalize({
   name: "web",
   value: {
     name: "",
+    entry: "",
     ws: new Set<Websocket>(),
     server: null as unknown as Server,
     isSSR: true,
