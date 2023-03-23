@@ -1,19 +1,15 @@
 import { setup } from "goober";
 import React from "react";
-import { hydrateRoot } from "react-dom/client";
-import { SSR } from "./src/types";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import { initRouter } from "./src/web/router";
 import { defineWindow } from "./src/web/define-window";
+import { SSR } from "web-types";
 
-export const initApp = async (
-  name: string,
-  App: SSR["App"],
-  init?: () => void
-) => {
-  setup(React.createElement);
-  defineWindow();
-
+export const initApp = async (name: string, App: SSR["App"]) => {
   if (!isSSR) {
+    setup(React.createElement);
+    defineWindow();
+
     const w = window as any;
     const pageImport = (await import(
       "../../../../../../app/gen/web/page/entry"
@@ -38,11 +34,11 @@ export const initApp = async (
 
     initRouter();
 
+    const onlyRoot = true;
     if (App) {
       const init = document.getElementById("init_script");
       if (init) {
-        hydrateRoot(
-          document,
+        const app = (
           <App
             initScript={init.innerText}
             name={__WEB_NAME__}
@@ -53,8 +49,23 @@ export const initApp = async (
               params: {},
               statusCode: (window as any).__STATUS_CODE__,
             }}
+            indexCSS={
+              document.getElementById("indexCSS")?.getAttribute("href") ||
+              undefined
+            }
+            onlyRoot={onlyRoot}
           />
         );
+
+        if (onlyRoot) {
+          const rootEl = document.getElementById("root");
+          if (rootEl) {
+            const root = createRoot(rootEl);
+            root.render(app);
+          }
+        } else {
+          hydrateRoot(document, app);
+        }
       }
     }
   }

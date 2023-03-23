@@ -1,20 +1,24 @@
 import { bundler } from "bundler/global";
+import { baseGlobal } from "./action";
 
 export const attachCleanUp = () => {
   let exiting = false;
   function exitHandler() {
-    if (!exiting) { 
+    if (!exiting) {
       exiting = true;
       if (bundler.bundlers) {
         bundler.bundlers.forEach((ctx) => {
           ctx.dispose();
         });
       }
+
+      baseGlobal.parcels.forEach((e) => e.kill(9));
+
       if (bundler.runs) {
         for (const runs of Object.values(bundler.runs)) {
           runs.forEach(async (run) => {
             await run.kill();
-          }); 
+          });
         }
       }
       process.exit(0);

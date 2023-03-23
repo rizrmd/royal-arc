@@ -4,6 +4,6 @@
   "dependencies": {
     "live-directory": "3.0.3",
     "@types/react": "18.0.28",
-    "hyper-express": "6.5.7"
+    "hyper-express": "6.5.8"
   }
 }

@@ -1,5 +1,5 @@
 import { web } from "./glbweb";
-import { initSSR } from "./ssr";
+import { initSSR } from "./init-ssr";
 
 export const webAction = {
   refresh: async () => {

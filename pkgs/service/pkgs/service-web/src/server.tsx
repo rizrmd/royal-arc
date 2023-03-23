@@ -7,22 +7,25 @@ import HyperExpress, {
   Router,
 } from "hyper-express";
 import LiveDirectory from "live-directory";
-import { join } from "path";
+import { basename, join } from "path";
 import { renderToPipeableStream } from "react-dom/server";
 import { liveReloadSrc } from "./live-reload";
-import { initSSR } from "./ssr";
+import { initSSR } from "./init-ssr";
 import trim from "lodash.trim";
 import { web } from "./glbweb";
 import { dirAsync } from "fs-jetpack";
+import { readdir } from "fs/promises";
 
 export const server = async ({
   mode,
   port,
   name,
+  ssrMode,
 }: {
   mode: "dev" | "prod" | "staging";
   name: string;
   port: number;
+  ssrMode: "render" | "stream";
 }) => {
   const server = new HyperExpress.Server({
     max_body_length: 250 * 1000 * 1000,
@@ -56,11 +59,31 @@ export const server = async ({
     } catch (e) {}
   };
 
+  let jsFile = "";
+  let cssFile = "";
+  live.files.forEach((e) => {
+    const file = basename(e.path);
+    if (file.startsWith("index")) {
+      if (file.endsWith(".js")) jsFile = file;
+      if (file.endsWith(".css")) cssFile = file;
+    }
+  });
+
   const renderSSR =
     (req: Request, res: Response, code: number, ssrMode: "stream" | "render") =>
     (props: any) => {
       return new Promise<string>(async (resolve) => {
         const { App } = web.ssr;
+
+        if (!jsFile || !cssFile) {
+          live.files.forEach((e) => {
+            const file = basename(e.path);
+            if (file.startsWith("index")) {
+              if (file.endsWith(".js")) jsFile = file;
+              if (file.endsWith(".css")) cssFile = file;
+            }
+          });
+        }
 
         if (!App) {
           await initSSR();
@@ -75,18 +98,21 @@ export const server = async ({
                   props
                 )};w.__MODE__="${mode}";w.__ETAG__="${stamp}";w.__STATUS_CODE__=${code};${
                   mode === "dev" ? liveReloadSrc : ""
-                }`
+                };`
               )}
               etag={stamp.toString()}
+              indexCSS={cssFile}
               props={props || {}}
               res={{ pathname: req.path, params: {}, statusCode: code }}
-            />, 
+            />,
             {
-              bootstrapScripts: ["/index.js"],
+              bootstrapScripts: [`/${jsFile}`],
               onShellReady() {
                 if (ssrMode === "stream") {
-                  res.setHeader("content-type", "text/html");
-                  if (!res.closed) pipe(new ProxyWritable(res) as any);
+                  try {
+                    res.setHeader("content-type", "text/html");
+                    if (!res.closed) pipe(new ProxyWritable(res) as any);
+                  } catch (e) {}
                 }
               },
               async onAllReady() {
@@ -174,8 +200,9 @@ export const server = async ({
           continue;
         }
         router.get(url, function (req, res) {
-          serveStatic(req, res, () => {
-            renderSSR(req, res, 200, "stream")({});
+          serveStatic(req, res, async () => {
+            const result = await renderSSR(req, res, 200, ssrMode)({});
+            if (ssrMode === "render") res.send(result);
           });
         });
       }
@@ -184,9 +211,10 @@ export const server = async ({
   const dup = router.routes.find((e) => e.pattern === "/*");
   if (!dup) {
     router.get("/*", (req, res) => {
-      serveStatic(req, res, () => {
+      serveStatic(req, res, async () => {
         res.status(404);
-        renderSSR(req, res, 404, "stream")({});
+        const result = await renderSSR(req, res, 404, ssrMode)({});
+        if (ssrMode === "render") res.send(result);
       });
     });
   }

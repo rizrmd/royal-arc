@@ -1,9 +1,8 @@
 import { bundle } from "bundler";
 import { runner } from "bundler/runner";
-import { watcher } from "bundler/watch";
 import chalk from "chalk";
 import { dir } from "dir";
-import { existsAsync, removeAsync } from "fs-jetpack";
+import { removeAsync } from "fs-jetpack";
 import padEnd from "lodash.padend";
 import { dirname, join } from "path";
 import { pkg, scanDir } from "pkg";
@@ -11,7 +10,7 @@ import { connectRPC, createRPC } from "rpc";
 import { rootAction as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
 import { bundleService } from "./builder/service";
-import { postBuild } from "./builder/service/postbuild";
+import { postRun } from "./builder/service/postrun";
 import { prepareBuild } from "./builder/service/prepare";
 import { attachCleanUp } from "./cleanup";
 import { commitHook } from "./commit-hook";
@@ -26,7 +25,7 @@ export const baseMain = async () => {
   process.removeAllListeners("warning");
   attachCleanUp();
   vscodeSettings();
- 
+
   await pkg.install(dir.root(), {
     deep: { exclude: [dir.root(".output"), dir.root("pkgs/template")] },
   });
@@ -37,7 +36,7 @@ export const baseMain = async () => {
   if (args.includes("clean")) {
     console.log("Cleaning node_modules");
     const dirs = await scanDir([dir.root()]);
-    await removeAsync(dir.root(".output")); 
+    await removeAsync(dir.root(".output"));
     await Promise.all(
       dirs.map((e) => removeAsync(join(dirname(e), "node_modules")))
     );
@@ -46,6 +45,9 @@ export const baseMain = async () => {
   }
 
   console.log(`── ${padEnd(chalk.yellow(`BASE`) + " ", 47, "─")}`);
+
+  baseGlobal.parcels = new Set()
+
 
   if (
     args.includes("build") ||
@@ -79,7 +81,6 @@ export const baseMain = async () => {
     await Promise.all(
       app.serviceNames.map(async (e) => await bundleService(e, { watch: true }))
     );
-    await Promise.all(app.serviceNames.map(async (e) => await postBuild(e)));
 
     versionCheck({ timeout: 3000 });
 
@@ -90,6 +91,8 @@ export const baseMain = async () => {
       path: app.output,
       cwd: app.cwd,
     });
+
+    await Promise.all(app.serviceNames.map(async (e) => await postRun(e)));
   }
 };
 

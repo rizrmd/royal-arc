@@ -1,6 +1,6 @@
 import { initRouter } from "web-types/router";
 import { web } from "./glbweb";
-import { ssr } from "../pkgs/web-init";
+import { ssr } from "../pkgs/web-init/src/export";
 
 const g = global as any;
 export const initSSR = async () => {

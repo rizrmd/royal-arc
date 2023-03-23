@@ -33,6 +33,8 @@ export type SSR = {
     props: Record<string, any>;
     res: PageResponse;
     etag: string;
+    indexCSS?: string
+    onlyRoot?: boolean;
   }> | null;
   handler: Record<string, OnRequestSSR>;
   initScript: (inject: string) => string;

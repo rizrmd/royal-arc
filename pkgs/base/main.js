@@ -282,7 +282,7 @@
           maxRetries: 3
         });
       };
-      var removeAsync9 = (path2) => {
+      var removeAsync10 = (path2) => {
         return fs2.rm(path2, {
           recursive: true,
           force: true,
@@ -291,7 +291,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync9;
+      exports2.async = removeAsync10;
     }
   });
 
@@ -2391,7 +2391,7 @@
         }
         return false;
       };
-      var existsAsync10 = (path2) => {
+      var existsAsync9 = (path2) => {
         return new Promise((resolve, reject) => {
           fs2.stat(path2).then((stat4) => {
             if (stat4.isDirectory()) {
@@ -2412,7 +2412,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = existsSync5;
-      exports2.async = existsAsync10;
+      exports2.async = existsAsync9;
     }
   });
 
@@ -3464,13 +3464,13 @@
       function toString(value) {
         return value == null ? "" : baseToString(value);
       }
-      function padEnd5(string, length, chars) {
+      function padEnd4(string, length, chars) {
         string = toString(string);
         length = toInteger(length);
         var strLength = length ? stringSize(string) : 0;
         return length && strLength < length ? string + createPadding(length - strLength, chars) : string;
       }
-      module2.exports = padEnd5;
+      module2.exports = padEnd4;
     }
   });
 
@@ -41728,14 +41728,14 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       Object.defineProperty(exports2, "__esModule", {
         value: true
       });
-      exports2.default = formatDuration3;
+      exports2.default = formatDuration2;
       var _index = require_defaultOptions();
       var _index2 = _interopRequireDefault(require_defaultLocale());
       function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : { default: obj };
       }
       var defaultFormat = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"];
-      function formatDuration3(duration, options) {
+      function formatDuration2(duration, options) {
         var _ref, _options$locale, _options$format, _options$zero, _options$delimiter;
         if (arguments.length < 1) {
           throw new TypeError("1 argument required, but only ".concat(arguments.length, " present"));
@@ -55073,9 +55073,9 @@ ${import_chalk2.default.magenta("Installing")} deps:
   };
 
   // pkgs/base/src/main.ts
-  var import_fs_jetpack20 = __toESM(require_main());
-  var import_lodash6 = __toESM(require_lodash());
-  var import_path17 = __require("path");
+  var import_fs_jetpack21 = __toESM(require_main());
+  var import_lodash5 = __toESM(require_lodash());
+  var import_path18 = __require("path");
 
   // pkgs/base/pkgs/rpc/src/connect.ts
   var import_cuid2 = __toESM(require_cuid2());
@@ -57612,67 +57612,37 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
     })
   };
 
-  // pkgs/base/src/builder/service/postbuild/web.ts
-  var import_core = __require("@parcel/core");
-  var import_lodash5 = __toESM(require_lodash());
-  var postBuildWeb = (name) => {
+  // pkgs/base/src/builder/service/postrun/web.ts
+  var import_child_process3 = __require("child_process");
+  var import_path15 = __require("path");
+  var import_fs_jetpack14 = __toESM(require_main());
+  var postRunWeb = (name) => {
     connectRPC(`svc.${name}`, { waitConnection: true }).then(
       (rpc) => __async(void 0, null, function* () {
         let entry = yield rpc.getEntry();
-        if (entry.startsWith("./"))
-          entry = entry.substring(2);
-        try {
-          let bundler2 = new import_core.Parcel({
-            entries: dir.root(`app/${name}/${entry}`),
-            defaultConfig: dir.root(
-              `pkgs/base/src/builder/service/postbuild/parcel.config.json`
-            ),
-            shouldAutoInstall: true,
-            targets: {
-              web: {
-                distDir: dir.root(`.output/app/${name}/public`)
-              }
-            }
-          });
-          let first = false;
-          const t0 = performance.now();
-          yield bundler2.watch((err2, ev) => {
-            if (!err2 && ev && ev.type === "buildSuccess") {
-              const parcel = `
-${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
-                source_default.green(name),
-                22
-              )}`;
-              if (!first) {
-                first = true;
-                console.log(
-                  `${parcel} ${formatDuration2(performance.now() - t0, 1)}`
-                );
-              } else {
-                console.log(`${parcel} ${formatDuration2(ev.buildTime)}`);
-              }
-            } else {
-              console.log(err2);
-            }
-          });
-        } catch (e) {
-          console.error(e);
-        }
+        yield (0, import_fs_jetpack14.removeAsync)(dir.root(`.output/app/${name}/public`));
+        const args2 = [
+          (0, import_path15.join)(..."node_modules/parcel/lib/bin.js".split("/")),
+          "watch",
+          entry,
+          "--no-hmr",
+          "--dist-dir",
+          dir.root(`.output/app/${name}/public`)
+        ];
+        baseGlobal.parcels.add(
+          (0, import_child_process3.spawn)("node", args2, {
+            cwd: dir.root(`app/${name}`),
+            stdio: ["ignore", "inherit", "inherit"]
+          })
+        );
       })
     );
   };
-  var formatDuration2 = (ms, pad) => {
-    if (ms > 1e3) {
-      return `${(0, import_lodash5.default)((ms / 1e3).toFixed(3) + "", pad || 6, " ")} s`;
-    } else {
-      return `${(0, import_lodash5.default)(ms.toFixed(2) + "", pad || 6, " ")} ms`;
-    }
-  };
 
-  // pkgs/base/src/builder/service/postbuild.ts
-  var postBuild = (name) => __async(void 0, null, function* () {
+  // pkgs/base/src/builder/service/postrun.ts
+  var postRun = (name) => __async(void 0, null, function* () {
     if (name.startsWith("web"))
-      postBuildWeb(name);
+      postRunWeb(name);
   });
 
   // pkgs/base/src/cleanup.ts
@@ -57686,6 +57656,7 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
             ctx.dispose();
           });
         }
+        baseGlobal.parcels.forEach((e) => e.kill(9));
         if (bundler.runs) {
           for (const runs of Object.values(bundler.runs)) {
             runs.forEach((run) => __async(this, null, function* () {
@@ -57704,11 +57675,11 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
   };
 
   // pkgs/base/src/commit-hook.ts
-  var import_child_process3 = __require("child_process");
-  var import_fs_jetpack14 = __toESM(require_main());
+  var import_child_process4 = __require("child_process");
+  var import_fs_jetpack15 = __toESM(require_main());
   var commitHook = (args2) => __async(void 0, null, function* () {
     const isMainRepo = () => __async(void 0, null, function* () {
-      const conf = yield (0, import_fs_jetpack14.readAsync)(dir.root(".git/config"), "utf8");
+      const conf = yield (0, import_fs_jetpack15.readAsync)(dir.root(".git/config"), "utf8");
       if (conf == null ? void 0 : conf.includes("url = https://github.com/avolut/royal")) {
         return true;
       }
@@ -57716,10 +57687,10 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
     });
     if (args2.includes("pre-commit")) {
       if (yield isMainRepo()) {
-        if (!(yield (0, import_fs_jetpack14.existsAsync)(dir.root(".husky/_/husky.sh")))) {
-          (0, import_child_process3.spawnSync)("pnpm husky install", { cwd: dir.root("") });
+        if (!(yield (0, import_fs_jetpack15.existsAsync)(dir.root(".husky/_/husky.sh")))) {
+          (0, import_child_process4.spawnSync)("pnpm husky install", { cwd: dir.root("") });
         }
-        yield (0, import_fs_jetpack14.writeAsync)(dir.root(".output/.commit"), "");
+        yield (0, import_fs_jetpack15.writeAsync)(dir.root(".output/.commit"), "");
       }
       if (process.send) {
         process.send("exit");
@@ -57730,9 +57701,9 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
     }
     if (args2.includes("post-commit")) {
       if (yield isMainRepo()) {
-        if (yield (0, import_fs_jetpack14.existsAsync)(dir.root(".output/.commit"))) {
-          yield (0, import_fs_jetpack14.removeAsync)(dir.root(".output/.commit"));
-          yield (0, import_fs_jetpack14.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
+        if (yield (0, import_fs_jetpack15.existsAsync)(dir.root(".output/.commit"))) {
+          yield (0, import_fs_jetpack15.removeAsync)(dir.root(".output/.commit"));
+          yield (0, import_fs_jetpack15.writeAsync)(dir.root("pkgs/version.json"), { ts: Date.now() });
           yield new Promise((resolve) => {
             spawn2("git", ["add", "./pkgs/version.json"], {
               cwd: dir.root("")
@@ -57756,19 +57727,19 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
 
   // pkgs/base/src/scaffold/app.ts
   var import_fs5 = __require("fs");
-  var import_fs_jetpack16 = __toESM(require_main());
+  var import_fs_jetpack17 = __toESM(require_main());
 
   // pkgs/base/src/appgen/service.ts
-  var import_fs_jetpack15 = __toESM(require_main());
+  var import_fs_jetpack16 = __toESM(require_main());
   var import_promises4 = __require("fs/promises");
   var serviceGen = () => __async(void 0, null, function* () {
     const names = [];
     for (const f of yield (0, import_promises4.readdir)(dir.root("app"))) {
       const s = yield (0, import_promises4.stat)(dir.root(`app/${f}`));
-      if (s.isDirectory() && (yield (0, import_fs_jetpack15.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
+      if (s.isDirectory() && (yield (0, import_fs_jetpack16.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
         names.push(f);
       }
-      yield (0, import_fs_jetpack15.writeAsync)(
+      yield (0, import_fs_jetpack16.writeAsync)(
         dir.root(`app/gen/service/name.ts`),
         `export type SERVICE_NAME = "${names.join(`" | "`)}";`
       );
@@ -57777,7 +57748,7 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
 
   // pkgs/base/src/scaffold/app.ts
   var prepareApp = () => __async(void 0, null, function* () {
-    yield (0, import_fs_jetpack16.writeAsync)(
+    yield (0, import_fs_jetpack17.writeAsync)(
       dir.path(".output/app/pnpm-workspace.yaml"),
       `packages:
   - ./*`
@@ -57797,7 +57768,7 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
   });
 
   // pkgs/base/src/upgrade.ts
-  var import_child_process4 = __require("child_process");
+  var import_child_process5 = __require("child_process");
 
   // node_modules/.pnpm/fflate@0.7.4/node_modules/fflate/esm/index.mjs
   var import_module = __require("module");
@@ -58268,13 +58239,13 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
 
   // pkgs/base/src/upgrade.ts
   var import_fs6 = __require("fs");
-  var import_fs_jetpack17 = __toESM(require_main());
-  var import_path15 = __require("path");
+  var import_fs_jetpack18 = __toESM(require_main());
+  var import_path16 = __require("path");
   var upgradeHook = (args2) => __async(void 0, null, function* () {
     if (args2.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
-      yield (0, import_fs_jetpack17.removeAsync)(dir.root(".output/upgrade"));
-      yield (0, import_fs_jetpack17.dirAsync)(backupDir);
+      yield (0, import_fs_jetpack18.removeAsync)(dir.root(".output/upgrade"));
+      yield (0, import_fs_jetpack18.dirAsync)(backupDir);
       console.log(`Upgrading Base Framework`);
       console.log(` > Downloading upgrade zip`);
       const downloadURI = `https://github.com/avolut/royal/archive/refs/heads/main.zip`;
@@ -58282,13 +58253,13 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
       const ab = yield res.arrayBuffer();
       console.log(` > Extracting: .output/upgrade/royal`);
       const uzi = unzipSync(new Uint8Array(ab));
-      yield (0, import_fs_jetpack17.dirAsync)(dir.root(".output/upgrade/royal-main"));
+      yield (0, import_fs_jetpack18.dirAsync)(dir.root(".output/upgrade/royal-main"));
       yield Promise.all(
         Object.entries(uzi).map((_0) => __async(void 0, [_0], function* ([filename, buf]) {
           if (buf.length === 0) {
-            yield (0, import_fs_jetpack17.dirAsync)(dir.root(`.output/upgrade/${filename}`));
+            yield (0, import_fs_jetpack18.dirAsync)(dir.root(`.output/upgrade/${filename}`));
           } else {
-            yield (0, import_fs_jetpack17.writeAsync)(
+            yield (0, import_fs_jetpack18.writeAsync)(
               dir.root(`.output/upgrade/${filename}`),
               Buffer.from(buf)
             );
@@ -58299,27 +58270,27 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
       const root2 = dir.root("");
       for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack17.existsAsync)((0, import_path15.join)(root2, `.output/upgrade/backup/${f}`))) {
-            yield (0, import_fs_jetpack17.moveAsync)(
-              (0, import_path15.join)(root2, f),
-              (0, import_path15.join)(root2, `.output/upgrade/backup/${f}`)
+          if (yield (0, import_fs_jetpack18.existsAsync)((0, import_path16.join)(root2, `.output/upgrade/backup/${f}`))) {
+            yield (0, import_fs_jetpack18.moveAsync)(
+              (0, import_path16.join)(root2, f),
+              (0, import_path16.join)(root2, `.output/upgrade/backup/${f}`)
             );
           }
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs6.readdirSync)((0, import_path15.join)(root2, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs6.readdirSync)((0, import_path16.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
-          yield (0, import_fs_jetpack17.copyAsync)(
-            (0, import_path15.join)(root2, `.output/upgrade/royal-main/${f}`),
-            (0, import_path15.join)(root2, f),
+          yield (0, import_fs_jetpack18.copyAsync)(
+            (0, import_path16.join)(root2, `.output/upgrade/royal-main/${f}`),
+            (0, import_path16.join)(root2, f),
             {
               overwrite: true
             }
           );
         }
       }
-      (0, import_child_process4.spawnSync)("pnpm", ["i"], { cwd: dir.root(""), stdio: "inherit" });
+      (0, import_child_process5.spawnSync)("pnpm", ["i"], { cwd: dir.root(""), stdio: "inherit" });
       if (process.send) {
         process.send("exit");
       } else {
@@ -58331,9 +58302,9 @@ ${source_default.magenta(`Parcel `)} ${(0, import_lodash5.default)(
 
   // pkgs/base/src/version-check.ts
   var import_date_fns = __toESM(require_date_fns());
-  var import_fs_jetpack18 = __toESM(require_main());
+  var import_fs_jetpack19 = __toESM(require_main());
   var versionCheck = (opt) => __async(void 0, null, function* () {
-    const version = yield (0, import_fs_jetpack18.readAsync)(dir.root("pkgs/version.json"), "json");
+    const version = yield (0, import_fs_jetpack19.readAsync)(dir.root("pkgs/version.json"), "json");
     let timeout = {
       timer: null
     };
@@ -58373,18 +58344,18 @@ If somehow upgrade failed you can rollback using
   });
 
   // pkgs/base/src/vscode.ts
-  var import_fs_jetpack19 = __toESM(require_main());
-  var import_path16 = __require("path");
+  var import_fs_jetpack20 = __toESM(require_main());
+  var import_path17 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
-    if (yield (0, import_fs_jetpack19.existsAsync)(vscodeFile)) {
-      if ((yield (0, import_fs_jetpack19.readAsync)(vscodeFile, "utf8")) === source) {
+    if (yield (0, import_fs_jetpack20.existsAsync)(vscodeFile)) {
+      if ((yield (0, import_fs_jetpack20.readAsync)(vscodeFile, "utf8")) === source) {
         return;
       }
     }
-    yield (0, import_fs_jetpack19.dirAsync)((0, import_path16.dirname)(vscodeFile));
-    yield (0, import_fs_jetpack19.writeAsync)(vscodeFile, source);
+    yield (0, import_fs_jetpack20.dirAsync)((0, import_path17.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack20.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
     "typescript.preferences.importModuleSpecifier": "relative",
@@ -58439,14 +58410,15 @@ If somehow upgrade failed you can rollback using
     if (args.includes("clean")) {
       console.log("Cleaning node_modules");
       const dirs = yield scanDir([dir.root()]);
-      yield (0, import_fs_jetpack20.removeAsync)(dir.root(".output"));
+      yield (0, import_fs_jetpack21.removeAsync)(dir.root(".output"));
       yield Promise.all(
-        dirs.map((e) => (0, import_fs_jetpack20.removeAsync)((0, import_path17.join)((0, import_path17.dirname)(e), "node_modules")))
+        dirs.map((e) => (0, import_fs_jetpack21.removeAsync)((0, import_path18.join)((0, import_path18.dirname)(e), "node_modules")))
       );
-      yield (0, import_fs_jetpack20.removeAsync)(dir.root("node_modules"));
+      yield (0, import_fs_jetpack21.removeAsync)(dir.root("node_modules"));
       return;
     }
-    console.log(`\u2500\u2500 ${(0, import_lodash6.default)(source_default.yellow(`BASE`) + " ", 47, "\u2500")}`);
+    console.log(`\u2500\u2500 ${(0, import_lodash5.default)(source_default.yellow(`BASE`) + " ", 47, "\u2500")}`);
+    baseGlobal.parcels = /* @__PURE__ */ new Set();
     if (args.includes("build") || args.includes("deploy") || args.includes("prod") || args.includes("staging")) {
     } else {
       yield createRPC("base", action, { isMain: true });
@@ -58473,9 +58445,6 @@ If somehow upgrade failed you can rollback using
           return yield bundleService(e, { watch: true });
         }))
       );
-      yield Promise.all(app.serviceNames.map((e) => __async(void 0, null, function* () {
-        return yield postBuild(e);
-      })));
       versionCheck({ timeout: 3e3 });
       if (process.send)
         process.send("base-ready");
@@ -58484,6 +58453,9 @@ If somehow upgrade failed you can rollback using
         path: app.output,
         cwd: app.cwd
       });
+      yield Promise.all(app.serviceNames.map((e) => __async(void 0, null, function* () {
+        return yield postRun(e);
+      })));
     }
   });
   baseMain();

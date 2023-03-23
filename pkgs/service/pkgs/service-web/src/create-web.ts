@@ -11,10 +11,12 @@ export const createWeb = async ({
   name,
   port,
   entry,
+  ssrMode,
 }: {
   name: SERVICE_NAME;
   port: number;
   entry: string;
+  ssrMode: "render" | "stream";
 }) => {
   await createService(name, async ({ markAsRunning, mode }) => {
     web.name = name;
@@ -27,6 +29,7 @@ export const createWeb = async ({
       mode,
       port: port,
       name: name,
+      ssrMode
     });
 
     console.log(

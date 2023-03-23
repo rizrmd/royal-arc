@@ -80,8 +80,8 @@ export const Root: FC<{
         local.Layout = __LAYOUTS__[page.layout] as any;
       }
     } else {
-      if (__LAYOUTS__ && __LAYOUTS__['default']) {
-        local.Layout = __LAYOUTS__['default'] as any;
+      if (__LAYOUTS__ && __LAYOUTS__["default"]) {
+        local.Layout = __LAYOUTS__["default"] as any;
       }
     }
 

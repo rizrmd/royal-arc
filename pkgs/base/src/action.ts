@@ -1,12 +1,14 @@
-import { SERVICE_TYPE } from "../../service/src/types";
-import { rootAction as ServiceAction } from "../../service/src/action";
+import { ChildProcess } from "child_process";
 import { RPCActionResult } from "rpc/src/types";
-import { prepareApp } from "./scaffold/app";
+import { rootAction as ServiceAction } from "../../service/src/action";
+import { SERVICE_TYPE } from "../../service/src/types";
 import { bundleService } from "./builder/service";
+import { prepareApp } from "./scaffold/app";
 
 export const baseGlobal = global as unknown as {
   rpc: { service: RPCActionResult<typeof ServiceAction> };
   app: Awaited<ReturnType<typeof prepareApp>>;
+  parcels: Set<ChildProcess>;
 };
 
 export const action = {
