@@ -3464,13 +3464,13 @@
       function toString(value) {
         return value == null ? "" : baseToString(value);
       }
-      function padEnd4(string, length, chars) {
+      function padEnd5(string, length, chars) {
         string = toString(string);
         length = toInteger(length);
         var strLength = length ? stringSize(string) : 0;
         return length && strLength < length ? string + createPadding(length - strLength, chars) : string;
       }
-      module2.exports = padEnd4;
+      module2.exports = padEnd5;
     }
   });
 
@@ -54686,14 +54686,14 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
           if (f === "*") {
             if (pkg2.dependencies) {
               for (const [k, v2] of Object.entries(pkg2.dependencies)) {
-                if (!v2.startsWith("workspace:")) {
+                if (!v2.startsWith("workspace:") && !v2.startsWith(".")) {
                   dependencies[k] = v2;
                 }
               }
             }
             if (pkg2.devDependencies) {
               for (const [k, v2] of Object.entries(pkg2.devDependencies)) {
-                if (!v2.startsWith("workspace:")) {
+                if (!v2.startsWith("workspace:") && !v2.startsWith(".")) {
                   dependencies[k] = v2;
                 }
               }
@@ -54703,14 +54703,14 @@ ERROR: Async operation of type "${type}" was created in "process.exit" callback.
       } else {
         if (pkg2.dependencies) {
           for (const [k, v] of Object.entries(pkg2.dependencies)) {
-            if (!v.startsWith("workspace:")) {
+            if (!v.startsWith("workspace:") && !v.startsWith(".")) {
               dependencies[k] = v;
             }
           }
         }
         if (pkg2.devDependencies) {
           for (const [k, v] of Object.entries(pkg2.devDependencies)) {
-            if (!v.startsWith("workspace:")) {
+            if (!v.startsWith("workspace:") && !v.startsWith(".")) {
               dependencies[k] = v;
             }
           }
@@ -55074,7 +55074,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
 
   // pkgs/base/src/main.ts
   var import_fs_jetpack20 = __toESM(require_main());
-  var import_lodash5 = __toESM(require_lodash());
+  var import_lodash6 = __toESM(require_lodash());
   var import_path17 = __require("path");
 
   // pkgs/base/pkgs/rpc/src/connect.ts
@@ -57601,6 +57601,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
 
   // pkgs/base/src/builder/service/postbuild/web.ts
   var import_core = __require("@parcel/core");
+  var import_lodash5 = __toESM(require_lodash());
   var postBuildWeb = (name) => {
     connectRPC(`svc.${name}`, { waitConnection: true }).then(
       (rpc) => __async(void 0, null, function* () {
@@ -57633,13 +57634,13 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
               if (!first) {
                 first = true;
                 console.log(
-                  `\u2728 Parcel ${source_default.green(name)} ${formatDuration2(
+                  `\u2728 Parcel ${(0, import_lodash5.default)(source_default.green(name), 20)} ${formatDuration2(
                     performance.now() - t0
                   )}`
                 );
               } else {
                 console.log(
-                  `\u2728 Parcel ${source_default.green(name)}  ${formatDuration2(
+                  `\u2728 Parcel ${(0, import_lodash5.default)(source_default.green(name), 20)} ${formatDuration2(
                     ev.buildTime
                   )}`
                 );
@@ -57656,9 +57657,9 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
   };
   var formatDuration2 = (ms) => {
     if (ms > 1e3) {
-      return `${(ms / 1e3).toFixed(3)}s`;
+      return `${(0, import_lodash5.default)((ms / 1e3).toFixed(3) + "", 6, " ")} s`;
     } else {
-      return `${ms.toFixed(2)}ms`;
+      return `${(0, import_lodash5.default)(ms.toFixed(2) + "", 6, " ")} ms`;
     }
   };
 
@@ -58439,7 +58440,7 @@ If somehow upgrade failed you can rollback using
       yield (0, import_fs_jetpack20.removeAsync)(dir.root("node_modules"));
       return;
     }
-    console.log(`\u2500\u2500 ${(0, import_lodash5.default)(source_default.yellow(`BASE`) + " ", 47, "\u2500")}`);
+    console.log(`\u2500\u2500 ${(0, import_lodash6.default)(source_default.yellow(`BASE`) + " ", 47, "\u2500")}`);
     if (args.includes("build") || args.includes("deploy") || args.includes("prod") || args.includes("staging")) {
     } else {
       yield createRPC("base", action, { isMain: true });

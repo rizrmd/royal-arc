@@ -1,14 +1,9 @@
-import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import { Suspense } from "react";
 import { Root, ServerScript, ServerStyle, setupEnv } from "web-init";
 import type { SSR } from "web-init/src/types";
 import { Loading } from "./compo/loading";
-import { customTheme } from "./theme";
 
 setupEnv();
-
-let theme = {} as any;
-theme = webLightTheme;
 
 export const App: SSR["App"] = ({ initScript, name, props, res: req }) => {
   return (
@@ -37,9 +32,7 @@ export const App: SSR["App"] = ({ initScript, name, props, res: req }) => {
             `
           )}
         >
-          {/* <FluentProvider theme={{ ...theme, ...customTheme }}> */}
           <Root name={name} loading={<Loading />} props={props} res={req} />
-          {/* </FluentProvider> */}
         </div>
         <ServerScript source={initScript} />
       </body>

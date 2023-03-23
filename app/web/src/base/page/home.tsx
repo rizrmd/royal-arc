@@ -1,8 +1,8 @@
 import { page } from "web-init";
 
 export default page({
-  url: "/*",
+  url: "/",
   component: ({}) => {
-    return <>Hello World</>;
+    return <>Hello mantap</>;
   },
 });

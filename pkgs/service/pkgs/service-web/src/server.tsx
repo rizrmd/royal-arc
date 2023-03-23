@@ -29,7 +29,7 @@ export const server = async ({
   });
 
   const publicPath = join(dir.path(`${name}/public`));
-  await dirAsync(publicPath)
+  await dirAsync(publicPath);
   const live = new LiveDirectory(publicPath, {
     static: mode === "dev" ? false : true,
   });
@@ -40,18 +40,20 @@ export const server = async ({
   await initSSR();
 
   const serveStatic: MiddlewareHandler = (req, res, next) => {
-    let url = req.path;
-    const asset = live.get(decodeURI(url));
-    if (asset === undefined) next();
-    else {
-      res.setHeader("etag", asset.etag);
-      if (mode == "dev" || !asset.cached) {
-        const readable = asset.stream();
-        return readable.pipe(res);
-      } else {
-        return res.send(asset.content);
+    try {
+      let url = req.path;
+      const asset = live.get(decodeURI(url));
+      if (asset === undefined) next();
+      else {
+        res.setHeader("etag", asset.etag);
+        if (mode == "dev" || !asset.cached) {
+          const readable = asset.stream();
+          return readable.pipe(res);
+        } else {
+          return res.send(asset.content);
+        }
       }
-    }
+    } catch (e) {}
   };
 
   const renderSSR =
@@ -63,7 +65,7 @@ export const server = async ({
         if (!App) {
           await initSSR();
         }
-
+ 
         if (App) {
           const { pipe } = renderToPipeableStream(
             <App

@@ -1,9 +1,7 @@
 import {
   Dialog,
   DialogBody,
-  DialogSurface,
-  MenuItem,
-  MenuList,
+  DialogSurface
 } from "@fluentui/react-components";
 import { isValidElement } from "react";
 import { useLocal } from "web-utils";

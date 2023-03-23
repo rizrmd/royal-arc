@@ -9,13 +9,14 @@
     "immer": "9.0.19",
     "scheduler": "^0.20.0",
     "service-web": "workspace:*",
+    "dbgen": "../db/node_modules/.gen",
     "web-init": "workspace:*",
     "web-utils": "workspace:*",
     "react-json-tree": "0.18.0",
     "react-virtuoso": "4.1.0",
     "lodash.capitalize": "4.2.1",
     "date-fns": "2.29.3",
-    "lodash.get": "4.4.2" 
+    "lodash.get": "4.4.2"
   },
   "devDependencies": {
     "@types/react": "18.0.28",

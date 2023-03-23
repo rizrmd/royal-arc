@@ -67,7 +67,7 @@ export const pkg = {
         if (f === "*") {
           if (pkg.dependencies) {
             for (const [k, v] of Object.entries(pkg.dependencies)) {
-              if (!v.startsWith("workspace:")) {
+              if (!v.startsWith("workspace:") && !v.startsWith(".")) {
                 dependencies[k] = v;
               }
             }
@@ -75,7 +75,7 @@ export const pkg = {
 
           if (pkg.devDependencies) {
             for (const [k, v] of Object.entries(pkg.devDependencies)) {
-              if (!v.startsWith("workspace:")) {
+              if (!v.startsWith("workspace:") && !v.startsWith(".")) {
                 dependencies[k] = v;
               }
             }
@@ -85,7 +85,7 @@ export const pkg = {
     } else {
       if (pkg.dependencies) {
         for (const [k, v] of Object.entries(pkg.dependencies)) {
-          if (!v.startsWith("workspace:")) {
+          if (!v.startsWith("workspace:") && !v.startsWith(".")) {
             dependencies[k] = v;
           }
         }
@@ -93,7 +93,7 @@ export const pkg = {
 
       if (pkg.devDependencies) {
         for (const [k, v] of Object.entries(pkg.devDependencies)) {
-          if (!v.startsWith("workspace:")) {
+          if (!v.startsWith("workspace:") && !v.startsWith(".")) {
             dependencies[k] = v;
           }
         }
@@ -114,7 +114,6 @@ export const pkg = {
   ) {
     const _arg = arg ? arg : { cwd: undefined, silent: false };
     const silent = _arg.silent === true ? true : false;
-
 
     if (g.pkgRunning.size > 0) {
       await Promise.all([...g.pkgRunning.values()]);
