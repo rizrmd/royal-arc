@@ -18,7 +18,7 @@ export const createWeb = async ({
   entry: string;
   ssrMode: "render" | "stream";
 }) => {
-  await createService({
+  return await createService({
     name,
     mode: "single",
     init: async ({ mode }) => {

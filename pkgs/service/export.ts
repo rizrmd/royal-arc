@@ -4,10 +4,12 @@ import chalk from "chalk";
 import { dir } from "dir";
 import { pkg } from "pkg";
 import { connectRPC } from "rpc";
+import { RPCActionResult } from "rpc/src/types";
 import { attachSpawnCleanup } from "utility/spawn";
 import type { actions } from "../../app/gen/service/actions";
 import { svc } from "./src/global";
 import { SERVICE_NAME } from "./src/types";
+import get from "lodash.get";
 
 export * from "./src/create-service";
 
@@ -67,9 +69,18 @@ export const executeAction = ({
   const tag = `${name}.${pid || name}`;
   const def = svc.definitions[tag];
 
-  if (def) {
-    if (def[entry] === "function" && svc.rpc[tag]) {
+  if (def && svc.rpc[tag]) {
+    if (def[entry] === "function") {
       return svc.rpc[tag][entry];
+    } else if (def[entry] === "object") {
+      return new DeepProxy({}, ({ path, key, PROXY }) => {
+        const objkey = [entry, ...path, key].join(".");
+
+        if (def[objkey] === "function") {
+          return get(svc.rpc[tag], objkey);
+        }
+        return PROXY({});
+      });
     }
   } else {
     console.error(
@@ -107,11 +118,11 @@ export const service = new DeepProxy({}, ({ PROXY, path, key }) => {
   });
 }) as {
   [K in keyof actions]: actions[K]["type"] extends "single"
-    ? actions[K]["action"] & { _process: ProcessAction }
+    ? RPCActionResult<actions[K]["action"]> & { _process: ProcessAction }
     : {
         _pid: Record<
           string,
-          actions[K]["action"] & {
+          RPCActionResult<actions[K]["action"]> & {
             _process: Omit<ProcessAction, "start" | "isRunning">;
           }
         >;
