@@ -18,25 +18,29 @@ export const createWeb = async ({
   entry: string;
   ssrMode: "render" | "stream";
 }) => {
-  await createService(name, async ({ markAsRunning, mode }) => {
-    web.name = name;
-    web.entry = entry;
-    await web.init();
+  await createService({
+    name,
+    mode: "single",
+    init: async ({ markAsRunning, mode }) => {
+      web.name = name;
+      web.entry = entry;
+      await web.init();
 
-    await createRPC(`svc.${name}`, webAction);
+      await createRPC(name, webAction);
 
-    web.server = await server({
-      mode,
-      port: port,
-      name: name,
-      ssrMode
-    });
+      web.server = await server({
+        mode,
+        port: port,
+        name: name,
+        ssrMode,
+      });
 
-    console.log(
-      `${chalk.magenta("Started")} ${chalk.green(
-        `${padEnd(name, 12, " ")}`
-      )} http://localhost:${port}`
-    );
-    markAsRunning();
+      console.log(
+        `${chalk.magenta("Started")} ${chalk.green(
+          `${padEnd(name, 12, " ")}`
+        )} http://localhost:${port}`
+      );
+      markAsRunning();
+    },
   });
 };

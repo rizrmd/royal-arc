@@ -4,25 +4,21 @@ import { attachSpawnCleanup } from "utility/spawn";
 import { rootAction } from "./action";
 import { MODE, SERVICE_NAME } from "./types";
 
-export const createService = async (
-  serviceName: SERVICE_NAME,
-  fn: (arg: {
-    mode: MODE;
-    markAsRunning: () => void;
-    root: RPCActionResult<typeof rootAction>;
-  }) => Promise<void>
-) => {
-  attachSpawnCleanup(`svc.${serviceName}`);
+export const createService = async <T>(arg: {
+  name: SERVICE_NAME;
+  mode: "single" | "multi";
+  init: (arg: { mode: MODE; markAsRunning: () => void }) => Promise<T>;
+}): Promise<T> => {
+  attachSpawnCleanup(arg.name);
   const root = await connectRPC<typeof rootAction>("root");
 
-  await fn({
+  return await arg.init({
     mode: "dev",
-    root,
     markAsRunning() {
       try {
         if (process.send)
           process.send(
-            `::RUNNING|${serviceName}::`,
+            `::RUNNING|${arg.name}::`,
             undefined,
             undefined,
             (e) => {}

@@ -18,40 +18,44 @@ export const createAPIServer = ({
   serverURL?: string;
   cookieKey: string;
 }) => {
-  createService(name, async ({ markAsRunning, mode }) => {
-    srv.name = name;
-    srv.port = port;
-    srv.cookieKey = cookieKey;
-    if (serverURL) {
-      srv.serverURL = serverURL;
-    } else {
-      srv.serverURL = `http://localhost:${port}`;
-    }
+  createService({
+    name,
+    mode: "single",
+    init: async ({ markAsRunning, mode }) => {
+      srv.name = name;
+      srv.port = port;
+      srv.cookieKey = cookieKey;
+      if (serverURL) {
+        srv.serverURL = serverURL;
+      } else {
+        srv.serverURL = `http://localhost:${port}`;
+      }
 
-    await createRPC(`svc.${name}`, srvAction);
-    await srv.init();
+      await createRPC(name, srvAction);
+      await srv.init();
 
-    const running = await server({
-      mode,
-      port: srv.port,
-      name: srv.name,
-      cookieKey: srv.cookieKey,
-    });
+      const running = await server({
+        mode,
+        port: srv.port,
+        name: srv.name,
+        cookieKey: srv.cookieKey,
+      });
 
-    if (typeof running === "string") {
-      console.log(
-        `${chalk.red("Skipped")} ${chalk.green(
-          `${padEnd(srv.name, 12, " ")}`
-        )} ${running}`
-      );
-    } else {
-      srv.server = running;
-      console.log(
-        `${chalk.magenta("Started")} ${chalk.green(
-          `${padEnd(srv.name, 12, " ")}`
-        )} http://localhost:${srv.port}`
-      );
-    }
-    markAsRunning();
+      if (typeof running === "string") {
+        console.log(
+          `${chalk.red("Skipped")} ${chalk.green(
+            `${padEnd(srv.name, 12, " ")}`
+          )} ${running}`
+        );
+      } else {
+        srv.server = running;
+        console.log(
+          `${chalk.magenta("Started")} ${chalk.green(
+            `${padEnd(srv.name, 12, " ")}`
+          )} http://localhost:${srv.port}`
+        );
+      }
+      markAsRunning();
+    },
   });
 };

@@ -4,6 +4,7 @@ import { dir } from "dir";
 import { basename } from "path";
 import { pkg } from "pkg";
 import { baseGlobal } from "../action";
+import { serviceGen } from "../appgen/service";
 import { watchService } from "../watcher/watch-service";
 import { prepareBuild } from "./service/prepare";
 
@@ -32,7 +33,7 @@ export const bundleService = async (name: string, arg: { watch: boolean }) => {
 
             if (isRebuild && runner.list[baseGlobal.app.output]) {
               const mark = marker[name];
- 
+
               if (mark) {
                 if (mark instanceof Set) {
                   const res = await prepareBuild(name, mark);
@@ -58,11 +59,16 @@ export const bundleService = async (name: string, arg: { watch: boolean }) => {
     if (!err) {
       for (const c of changes) {
         if (c.type === "update") {
-          if (basename(c.path) === "package.json") {
+          const basePath = c.path.substring(dir.root(`app/${name}`).length + 1);
+          if (basePath === "package.json") {
             marker[name] = "skip";
 
             await pkg.install(c.path);
             await baseGlobal.rpc.service.restart({ name: name as any });
+            return;
+          }
+          if (basePath === "main.ts") {
+            process.exit(99);
             return;
           }
 

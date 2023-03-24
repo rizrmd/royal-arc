@@ -18,6 +18,7 @@ import { prepareApp } from "./scaffold/app";
 import { upgradeHook } from "./upgrade";
 import { versionCheck } from "./version-check";
 import { vscodeSettings } from "./vscode";
+import { watchNewService } from "./watcher/new-service";
 
 const args = process.argv.slice(2);
 
@@ -63,6 +64,8 @@ export const baseMain = async () => {
         waitConnection: false,
       }),
     };
+
+    watchNewService()
 
     const app = await prepareApp();
 

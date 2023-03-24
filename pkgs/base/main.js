@@ -282,7 +282,7 @@
           maxRetries: 3
         });
       };
-      var removeAsync10 = (path2) => {
+      var removeAsync11 = (path2) => {
         return fs2.rm(path2, {
           recursive: true,
           force: true,
@@ -291,7 +291,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = removeSync;
-      exports2.async = removeAsync10;
+      exports2.async = removeAsync11;
     }
   });
 
@@ -328,18 +328,18 @@
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat4;
+        let stat5;
         try {
-          stat4 = fs2.statSync(path2);
+          stat5 = fs2.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
           }
         }
-        if (stat4 && !stat4.isDirectory()) {
+        if (stat5 && !stat5.isDirectory()) {
           throw generatePathOccupiedByNotDirectoryError(path2);
         }
-        return stat4;
+        return stat5;
       };
       var createBrandNewDirectorySync = (path2, opts) => {
         const options = opts || {};
@@ -355,9 +355,9 @@
           }
         }
       };
-      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat4, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaSync = (path2, stat5, criteria) => {
         const checkMode = () => {
-          const mode = modeUtil.normalizeFileMode(stat4.mode);
+          const mode = modeUtil.normalizeFileMode(stat5.mode);
           if (criteria.mode !== void 0 && criteria.mode !== mode) {
             fs2.chmodSync(path2, criteria.mode);
           }
@@ -375,18 +375,18 @@
       };
       var dirSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat4 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat4) {
-          checkExistingDirectoryFulfillsCriteriaSync(path2, stat4, criteria);
+        const stat5 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat5) {
+          checkExistingDirectoryFulfillsCriteriaSync(path2, stat5, criteria);
         } else {
           createBrandNewDirectorySync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve, reject) => {
-          fs2.stat(path2).then((stat4) => {
-            if (stat4.isDirectory()) {
-              resolve(stat4);
+          fs2.stat(path2).then((stat5) => {
+            if (stat5.isDirectory()) {
+              resolve(stat5);
             } else {
               reject(generatePathOccupiedByNotDirectoryError(path2));
             }
@@ -416,10 +416,10 @@
           }).catch(reject);
         });
       };
-      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat4, criteria) => {
+      var checkExistingDirectoryFulfillsCriteriaAsync = (path2, stat5, criteria) => {
         return new Promise((resolve, reject) => {
           const checkMode = () => {
-            const mode = modeUtil.normalizeFileMode(stat4.mode);
+            const mode = modeUtil.normalizeFileMode(stat5.mode);
             if (criteria.mode !== void 0 && criteria.mode !== mode) {
               return fs2.chmod(path2, criteria.mode);
             }
@@ -459,11 +459,11 @@
       var dirAsync4 = (path2, passedCriteria) => {
         return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat4) => {
-            if (stat4 !== void 0) {
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
+            if (stat5 !== void 0) {
               return checkExistingDirectoryFulfillsCriteriaAsync(
                 path2,
-                stat4,
+                stat5,
                 criteria
               );
             }
@@ -558,7 +558,7 @@
           }).then(resolve, reject);
         });
       };
-      var writeAsync15 = (path2, data, options) => {
+      var writeAsync16 = (path2, data, options) => {
         const opts = options || {};
         const processedData = serializeToJsonMaybe(data, opts.jsonIndent);
         let writeStrategy = writeFileAsync;
@@ -569,7 +569,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = writeSync;
-      exports2.async = writeAsync15;
+      exports2.async = writeAsync16;
     }
   });
 
@@ -646,21 +646,21 @@
         );
       };
       var checkWhatAlreadyOccupiesPathSync = (path2) => {
-        let stat4;
+        let stat5;
         try {
-          stat4 = fs2.statSync(path2);
+          stat5 = fs2.statSync(path2);
         } catch (err2) {
           if (err2.code !== "ENOENT") {
             throw err2;
           }
         }
-        if (stat4 && !stat4.isFile()) {
+        if (stat5 && !stat5.isFile()) {
           throw generatePathOccupiedByNotFileError(path2);
         }
-        return stat4;
+        return stat5;
       };
-      var checkExistingFileFulfillsCriteriaSync = (path2, stat4, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat4.mode);
+      var checkExistingFileFulfillsCriteriaSync = (path2, stat5, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat5.mode);
         const checkContent = () => {
           if (criteria.content !== void 0) {
             write.sync(path2, criteria.content, {
@@ -693,18 +693,18 @@
       };
       var fileSync = (path2, passedCriteria) => {
         const criteria = getCriteriaDefaults(passedCriteria);
-        const stat4 = checkWhatAlreadyOccupiesPathSync(path2);
-        if (stat4 !== void 0) {
-          checkExistingFileFulfillsCriteriaSync(path2, stat4, criteria);
+        const stat5 = checkWhatAlreadyOccupiesPathSync(path2);
+        if (stat5 !== void 0) {
+          checkExistingFileFulfillsCriteriaSync(path2, stat5, criteria);
         } else {
           createBrandNewFileSync(path2, criteria);
         }
       };
       var checkWhatAlreadyOccupiesPathAsync = (path2) => {
         return new Promise((resolve, reject) => {
-          fs2.stat(path2).then((stat4) => {
-            if (stat4.isFile()) {
-              resolve(stat4);
+          fs2.stat(path2).then((stat5) => {
+            if (stat5.isFile()) {
+              resolve(stat5);
             } else {
               reject(generatePathOccupiedByNotFileError(path2));
             }
@@ -717,8 +717,8 @@
           });
         });
       };
-      var checkExistingFileFulfillsCriteriaAsync = (path2, stat4, criteria) => {
-        const mode = modeUtil.normalizeFileMode(stat4.mode);
+      var checkExistingFileFulfillsCriteriaAsync = (path2, stat5, criteria) => {
+        const mode = modeUtil.normalizeFileMode(stat5.mode);
         const checkContent = () => {
           return new Promise((resolve, reject) => {
             if (criteria.content !== void 0) {
@@ -759,9 +759,9 @@
       var fileAsync = (path2, passedCriteria) => {
         return new Promise((resolve, reject) => {
           const criteria = getCriteriaDefaults(passedCriteria);
-          checkWhatAlreadyOccupiesPathAsync(path2).then((stat4) => {
-            if (stat4 !== void 0) {
-              return checkExistingFileFulfillsCriteriaAsync(path2, stat4, criteria);
+          checkWhatAlreadyOccupiesPathAsync(path2).then((stat5) => {
+            if (stat5 !== void 0) {
+              return checkExistingFileFulfillsCriteriaAsync(path2, stat5, criteria);
             }
             return createBrandNewFileAsync(path2, criteria);
           }).then(resolve, reject);
@@ -808,27 +808,27 @@
           );
         }
       };
-      var createInspectObj = (path2, options, stat4) => {
+      var createInspectObj = (path2, options, stat5) => {
         const obj = {};
         obj.name = pathUtil.basename(path2);
-        if (stat4.isFile()) {
+        if (stat5.isFile()) {
           obj.type = "file";
-          obj.size = stat4.size;
-        } else if (stat4.isDirectory()) {
+          obj.size = stat5.size;
+        } else if (stat5.isDirectory()) {
           obj.type = "dir";
-        } else if (stat4.isSymbolicLink()) {
+        } else if (stat5.isSymbolicLink()) {
           obj.type = "symlink";
         } else {
           obj.type = "other";
         }
         if (options.mode) {
-          obj.mode = stat4.mode;
+          obj.mode = stat5.mode;
         }
         if (options.times) {
-          obj.accessTime = stat4.atime;
-          obj.modifyTime = stat4.mtime;
-          obj.changeTime = stat4.ctime;
-          obj.birthTime = stat4.birthtime;
+          obj.accessTime = stat5.atime;
+          obj.modifyTime = stat5.mtime;
+          obj.changeTime = stat5.ctime;
+          obj.birthTime = stat5.birthtime;
         }
         if (options.absolutePath) {
           obj.absolutePath = path2;
@@ -850,20 +850,20 @@
       };
       var inspectSync = (path2, options) => {
         let statOperation = fs2.lstatSync;
-        let stat4;
+        let stat5;
         const opts = options || {};
         if (opts.symlinks === "follow") {
           statOperation = fs2.statSync;
         }
         try {
-          stat4 = statOperation(path2);
+          stat5 = statOperation(path2);
         } catch (err2) {
           if (err2.code === "ENOENT") {
             return void 0;
           }
           throw err2;
         }
-        const inspectObj = createInspectObj(path2, opts, stat4);
+        const inspectObj = createInspectObj(path2, opts, stat5);
         addExtraFieldsSync(path2, inspectObj, opts);
         return inspectObj;
       };
@@ -901,8 +901,8 @@
           if (opts.symlinks === "follow") {
             statOperation = fs2.stat;
           }
-          statOperation(path2).then((stat4) => {
-            const inspectObj = createInspectObj(path2, opts, stat4);
+          statOperation(path2).then((stat5) => {
+            const inspectObj = createInspectObj(path2, opts, stat5);
             addExtraFieldsAsync(path2, inspectObj, opts).then(resolve, reject);
           }).catch((err2) => {
             if (err2.code === "ENOENT") {
@@ -2377,10 +2377,10 @@
       };
       var existsSync5 = (path2) => {
         try {
-          const stat4 = fs2.statSync(path2);
-          if (stat4.isDirectory()) {
+          const stat5 = fs2.statSync(path2);
+          if (stat5.isDirectory()) {
             return "dir";
-          } else if (stat4.isFile()) {
+          } else if (stat5.isFile()) {
             return "file";
           }
           return "other";
@@ -2393,10 +2393,10 @@
       };
       var existsAsync9 = (path2) => {
         return new Promise((resolve, reject) => {
-          fs2.stat(path2).then((stat4) => {
-            if (stat4.isDirectory()) {
+          fs2.stat(path2).then((stat5) => {
+            if (stat5.isDirectory()) {
               resolve("dir");
-            } else if (stat4.isFile()) {
+            } else if (stat5.isFile()) {
               resolve("file");
             } else {
               resolve("other");
@@ -2639,7 +2639,7 @@
         }
         return Promise.resolve();
       };
-      var copyAsync3 = (from, to, options) => {
+      var copyAsync4 = (from, to, options) => {
         return new Promise((resolve, reject) => {
           const opts = parseOptions(options, from);
           checksBeforeCopyingAsync(from, to, opts).then(() => {
@@ -2679,7 +2679,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = copySync;
-      exports2.async = copyAsync3;
+      exports2.async = copyAsync4;
     }
   });
 
@@ -2853,7 +2853,7 @@
         }
         return data;
       };
-      var readAsync12 = (path2, returnAs) => {
+      var readAsync14 = (path2, returnAs) => {
         return new Promise((resolve, reject) => {
           const retAs = returnAs || "utf8";
           let encoding = "utf8";
@@ -2883,7 +2883,7 @@
       };
       exports2.validateInput = validateInput;
       exports2.sync = readSync;
-      exports2.async = readAsync12;
+      exports2.async = readAsync14;
     }
   });
 
@@ -55073,7 +55073,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
   };
 
   // pkgs/base/src/main.ts
-  var import_fs_jetpack21 = __toESM(require_main());
+  var import_fs_jetpack22 = __toESM(require_main());
   var import_lodash5 = __toESM(require_lodash());
   var import_path18 = __require("path");
 
@@ -55610,9 +55610,6 @@ Make sure to kill running instance before starting.
     return server;
   });
 
-  // pkgs/base/src/builder/service.ts
-  var import_path14 = __require("path");
-
   // pkgs/base/pkgs/bundler/watch.ts
   var import_watcher = __require("@parcel/watcher");
   var import_path6 = __require("path");
@@ -55685,6 +55682,7 @@ Make sure to kill running instance before starting.
 
   // pkgs/service/pkgs/service-db/src/create-db.ts
   var import_fs_jetpack6 = __toESM(require_main());
+  var import_lodash4 = __toESM(require_lodash());
 
   // pkgs/service/export.ts
   var import_catch_exit = __toESM(require_dist());
@@ -55714,30 +55712,86 @@ Make sure to kill running instance before starting.
   var svc = globalize({
     name: "svc",
     value: {
-      rpc: null
+      rootRpc: null,
+      rpc: {}
     },
     init: async (g2) => {
-      g2.rpc = await createRPC("root", rootAction);
+      g2.rootRpc = await createRPC("root", rootAction);
     }
   });
 
-  // pkgs/service/pkgs/service-db/src/parse-prisma.ts
-  var import_prisma_ast = __toESM(require_dist2());
-  var import_fs_jetpack4 = __toESM(require_main());
-
-  // pkgs/service/pkgs/service-db/src/create-db.ts
-  var import_lodash4 = __toESM(require_lodash());
+  // pkgs/service/export.ts
+  var manageProcess = (name, pid) => {
+    return {
+      get isRunning() {
+        return false;
+      },
+      async start() {
+        console.log("starting", pid);
+        return false;
+      },
+      async restart() {
+        return true;
+      },
+      async stop() {
+        return true;
+      }
+    };
+  };
+  var executeAction = (name, pid) => {
+    return new Proxy(
+      {},
+      {
+        get(target, p, receiver) {
+          return async (...args2) => {
+            console.log(name, pid, p, args2);
+          };
+        }
+      }
+    );
+  };
+  var service = new DeepProxy({}, ({ path: path2, key, PROXY }) => {
+    const lastPath = path2[path2.length - 1];
+    if (path2.length === 1) {
+      if (!["_process", "_pid", "_all"].includes(key)) {
+        return executeAction(path2[0])[key];
+      }
+      if (key === "_start") {
+        return manageProcess(path2[0])["start"];
+      }
+    }
+    if (path2.length === 2) {
+      if (lastPath === "_process" || lastPath === "_all") {
+        return manageProcess(path2[0])[key];
+      }
+    }
+    if (path2.length === 3) {
+      if (path2[1] === "_pid") {
+        const pid = path2[2];
+        return executeAction(path2[0], pid)[key];
+      }
+    }
+    if (path2.length === 4) {
+      if (path2[1] === "_pid") {
+        const pid = path2[2];
+        if (lastPath === "_process") {
+          return manageProcess(path2[0], pid)[key];
+        }
+      }
+    }
+    return PROXY({});
+  });
 
   // pkgs/service/pkgs/service-db/src/ensure-prisma.ts
-  var import_prisma_ast2 = __toESM(require_dist2());
-  var import_fs_jetpack5 = __toESM(require_main());
+  var import_prisma_ast = __toESM(require_dist2());
+  var import_fs_jetpack4 = __toESM(require_main());
   var import_path7 = __require("path");
   var fixPrismaName = async (path2) => {
     try {
-      const pkg2 = await (0, import_fs_jetpack5.readAsync)(path2, "json");
+      const pkg2 = await (0, import_fs_jetpack4.readAsync)(path2, "json");
       if (pkg2 && pkg2.name) {
         pkg2.name = pkg2.name.replace(/[\W_]+/g, "_");
-        await (0, import_fs_jetpack5.writeAsync)(path2, pkg2);
+        await (0, import_fs_jetpack4.writeAsync)(path2, pkg2);
       }
     } catch (e) {
     }
@@ -55745,9 +55799,9 @@ Make sure to kill running instance before starting.
   var ensurePrisma = async (name) => {
     const prismaPath = dir.root(`app/${name}/prisma/schema.prisma`);
     let dburl = "";
-    if (!await (0, import_fs_jetpack5.existsAsync)(prismaPath)) {
-      await (0, import_fs_jetpack5.dirAsync)((0, import_path7.dirname)(prismaPath));
-      await (0, import_fs_jetpack5.writeAsync)(
+    if (!await (0, import_fs_jetpack4.existsAsync)(prismaPath)) {
+      await (0, import_fs_jetpack4.dirAsync)((0, import_path7.dirname)(prismaPath));
+      await (0, import_fs_jetpack4.writeAsync)(
         prismaPath,
         `generator client {
   provider = "prisma-client-js"
@@ -55760,9 +55814,9 @@ datasource db {
 }`
       );
     }
-    const schemaRaw = await (0, import_fs_jetpack5.readAsync)(prismaPath, "utf8");
+    const schemaRaw = await (0, import_fs_jetpack4.readAsync)(prismaPath, "utf8");
     if (schemaRaw) {
-      const schema = (0, import_prisma_ast2.getSchema)(schemaRaw);
+      const schema = (0, import_prisma_ast.getSchema)(schemaRaw);
       let hasModel = false;
       for (const s of schema.list) {
         if (s.type === "model") {
@@ -55789,34 +55843,38 @@ datasource db {
           });
         }
       }
-      const newSchemaRaw = (0, import_prisma_ast2.printSchema)(schema).trim();
-      await (0, import_fs_jetpack5.writeAsync)(prismaPath, newSchemaRaw);
+      const newSchemaRaw = (0, import_prisma_ast.printSchema)(schema).trim();
+      await (0, import_fs_jetpack4.writeAsync)(prismaPath, newSchemaRaw);
       if (newSchemaRaw !== schemaRaw.trim() || !hasModel) {
         return { generated: false, pulled: false, dburl };
       }
       let prismaOutputSame = false;
-      if (await (0, import_fs_jetpack5.existsAsync)(dir.root(`.output/app/${name}/prisma/schema.prisma`))) {
+      if (await (0, import_fs_jetpack4.existsAsync)(dir.root(`.output/app/${name}/prisma/schema.prisma`))) {
         prismaOutputSame = true;
-        const outputSchema = await (0, import_fs_jetpack5.readAsync)(
+        const outputSchema = await (0, import_fs_jetpack4.readAsync)(
           dir.root(`.output/app/${name}/prisma/schema.prisma`)
         );
         if (newSchemaRaw.trim() !== outputSchema?.trim()) {
           prismaOutputSame = false;
         }
       }
-      await (0, import_fs_jetpack5.copyAsync)(
+      await (0, import_fs_jetpack4.copyAsync)(
         dir.root(`app/${name}/prisma`),
         dir.root(`.output/app/${name}/prisma`),
         {
           overwrite: true
         }
       );
-      if (!prismaOutputSame || !await (0, import_fs_jetpack5.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
+      if (!prismaOutputSame || !await (0, import_fs_jetpack4.existsAsync)(dir.root(`app/${name}/node_modules/.gen`))) {
         return { generated: false, pulled: true, dburl };
       }
     }
     return { generated: true, pulled: true, dburl };
   };
+
+  // pkgs/service/pkgs/service-db/src/parse-prisma.ts
+  var import_prisma_ast2 = __toESM(require_dist2());
+  var import_fs_jetpack5 = __toESM(require_main());
 
   // pkgs/base/src/builder/service/prepare/db.ts
   var prepareDB = (name, changes) => __async(void 0, null, function* () {
@@ -57573,10 +57631,15 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
       if (!err2) {
         for (const c of changes) {
           if (c.type === "update") {
-            if ((0, import_path14.basename)(c.path) === "package.json") {
+            const basePath = c.path.substring(dir.root(`app/${name}`).length + 1);
+            if (basePath === "package.json") {
               marker[name] = "skip";
               yield pkg.install(c.path);
               yield baseGlobal.rpc.service.restart({ name });
+              return;
+            }
+            if (basePath === "main.ts") {
+              process.exit(99);
               return;
             }
             if (!marker[name])
@@ -57614,7 +57677,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
 
   // pkgs/base/src/builder/service/postrun/web.ts
   var import_child_process3 = __require("child_process");
-  var import_path15 = __require("path");
+  var import_path14 = __require("path");
   var import_fs_jetpack14 = __toESM(require_main());
   var postRunWeb = (name) => {
     connectRPC(`svc.${name}`, { waitConnection: true }).then(
@@ -57622,7 +57685,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
         let entry = yield rpc.getEntry();
         yield (0, import_fs_jetpack14.removeAsync)(dir.root(`.output/app/${name}/public`));
         const args2 = [
-          (0, import_path15.join)(..."node_modules/parcel/lib/bin.js".split("/")),
+          (0, import_path14.join)(..."node_modules/parcel/lib/bin.js".split("/")),
           "watch",
           entry,
           "--no-hmr",
@@ -57734,16 +57797,50 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
   var import_promises4 = __require("fs/promises");
   var serviceGen = () => __async(void 0, null, function* () {
     const names = [];
+    const actions = [];
     for (const f of yield (0, import_promises4.readdir)(dir.root("app"))) {
       const s = yield (0, import_promises4.stat)(dir.root(`app/${f}`));
       if (s.isDirectory() && (yield (0, import_fs_jetpack16.existsAsync)(dir.root(`app/${f}/main.ts`)))) {
         names.push(f);
+        if (f.startsWith("web") || f.startsWith("db") || f.startsWith("srv")) {
+          actions.push({ type: "single", name: f });
+        } else {
+          const src = yield (0, import_fs_jetpack16.readAsync)(dir.root(`app/${f}/main.ts`), "utf8");
+          if (src) {
+            yield traverse(src, (parent) => ({
+              visitObjectExpression(n) {
+                for (const p of n.properties) {
+                  if (p.type === "KeyValueProperty" && p.key.type === "Identifier" && p.key.value === "mode" && p.value.type === "StringLiteral") {
+                    actions.push({ type: p.value.value, name: f });
+                  }
+                }
+                return parent.visitObjectExpression(n);
+              }
+            }));
+          }
+        }
       }
-      yield (0, import_fs_jetpack16.writeAsync)(
-        dir.root(`app/gen/service/name.ts`),
-        `export type SERVICE_NAME = "${names.join(`" | "`)}";`
-      );
     }
+    yield (0, import_fs_jetpack16.writeAsync)(
+      dir.root(`app/gen/service/actions.d.ts`),
+      `${actions.map((e) => {
+        return `import { main as ${e.name}_action } from "../../${e.name}/main";`;
+      }).join("\n")}
+
+export type actions = {
+${actions.map((e) => {
+        return `  ${e.name}: {
+    type: "${e.type}";
+    action: Awaited<typeof ${e.name}_action>;
+  };`;
+      }).join("\n")}
+}
+`
+    );
+    yield (0, import_fs_jetpack16.writeAsync)(
+      dir.root(`app/gen/service/name.ts`),
+      `export type SERVICE_NAME = "${names.join(`" | "`)}";`
+    );
   });
 
   // pkgs/base/src/scaffold/app.ts
@@ -57756,7 +57853,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
     const dirs = (0, import_fs5.readdirSync)(dir.path("app")).filter(
       (e) => !["node_modules", "app.ts", "package.json", "gen"].includes(e)
     ).map((e) => ({ name: e, stat: (0, import_fs5.statSync)(dir.path(`app/${e}`)) })).filter(
-      ({ stat: stat4, name }) => stat4.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
+      ({ stat: stat5, name }) => stat5.isDirectory() && (0, import_fs5.existsSync)(dir.path(`app/${name}/main.ts`))
     );
     yield serviceGen();
     return {
@@ -58240,7 +58337,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
   // pkgs/base/src/upgrade.ts
   var import_fs6 = __require("fs");
   var import_fs_jetpack18 = __toESM(require_main());
-  var import_path16 = __require("path");
+  var import_path15 = __require("path");
   var upgradeHook = (args2) => __async(void 0, null, function* () {
     if (args2.includes("upgrade")) {
       const backupDir = dir.root(".output/upgrade/backup");
@@ -58270,20 +58367,20 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
       const root2 = dir.root("");
       for (const f of (0, import_fs6.readdirSync)(dir.root(""))) {
         if (f !== "app" && f !== ".output" && f !== ".husky" && f !== ".git") {
-          if (yield (0, import_fs_jetpack18.existsAsync)((0, import_path16.join)(root2, `.output/upgrade/backup/${f}`))) {
+          if (yield (0, import_fs_jetpack18.existsAsync)((0, import_path15.join)(root2, `.output/upgrade/backup/${f}`))) {
             yield (0, import_fs_jetpack18.moveAsync)(
-              (0, import_path16.join)(root2, f),
-              (0, import_path16.join)(root2, `.output/upgrade/backup/${f}`)
+              (0, import_path15.join)(root2, f),
+              (0, import_path15.join)(root2, `.output/upgrade/backup/${f}`)
             );
           }
         }
       }
       console.log(` > Applying upgrade`);
-      for (const f of (0, import_fs6.readdirSync)((0, import_path16.join)(root2, ".output/upgrade/royal-main"))) {
+      for (const f of (0, import_fs6.readdirSync)((0, import_path15.join)(root2, ".output/upgrade/royal-main"))) {
         if (f !== "app" && f !== ".output" && f !== "." && f !== ".." && f !== ".husky" && f !== ".git") {
           yield (0, import_fs_jetpack18.copyAsync)(
-            (0, import_path16.join)(root2, `.output/upgrade/royal-main/${f}`),
-            (0, import_path16.join)(root2, f),
+            (0, import_path15.join)(root2, `.output/upgrade/royal-main/${f}`),
+            (0, import_path15.join)(root2, f),
             {
               overwrite: true
             }
@@ -58345,7 +58442,7 @@ If somehow upgrade failed you can rollback using
 
   // pkgs/base/src/vscode.ts
   var import_fs_jetpack20 = __toESM(require_main());
-  var import_path17 = __require("path");
+  var import_path16 = __require("path");
   var vscodeSettings = () => __async(void 0, null, function* () {
     const vscodeFile = dir.path(".vscode/settings.json");
     const source = JSON.stringify(defaultVsSettings, null, 2);
@@ -58354,7 +58451,7 @@ If somehow upgrade failed you can rollback using
         return;
       }
     }
-    yield (0, import_fs_jetpack20.dirAsync)((0, import_path17.dirname)(vscodeFile));
+    yield (0, import_fs_jetpack20.dirAsync)((0, import_path16.dirname)(vscodeFile));
     yield (0, import_fs_jetpack20.writeAsync)(vscodeFile, source);
   });
   var defaultVsSettings = {
@@ -58394,6 +58491,65 @@ If somehow upgrade failed you can rollback using
     "hide-files.files": []
   };
 
+  // pkgs/base/src/watcher/new-service.ts
+  var import_fs_jetpack21 = __toESM(require_main());
+  var import_promises5 = __require("fs/promises");
+  var import_path17 = __require("path");
+  var watchNewService = () => {
+    watcher.watch({
+      dir: dir.root("app"),
+      depth: 1,
+      event: (err2, changes) => __async(void 0, null, function* () {
+        if (!err2) {
+          for (const c of changes) {
+            const name = (0, import_path17.basename)(c.path);
+            if (c.type === "delete") {
+              console.log(`Removing service: ${source_default.red(name)}`);
+              yield (0, import_fs_jetpack21.removeAsync)(dir.root(`.output/app/${name}`));
+              yield serviceGen();
+              process.exit(99);
+            } else if (c.type === "create") {
+              const s = yield (0, import_promises5.stat)(c.path);
+              if (s.isDirectory() && (yield (0, import_promises5.readdir)(c.path)).length === 0) {
+                console.log(`Scaffolding new service: ${source_default.blue(name)}`);
+                let root2 = "pkgs/template/pkgs/service";
+                if (name.startsWith("db")) {
+                  root2 = "pkgs/template/pkgs/db";
+                } else if (name.startsWith("srv")) {
+                  root2 = "pkgs/template/pkgs/srv";
+                }
+                const files = yield (0, import_promises5.readdir)(dir.root(root2));
+                for (const f of files) {
+                  if (f !== "node_modules") {
+                    const fpath = dir.root(`${root2}/${f}`);
+                    const s2 = yield (0, import_promises5.stat)(fpath);
+                    if (s2.isDirectory()) {
+                      yield (0, import_fs_jetpack21.copyAsync)(fpath, (0, import_path17.join)(c.path, f), {
+                        overwrite: true
+                      });
+                    } else {
+                      const src = yield (0, import_fs_jetpack21.readAsync)(fpath, "utf8");
+                      yield (0, import_fs_jetpack21.writeAsync)(
+                        (0, import_path17.join)(c.path, f),
+                        (src || "").replace(/template_service/g, name)
+                      );
+                    }
+                  }
+                }
+                yield serviceGen();
+                yield pkg.install(dir.root(`app/${name}`), {
+                  cwd: dir.root(`app/${name}`),
+                  silent: true
+                });
+                process.exit(99);
+              }
+            }
+          }
+        }
+      })
+    });
+  };
+
   // pkgs/base/src/main.ts
   var args = process.argv.slice(2);
   var baseMain = () => __async(void 0, null, function* () {
@@ -58410,11 +58566,11 @@ If somehow upgrade failed you can rollback using
     if (args.includes("clean")) {
       console.log("Cleaning node_modules");
       const dirs = yield scanDir([dir.root()]);
-      yield (0, import_fs_jetpack21.removeAsync)(dir.root(".output"));
+      yield (0, import_fs_jetpack22.removeAsync)(dir.root(".output"));
       yield Promise.all(
-        dirs.map((e) => (0, import_fs_jetpack21.removeAsync)((0, import_path18.join)((0, import_path18.dirname)(e), "node_modules")))
+        dirs.map((e) => (0, import_fs_jetpack22.removeAsync)((0, import_path18.join)((0, import_path18.dirname)(e), "node_modules")))
       );
-      yield (0, import_fs_jetpack21.removeAsync)(dir.root("node_modules"));
+      yield (0, import_fs_jetpack22.removeAsync)(dir.root("node_modules"));
       return;
     }
     console.log(`\u2500\u2500 ${(0, import_lodash5.default)(source_default.yellow(`BASE`) + " ", 47, "\u2500")}`);
@@ -58427,6 +58583,7 @@ If somehow upgrade failed you can rollback using
           waitConnection: false
         })
       };
+      watchNewService();
       const app = yield prepareApp();
       baseGlobal.app = app;
       yield bundle({

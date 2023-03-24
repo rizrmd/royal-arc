@@ -142,7 +142,7 @@ const createServer = async () => {
         | ActionResult;
 
       if (msg.type === "identify") {
-        if (!conns[msg.name]) { 
+        if (!conns[msg.name]) {
           conns[msg.name] = {
             server: null,
             clients: new Set(),

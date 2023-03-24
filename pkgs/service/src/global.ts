@@ -6,9 +6,10 @@ import { rootAction } from "./action";
 export const svc = globalize({
   name: "svc",
   value: {
-    rpc: null as unknown as RPCServerAction<typeof rootAction>,
+    rootRpc: null as unknown as RPCServerAction<typeof rootAction>,
+    rpc: {} as Record<string, any>,
   },
   init: async (g) => {
-    g.rpc = await createRPC("root", rootAction);
+    g.rootRpc = await createRPC("root", rootAction);
   },
 });

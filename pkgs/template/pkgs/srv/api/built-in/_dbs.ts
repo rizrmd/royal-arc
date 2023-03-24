@@ -1,6 +1,7 @@
-import { root } from "service";
-import { DBArg } from "svc-db/src/glbdb";
+import { service } from "service";
 import { apiContext } from "service-srv";
+import { DBArg } from "service/pkgs/service-db/src/glbdb";
+
 
 export const _ = {
   url: "/_dbs/:dbName/:action",
@@ -9,7 +10,7 @@ export const _ = {
 
     const body = (await req.json()) as DBArg;
     try {
-      const result = await root.action(dbName as "db").query(body);
+      const result = await service.db.query(body);
       res.json(result);
     } catch (e: any) {
       res.sendStatus(500);

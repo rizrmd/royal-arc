@@ -19,6 +19,12 @@ importers:
     dependencies:
       service: link:../pkgs/service
 
+  app/coba:
+    specifiers:
+      service: workspace:*
+    dependencies:
+      service: link:../../pkgs/service
+
   app/db:
     specifiers:
       '@prisma/client': ^4.11.0

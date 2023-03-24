@@ -1,10 +1,15 @@
 import { createService } from "service";
 
 export const main = createService({
-  name: "template_service",
+  name: "coba",
   mode: "single",
   init: async ({ markAsRunning }) => {
-    console.log("hello template_service");
+    console.log("hello coba");
     markAsRunning();
+    return {
+      mantap: () => {
+        return "jiwa";
+      },
+    };
   },
 });

@@ -21,7 +21,7 @@ export const srv = globalize({
     },
   },
   async init() {
-    srv.rpc.db = await connectRPC("svc.db");
+    srv.rpc.db = await connectRPC("db");
     (global as any).db = dbs(srv.rpc.db);
   },
 });
