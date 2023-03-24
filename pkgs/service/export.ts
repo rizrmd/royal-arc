@@ -3,13 +3,14 @@ import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
 import { dir } from "dir";
 import { pkg } from "pkg";
-import { connectRPC } from "rpc";
+import { connectRPC, createRPC } from "rpc";
 import { RPCActionResult } from "rpc/src/types";
 import { attachSpawnCleanup } from "utility/spawn";
 import type { actions } from "../../app/gen/service/actions";
 import { svc } from "./src/global";
 import { SERVICE_NAME } from "./src/types";
 import get from "lodash.get";
+import { rootAction } from "./src/action";
 
 export * from "./src/create-service";
 
@@ -19,6 +20,7 @@ export const initialize = async (fn: () => Promise<void>) => {
   await pkg.install(dir.path(), { deep: true });
   process.removeAllListeners("warning");
 
+  const root = await createRPC("root", rootAction);
   await svc.init();
 
   await fn();
@@ -28,7 +30,7 @@ export const initialize = async (fn: () => Promise<void>) => {
   if ((await connectRPC("base")).connected) {
   } else {
     addExitCallback(() => {
-      svc.rootRpc.destroy();
+      root.destroy();
     });
   }
 };
@@ -46,7 +48,7 @@ const manageProcess = (name: SERVICE_NAME, pid?: string) => {
       return false;
     },
     async start() {
-      return await svc.rootRpc.start({ name, pid: pid || name });
+      return await svc.root.start({ name, pid: pid || name });
     },
     async restart() {
       return true;
@@ -57,35 +59,45 @@ const manageProcess = (name: SERVICE_NAME, pid?: string) => {
   } as ProcessAction;
 };
 
-export const executeAction = ({
-  name,
-  pid,
-  entry,
-}: {
-  name: string;
-  pid?: string;
-  entry: string;
-}): any => {
-  const tag = `${name}.${pid || name}`;
-  const def = svc.definitions[tag];
+const executeAction = (arg: { name: string; pid?: string; entry: string }) => {
+  const { name, entry } = arg;
+  let pid = arg.pid || name;
+  const tag = `${name}.${pid}`;
+  const def = svc.definitions[name];
 
-  if (def && svc.rpc[tag]) {
+  if (def) {
     if (def[entry] === "function") {
-      return svc.rpc[tag][entry];
+      return async (...args: any[]) => {
+        return await svc.root.executeAction({
+          name: name as SERVICE_NAME,
+          pid,
+          path: [entry],
+          args,
+        });
+      };
     } else if (def[entry] === "object") {
       return new DeepProxy({}, ({ path, key, PROXY }) => {
-        const objkey = [entry, ...path, key].join(".");
+        const objkey = [entry, ...path, key as string];
 
-        if (def[objkey] === "function") {
-          return get(svc.rpc[tag], objkey);
+        if (def[objkey.join(".")] === "function") {
+          return async (...args: any[]) => {
+            return await svc.root.executeAction({
+              name: name as SERVICE_NAME,
+              pid,
+              path: objkey,
+              args,
+            });
+          };
         }
         return PROXY({});
       });
     }
   } else {
+    console.log(svc.definitions);
+
     console.error(
       `Failed to call ${chalk.magenta(
-        `service.coba.${entry}`
+        `service.${name}.${entry}`
       )}\n Service ${chalk.green(name)} not started yet.`
     );
   }
@@ -100,12 +112,12 @@ export const service = new DeepProxy({}, ({ PROXY, path, key }) => {
     if (key === "_pid") {
       return PROXY({}, ({ path, key }) => {
         const pid = key as string;
-        return PROXY({}, ({ key }) => {
+        return PROXY({}, async ({ key }) => {
           if (key === "_process") {
             return manageProcess(path[0] as any, key as string);
           }
 
-          return executeAction({
+          return await executeAction({
             name: path[0],
             pid: pid,
             entry: key as string,

@@ -9,9 +9,9 @@
 import { initialize, service } from "service";
 
 initialize(async () => {
+  await service.db._process.start();
+  await service.srv._process.start();
+  await service.web._process.start();
+
   await service.coba._process.start();
-  console.log(await service.coba.api.orang());
-  // await root.service.start({ name: "srv" });
-  // await root.service.start({ name: "db" });
-  // await root.service.start({ name: "web" });
 });

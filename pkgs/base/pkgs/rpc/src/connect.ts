@@ -23,6 +23,7 @@ export const connectRPC = async <T extends RPCAction>(
     waitServer: waitConnection,
     onClose,
   });
+
   if (res) {
     ws = res.ws;
     serverConnected = res.serverConnected;
@@ -51,27 +52,30 @@ export const connectRPC = async <T extends RPCAction>(
 
         return new Promise<any>((resolve) => {
           if (ws) {
+            const msgid = createId();
             const onmsg = (raw: string) => {
               if (ws) {
-                ws.off("message", onmsg);
-
                 const msg = JSON.parse(raw) as ActionResult;
+                if (msg.msgid === msgid) {
+                  ws.off("message", onmsg);
 
-                if (msg.type === "action-result") {
-                  if (!msg.error) {
-                    resolve(msg.result);
-                  } else {
-                    process.stdout.write(msg.error.msg);
-                    resolve(msg.result);
+                  if (msg.type === "action-result") {
+                    if (!msg.error) {
+                      resolve(msg.result);
+                    } else {
+                      process.stdout.write(msg.error.msg);
+                      resolve(msg.result);
+                    }
                   }
                 }
               }
             };
+
             ws.on("message", onmsg);
             ws.send(
               JSON.stringify({
                 type: "action",
-                msgid: createId(),
+                msgid,
                 path: [...path, key],
                 args,
               })

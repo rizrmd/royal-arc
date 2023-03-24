@@ -2,24 +2,38 @@ import { connectRPC, createRPC } from "rpc";
 import { RPCAction } from "rpc/src/types";
 import { attachSpawnCleanup } from "utility/spawn";
 import { rootAction } from "./action";
+import { svc } from "./global";
 import { MODE, SERVICE_NAME } from "./types";
 
 export const createService = async <T extends RPCAction>(arg: {
   name: SERVICE_NAME;
   mode: "single" | "multi";
-  init: (arg: { mode: MODE }) => Promise<T>;
+  init: (arg: {
+    mode: MODE;
+    onServiceReady: (fn: () => any) => void;
+  }) => Promise<T>;
 }): Promise<T> => {
   attachSpawnCleanup(arg.name);
-  const root = await connectRPC<typeof rootAction>("root");
+  await svc.init();
 
+  let onServiceReady = () => {};
   const action =
     (await arg.init({
       mode: "dev",
+      onServiceReady: async (fn) => {
+        onServiceReady = fn;
+      },
     })) || ({} as T);
+
+  (action as any)._receiveDefinition = (def: any) => {
+    svc.definitions = def;
+  };
 
   const definition = genDefinition(action);
   await createRPC(`${arg.name}.${arg.name}`, action);
-  await root.identify({ name: arg.name, pid: arg.name, definition });
+  await svc.root.identify({ name: arg.name, pid: arg.name, definition });
+
+  await onServiceReady();
 
   try {
     if (process.send)

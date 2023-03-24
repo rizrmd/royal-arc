@@ -1,9 +1,12 @@
-import { SERVICE_NAME } from "./types";
 import { runner } from "bundler/runner";
-import { dir } from "dir";
 import chalk from "chalk";
-import { svc } from "./global";
+import { dir } from "dir";
+import get from "lodash.get";
 import { connectRPC } from "rpc";
+import { svc } from "./global";
+import { SERVICE_NAME } from "./types";
+
+const rpc = {} as Record<string, any>;
 
 export const rootAction = {
   async start(arg: { name: SERVICE_NAME; pid: string }) {
@@ -34,7 +37,24 @@ export const rootAction = {
     pid: string;
     definition: Record<string, "object" | "function" | "proxy">;
   }) {
-    svc.definitions[`${name}.${pid}`] = definition;
-    svc.rpc[`${name}.${pid}`] = await connectRPC(`${name}.${pid}`);
+    svc.definitions[name] = definition;
+    rpc[`${name}.${pid}`] = await connectRPC(`${name}.${pid}`, {
+      waitConnection: true,
+    });
+
+    for (const v of Object.values(rpc)) {
+      await v._receiveDefinition(svc.definitions);
+    }
+  },
+  async executeAction(arg: {
+    name: SERVICE_NAME;
+    pid: string;
+    path: string[];
+    args: any;
+  }) {
+    return await get(
+      rpc[`${arg.name}.${arg.pid}`],
+      arg.path.join(".")
+    )(...arg.args);
   },
 };

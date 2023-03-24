@@ -4,7 +4,6 @@ import { DBArg, glbdb } from "./glbdb";
 
 export const dbAction = {
   query: async (arg: DBArg) => {
-
     const result = await execQuery(arg, glbdb, "prisma");
     return result;
   },

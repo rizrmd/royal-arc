@@ -209,6 +209,7 @@ importers:
       '@types/lodash.get': 4.4.7
       '@types/node': ^18.13.0
       '@types/ws': 8.5.4
+      chalk: 5.2.0
       dir: workspace:*
       get-port: ^6.1.2
       hyper-express: ^6.5.8
@@ -219,6 +220,7 @@ importers:
     dependencies:
       '@paralleldrive/cuid2': 2.0.1
       '@qiwi/deep-proxy': 2.0.3
+      chalk: 5.2.0
       dir: link:../dir
       get-port: 6.1.2
       hyper-express: 6.5.8

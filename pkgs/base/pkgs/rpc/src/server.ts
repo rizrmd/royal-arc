@@ -6,6 +6,7 @@ import getPort, { portNumbers } from "get-port";
 import { DeepProxy } from "@qiwi/deep-proxy";
 import { createId } from "@paralleldrive/cuid2";
 import get from "lodash.get";
+import chalk from "chalk";
 import PrettyError from "pretty-error";
 
 const pe = new PrettyError();
@@ -95,6 +96,22 @@ const connect = (name: string, action: RPCAction) => {
 
         if (msg.type === "action") {
           const fn = get(action, msg.path.join("."));
+
+          if (typeof fn === "undefined") {
+            ws.send(
+              JSON.stringify({
+                type: "action-result",
+                error: {
+                  msg: `${chalk.red(`ERROR`)}: Function ${chalk.cyan(
+                    msg.path.join(".")
+                  )} not found in ${chalk.green(name)} action`,
+                },
+                clientid: msg.clientid,
+                msgid: msg.msgid,
+              })
+            );
+          }
+
           if (typeof fn === "function") {
             let result = undefined as any;
             let error = undefined as any;

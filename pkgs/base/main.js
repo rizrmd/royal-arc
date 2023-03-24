@@ -55250,16 +55250,19 @@ ${import_chalk2.default.magenta("Installing")} deps:
           }
           return new Promise((resolve) => {
             if (ws) {
+              const msgid = (0, import_cuid2.createId)();
               const onmsg = (raw) => {
                 if (ws) {
-                  ws.off("message", onmsg);
                   const msg = JSON.parse(raw);
-                  if (msg.type === "action-result") {
-                    if (!msg.error) {
-                      resolve(msg.result);
-                    } else {
-                      process.stdout.write(msg.error.msg);
-                      resolve(msg.result);
+                  if (msg.msgid === msgid) {
+                    ws.off("message", onmsg);
+                    if (msg.type === "action-result") {
+                      if (!msg.error) {
+                        resolve(msg.result);
+                      } else {
+                        process.stdout.write(msg.error.msg);
+                        resolve(msg.result);
+                      }
                     }
                   }
                 }
@@ -55268,7 +55271,7 @@ ${import_chalk2.default.magenta("Installing")} deps:
               ws.send(
                 JSON.stringify({
                   type: "action",
-                  msgid: (0, import_cuid2.createId)(),
+                  msgid,
                   path: [...path2, key],
                   args: args2
                 })
@@ -55509,6 +55512,20 @@ Make sure to kill running instance before starting.
           const msg = JSON.parse(raw);
           if (msg.type === "action") {
             const fn = (0, import_lodash3.default)(action2, msg.path.join("."));
+            if (typeof fn === "undefined") {
+              ws.send(
+                JSON.stringify({
+                  type: "action-result",
+                  error: {
+                    msg: `${source_default.red(`ERROR`)}: Function ${source_default.cyan(
+                      msg.path.join(".")
+                    )} not found in ${source_default.green(name)} action`
+                  },
+                  clientid: msg.clientid,
+                  msgid: msg.msgid
+                })
+              );
+            }
             if (typeof fn === "function") {
               let result = void 0;
               let error = void 0;
@@ -55687,58 +55704,29 @@ Make sure to kill running instance before starting.
   // pkgs/service/export.ts
   var import_catch_exit = __toESM(require_dist());
 
-  // pkgs/service/src/action.ts
-  var rootAction = {
-    async start(arg) {
-      const running = await runner.run({
-        path: dir.path(`${arg.name}/index.js`),
-        args: [arg.pid],
-        cwd: dir.path()
-      });
-      if (!running) {
-        console.log(
-          `${source_default.red(`Failed`)} to start ${source_default.cyan(
-            arg.name
-          )}: Service not found`
-        );
-      }
-      return running;
-    },
-    async restart(arg) {
-      return await runner.restart(dir.path(`${arg.name}/index.js`));
-    },
-    async identify({
-      name,
-      pid,
-      definition
-    }) {
-      svc.definitions[`${name}.${pid}`] = definition;
-      svc.rpc[`${name}.${pid}`] = await connectRPC(`${name}.${pid}`);
-    }
-  };
-
   // pkgs/service/src/global.ts
   var svc = globalize({
     name: "svc",
     value: {
-      rootRpc: null,
-      definitions: {},
-      rpc: {}
+      root: null,
+      definitions: {}
     },
     init: async (g2) => {
-      g2.rootRpc = await createRPC("root", rootAction);
+      g2.root = await connectRPC("root");
     }
   });
 
-  // pkgs/service/export.ts
+  // pkgs/service/src/action.ts
   var import_lodash4 = __toESM(require_lodash2());
+
+  // pkgs/service/export.ts
   var manageProcess = (name, pid) => {
     return {
       get isRunning() {
         return false;
       },
       async start() {
-        return await svc.rootRpc.start({ name, pid: pid || name });
+        return await svc.root.start({ name, pid: pid || name });
       },
       async restart() {
         return true;
@@ -55748,29 +55736,42 @@ Make sure to kill running instance before starting.
       }
     };
   };
-  var executeAction = ({
-    name,
-    pid,
-    entry
-  }) => {
-    const tag = `${name}.${pid || name}`;
-    const def = svc.definitions[tag];
-    if (def && svc.rpc[tag]) {
+  var executeAction = (arg) => {
+    const { name, entry } = arg;
+    let pid = arg.pid || name;
+    const tag = `${name}.${pid}`;
+    const def = svc.definitions[name];
+    if (def) {
       if (def[entry] === "function") {
-        return svc.rpc[tag][entry];
+        return async (...args2) => {
+          return await svc.root.executeAction({
+            name,
+            pid,
+            path: [entry],
+            args: args2
+          });
+        };
       } else if (def[entry] === "object") {
         return new DeepProxy({}, ({ path: path2, key, PROXY }) => {
-          const objkey = [entry, ...path2, key].join(".");
-          if (def[objkey] === "function") {
-            return (0, import_lodash4.default)(svc.rpc[tag], objkey);
+          const objkey = [entry, ...path2, key];
+          if (def[objkey.join(".")] === "function") {
+            return async (...args2) => {
+              return await svc.root.executeAction({
+                name,
+                pid,
+                path: objkey,
+                args: args2
+              });
+            };
           }
           return PROXY({});
         });
       }
     } else {
+      console.log(svc.definitions);
       console.error(
         `Failed to call ${source_default.magenta(
-          `service.coba.${entry}`
+          `service.${name}.${entry}`
         )}
  Service ${source_default.green(name)} not started yet.`
       );
@@ -55784,11 +55785,11 @@ Make sure to kill running instance before starting.
       if (key2 === "_pid") {
         return PROXY2({}, ({ path: path4, key: key3 }) => {
           const pid = key3;
-          return PROXY2({}, ({ key: key4 }) => {
+          return PROXY2({}, async ({ key: key4 }) => {
             if (key4 === "_process") {
               return manageProcess(path4[0], key4);
             }
-            return executeAction({
+            return await executeAction({
               name: path4[0],
               pid,
               entry: key4
