@@ -55692,6 +55692,7 @@ Make sure to kill running instance before starting.
     async start(arg) {
       const running = await runner.run({
         path: dir.path(`${arg.name}/index.js`),
+        args: [arg.pid],
         cwd: dir.path()
       });
       if (!running) {
@@ -55705,6 +55706,14 @@ Make sure to kill running instance before starting.
     },
     async restart(arg) {
       return await runner.restart(dir.path(`${arg.name}/index.js`));
+    },
+    async identify({
+      name,
+      pid,
+      definition
+    }) {
+      svc.definitions[`${name}.${pid}`] = definition;
+      svc.rpc[`${name}.${pid}`] = await connectRPC(`${name}.${pid}`);
     }
   };
 
@@ -55713,6 +55722,7 @@ Make sure to kill running instance before starting.
     name: "svc",
     value: {
       rootRpc: null,
+      definitions: {},
       rpc: {}
     },
     init: async (g2) => {
@@ -55727,8 +55737,7 @@ Make sure to kill running instance before starting.
         return false;
       },
       async start() {
-        console.log("starting", pid);
-        return false;
+        return await svc.rootRpc.start({ name, pid: pid || name });
       },
       async restart() {
         return true;
@@ -55738,48 +55747,48 @@ Make sure to kill running instance before starting.
       }
     };
   };
-  var executeAction = (name, pid) => {
-    return new Proxy(
-      {},
-      {
-        get(target, p, receiver) {
-          return async (...args2) => {
-            console.log(name, pid, p, args2);
-          };
-        }
+  var executeAction = ({
+    name,
+    pid,
+    entry
+  }) => {
+    const tag = `${name}.${pid || name}`;
+    const def = svc.definitions[tag];
+    if (def) {
+      if (def[entry] === "function" && svc.rpc[tag]) {
+        return svc.rpc[tag][entry];
       }
-    );
+    } else {
+      console.error(
+        `Failed to call ${source_default.magenta(
+          `service.coba.${entry}`
+        )}
+ Service ${source_default.green(name)} not started yet.`
+      );
+    }
   };
-  var service = new DeepProxy({}, ({ path: path2, key, PROXY }) => {
-    const lastPath = path2[path2.length - 1];
-    if (path2.length === 1) {
-      if (!["_process", "_pid", "_all"].includes(key)) {
-        return executeAction(path2[0])[key];
+  var service = new DeepProxy({}, ({ PROXY, path: path2, key }) => {
+    return PROXY({}, ({ path: path3, key: key2, PROXY: PROXY2 }) => {
+      if (key2 === "_process" || key2 === "_all") {
+        return manageProcess(path3[0]);
       }
-      if (key === "_start") {
-        return manageProcess(path2[0])["start"];
+      if (key2 === "_pid") {
+        return PROXY2({}, ({ path: path4, key: key3 }) => {
+          const pid = key3;
+          return PROXY2({}, ({ key: key4 }) => {
+            if (key4 === "_process") {
+              return manageProcess(path4[0], key4);
+            }
+            return executeAction({
+              name: path4[0],
+              pid,
+              entry: key4
+            });
+          });
+        });
       }
-    }
-    if (path2.length === 2) {
-      if (lastPath === "_process" || lastPath === "_all") {
-        return manageProcess(path2[0])[key];
-      }
-    }
-    if (path2.length === 3) {
-      if (path2[1] === "_pid") {
-        const pid = path2[2];
-        return executeAction(path2[0], pid)[key];
-      }
-    }
-    if (path2.length === 4) {
-      if (path2[1] === "_pid") {
-        const pid = path2[2];
-        if (lastPath === "_process") {
-          return manageProcess(path2[0], pid)[key];
-        }
-      }
-    }
-    return PROXY({});
+      return executeAction({ name: path3[0], entry: key2 });
+    });
   });
 
   // pkgs/service/pkgs/service-db/src/ensure-prisma.ts
@@ -58503,6 +58512,10 @@ If somehow upgrade failed you can rollback using
         if (!err2) {
           for (const c of changes) {
             const name = (0, import_path17.basename)(c.path);
+            if (name === "app.ts") {
+              process.exit(99);
+              return;
+            }
             if (c.type === "delete") {
               console.log(`Removing service: ${source_default.red(name)}`);
               yield (0, import_fs_jetpack21.removeAsync)(dir.root(`.output/app/${name}`));

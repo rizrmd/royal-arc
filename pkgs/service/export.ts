@@ -1,11 +1,13 @@
+import { DeepProxy, TProxyFactory } from "@qiwi/deep-proxy";
 import { addExitCallback } from "catch-exit";
+import chalk from "chalk";
+import { dir } from "dir";
+import { pkg } from "pkg";
 import { connectRPC } from "rpc";
 import { attachSpawnCleanup } from "utility/spawn";
-import { svc } from "./src/global";
-import { pkg } from "pkg";
-import { dir } from "dir";
 import type { actions } from "../../app/gen/service/actions";
-import { DeepProxy } from "@qiwi/deep-proxy";
+import { svc } from "./src/global";
+import { SERVICE_NAME } from "./src/types";
 
 export * from "./src/create-service";
 
@@ -36,14 +38,13 @@ type ProcessAction = {
   stop: () => Promise<boolean>;
 };
 
-const manageProcess = (name: string, pid?: string) => {
+const manageProcess = (name: SERVICE_NAME, pid?: string) => {
   return {
     get isRunning() {
       return false;
     },
-    async start(): Promise<false | string> {
-      console.log("starting", pid);
-      return false;
+    async start() {
+      return await svc.rootRpc.start({ name, pid: pid || name });
     },
     async restart() {
       return true;
@@ -54,60 +55,56 @@ const manageProcess = (name: string, pid?: string) => {
   } as ProcessAction;
 };
 
-export const executeAction = (name: string, pid?: string): any => {
-  return new Proxy(
-    {},
-    {
-      get(target, p, receiver) {
-        return async (...args: any) => {
-          console.log(name, pid, p, args);
-        };
-      },
+export const executeAction = ({
+  name,
+  pid,
+  entry,
+}: {
+  name: string;
+  pid?: string;
+  entry: string;
+}): any => {
+  const tag = `${name}.${pid || name}`;
+  const def = svc.definitions[tag];
+
+  if (def) {
+    if (def[entry] === "function" && svc.rpc[tag]) {
+      return svc.rpc[tag][entry];
     }
-  );
+  } else {
+    console.error(
+      `Failed to call ${chalk.magenta(
+        `service.coba.${entry}`
+      )}\n Service ${chalk.green(name)} not started yet.`
+    );
+  }
 };
 
-export const service = new DeepProxy({}, ({ path, key, PROXY }) => {
-  const lastPath = path[path.length - 1];
-
-  // db.query()
-  // db._start()
-  if (path.length === 1) {
-    if (!["_process", "_pid", "_all"].includes(key as any)) {
-      return executeAction(path[0])[key];
+export const service = new DeepProxy({}, ({ PROXY, path, key }) => {
+  return PROXY({}, ({ path, key, PROXY }) => {
+    if (key === "_process" || key === "_all") {
+      return manageProcess(path[0] as any);
     }
-    if (key === "_start") {
-      return manageProcess(path[0])["start"];
-    }
-  }
 
-  // db._process.stop()
-  // db._all.stop()
-  if (path.length === 2) {
-    if (lastPath === "_process" || lastPath === "_all") {
-      return manageProcess(path[0])[key as keyof ProcessAction];
-    }
-  }
+    if (key === "_pid") {
+      return PROXY({}, ({ path, key }) => {
+        const pid = key as string;
+        return PROXY({}, ({ key }) => {
+          if (key === "_process") {
+            return manageProcess(path[0] as any, key as string);
+          }
 
-  // db._pid.123.query()
-  if (path.length === 3) {
-    if (path[1] === "_pid") {
-      const pid = path[2];
-      return executeAction(path[0], pid)[key];
+          return executeAction({
+            name: path[0],
+            pid: pid,
+            entry: key as string,
+          });
+        });
+      });
     }
-  }
 
-  // db._pid.123._process.stop()
-  if (path.length === 4) {
-    if (path[1] === "_pid") {
-      const pid = path[2];
-      if (lastPath === "_process") {
-        return manageProcess(path[0], pid)[key as keyof ProcessAction];
-      }
-    }
-  }
-
-  return PROXY({});
+    return executeAction({ name: path[0], entry: key as string });
+  });
 }) as {
   [K in keyof actions]: actions[K]["type"] extends "single"
     ? actions[K]["action"] & { _process: ProcessAction }

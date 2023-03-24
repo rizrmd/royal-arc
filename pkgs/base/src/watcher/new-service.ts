@@ -16,6 +16,11 @@ export const watchNewService = () => {
         for (const c of changes) {
           const name = basename(c.path);
 
+          if (name === "app.ts") {
+            process.exit(99);
+            return;
+          }
+
           if (c.type === "delete") {
             console.log(`Removing service: ${chalk.red(name)}`);
             await removeAsync(dir.root(`.output/app/${name}`));

@@ -7,7 +7,7 @@ import { srv } from "./glbsrv";
 import { server } from "./server";
 import { srvAction } from "./action";
 
-export const createAPIServer = ({
+export const createAPIServer = async ({
   name,
   port,
   serverURL,
@@ -18,10 +18,10 @@ export const createAPIServer = ({
   serverURL?: string;
   cookieKey: string;
 }) => {
-  createService({
+  return await createService({
     name,
     mode: "single",
-    init: async ({ markAsRunning, mode }) => {
+    init: async ({ mode }) => {
       srv.name = name;
       srv.port = port;
       srv.cookieKey = cookieKey;
@@ -55,7 +55,7 @@ export const createAPIServer = ({
           )} http://localhost:${srv.port}`
         );
       }
-      markAsRunning();
+      return srvAction;
     },
   });
 };

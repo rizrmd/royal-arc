@@ -17,7 +17,7 @@ export const createDB = async (arg: { name: SERVICE_NAME }) => {
   return await createService({
     name,
     mode: "single",
-    init: async ({ markAsRunning }) => {
+    init: async ({}) => {
       await createRPC(name, dbAction);
 
       const schemaPath = dir.path(`${name}/prisma/schema.prisma`);
@@ -80,9 +80,7 @@ export const createDB = async (arg: { name: SERVICE_NAME }) => {
         await glbdb.prisma.$connect();
       } catch (e) {}
 
-      markAsRunning();
-
-      return {} as typeof dbAction;
+      return dbAction;
     },
   });
 };

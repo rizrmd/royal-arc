@@ -21,7 +21,7 @@ export const createWeb = async ({
   await createService({
     name,
     mode: "single",
-    init: async ({ markAsRunning, mode }) => {
+    init: async ({ mode }) => {
       web.name = name;
       web.entry = entry;
       await web.init();
@@ -40,7 +40,7 @@ export const createWeb = async ({
           `${padEnd(name, 12, " ")}`
         )} http://localhost:${port}`
       );
-      markAsRunning();
+      return webAction;
     },
   });
 };
