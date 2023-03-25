@@ -11,6 +11,7 @@ import { zip } from "zip-a-folder";
 import { rootAction as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
 import { bundleService } from "./builder/service";
+import { buildMainApp } from "./builder/build-app";
 import { postRun } from "./builder/service/postrun";
 import { prepareBuild } from "./builder/service/prepare";
 import { attachCleanUp } from "./cleanup";
@@ -67,15 +68,7 @@ export const baseMain = async () => {
       baseGlobal.mode = "staging";
     }
 
-    await bundle({
-      input: app.input,
-      output: app.output,
-      pkgjson: {
-        input: dir.root("app/package.json"),
-        output: dir.root(".output/app/package.json"),
-      },
-    });
-
+    await buildMainApp(app);
     await Promise.all(app.serviceNames.map(async (e) => await prepareBuild(e)));
     await Promise.all(
       app.serviceNames.map(
@@ -99,15 +92,7 @@ export const baseMain = async () => {
 
     watchNewService();
 
-    await bundle({
-      input: app.input,
-      output: app.output,
-      pkgjson: {
-        input: dir.root("app/package.json"),
-        output: dir.root(".output/app/package.json"),
-      },
-    });
-
+    await buildMainApp(app);
     await Promise.all(app.serviceNames.map(async (e) => await prepareBuild(e)));
     await Promise.all(
       app.serviceNames.map(async (e) => await bundleService(e, { watch: true }))

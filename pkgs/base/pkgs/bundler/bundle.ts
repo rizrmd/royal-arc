@@ -16,12 +16,13 @@ export const bundle = async (arg: {
   pkgjson?: { input: string; output?: string };
   tstart?: number;
   watch?: boolean;
+  format?: "iife" | "cjs";
   event?: {
     onStart?: (arg: { isRebuild: boolean }) => any;
     onEnd?: (arg: { isRebuild: boolean }) => any;
   };
 }): Promise<boolean> => {
-  const { input, output, watch, pkgjson, tstart, event } = arg;
+  const { input, output, watch, pkgjson, tstart, event, format } = arg;
 
   let t0 = tstart || performance.now();
   if (!bundler.bundlers) {
@@ -52,6 +53,7 @@ export const bundle = async (arg: {
         bundle: true,
         sourcemap: true,
         platform: "node",
+        format,
         external,
         loader: {
           ".css": "text",
