@@ -55704,6 +55704,9 @@ Make sure to kill running instance before starting.
   // pkgs/service/export.ts
   var import_catch_exit = __toESM(require_dist());
 
+  // pkgs/service/src/action.ts
+  var import_lodash4 = __toESM(require_lodash2());
+
   // pkgs/service/src/global.ts
   var svc = globalize({
     name: "svc",
@@ -55715,9 +55718,6 @@ Make sure to kill running instance before starting.
       g2.root = await connectRPC("root");
     }
   });
-
-  // pkgs/service/src/action.ts
-  var import_lodash4 = __toESM(require_lodash2());
 
   // pkgs/service/export.ts
   var manageProcess = (name, pid) => {
@@ -57699,7 +57699,7 @@ ${webs.map((e) => `export { App as ${e} } from "../../${e}/src/app";`).join("\n"
   var import_path14 = __require("path");
   var import_fs_jetpack14 = __toESM(require_main());
   var postRunWeb = (name) => {
-    connectRPC(`svc.${name}`, { waitConnection: true }).then(
+    connectRPC(name, { waitConnection: true }).then(
       (rpc) => __async(void 0, null, function* () {
         let entry = yield rpc.getEntry();
         yield (0, import_fs_jetpack14.removeAsync)(dir.root(`.output/app/${name}/public`));

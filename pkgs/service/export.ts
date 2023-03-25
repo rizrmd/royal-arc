@@ -1,4 +1,4 @@
-import { DeepProxy, TProxyFactory } from "@qiwi/deep-proxy";
+import { DeepProxy } from "@qiwi/deep-proxy";
 import { addExitCallback } from "catch-exit";
 import chalk from "chalk";
 import { dir } from "dir";
@@ -7,10 +7,9 @@ import { connectRPC, createRPC } from "rpc";
 import { RPCActionResult } from "rpc/src/types";
 import { attachSpawnCleanup } from "utility/spawn";
 import type { actions } from "../../app/gen/service/actions";
+import { rootAction } from "./src/action";
 import { svc } from "./src/global";
 import { SERVICE_NAME } from "./src/types";
-import get from "lodash.get";
-import { rootAction } from "./src/action";
 
 export * from "./src/create-service";
 

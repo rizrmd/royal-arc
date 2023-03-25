@@ -8,7 +8,7 @@ import { join } from "path";
 import { removeAsync } from "fs-jetpack";
 
 export const postRunWeb = (name: string) => {
-  connectRPC<typeof webAction>(`svc.${name}`, { waitConnection: true }).then(
+  connectRPC<typeof webAction>(name, { waitConnection: true }).then(
     async (rpc) => {
       let entry = await rpc.getEntry();
 
