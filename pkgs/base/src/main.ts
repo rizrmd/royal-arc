@@ -7,6 +7,7 @@ import padEnd from "lodash.padend";
 import { dirname, join } from "path";
 import { pkg, scanDir } from "pkg";
 import { connectRPC, createRPC } from "rpc";
+import { zip } from "zip-a-folder";
 import { rootAction as RootAction } from "../../service/src/action";
 import { action, baseGlobal } from "./action";
 import { bundleService } from "./builder/service";
@@ -47,8 +48,8 @@ export const baseMain = async () => {
 
   console.log(`── ${padEnd(chalk.yellow(`BASE`) + " ", 47, "─")}`);
 
-  baseGlobal.parcels = new Set()
-
+  baseGlobal.parcels = new Set();
+  await createRPC("base", action, { isMain: true });
 
   if (
     args.includes("build") ||
@@ -56,20 +57,47 @@ export const baseMain = async () => {
     args.includes("prod") ||
     args.includes("staging")
   ) {
-  } else {
-    await createRPC("base", action, { isMain: true });
+    await removeAsync(dir.root(`.output/app`));
 
+    const app = await prepareApp();
+    baseGlobal.app = app;
+
+    baseGlobal.mode = "prod";
+    if (args.includes("staging")) {
+      baseGlobal.mode = "staging";
+    }
+
+    await bundle({
+      input: app.input,
+      output: app.output,
+      pkgjson: {
+        input: dir.root("app/package.json"),
+        output: dir.root(".output/app/package.json"),
+      },
+    });
+
+    await Promise.all(app.serviceNames.map(async (e) => await prepareBuild(e)));
+    await Promise.all(
+      app.serviceNames.map(
+        async (e) => await bundleService(e, { watch: false })
+      )
+    );
+    await Promise.all(app.serviceNames.map(async (e) => await postRun(e)));
+    await zip(dir.root(".output/app"), dir.root(".output/app.zip"));
+    console.log(`\nBuild done: ${chalk.green(`.output/app.zip`)}`);
+    process.exit(1);
+  } else {
+    baseGlobal.mode = "dev";
     baseGlobal.rpc = {
       service: await connectRPC<typeof RootAction>("root", {
         waitConnection: false,
       }),
     };
 
-    watchNewService()
-
     const app = await prepareApp();
-
     baseGlobal.app = app;
+
+    watchNewService();
 
     await bundle({
       input: app.input,

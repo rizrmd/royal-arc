@@ -13,6 +13,7 @@
     "fflate": "0.7.4",
     "fs-jetpack": "^5.1.0",
     "hyper-express": "^6.5.8",
+    "zip-a-folder": "1.1.5",
     "lodash.padend": "^4.6.1",
     "pkg": "workspace:*",
     "rpc": "workspace:*",

@@ -9,6 +9,7 @@ export const baseGlobal = global as unknown as {
   rpc: { service: RPCActionResult<typeof ServiceAction> };
   app: Awaited<ReturnType<typeof prepareApp>>;
   parcels: Set<ChildProcess>;
+  mode: "dev" | "prod" | "staging";
 };
 
 export const action = {

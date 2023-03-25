@@ -32,8 +32,8 @@ const main = async () => {
 
   function exitHandler(options, exitCode) {
     global.exiting = true;
-    global.base.kill(2);
-    global.build.kill(2);
+    if (!!global.base) global.base.kill(2);
+    if (!!global.build) global.build.kill(2);
   }
 
   //do something when app is closing
@@ -93,7 +93,7 @@ const runBase = () => {
     if (global.exiting) return;
 
     if (code === 1 || code === 2) {
-      if (global.build) {
+      if (!!global.build) {
         global.build.kill();
       }
       process.exit();
